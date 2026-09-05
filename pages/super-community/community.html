@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Super Community &middot; SuperSchools Console</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="../../styles/tailwind-config.js"></script>
+  <link rel="stylesheet" href="../../styles/dashboard.css" />
+</head>
+<body class="bg-slate-200 text-slate-900 min-h-screen" x-data="schoolConsole({ module: 'community', sub: 'community' })">
+  <div id="routeLoader" class="route-loader" role="status" aria-live="polite" aria-label="Loading">
+    <div class="route-loader__box"><div class="route-loader__spinner"></div><div class="route-loader__text">Loading&hellip;</div></div>
+  </div>
+  <div class="ss-app min-h-screen h-screen w-full flex bg-mobile-background md:bg-background relative">
+    <div data-shell="sidebar"></div>
+    <main class="flex-1 flex flex-col overflow-hidden bg-mobile-background md:bg-background">
+      <div data-shell="header"></div>
+      <section class="flex-1 custom-scrollbar overflow-y-auto" :class="isFullScreenPage ? 'pb-0' : 'pb-20 md:pb-0'">
+        <div class="w-full" :class="isFullScreenPage ? 'min-h-full px-5 py-4 md:px-10 md:py-5 lg:px-[56px]' : 'px-5 py-5 md:px-10 md:py-6 lg:px-[56px] lg:py-8'">
+          <div x-show="!isFullScreenPage" class="lg:hidden mb-4 relative">
+            <input class="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-2xl text-sm focus:ring-primary focus:border-primary text-slate-700 shadow-sm" placeholder="Search" type="text" x-model="search" />
+            <span class="material-icons-outlined absolute left-3 text-slate-400 text-lg top-1/2 -translate-y-1/2">search</span>
+          </div>
+          <template x-if="activePage === 'community'">
+            <div class="space-y-6">
+              <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
+                <div class="lg:col-span-2 bg-white rounded-2xl shadow-card border border-slate-100 p-5 md:p-6">
+                  <h2 class="text-2xl font-semibold text-slate-900">Community engagement</h2>
+                  <p class="mt-2 text-sm text-slate-500">Placeholder dashboard for parent community, events, announcements, and school updates.</p>
+                  <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-6">
+                    <template x-for="stat in communityStats" :key="stat.label"><div class="rounded-2xl bg-slate-50 p-4 border border-slate-100"><p class="text-2xl font-semibold" x-text="stat.value"></p><p class="text-xs text-slate-500 mt-1" x-text="stat.label"></p></div></template>
+                  </div>
+                </div>
+                <div class="bg-primary rounded-2xl shadow-card p-5 text-white"><span class="material-symbols-outlined text-4xl">campaign</span><h3 class="mt-4 font-semibold">Next announcement</h3><p class="text-sm text-white/75 mt-2">Share admissions open reminder with shortlisted parents.</p><button class="mt-5 bg-white text-primary rounded-full px-4 py-2 text-sm font-medium">Create post</button></div>
+              </div>
+              <div class="bg-white rounded-2xl shadow-card border border-slate-100 p-5"><h3 class="font-semibold mb-4">Upcoming events</h3><div class="grid grid-cols-1 md:grid-cols-3 gap-3"><template x-for="event in events" :key="event.title"><div class="rounded-2xl border border-slate-100 p-4"><p class="text-sm font-semibold" x-text="event.title"></p><p class="text-xs text-slate-500 mt-1" x-text="event.date"></p><p class="text-sm text-slate-600 mt-3" x-text="event.note"></p></div></template></div></div>
+            </div>
+          </template>
+        </div>
+      </section>
+    </main>
+    <div data-shell="chrome-inner"></div>
+  </div>
+  <div data-shell="chrome-outer"></div>
+
+  <script src="../../lib/navigation.js"></script>
+  <script src="../../lib/store.js"></script>
+  <script src="../../lib/charts.js"></script>
+  <script src="../../components/Sidebar.js"></script>
+  <script src="../../components/TopNav.js"></script>
+  <script src="../../components/MobileNav.js"></script>
+  <script src="../../components/HamburgerMenu.js"></script>
+  <script src="../../components/Toast.js"></script>
+  <script src="../../components/RouteLoader.js"></script>
+  <script src="../../components/AppShell.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</body>
+</html>

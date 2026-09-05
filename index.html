@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SuperSchools Console</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- Shared design tokens (identical to every content page) so the shell + iframe match exactly. -->
+  <script src="styles/tailwind-config.js"></script>
+  <style>
+    /* ============================================================
+       Persistent app shell — owns the GLOBAL sidebar + top nav
+       (level-1 and level-2). The module content is loaded into the
+       <iframe id="contentFrame"> below; navigating swaps ONLY the
+       iframe (with a content-area spinner) — the chrome never reloads.
+       ============================================================ */
+    body { font-family: 'Inter', sans-serif; }
+    [x-cloak] { display: none !important; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+    /* Sidebar nav: kill all browser focus rings + sub-pixel gaps (mirrors v15). */
+    aside nav button:focus,
+    aside nav button:focus-visible,
+    aside nav button:focus-within { outline: none !important; box-shadow: none !important; }
+    aside nav button.bg-white { background-color: #ffffff !important; }
+
+    /* Content-area navigation spinner (shown only over the iframe, never over the chrome). */
+    .ss-frame-spinner { width: 46px; height: 46px; border-radius: 9999px; border: 4px solid #DCE8FF; border-top-color: #284CA5; animation: ssSpin .7s linear infinite; }
+    @keyframes ssSpin { to { transform: rotate(360deg); } }
+
+    /* Global toast stack (shell-level actions: notifications, etc.). */
+    .cfg-toast-stack { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 80; display: flex; flex-direction: column; align-items: center; gap: 10px; max-width: 90vw; pointer-events: none; }
+    .cfg-toast { pointer-events: auto; display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 8px; background: #fff; border: 1px solid #e2e8f0; box-shadow: 0 8px 24px rgba(15,23,42,.10); animation: cfg-toast-in .3s ease-out; }
+    @keyframes cfg-toast-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    .cfg-toast.is-success { background: #EEFFFE; border-color: #359694; color: #359694; }
+    .cfg-toast.is-error { background: #FFF3F3; border-color: #D54545; color: #D54545; }
+    .cfg-toast.is-info { background: #EFF4FF; border-color: #284CA5; color: #284CA5; }
+    @media (max-width: 640px) { .cfg-toast-stack { bottom: 16px; max-width: 92vw; } }
+  </style>
+</head>
+<body class="bg-slate-200 text-slate-900 min-h-screen" x-data="appShell()" x-cloak>
+  <div class="min-h-screen h-screen w-full flex bg-mobile-background md:bg-background relative">
+    <!-- Single collapse/expand control — sits over the top-left corner of BOTH the sidebar and
+         the top nav bar. Colour adapts to what is beneath it. Hover opens when collapsed. -->
+    <button type="button" @click="toggleSidebar()" @mouseenter="peekEnter()" @mouseleave="peekLeave()"
+      class="hidden md:inline-flex absolute top-2.5 left-3.5 z-50 w-9 h-9 items-center justify-center text-white/90 hover:text-white transition-colors duration-300 ease-in-out focus:outline-none"
+      :aria-label="(sidebarCollapsed && sidebarPeek) ? 'Pin sidebar' : (sidebarCollapsed ? 'Open sidebar' : 'Collapse sidebar')" :title="(sidebarCollapsed && sidebarPeek) ? 'Pin sidebar' : (sidebarCollapsed ? 'Open sidebar' : 'Collapse sidebar')">
+      <!-- Pin icon: shown ONLY during hover-preview (sidebar closed, temporarily opened by hover) -->
+      <span x-show="sidebarCollapsed && sidebarPeek" class="material-symbols-outlined text-[26px] leading-none inline-block rotate-45">push_pin</span>
+      <!-- Collapse / open icon: shown in every other state, including the normal visible sidebar -->
+      <svg x-show="!(sidebarCollapsed && sidebarPeek)" class="w-7 h-7" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <rect x="3.25" y="4.25" width="17.5" height="15.5" rx="3" stroke="currentColor" stroke-width="1.8"/>
+        <line x1="9" y1="4.5" x2="9" y2="19.5" stroke="currentColor" stroke-width="1.8"/>
+        <path d="M12.6 9.1 L15.7 12 L12.6 14.9 Z" fill="currentColor"/>
+      </svg>
+    </button>
+
+    <!-- LEFT SIDEBAR — the MAIN modules. Collapses to w-0 (icon toggle); hover-peeks when collapsed. -->
+    <aside
+      @mouseenter="sidebarEnter()" @mouseleave="sidebarLeave()"
+      :class="(!sidebarCollapsed || sidebarPeek) ? 'w-[72px]' : 'w-0'"
+      class="hidden md:flex absolute left-0 top-0 z-40 bg-[#284CA5] flex-col flex-shrink-0 h-full overflow-hidden transition-all duration-300 ease-in-out">
+      <div class="w-[72px] flex-shrink-0 flex flex-col items-center pt-14 pb-4 h-full">
+        <nav class="flex-1 min-h-0 flex flex-col items-stretch w-full px-0 overflow-y-auto no-scrollbar" aria-label="Primary navigation">
+          <template x-for="item in menuItems" :key="item.id">
+            <button type="button" @click="setPage(item.id)"
+              class="group w-full flex flex-col items-center justify-center gap-1 px-1 transition-colors duration-150 outline-none focus:outline-none focus-visible:outline-none"
+              style="height:72px;min-height:72px;flex-shrink:0;"
+              :class="activePage === item.id ? 'bg-white text-primary relative z-10' : 'text-white/90 hover:bg-white/10 hover:text-white'"
+              :aria-label="item.label" :aria-current="activePage === item.id ? 'page' : false">
+              <span class="material-symbols-outlined text-[24px] leading-none" x-text="item.icon"></span>
+              <span class="flex flex-col items-center text-[11px] text-center leading-tight" :class="activePage === item.id ? 'font-semibold' : 'font-medium'">
+                <span x-text="item.label.split(' ')[0]"></span>
+                <span x-show="item.label.split(' ').length > 1" x-text="item.label.split(' ').slice(1).join(' ')"></span>
+              </span>
+            </button>
+          </template>
+        </nav>
+      </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col overflow-hidden bg-mobile-background md:bg-background">
+      <!-- LEVEL-1 top navigation — global; shows the sub-modules of the active sidebar module. -->
+      <header :class="[(isMobile || (sidebarCollapsed && !sidebarPeek)) ? 'bg-[#284CA5] border-[#284CA5] text-white' : 'bg-white border-slate-200 text-slate-900', mobileTopHidden ? '-translate-y-full md:translate-y-0' : 'translate-y-0']" class="h-14 flex items-center flex-shrink-0 z-30 px-3 sm:px-4 lg:px-6 fixed top-0 left-0 right-0 md:static border-b transition duration-300 ease-in-out will-change-transform">
+        <div class="flex items-center w-full gap-2 sm:gap-3 min-w-0 h-full md:pl-16">
+          <nav class="flex-1 min-w-0 flex items-stretch h-full overflow-x-auto no-scrollbar" aria-label="Section navigation">
+            <div class="flex items-stretch h-full">
+              <template x-for="tab in topNavItems" :key="tab.kind + ':' + tab.id">
+                <button type="button" @click="onTopNav(tab)" class="relative h-full inline-flex shrink-0 items-center px-3 lg:px-4 text-sm whitespace-nowrap transition-colors focus:outline-none"
+                  :class="isTopNavActive(tab)
+                    ? ((isMobile || (sidebarCollapsed && !sidebarPeek)) ? 'text-white font-semibold' : 'text-primary font-semibold')
+                    : ((isMobile || (sidebarCollapsed && !sidebarPeek)) ? 'text-white/70 hover:text-white' : 'text-slate-500 hover:text-slate-800')">
+                  <span x-text="tab.label"></span>
+                  <span x-show="isTopNavActive(tab)" :class="(isMobile || (sidebarCollapsed && !sidebarPeek)) ? 'bg-white' : 'bg-primary'" class="absolute left-2 right-2 lg:left-3 lg:right-3 bottom-0 h-[2.5px] rounded-t-full"></span>
+                </button>
+              </template>
+            </div>
+          </nav>
+          <!-- Utility icon buttons (colours adapt to header background) -->
+          <div class="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+            <button type="button"
+              @click="searchOpen = true; $nextTick(() => $refs.navSearchInput && $refs.navSearchInput.focus())"
+              :class="navIconClass" class="hidden sm:inline-flex h-9 w-9 items-center justify-center rounded-full border transition-colors focus:outline-none"
+              aria-label="Search" :aria-expanded="searchOpen">
+              <span class="material-symbols-outlined text-[20px]">search</span>
+            </button>
+            <button type="button" @click="pushToast('info','Create new','Quick create coming soon.')" x-show="['admissions','jobs','community','social'].includes(activePage)" :class="navIconClass" class="hidden md:inline-flex h-9 w-9 items-center justify-center rounded-full border transition-colors focus:outline-none" aria-label="Create new">
+              <span class="material-symbols-outlined text-[20px]">add</span>
+            </button>
+            <button type="button" @click="openCrmSettings()" :class="navIconClass" class="hidden sm:inline-flex h-9 w-9 items-center justify-center rounded-full border transition-colors focus:outline-none" aria-label="Settings">
+              <span class="material-symbols-outlined text-[20px]">settings</span>
+            </button>
+            <button type="button" @click="pushToast('info','Notifications','You have 1 new notification.')" :class="navIconClass" class="relative inline-flex h-9 w-9 items-center justify-center rounded-full border transition-colors focus:outline-none" aria-label="Notifications">
+              <span class="material-symbols-outlined text-[20px]">notifications</span>
+              <span class="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-red-500 ring-2" :class="(isMobile || (sidebarCollapsed && !sidebarPeek)) ? 'ring-[#284CA5]' : 'ring-white'"></span>
+            </button>
+            <button type="button" @click="rightMenuOpen = true" :class="navIconClass" class="inline-flex h-9 w-9 items-center justify-center rounded-full border transition-colors focus:outline-none" aria-label="Open menu" title="Menu">
+              <span class="material-symbols-outlined text-[20px]">menu</span>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <!-- LEVEL-2 top navigation: Super CRM › Visit (Visits / Bookings). Derived from the level-1 tab.
+           On mobile it sticks to the very top once the level-1 header scrolls away. -->
+      <div x-show="showVisitsL2Nav" x-cloak
+        class="bg-white border-b border-slate-200 flex-shrink-0 z-30 fixed left-0 right-0 md:static transition-[top] duration-300 ease-in-out"
+        :class="mobileTopHidden ? 'top-0' : 'top-14'">
+        <div class="flex items-center h-10 pl-3 sm:pl-4 md:pl-[80px] lg:pl-[88px]">
+          <nav class="flex-1 min-w-0 flex items-stretch h-full overflow-x-auto no-scrollbar" aria-label="Visits sub-navigation">
+            <div class="flex items-stretch h-full">
+              <template x-for="item in l2VisitItems" :key="item.id">
+                <button type="button"
+                  @click="onL2Visit(item)"
+                  class="relative h-full inline-flex shrink-0 items-center px-3 lg:px-4 text-sm whitespace-nowrap transition-colors focus:outline-none focus-visible:outline-none"
+                  :class="crmVisitsSection === item.id
+                    ? 'text-primary font-semibold'
+                    : 'text-slate-500 hover:text-slate-800 font-medium'">
+                  <span x-text="item.label"></span>
+                </button>
+              </template>
+            </div>
+          </nav>
+          <!-- Page actions, relayed into this level-2 bar (right end). -->
+          <div class="ml-auto flex items-center gap-1.5 pl-2 pr-3 lg:pr-5 flex-shrink-0">
+            <template x-for="act in l2Actions" :key="act.id">
+              <button type="button" @click="runL2Action(act.id)" :title="act.label" :aria-label="act.label"
+                class="inline-flex items-center gap-1.5 rounded-lg px-2.5 h-7 text-[12.5px] font-semibold transition-colors focus:outline-none"
+                :class="act.primary ? 'bg-primary text-white hover:bg-primary-hover' : 'border border-slate-200 text-slate-600 hover:text-primary hover:border-primary/40 hover:bg-slate-50'">
+                <span class="material-symbols-outlined text-[16px]" x-text="act.icon"></span>
+                <span class="hidden sm:inline" x-text="act.label"></span>
+              </button>
+            </template>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONTENT — the only thing that changes between modules. The chrome above/left stays put. -->
+      <section class="flex-1 min-h-0 relative overflow-hidden transition-[padding] duration-300 ease-in-out bg-mobile-background md:bg-background"
+        :class="[
+          (!sidebarCollapsed || sidebarPeek) ? 'md:pl-[72px]' : '',
+          // bottom: drop the reserve when the mobile bottom-nav has scrolled away (no white gap)
+          mobileBottomHidden ? 'pb-0 md:pb-0' : 'pb-20 md:pb-0',
+          // top: reserve only for the bars currently visible on mobile (desktop is md:pt-0)
+          showVisitsL2Nav
+            ? (mobileTopHidden ? 'pt-10 md:pt-0' : 'pt-[96px] md:pt-0')
+            : (mobileTopHidden ? 'pt-0 md:pt-0' : 'pt-14 md:pt-0')
+        ]">
+        <div class="relative w-full h-full">
+          <!-- The module page renders here; in an iframe it auto-hides its own chrome (embedded mode). -->
+          <iframe x-ref="contentFrame" title="Module content" @load="onFrameLoad()"
+            class="w-full h-full block border-0 bg-mobile-background md:bg-background"></iframe>
+
+          <!-- Placeholder for sub-modules that don't have a page yet. -->
+          <div x-show="placeholder" x-cloak class="absolute inset-0 flex items-center justify-center p-6 bg-mobile-background md:bg-background">
+            <div class="text-center max-w-sm">
+              <div class="mx-auto w-14 h-14 rounded-2xl bg-primary-soft text-primary flex items-center justify-center mb-4">
+                <span class="material-symbols-outlined text-[30px]">construction</span>
+              </div>
+              <h2 class="text-lg font-semibold text-slate-800" x-text="placeholder"></h2>
+              <p class="mt-1.5 text-sm text-slate-500">This section is coming soon. The global navigation stays put — only this content area changes.</p>
+            </div>
+          </div>
+
+          <!-- Content-area navigation spinner. Covers ONLY the iframe, so the chrome stays visible. -->
+          <div x-show="loading" x-cloak class="absolute inset-0 z-10 flex items-center justify-center bg-mobile-background md:bg-background" role="status" aria-live="polite" aria-label="Loading">
+            <div class="flex flex-col items-center gap-3.5">
+              <div class="ss-frame-spinner"></div>
+              <div class="text-[13px] font-semibold text-primary tracking-[0.01em]">Loading&hellip;</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- MOBILE bottom navigation (main modules). -->
+    <nav :class="mobileBottomHidden ? 'translate-y-full' : 'translate-y-0'" class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-outline-variant h-16 flex items-center justify-between px-1 z-50 pb-1 shadow-[0_-8px_20px_rgba(15,23,42,0.06)] transition-transform duration-300 ease-in-out will-change-transform" aria-label="Mobile navigation">
+      <template x-for="item in mobileMenuItems" :key="item.id">
+        <button type="button" @click="setPage(item.id)" class="flex flex-1 min-w-0 flex-col items-center justify-center h-12 rounded-xl transition-colors px-0.5" :class="activePage === item.id ? 'text-primary' : 'text-on-surface-variant'" :aria-label="item.label">
+          <span class="material-symbols-outlined text-[22px]" x-text="item.icon"></span>
+          <span class="mt-0.5 flex flex-col items-center leading-[1.15] text-center w-full" :class="activePage === item.id ? 'font-semibold' : 'font-medium'">
+            <span class="text-[9px] block" x-text="item.label.split(' ')[0]"></span>
+            <span class="text-[9px] block" x-text="item.label.split(' ').slice(1).join(' ')"></span>
+          </span>
+        </button>
+      </template>
+    </nav>
+
+    <!-- Right-side account drawer (opens from the hamburger). -->
+    <div x-show="rightMenuOpen" x-cloak class="fixed inset-0 z-[70]" @keydown.escape.window="rightMenuOpen = false">
+      <div x-show="rightMenuOpen" x-transition.opacity.duration.300ms @click="rightMenuOpen = false" class="absolute inset-0 bg-slate-900/40"></div>
+      <aside x-show="rightMenuOpen"
+        x-transition:enter="transition transform ease-out duration-300" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0"
+        x-transition:leave="transition transform ease-in duration-300" x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full"
+        class="absolute top-0 right-0 h-full w-[88%] max-w-[360px] bg-white shadow-2xl flex flex-col" role="dialog" aria-modal="true" aria-label="Account menu">
+        <div class="flex items-center gap-3 p-5 border-b border-slate-200 flex-shrink-0">
+          <div class="w-12 h-12 rounded-full overflow-hidden border border-slate-200 flex-shrink-0 bg-primary-soft flex items-center justify-center">
+            <span class="material-symbols-outlined text-primary text-[26px]">account_circle</span>
+          </div>
+          <div class="min-w-0">
+            <p class="font-semibold text-slate-900 truncate">Green Valley Admin</p>
+            <p class="text-xs text-slate-500 truncate">admin@greenvalley.edu</p>
+          </div>
+          <button type="button" @click="rightMenuOpen = false" class="ml-auto inline-flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition-colors flex-shrink-0" aria-label="Close menu">
+            <span class="material-symbols-outlined text-[20px]">close</span>
+          </button>
+        </div>
+        <nav class="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-1" aria-label="Account options">
+          <button type="button" @click="rightMenuOpen = false; searchOpen = true; $nextTick(() => $refs.navSearchInput && $refs.navSearchInput.focus())"
+            class="w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-left hover:bg-slate-50 transition-colors group/opt">
+            <span class="w-9 h-9 rounded-lg bg-slate-100 text-slate-500 flex items-center justify-center flex-shrink-0 group-hover/opt:bg-primary-soft group-hover/opt:text-primary transition-colors">
+              <span class="material-symbols-outlined text-[20px]">search</span>
+            </span>
+            <span class="flex-1 min-w-0">
+              <span class="block text-sm font-medium text-slate-800 truncate group-hover/opt:text-primary transition-colors">Search</span>
+              <span class="block text-xs text-slate-400 truncate">Find enquiries, applicants, and pages</span>
+            </span>
+            <span class="material-symbols-outlined text-[18px] text-slate-300 flex-shrink-0">chevron_right</span>
+          </button>
+          <button type="button" @click="rightMenuOpen = false; setPage('settings')"
+            class="w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-left hover:bg-slate-50 transition-colors group/opt">
+            <span class="w-9 h-9 rounded-lg bg-slate-100 text-slate-500 flex items-center justify-center flex-shrink-0 group-hover/opt:bg-primary-soft group-hover/opt:text-primary transition-colors">
+              <span class="material-symbols-outlined text-[20px]">settings</span>
+            </span>
+            <span class="flex-1 min-w-0">
+              <span class="block text-sm font-medium text-slate-800 truncate group-hover/opt:text-primary transition-colors">Settings</span>
+              <span class="block text-xs text-slate-400 truncate">Console preferences and configuration</span>
+            </span>
+            <span class="material-symbols-outlined text-[18px] text-slate-300 flex-shrink-0">chevron_right</span>
+          </button>
+          <div class="my-1 border-t border-slate-100"></div>
+          <template x-for="opt in rightMenuItems" :key="opt.label">
+            <button type="button" class="w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-left hover:bg-slate-50 transition-colors group/opt">
+              <span class="w-9 h-9 rounded-lg bg-slate-100 text-slate-500 flex items-center justify-center flex-shrink-0 group-hover/opt:bg-primary-soft group-hover/opt:text-primary transition-colors">
+                <span class="material-symbols-outlined text-[20px]" x-text="opt.icon"></span>
+              </span>
+              <span class="flex-1 min-w-0">
+                <span class="block text-sm font-medium text-slate-800 truncate group-hover/opt:text-primary transition-colors" x-text="opt.label"></span>
+                <span class="block text-xs text-slate-400 truncate" x-text="opt.desc"></span>
+              </span>
+              <span class="material-symbols-outlined text-[18px] text-slate-300 flex-shrink-0">chevron_right</span>
+            </button>
+          </template>
+        </nav>
+        <div class="p-3 border-t border-slate-200 flex-shrink-0">
+          <button type="button" class="w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-rose-600 hover:bg-rose-50 transition-colors">
+            <span class="material-symbols-outlined text-[20px]">logout</span> Sign out
+          </button>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- Search overlay -->
+  <div x-show="searchOpen" x-cloak class="fixed inset-0 z-[90]" role="dialog" aria-modal="true" aria-label="Search"
+    @keydown.escape.window="searchOpen = false">
+    <div x-show="searchOpen" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+      x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+      class="absolute inset-0 bg-slate-900/50" @click="searchOpen = false"></div>
+    <div class="absolute inset-0 flex items-start justify-center px-4 pt-24 pb-4 pointer-events-none">
+      <div x-show="searchOpen"
+        x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 -translate-y-2 scale-95" x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+        x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100 translate-y-0 scale-100" x-transition:leave-end="opacity-0 -translate-y-2 scale-95"
+        class="pointer-events-auto w-full max-w-lg rounded-full border border-slate-200 bg-white shadow-2xl p-1.5 pl-3 flex items-center gap-2">
+        <input type="text" x-model="navSearch" x-ref="navSearchInput" @keydown.enter.prevent="submitNavSearch()"
+          placeholder="Search&hellip;"
+          class="flex-1 min-w-0 border-0 bg-transparent px-3 py-1.5 text-base text-slate-700 placeholder:text-slate-400 focus:ring-0" />
+        <button type="button" @click="submitNavSearch()" aria-label="Submit search"
+          class="inline-flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-primary text-white hover:bg-primary-hover transition-colors focus:outline-none">
+          <span class="material-symbols-outlined text-[20px]">search</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Global toast stack -->
+  <div class="cfg-toast-stack" aria-live="polite" aria-atomic="true">
+    <template x-for="toast in toasts" :key="toast.id">
+      <div class="cfg-toast" :class="'is-' + toast.type" role="status">
+        <span class="material-symbols-outlined text-[16px] flex-shrink-0"
+              x-text="toast.type==='success' ? 'check_circle' : toast.type==='error' ? 'error' : 'info'"></span>
+        <div class="min-w-0">
+          <p class="text-[13px] font-medium leading-[20px]" x-text="toast.title"></p>
+          <p x-show="toast.desc" class="text-[12px] leading-tight opacity-80" x-text="toast.desc"></p>
+        </div>
+      </div>
+    </template>
+  </div>
+
+  <script src="lib/shell.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,1830 @@
+<!DOCTYPE html>
+<!-- Standalone Visit Module extracted from the Super CRM project. Other console pages, side menu, and global CRM HTML were removed. -->
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Visit Module — Super CRM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = { theme: { extend: { fontFamily: { sans:['Plus Jakarta Sans','system-ui','sans-serif'], display:['Fraunces','Georgia','serif'], mono:['JetBrains Mono','ui-monospace','monospace'] }, colors: { brand: { DEFAULT:'#284CA5', 50:'#EEF2FB', 100:'#DCE4F6', 200:'#B9C8EA', 300:'#8AA1D6', 600:'#284CA5', 700:'#1F3C84' } } } } };
+  </script>
+  <style>
+    body { font-family:var(--font-body); font-size:16px; font-weight:400; color:#0F172A; }
+    h1,h2,h3,.visit-section-heading,.font-display{ font-family:var(--font-display); letter-spacing:-0.012em; }
+    [x-cloak]{ display:none !important; }
+    .material-symbols-outlined{ font-variation-settings:'wght' 500; }
+    *:focus-visible{ outline:2px solid #284CA5; outline-offset:2px; border-radius:8px; }
+    .scroll-clean::-webkit-scrollbar{ height:7px;width:7px } .scroll-clean::-webkit-scrollbar-thumb{ background:#cbd5e1;border-radius:10px } .scroll-clean::-webkit-scrollbar-track{ background:transparent }
+    .app-bg{ background:radial-gradient(1100px 460px at 50% -160px,rgba(40,76,165,.10),transparent 62%),linear-gradient(180deg,#F5F7FC 0%,#EEF1F8 55%,#F6F8FC 100%); background-attachment:fixed; }
+    .premium-card{ background:#fff; border:1px solid #E8EDF5; border-radius:18px; box-shadow:0 1px 2px rgba(16,24,40,.04); }
+    .metric-card{ background:#fff; border:1px solid #E8EDF5; border-radius:16px; box-shadow:0 1px 2px rgba(16,24,40,.04); }
+    .soft-shadow{ box-shadow:0 6px 22px -10px rgba(16,24,40,.12),0 2px 6px -3px rgba(16,24,40,.06); }
+    .card-hover{ transition:box-shadow .2s,border-color .2s,transform .2s; }
+    .card-hover:hover{ box-shadow:0 10px 28px -12px rgba(16,24,40,.18),0 3px 8px -4px rgba(16,24,40,.08); }
+    .glass-bar{ background:rgba(255,255,255,.82); backdrop-filter:blur(14px) saturate(140%); -webkit-backdrop-filter:blur(14px) saturate(140%); }
+    .dock-shadow{ box-shadow:0 -8px 28px -12px rgba(16,24,40,.16); }
+    .status-pill{ display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:700; line-height:1; border-radius:999px; padding:4px 9px; white-space:nowrap; }
+    .num{ font-variant-numeric:tabular-nums; }
+    .wrap-any{ overflow-wrap:anywhere; }
+    .btn{ display:inline-flex; align-items:center; justify-content:center; gap:7px; min-height:42px; padding:0 16px; border-radius:12px; font-size:13px; font-weight:700; transition:.15s; flex-shrink:0; }
+    .btn-primary{ background:#284CA5; color:#fff; box-shadow:0 1px 2px rgba(40,76,165,.45),0 6px 16px -6px rgba(40,76,165,.5); }
+    .btn-primary:hover:not(:disabled){ background:#1F3C84; }
+    .btn-secondary{ background:#fff; color:#334155; border:1px solid #E2E8F0; box-shadow:0 1px 2px rgba(16,24,40,.04); }
+    .btn-secondary:hover:not(:disabled){ background:#F8FAFC; border-color:#CBD5E1; }
+    .btn-danger{ background:#DC2626; color:#fff; box-shadow:none; }
+    .btn-danger:hover:not(:disabled){ background:#B91C1C; }
+    .btn-wa{ background:#16A34A; color:#fff; }
+    .btn-wa:hover:not(:disabled){ background:#15803D; }
+    .btn:disabled{ opacity:.45; cursor:not-allowed; box-shadow:none; }
+    .chip-btn{ display:inline-flex; align-items:center; gap:6px; min-height:36px; padding:0 11px; border-radius:10px; font-size:12px; font-weight:700; color:#334155; background:#fff; border:1px solid #E2E8F0; transition:.14s; white-space:nowrap; }
+    .chip-btn:hover{ border-color:#284CA5; color:#284CA5; background:#F6F9FF; }
+    .chip-btn:disabled{ opacity:.4; cursor:not-allowed; }
+    .seg{ display:inline-flex; align-items:center; min-height:38px; padding:0 14px; font-size:12.5px; font-weight:700; color:#475569; background:#fff; white-space:nowrap; transition:.12s; cursor:pointer; }
+    .seg:hover{ background:#F1F5F9; color:#284CA5; }
+    .seg-on{ background:#284CA5; color:#fff; } .seg-on:hover{ background:#1F3C84; color:#fff; }
+    .fpill{ display:inline-flex; align-items:center; gap:5px; min-height:34px; padding:0 12px; border-radius:999px; font-size:12px; font-weight:700; color:#475569; background:#fff; border:1px solid #E2E8F0; transition:.12s; cursor:pointer; white-space:nowrap; }
+    .fpill:hover{ border-color:#B9C8EA; color:#284CA5; }
+    .fpill-on{ background:#EEF2FB; border-color:#B9C8EA; color:#284CA5; }
+    .navbtn{ width:36px; height:36px; border-radius:11px; border:1px solid #E2E8F0; display:inline-flex; align-items:center; justify-content:center; color:#475569; background:#fff; transition:.12s; }
+    .navbtn:hover{ border-color:#284CA5; color:#284CA5; background:#F6F9FF; }
+    .iconbtn{ width:36px; height:36px; border-radius:10px; display:inline-flex; align-items:center; justify-content:center; transition:.12s; flex-shrink:0; }
+    .field{ width:100%; border-radius:11px; border:1px solid #E2E8F0; padding:9px 12px; font-size:14px; font-weight:500; color:#0F172A; background:#fff; }
+    .field:focus{ outline:none; border-color:#284CA5; box-shadow:0 0 0 3px rgba(40,76,165,.12); }
+    .flabel{ font-size:11px; font-weight:700; color:#64748B; text-transform:uppercase; letter-spacing:.06em; margin-bottom:5px; display:block; }
+    .ev-chip{ border-radius:6px; padding:3px 7px; font-size:11px; font-weight:700; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; cursor:pointer; transition:opacity .12s,box-shadow .12s; display:block; width:100%; text-align:left; }
+    .ev-chip:hover{ opacity:.85; box-shadow:0 2px 6px rgba(0,0,0,.14); }
+    .blocked-stripe{ background-image:repeating-linear-gradient(45deg,transparent,transparent 4px,rgba(148,163,184,.14) 4px,rgba(148,163,184,.14) 8px); }
+    .modal-card{ background:#fff; border-radius:20px; box-shadow:0 24px 60px -20px rgba(16,24,40,.4); }
+    .new-booking-overlay{ align-items:flex-end !important; justify-content:center !important; padding:0 !important; }
+    .new-booking-sheet{ width:100%; max-height:calc(100dvh - 18px); border-radius:24px 24px 0 0 !important; overflow:hidden; display:flex; flex-direction:column; box-shadow:0 -18px 54px -22px rgba(15,23,42,.46); }
+    .new-booking-sheet__handle{ width:42px; height:4px; border-radius:999px; background:#CBD5E1; margin:10px auto 6px; flex-shrink:0; }
+    .new-booking-sheet__body{ overflow-y:auto; -webkit-overflow-scrolling:touch; }
+    @media (min-width:1024px){
+      .new-booking-overlay{ align-items:center !important; padding:1rem !important; }
+      .new-booking-sheet{ max-width:36rem; max-height:92vh; border-radius:20px !important; box-shadow:0 24px 60px -20px rgba(16,24,40,.4); }
+      .new-booking-sheet__handle{ display:none; }
+    }
+    .print-schedule{ display:none; }
+    @media (prefers-reduced-motion: reduce){ *,*::before,*::after{ transition-duration:.01ms !important; animation-duration:.01ms !important; scroll-behavior:auto !important; } }
+    @media print{
+      header, .no-print, .glass-bar, .dock-shadow, .modal-back { display:none !important; }
+      .print-schedule{ display:block !important; }
+      body{ background:#fff; font-size:12px; }
+      .print-header{ margin-bottom:16px; } .print-header h1{ font-size:18px; font-weight:800; } .print-header p{ color:#475569; }
+      table{ width:100%; border-collapse:collapse; }
+      th{ background:#F1F5F9; font-weight:700; padding:8px; text-align:left; border:1px solid #E2E8F0; font-size:11px; }
+      td{ padding:8px; border:1px solid #E2E8F0; font-size:11px; }
+      tr.completed td{ color:#15803D; } tr.no_show td{ color:#9A3412; } tr.cancelled td{ color:#94A3B8; text-decoration:line-through; }
+    }
+  
+    /* ---- slots: toggles, steppers, checkboxes ---- */
+    .switch   { position:relative; width:44px; height:26px; border-radius:999px; background:#CBD5E1; transition:.18s; flex-shrink:0; cursor:pointer; }
+    .switch.on{ background:#284CA5; box-shadow:0 1px 4px rgba(40,76,165,.4); }
+    .switch::after { content:''; position:absolute; top:3px; left:3px; width:20px; height:20px; border-radius:50%; background:#fff; transition:.18s; box-shadow:0 1px 2px rgba(0,0,0,.25); }
+    .switch.on::after { transform:translateX(18px); }
+    .step         { display:inline-flex; align-items:center; border:1px solid #E2E8F0; border-radius:11px; overflow:hidden; background:#fff; height:36px; flex-shrink:0; box-shadow:0 1px 2px rgba(16,24,40,.04); }
+    .step button  { width:36px; height:100%; display:flex; align-items:center; justify-content:center; color:#334155; transition:.12s; }
+    .step button:hover:not(:disabled){ background:#EEF2FB; color:#284CA5; }
+    .step button:disabled { opacity:.3; cursor:not-allowed; }
+    .step .v      { min-width:30px; text-align:center; font-size:14px; font-weight:800; color:#0F172A; font-variant-numeric:tabular-nums; }
+    .step.full    { display:flex; width:100%; } .step.full .v { flex:1; }
+    .step.compact { height:30px; } .step.compact button { width:30px; } .step.compact .v { min-width:24px; font-size:13px; }
+    .chk          { width:24px; height:24px; border-radius:8px; border:2px solid #CBD5E1; background:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:.15s; }
+    .chk.on       { background:#284CA5; border-color:#284CA5; box-shadow:0 1px 3px rgba(40,76,165,.4); }
+    /* ---- visit module tabs ---- */
+    .mod-tab{ display:inline-flex; align-items:center; gap:6px; min-height:34px; padding:0 11px; border-radius:9px; font-size:12.5px; font-weight:700; color:#64748B; transition:.14s; white-space:nowrap; cursor:pointer; }
+    .mod-tab:hover{ color:#284CA5; }
+    .mod-tab-on{ background:#fff; color:#284CA5; box-shadow:0 1px 2px rgba(16,24,40,.08); }
+  
+
+    /* ===== Superschools Design System (.fig) alignment — embedded visit module ===== */
+    :root{
+      --ss-primary:#284CA5;
+      --ss-primary-hover:#1F3C84;
+      --ss-primary-soft:#EEF2FB;
+      --ss-primary-soft-2:#DCE4F6;
+      --ss-primary-border:#B9C8EA;
+      --ss-bg:#F5F7FC;
+      --ss-surface:#FFFFFF;
+      --ss-surface-soft:#F8FAFC;
+      --ss-border:#E2E8F0;
+      --ss-border-strong:#CBD5E1;
+      --ss-text:#0F172A;
+      --ss-muted:#64748B;
+      --ss-radius-md:12px;
+      --ss-radius-lg:16px;
+      --ss-radius-xl:20px;
+      --ss-shadow-card:0 1px 2px rgba(16,24,40,.04),0 8px 24px -18px rgba(16,24,40,.18);
+      --ss-shadow-hover:0 2px 6px rgba(16,24,40,.06),0 18px 36px -22px rgba(16,24,40,.24);
+      --ss-focus:0 0 0 3px rgba(40,76,165,.14);
+    }
+    body{ color:var(--ss-text); letter-spacing:-0.01em; }
+    .app-bg{ background:linear-gradient(180deg,#F9FBFF 0%,var(--ss-bg) 58%,#F9FBFF 100%) !important; background-attachment:fixed; }
+    .premium-card,.metric-card,.modal-card{
+      background:var(--ss-surface) !important;
+      border-color:var(--ss-border) !important;
+      border-radius:var(--ss-radius-xl) !important;
+      box-shadow:var(--ss-shadow-card) !important;
+    }
+    .metric-card{ border-radius:var(--ss-radius-lg) !important; }
+    .premium-card:hover,.metric-card:hover{ border-color:var(--ss-border-strong) !important; box-shadow:var(--ss-shadow-hover) !important; }
+    .btn{ border-radius:var(--ss-radius-md) !important; font-weight:700 !important; }
+    .btn-primary{ background:var(--ss-primary) !important; color:#fff !important; box-shadow:0 1px 2px rgba(40,76,165,.34),0 8px 18px -10px rgba(40,76,165,.55) !important; }
+    .btn-primary:hover:not(:disabled){ background:var(--ss-primary-hover) !important; }
+    .btn-secondary{ background:var(--ss-surface) !important; color:#334155 !important; border-color:var(--ss-border) !important; }
+    .btn-secondary:hover:not(:disabled){ background:var(--ss-surface-soft) !important; border-color:var(--ss-border-strong) !important; }
+    .iconbtn,.navbtn{ border-radius:var(--ss-radius-md) !important; }
+    .iconbtn:hover,.navbtn:hover{ background:var(--ss-primary-soft) !important; color:var(--ss-primary) !important; border-color:var(--ss-primary-border) !important; }
+    .field{ border-color:var(--ss-border) !important; border-radius:var(--ss-radius-md) !important; }
+    .field:focus{ border-color:var(--ss-primary) !important; box-shadow:var(--ss-focus) !important; }
+    .fpill{ border-color:var(--ss-border) !important; border-radius:999px !important; background:var(--ss-surface) !important; color:#475569 !important; }
+    .fpill:hover{ border-color:var(--ss-primary-border) !important; color:var(--ss-primary) !important; background:var(--ss-primary-soft) !important; }
+    .fpill-on,
+    .fpill-on:hover,
+    .seg-on,
+    .seg-on:hover{
+      background:var(--ss-primary) !important;
+      border-color:var(--ss-primary) !important;
+      color:#fff !important;
+      box-shadow:0 1px 2px rgba(40,76,165,.34) !important;
+    }
+    .mod-tab-on{ color:var(--ss-primary) !important; background:#fff !important; box-shadow:0 1px 2px rgba(16,24,40,.08) !important; }
+    .bg-brand,.bg-brand-600{ background-color:var(--ss-primary) !important; }
+    .text-brand{ color:var(--ss-primary) !important; }
+    .border-brand-100{ border-color:var(--ss-primary-border) !important; }
+    .bg-brand-50,.bg-brand-50\/30,.bg-brand-50\/60,.bg-brand-50\/70{ background-color:var(--ss-primary-soft) !important; }
+    button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{ outline:none !important; box-shadow:var(--ss-focus) !important; }
+    .mobile-new-booking-fab{ border-radius:9999px !important; background:var(--ss-primary) !important; box-shadow:0 12px 24px -10px rgba(40,76,165,.72) !important; }
+    .mobile-new-booking-fab:hover{ background:var(--ss-primary-hover) !important; }
+    @media (max-width:640px){
+      main[data-bg-inert]{ padding-left:16px !important; padding-right:16px !important; padding-top:18px !important; }
+      .premium-card,.metric-card{ border-radius:16px !important; }
+      .btn{ min-height:40px !important; }
+      .mobile-new-booking-fab{ width:40px !important; height:40px !important; right:14px !important; bottom:14px !important; }
+      .fpill{ min-height:34px !important; padding-left:12px !important; padding-right:12px !important; }
+    }
+
+
+    /* ===== Standalone shell header: matched to the full Super CRM HTML page ===== */
+    :root{
+      --standalone-main-header-height:0px;
+      /* In-page action sub-header removed (Print/Export/New-booking moved to the shell's level-2 bar); zero out the reserved offset so there is no empty gap. */
+      --standalone-sub-header-height:0px;
+
+      /* ── Superschools design-system foundation (fallback snapshot — Figma sync pending) ── */
+      /* Typography */
+      --font-display:'Fraunces', Georgia, serif;
+      --font-body:'Plus Jakarta Sans', system-ui, sans-serif;
+      --font-mono:'JetBrains Mono', ui-monospace, monospace;
+
+      /* Spacing scale (4px base) */
+      --sp-1:4px;  --sp-2:8px;  --sp-3:12px; --sp-4:16px; --sp-5:20px;
+      --sp-6:24px; --sp-8:32px; --sp-10:40px; --sp-12:48px; --sp-16:64px; --sp-20:80px;
+
+      /* Radius */
+      --r-sm:8px; --r-md:12px; --r-lg:20px; --r-xl:28px; --r-pill:999px;
+
+      /* Brand (matches existing #284CA5) */
+      --ss-blue:#284CA5; --ss-blue-dark:#1d3b85; --ss-blue-soft:#e8eefa;
+
+      /* Layout */
+      --container-max:1240px;
+      --container-pad:clamp(16px, 4vw, 32px);
+    }
+    .no-scrollbar::-webkit-scrollbar{ display:none; }
+    .no-scrollbar{ -ms-overflow-style:none; scrollbar-width:none; }
+    .ss-main-header{
+      height:var(--standalone-main-header-height);
+      position:fixed;
+      top:0;
+      left:0;
+      right:0;
+      z-index:70;
+      display:flex;
+      align-items:center;
+      flex-shrink:0;
+      border-bottom:1px solid #284CA5;
+      background:#284CA5;
+      color:#fff;
+      box-shadow:0 1px 2px rgba(16,24,40,.06);
+    }
+    .ss-main-header .ss-top-nav-link{
+      position:relative;
+      height:100%;
+      display:inline-flex;
+      align-items:center;
+      flex-shrink:0;
+      padding-left:0.75rem;
+      padding-right:0.75rem;
+      white-space:nowrap;
+      font-size:0.875rem;
+      line-height:1.25rem;
+      font-weight:500;
+      color:rgba(255,255,255,.72);
+      transition:color .15s ease;
+    }
+    .ss-main-header .ss-top-nav-link:hover{ color:#fff; }
+    .ss-main-header .ss-top-nav-link.is-active{ color:#fff; font-weight:700; }
+    .ss-main-header .ss-top-nav-link.is-active::after{
+      content:'';
+      position:absolute;
+      left:.5rem;
+      right:.5rem;
+      bottom:0;
+      height:2.5px;
+      border-radius:999px 999px 0 0;
+      background:#fff;
+    }
+    .ss-nav-icon-btn{
+      width:36px;
+      height:36px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.18);
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      color:rgba(255,255,255,.86);
+      background:rgba(255,255,255,.08);
+      transition:background-color .15s ease,color .15s ease,border-color .15s ease;
+    }
+    .ss-nav-icon-btn:hover{ background:rgba(255,255,255,.16); color:#fff; border-color:rgba(255,255,255,.28); }
+    .ss-logo-btn{
+      width:36px; height:36px; border-radius:10px;
+      border:1px solid rgba(255,255,255,.30);
+      display:inline-flex; align-items:center; justify-content:center;
+      color:#fff; background:rgba(255,255,255,.10);
+      transition:background-color .15s ease,border-color .15s ease;
+    }
+    .ss-logo-btn:hover{ background:rgba(255,255,255,.18); border-color:rgba(255,255,255,.42); }
+    .visit-subheader-ds.standalone-visit-subheader{
+      position:fixed !important;
+      top:var(--standalone-main-header-height) !important;
+      left:0 !important;
+      right:0 !important;
+      z-index:65 !important;
+      height:var(--standalone-sub-header-height) !important;
+      min-height:var(--standalone-sub-header-height) !important;
+      display:flex !important;
+      align-items:stretch !important;
+      justify-content:space-between !important;
+      gap:.75rem !important;
+      padding-left:1rem !important;
+      padding-right:1rem !important;
+      border-bottom:1px solid #E2E8F0 !important;
+      background:rgba(255,255,255,.98) !important;
+      backdrop-filter:blur(12px) saturate(140%);
+      -webkit-backdrop-filter:blur(12px) saturate(140%);
+      box-shadow:0 1px 2px rgba(16,24,40,.04) !important;
+    }
+    .visit-subheader-ds [role='tablist']{
+      display:flex;
+      align-items:stretch;
+      min-width:0;
+      overflow-x:auto;
+      overflow-y:hidden;
+    }
+    .visit-subheader-ds [role='tab']{
+      position:relative;
+      display:inline-flex;
+      height:100%;
+      align-items:center;
+      padding-left:.75rem;
+      padding-right:.75rem;
+      white-space:nowrap;
+      font-size:.875rem;
+      line-height:1.25rem;
+      transition:color .15s ease;
+      outline:none;
+    }
+    .visit-subheader-ds [role='tab'][aria-selected='true']{
+      color:#284CA5;
+      font-weight:700;
+    }
+    .visit-subheader-ds [role='tab'][aria-selected='true']::after{
+      content:'';
+      position:absolute;
+      left:.75rem;
+      right:.75rem;
+      bottom:0;
+      height:2.5px;
+      border-radius:999px 999px 0 0;
+      background:#284CA5;
+    }
+    .visit-subheader-ds [role='tab'][aria-selected='false']{
+      color:#64748B;
+      font-weight:600;
+    }
+    .visit-subheader-ds [role='tab'][aria-selected='false']:hover{ color:#0F172A; }
+    .visit-action-icon-btn{
+      width:36px !important;
+      height:36px !important;
+      min-width:36px !important;
+      min-height:36px !important;
+      border-radius:12px !important;
+      color:#64748B !important;
+      background:transparent !important;
+      display:inline-flex !important;
+      align-items:center !important;
+      justify-content:center !important;
+      flex-shrink:0 !important;
+      transition:background-color .15s ease,color .15s ease;
+    }
+    .visit-action-icon-btn:hover{ background:#EEF2FB !important; color:#284CA5 !important; }
+    .visit-new-booking-parent{
+      height:36px !important;
+      min-height:36px !important;
+      min-width:36px !important;
+      border-radius:12px !important;
+      background:#284CA5 !important;
+      color:#fff !important;
+      box-shadow:0 1px 2px rgba(40,76,165,.34),0 8px 18px -10px rgba(40,76,165,.55) !important;
+    }
+    .visit-new-booking-parent:hover{ background:#1F3C84 !important; }
+    main.visit-scroll-content{
+      padding-top:calc(var(--standalone-main-header-height) + var(--standalone-sub-header-height) + 24px) !important;
+    }
+    @media (min-width:1024px){
+      .ss-main-header .ss-top-nav-link{ padding-left:1rem; padding-right:1rem; }
+      .ss-main-header .ss-top-nav-link.is-active::after{ left:.75rem; right:.75rem; }
+      .visit-subheader-ds.standalone-visit-subheader{ padding-left:1.5rem !important; padding-right:1.5rem !important; }
+      .visit-subheader-ds [role='tab']{ padding-left:1rem; padding-right:1rem; }
+      .visit-subheader-ds [role='tab'][aria-selected='true']::after{ left:1rem; right:1rem; }
+    }
+    @media (max-width:767px){
+      .ss-main-header{ padding-left:.75rem !important; padding-right:.75rem !important; }
+      .ss-main-header .ss-top-nav-link{ padding-left:.65rem; padding-right:.65rem; font-size:.8125rem; }
+      .ss-nav-icon-btn{ width:34px; height:34px; }
+      .visit-subheader-ds.standalone-visit-subheader{
+        padding-left:.625rem !important;
+        padding-right:.625rem !important;
+        gap:.5rem !important;
+      }
+      .visit-subheader-ds [role='tab']{ padding-left:.6rem; padding-right:.6rem; font-size:.8125rem; }
+      .visit-subheader-ds [role='tab'][aria-selected='true']::after{ left:.6rem; right:.6rem; }
+      .visit-action-icon-btn,
+      .visit-new-booking-parent{
+        width:34px !important;
+        height:34px !important;
+        min-width:34px !important;
+        min-height:34px !important;
+        padding:0 !important;
+      }
+      .visit-new-booking-parent{ justify-content:center !important; gap:0 !important; }
+      .visit-new-booking-label{ display:none !important; }
+      main.visit-scroll-content{
+        padding-left:16px !important;
+        padding-right:16px !important;
+        padding-top:calc(var(--standalone-main-header-height) + var(--standalone-sub-header-height) + 18px) !important;
+      }
+      .seg{ padding:0 6px; font-size:12px; }
+    }
+    @media (max-width:420px){
+      .ss-main-header .ss-top-nav-link{ padding-left:.55rem; padding-right:.55rem; }
+      .ss-main-header .ss-top-nav-link:not(.is-active):not(.ss-compact-visible){ display:none; }
+      .visit-subheader-ds.standalone-visit-subheader{ padding-left:.5rem !important; padding-right:.5rem !important; }
+    }
+
+
+    /* Availability save controls moved into the fixed Visit sub-header */
+    .availability-subheader-toolbar{
+      min-width:0;
+      overflow:hidden;
+    }
+    .availability-capacity-pill{
+      height:36px;
+      min-width:0;
+      max-width:190px;
+      display:inline-flex;
+      align-items:center;
+      gap:.45rem;
+      border:1px solid #E2E8F0;
+      border-radius:12px;
+      background:#F8FAFC;
+      color:#0F172A;
+      padding:0 .75rem;
+      font-size:.75rem;
+      font-weight:800;
+      line-height:1;
+      white-space:nowrap;
+      box-shadow:0 1px 2px rgba(16,24,40,.04);
+    }
+    .availability-publish-btn{
+      height:36px !important;
+      min-height:36px !important;
+      border-radius:12px !important;
+      background:#284CA5 !important;
+      color:#fff !important;
+      padding:0 .9rem !important;
+      display:inline-flex !important;
+      align-items:center !important;
+      justify-content:center !important;
+      gap:.4rem !important;
+      font-size:.8125rem !important;
+      font-weight:800 !important;
+      line-height:1 !important;
+      white-space:nowrap !important;
+      box-shadow:0 1px 2px rgba(40,76,165,.34),0 8px 18px -10px rgba(40,76,165,.55) !important;
+      transition:background-color .15s ease, opacity .15s ease, transform .15s ease !important;
+    }
+    .availability-publish-btn:hover:not(:disabled){ background:#1F3C84 !important; }
+    .availability-publish-btn:disabled,
+    .availability-confirm-btn:disabled,
+    .visit-action-icon-btn:disabled{
+      opacity:.42 !important;
+      cursor:not-allowed !important;
+      box-shadow:none !important;
+      transform:none !important;
+    }
+    .availability-confirm-btn{
+      height:36px !important;
+      min-height:36px !important;
+      border-radius:12px !important;
+      background:#059669 !important;
+      color:#fff !important;
+      padding:0 .85rem !important;
+      display:inline-flex !important;
+      align-items:center !important;
+      justify-content:center !important;
+      gap:.35rem !important;
+      font-size:.8125rem !important;
+      font-weight:800 !important;
+      white-space:nowrap !important;
+    }
+    .availability-confirm-btn:hover{ background:#047857 !important; }
+    .availability-subheader-toolbar .status-pill{
+      height:30px;
+      max-width:135px;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+    @media (max-width:1023px){
+      .availability-capacity-pill{
+        max-width:120px;
+        padding-left:.55rem;
+        padding-right:.55rem;
+      }
+      .availability-capacity-pill .availability-capacity-label,
+      .availability-subheader-toolbar .status-pill{
+        display:none !important;
+      }
+      .availability-publish-btn{
+        width:36px !important;
+        min-width:36px !important;
+        padding:0 !important;
+      }
+      .availability-publish-label,
+      .availability-confirm-label{
+        display:none !important;
+      }
+    }
+    @media (max-width:767px){
+      .availability-subheader-toolbar{
+        gap:.35rem !important;
+      }
+      .availability-capacity-pill{
+        display:none !important;
+      }
+      .availability-publish-btn,
+      .availability-confirm-btn{
+        width:34px !important;
+        height:34px !important;
+        min-width:34px !important;
+        min-height:34px !important;
+        padding:0 !important;
+      }
+    }
+
+
+    /* Mobile publish dock: moves Availability publish controls out of the sub-header on phones */
+    .availability-mobile-publish-dock{ display:none; }
+    .availability-mobile-publish-panel{
+      border:1px solid rgba(226,232,240,.96);
+      border-radius:22px;
+      background:rgba(255,255,255,.98);
+      box-shadow:0 -10px 32px rgba(15,23,42,.14), 0 1px 2px rgba(16,24,40,.05);
+      backdrop-filter:blur(16px) saturate(150%);
+      -webkit-backdrop-filter:blur(16px) saturate(150%);
+      padding:12px;
+    }
+    .availability-mobile-status-title{
+      font-size:12px;
+      line-height:1.25;
+      font-weight:900;
+      color:#0F172A;
+      letter-spacing:-.02em;
+    }
+    .availability-mobile-status-meta{
+      margin-top:2px;
+      font-size:11px;
+      line-height:1.25;
+      font-weight:700;
+      color:#64748B;
+    }
+    .availability-mobile-primary-btn,
+    .availability-mobile-confirm-btn,
+    .availability-mobile-secondary-btn{
+      min-height:42px;
+      border-radius:14px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:.45rem;
+      font-size:13px;
+      font-weight:900;
+      line-height:1;
+      transition:background-color .15s ease, opacity .15s ease, transform .15s ease;
+    }
+    .availability-mobile-primary-btn{ background:#284CA5; color:#fff; box-shadow:0 10px 22px rgba(40,76,165,.22); }
+    .availability-mobile-primary-btn:hover:not(:disabled){ background:#1F3C84; }
+    .availability-mobile-confirm-btn{ background:#059669; color:#fff; box-shadow:0 10px 22px rgba(5,150,105,.18); }
+    .availability-mobile-confirm-btn:hover:not(:disabled){ background:#047857; }
+    .availability-mobile-secondary-btn{ background:#F8FAFC; color:#475569; border:1px solid #E2E8F0; }
+    .availability-mobile-primary-btn:disabled,
+    .availability-mobile-confirm-btn:disabled,
+    .availability-mobile-secondary-btn:disabled{
+      opacity:.45;
+      cursor:not-allowed;
+      box-shadow:none;
+      transform:none;
+    }
+    .booked-new-booking-subheader-btn .material-symbols-outlined{ display:none !important; }
+    @media (max-width:767px){
+      .availability-subheader-toolbar{ display:none !important; }
+      .availability-mobile-publish-dock{
+        display:block !important;
+        position:fixed;
+        left:12px;
+        right:12px;
+        bottom:calc(env(safe-area-inset-bottom, 0px) + 12px);
+        z-index:60;
+        pointer-events:none;
+      }
+      .availability-mobile-publish-panel{ pointer-events:auto; }
+      .availability-scroll-content{ padding-bottom:9.5rem !important; }
+      .availability-toast{ bottom:calc(env(safe-area-inset-bottom, 0px) + 104px) !important; }
+    }
+    @media (min-width:768px){
+      .availability-mobile-publish-dock{ display:none !important; }
+    }
+
+    /* ===== Host management embedded in Availability (date-wise) ===== */
+    .hf-av{ display:inline-flex; align-items:center; justify-content:center; font-weight:800; color:#fff; border-radius:50%; background:linear-gradient(135deg,#284CA5,#1F3C84); flex-shrink:0; box-shadow:0 2px 8px -2px rgba(40,76,165,.5); }
+    .hf-av.soft{ background:#EEF2FB!important; color:#284CA5!important; box-shadow:none!important; }
+    .hf-dot{ position:absolute; right:-1px; bottom:-1px; border-radius:50%; border:2.5px solid #fff; }
+    .hf-dot.on{ background:#16A34A; } .hf-dot.away{ background:#D97706; }
+    .hf-pill{ display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:800; border-radius:999px; padding:3px 8px; line-height:1; text-transform:uppercase; letter-spacing:.04em; }
+    .hf-pill-brand{ background:#EEF2FB; color:#284CA5; border:1px solid #DCE4F6; }
+    .hf-pill-amber{ background:#FEF3C7; color:#B45309; border:1px solid #FDE68A; }
+    .hf-menu{ position:absolute; z-index:55; background:#fff; border:1px solid #E2E8F0; border-radius:14px; box-shadow:0 20px 50px -18px rgba(16,24,40,.4); overflow:hidden; max-width:calc(100vw - 1.5rem); }
+    .hf-menu-item{ display:flex; align-items:center; gap:9px; width:100%; text-align:left; padding:8px 11px; font-size:13px; transition:.12s; }
+    .hf-menu-item:hover{ background:#F6F9FF; }
+    .switch.host-away.on{ background:#D97706; box-shadow:0 1px 4px rgba(217,119,6,.4); }
+
+</style>
+</head>
+<body class="app-bg text-slate-900 min-h-screen antialiased" x-data="{ module: 'bookings', embedded: true, init(){} }" x-cloak>
+  <noscript>
+    <div style="font-family:var(--font-body);padding:2.5rem 1.5rem;text-align:center;max-width:440px;margin:4rem auto;background:#fff;border-radius:16px;border:1px solid #E8EDF5">
+      <p style="font-weight:800;font-size:1.1rem;margin:.25rem 0 .5rem">JavaScript is required</p>
+      <p style="color:#475569;font-size:.9rem;line-height:1.6">Enable JavaScript to use the SuperSchools visit module. To schedule a parent visit, please contact your school directly.</p>
+    </div>
+  </noscript>
+
+  <!-- ===================== BOOKED VISITS VIEW ===================== -->
+  <div x-show="module==='bookings'" x-cloak x-data="visitManager()" x-init="init()" x-effect="document.querySelectorAll('[data-bg-inert]').forEach(el=> el.inert = anyModalOpen)" @slots-published.window="applyPublishedSlots($event.detail)" data-visit-view="bookings" class="visit-view-shell">
+
+
+  
+
+  <!-- ============ MODALS ============ -->
+
+  <!-- BOOKING DETAIL DRAWER -->
+  <div x-show="showDetail" x-cloak class="fixed inset-0 z-[60] modal-back" @keydown.esc.window="closeDetail()">
+    <div class="absolute inset-0 bg-slate-900/45 backdrop-blur-sm" @click="closeDetail()" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"></div>
+    <div tabindex="-1" x-effect="showDetail && $nextTick(()=>$el.focus())" role="dialog" aria-modal="true" :aria-label="activeBooking ? ('Booking details for '+activeBooking.parentName) : 'Booking details'"
+      class="absolute right-0 top-0 bottom-0 w-full sm:max-w-[440px] bg-white shadow-2xl overflow-y-auto scroll-clean sm:rounded-l-2xl"
+      x-transition:enter="transition ease-out duration-250" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full">
+      <template x-if="activeBooking">
+        <div class="p-5 md:p-6">
+          <div class="flex items-start justify-between gap-3 mb-5">
+            <div class="min-w-0">
+              <p class="text-[11px] font-bold text-slate-400 num" x-text="activeBooking.id"></p>
+              <span class="status-pill mt-1.5" :class="statusPill(activeBooking.status)" x-text="statusLabel(activeBooking.status)"></span>
+            </div>
+            <button @click="closeDetail()" class="iconbtn text-slate-400 hover:bg-slate-100" aria-label="Close details"><span class="material-symbols-outlined">close</span></button>
+          </div>
+
+          <div class="space-y-5">
+            <div class="rounded-2xl bg-slate-50 border border-slate-100 p-4">
+              <div class="grid grid-cols-2 gap-y-3 gap-x-4">
+                <div><p class="flabel">Date</p><p class="text-[14px] font-bold" x-text="formatDate(activeBooking.date)"></p></div>
+                <div><p class="flabel">Time</p><p class="text-[14px] font-bold num" x-text="slotLabel(activeBooking.hour)"></p></div>
+                <div>
+                  <p class="flabel">Assigned to</p>
+                  <select class="field !py-1.5 !text-[13px]" :value="activeBooking.assignedTo||''" @change="updateAssignedTo(activeBooking.id,$event.target.value)" aria-label="Assign staff member">
+                    <option value="" :selected="!activeBooking.assignedTo">Unassigned</option>
+                    <template x-for="s in staffList" :key="s"><option :value="s" :selected="s===activeBooking.assignedTo" x-text="s"></option></template>
+                  </select>
+                </div>
+                <div><p class="flabel">Source</p><p class="text-[13px] font-semibold capitalize" x-text="activeBooking.source"></p></div>
+              </div>
+            </div>
+
+            <div>
+              <p class="flabel">Parent</p>
+              <div class="flex items-center justify-between gap-2">
+                <p class="text-[15px] font-extrabold" x-text="activeBooking.parentName"></p>
+                <span x-show="activeBooking.isReturnVisitor" :title="returnVisitTitle(activeBooking)" class="status-pill bg-violet-50 text-violet-700 border border-violet-100"><span class="material-symbols-outlined text-[13px]">sync</span> Return visit</span>
+              </div>
+              <a :href="'tel:+'+activeBooking.parentPhone" class="inline-flex items-center gap-1.5 text-[13px] font-semibold text-brand mt-1 hover:underline"><span class="material-symbols-outlined text-[15px]">call</span><span x-text="formatPhone(activeBooking.parentPhone)"></span></a>
+            </div>
+
+            <div>
+              <p class="flabel">Child</p>
+              <p class="text-[14px] font-bold" x-text="activeBooking.childName + ' · ' + activeBooking.childAge + ' yrs'"></p>
+              <span class="status-pill mt-1.5" :class="typeChip(activeBooking.admissionType)" x-text="typeLabel(activeBooking.admissionType)"></span>
+            </div>
+
+            <div x-show="activeBooking.parentNotes">
+              <p class="flabel">Parent's note at booking</p>
+              <div class="rounded-xl bg-sky-50 border border-sky-100 p-3 flex gap-2">
+                <span class="material-symbols-outlined text-sky-400 text-[18px] flex-shrink-0">format_quote</span>
+                <p class="text-[13px] text-slate-700 leading-relaxed wrap-any" x-text="activeBooking.parentNotes"></p>
+              </div>
+            </div>
+
+            <div>
+              <p class="flabel">Internal notes — not shared with parent</p>
+              <textarea class="field !text-[13px] resize-none" rows="2" placeholder="Add a private note for your team" :value="activeBooking.adminNotes" @blur="updateAdminNotes(activeBooking.id,$event.target.value)" aria-label="Internal admin notes"></textarea>
+            </div>
+
+            <div>
+              <p class="flabel">Communications</p>
+              <div class="rounded-xl border border-slate-100 divide-y divide-slate-100 overflow-hidden">
+                <template x-if="activeBooking.communications.length===0">
+                  <div class="px-3 py-3 text-[12px] text-slate-400">No messages sent yet.</div>
+                </template>
+                <template x-for="(c,ci) in [...activeBooking.communications].reverse()" :key="ci">
+                  <div class="px-3 py-2.5 flex items-start gap-2.5">
+                    <span class="material-symbols-outlined text-emerald-500 text-[16px] mt-px flex-shrink-0">chat</span>
+                    <div class="min-w-0">
+                      <p class="text-[12px] font-bold text-slate-700 capitalize" x-text="c.type+' sent'"></p>
+                      <p class="text-[11px] text-slate-400 num" x-text="formatDateTime(c.sentAt)"></p>
+                    </div>
+                  </div>
+                </template>
+              </div>
+            </div>
+
+            <div x-show="activeBooking.status==='completed' || activeBooking.status==='no_show'" class="rounded-2xl bg-emerald-50/60 border border-emerald-100 p-4 space-y-3">
+              <p class="flabel !text-emerald-700">Post-visit</p>
+              <label class="flex items-center gap-2.5 cursor-pointer">
+                <input type="checkbox" class="rounded text-brand focus:ring-brand/40" :checked="activeBooking.applicationSubmitted" @change="markApplicationSubmitted(activeBooking.id,$event.target.checked)">
+                <span class="text-[13px] font-semibold text-slate-700">Application submitted</span>
+              </label>
+              <label class="flex items-center gap-2.5 cursor-pointer">
+                <input type="checkbox" class="rounded text-brand focus:ring-brand/40" :checked="activeBooking.followUp.required" @change="toggleFollowUp(activeBooking.id,$event.target.checked)">
+                <span class="text-[13px] font-semibold text-slate-700">Follow-up required</span>
+              </label>
+              <div x-show="activeBooking.followUp.required" class="pl-7 space-y-2">
+                <input type="date" class="field !py-1.5 !text-[13px]" :value="activeBooking.followUp.dueDate||''" @change="setFollowUpDate(activeBooking.id,$event.target.value)" aria-label="Follow-up due date">
+                <input type="text" class="field !py-1.5 !text-[13px]" placeholder="Follow-up note" :value="activeBooking.followUp.note" @blur="setFollowUpNote(activeBooking.id,$event.target.value)" aria-label="Follow-up note">
+              </div>
+            </div>
+
+            <div>
+              <p class="flabel">Update status</p>
+              <div class="flex flex-wrap gap-1.5">
+                <button @click="confirmBooking(activeBooking.id)" class="fpill" :class="{'fpill-on':activeBooking.status==='confirmed'}">Confirmed</button>
+                <button @click="markCompleted(activeBooking.id)" class="fpill" :class="{'fpill-on':activeBooking.status==='completed'}">Completed</button>
+                <button @click="markNoShow(activeBooking.id)" class="fpill" :class="{'fpill-on':activeBooking.status==='no_show'}">No-show</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2 mt-6 pt-5 border-t border-slate-100">
+            <button @click="openWhatsApp(activeBooking.id,'reminder')" class="btn btn-wa flex-1"><span class="material-symbols-outlined text-[17px]">chat</span> WhatsApp</button>
+            <button @click="promptReschedule(activeBooking.id)" class="btn btn-secondary" aria-label="Reschedule"><span class="material-symbols-outlined text-[16px]">edit_calendar</span></button>
+            <button @click="promptCancel(activeBooking.id)" class="btn btn-secondary !text-red-600" aria-label="Cancel visit"><span class="material-symbols-outlined text-[16px]">event_busy</span></button>
+          </div>
+        </div>
+      </template>
+    </div>
+  </div>
+
+  <!-- NEW BOOKING MODAL -->
+  <div x-show="showNewBooking" x-cloak class="new-booking-overlay fixed inset-0 z-[60] flex modal-back" @keydown.esc.window="closeNewBooking()"
+    x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
+    <div class="absolute inset-0 bg-slate-900/55 backdrop-blur-sm" @click="closeNewBooking()"></div>
+    <div tabindex="-1" x-effect="showNewBooking && $nextTick(()=>$el.focus())" role="dialog" aria-modal="true" aria-labelledby="newbk-title"
+      class="modal-card new-booking-sheet relative"
+      x-transition:enter="transition ease-out duration-260" x-transition:enter-start="translate-y-full lg:translate-y-0 lg:scale-[.98]" x-transition:enter-end="translate-y-0 lg:scale-100" x-transition:leave="transition ease-in duration-180" x-transition:leave-start="translate-y-0 lg:scale-100" x-transition:leave-end="translate-y-full lg:translate-y-0 lg:scale-[.98]">
+      <div class="new-booking-sheet__handle" aria-hidden="true"></div>
+      <div class="new-booking-sheet__body scroll-clean p-5 md:p-6">
+        <div class="flex items-center justify-between mb-1">
+          <h3 id="newbk-title" class="text-lg font-extrabold">Add a booking</h3>
+          <button @click="closeNewBooking()" class="iconbtn text-slate-400 hover:bg-slate-100" aria-label="Close"><span class="material-symbols-outlined">close</span></button>
+        </div>
+        <p class="text-[13px] text-slate-500 mb-5">Log a visit booked by phone or a walk-in parent.</p>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div class="col-span-2 sm:col-span-1"><label class="flabel">Parent name</label><input type="text" class="field" x-model="newBooking.parentName" placeholder="Full name"></div>
+          <div class="col-span-2 sm:col-span-1"><label class="flabel">Phone number</label><input type="tel" class="field" x-model="newBooking.parentPhone" placeholder="98765 43210" @blur="normalizePhone()"></div>
+          <div class="col-span-2 sm:col-span-1"><label class="flabel">Child name</label><input type="text" class="field" x-model="newBooking.childName" placeholder="Child's name"></div>
+          <div class="col-span-2 sm:col-span-1"><label class="flabel">Child age (years)</label><input type="number" step="0.5" min="0" max="18" class="field" x-model="newBooking.childAge" placeholder="4.5"></div>
+        </div>
+
+        <div class="mt-3">
+          <label class="flabel">Admission type</label>
+          <div class="inline-flex rounded-xl border border-slate-200 overflow-hidden w-full" role="radiogroup" aria-label="Admission type" @keydown.left.prevent="segNav($event,-1)" @keydown.right.prevent="segNav($event,1)">
+            <button role="radio" :aria-checked="newBooking.admissionType==='preschool'" :tabindex="newBooking.admissionType==='preschool'?0:-1" @click="newBooking.admissionType='preschool'" class="seg flex-1 justify-center" :class="{'seg-on':newBooking.admissionType==='preschool'}">Preschool</button>
+            <button role="radio" :aria-checked="newBooking.admissionType==='day school'" :tabindex="newBooking.admissionType==='day school'?0:-1" @click="newBooking.admissionType='day school'" class="seg flex-1 justify-center border-l border-slate-200" :class="{'seg-on':newBooking.admissionType==='day school'}">Day school</button>
+            <button role="radio" :aria-checked="newBooking.admissionType==='boarding'" :tabindex="newBooking.admissionType==='boarding'?0:-1" @click="newBooking.admissionType='boarding'" class="seg flex-1 justify-center border-l border-slate-200" :class="{'seg-on':newBooking.admissionType==='boarding'}">Boarding</button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 mt-3">
+          <div>
+            <label class="flabel">Source</label>
+            <div class="inline-flex rounded-xl border border-slate-200 overflow-hidden w-full" role="radiogroup" aria-label="Booking source" @keydown.left.prevent="segNav($event,-1)" @keydown.right.prevent="segNav($event,1)">
+              <button role="radio" :aria-checked="newBooking.source==='phone'" :tabindex="newBooking.source==='phone'?0:-1" @click="newBooking.source='phone'" class="seg flex-1 justify-center !px-2 !text-[11.5px]" :class="{'seg-on':newBooking.source==='phone'}">Phone</button>
+              <button role="radio" :aria-checked="newBooking.source==='walk-in'" :tabindex="newBooking.source==='walk-in'?0:-1" @click="newBooking.source='walk-in'" class="seg flex-1 justify-center !px-2 !text-[11.5px] border-l border-slate-200" :class="{'seg-on':newBooking.source==='walk-in'}">Walk-in</button>
+              <button role="radio" :aria-checked="newBooking.source==='website'" :tabindex="newBooking.source==='website'?0:-1" @click="newBooking.source='website'" class="seg flex-1 justify-center !px-2 !text-[11.5px] border-l border-slate-200" :class="{'seg-on':newBooking.source==='website'}">Website</button>
+            </div>
+          </div>
+          <div>
+            <label class="flabel">Assigned to</label>
+            <select class="field" x-model="newBooking.assignedTo"><template x-for="s in staffList" :key="s"><option :value="s" x-text="s"></option></template></select>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <label class="flabel">Select date and time</label>
+          <div class="rounded-2xl border border-slate-200 p-3">
+            <div class="flex items-center justify-between mb-2.5">
+              <button @click="nbPrevMonth()" class="navbtn !w-8 !h-8" aria-label="Previous month"><span class="material-symbols-outlined text-[16px]">chevron_left</span></button>
+              <p class="text-[13px] font-extrabold" x-text="miniMonthLabel(nbCalYear,nbCalMonth)"></p>
+              <button @click="nbNextMonth()" class="navbtn !w-8 !h-8" aria-label="Next month"><span class="material-symbols-outlined text-[16px]">chevron_right</span></button>
+            </div>
+            <div class="grid grid-cols-7 gap-1 mb-1">
+              <template x-for="(w,wi) in ['M','T','W','T','F','S','S']" :key="wi"><div class="text-center text-[10px] font-bold text-slate-400" x-text="w"></div></template>
+            </div>
+            <div class="grid grid-cols-7 gap-1">
+              <template x-for="day in miniCalDays(nbCalYear,nbCalMonth)" :key="day.iso">
+                <button @click="day.selectable && (newBooking.date=day.iso, newBooking.hour=null)" :disabled="!day.selectable"
+                  class="aspect-square rounded-lg text-[12px] font-bold transition num flex items-center justify-center"
+                  :class="miniDayClass(day, newBooking.date)" x-text="day.day"></button>
+              </template>
+            </div>
+            <div x-show="newBooking.date" class="mt-3 pt-3 border-t border-slate-100">
+              <p class="text-[11px] font-bold text-slate-500 mb-2">Available times on <span x-text="newBooking.date?formatDate(newBooking.date):''"></span></p>
+              <div class="flex flex-wrap gap-1.5">
+                <template x-for="h in availableHoursForDate(newBooking.date)" :key="h.hour">
+                  <button @click="h.open && (newBooking.hour=h.hour)" :disabled="!h.open"
+                    class="px-2.5 py-1.5 rounded-lg text-[11.5px] font-bold border transition num"
+                    :class="newBooking.hour===h.hour ? 'bg-brand text-white border-brand' : h.open ? 'bg-white border-slate-200 text-slate-600 hover:border-brand-300' : 'bg-slate-50 border-slate-100 text-slate-300 cursor-not-allowed'">
+                    <span x-text="slotLabelShort(h.hour)"></span>
+                    <span class="block text-[9px] font-semibold opacity-70" x-text="h.booked+'/'+h.max"></span>
+                  </button>
+                </template>
+                <p x-show="availableHoursForDate(newBooking.date).filter(h=>h.open).length===0" class="text-[12px] text-slate-400 py-2">No open times on this date.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-3"><label class="flabel">Parent's note (optional)</label><textarea class="field resize-none" rows="2" x-model="newBooking.parentNotes" placeholder="Anything the parent mentioned"></textarea></div>
+
+        <label class="flex items-center gap-2.5 mt-4 cursor-pointer">
+          <input type="checkbox" class="rounded text-brand focus:ring-brand/40" x-model="newBooking.notify">
+          <span class="text-[13px] font-semibold text-slate-600">Send WhatsApp confirmation to parent</span>
+        </label>
+
+        <div class="new-booking-actions sticky bottom-0 -mx-5 md:-mx-6 mt-6 px-5 md:px-6 py-3 bg-white/95 backdrop-blur border-t border-slate-100 flex justify-end gap-2.5">
+          <button @click="closeNewBooking()" class="btn btn-secondary">Cancel</button>
+          <button @click="createBooking()" :disabled="!newBookingValid()" class="btn btn-primary"><span class="material-symbols-outlined text-[17px]">add</span> Create booking</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CANCEL MODAL -->
+  <div x-show="showCancel" x-cloak class="fixed inset-0 z-[60] flex items-center justify-center p-4 modal-back" @keydown.esc.window="closeCancel()"
+    x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
+    <div class="absolute inset-0 bg-slate-900/55 backdrop-blur-sm" @click="closeCancel()"></div>
+    <div tabindex="-1" x-effect="showCancel && $nextTick(()=>$el.focus())" role="dialog" aria-modal="true" aria-labelledby="cancel-title" class="modal-card relative w-full max-w-sm p-6">
+      <template x-if="activeBooking">
+        <div>
+          <div class="flex items-start gap-3 mb-3">
+            <span class="w-10 h-10 flex-shrink-0 flex items-center justify-center bg-red-50 text-red-600 rounded-xl"><span class="material-symbols-outlined text-[22px]">event_busy</span></span>
+            <div class="min-w-0">
+              <h3 id="cancel-title" class="text-base font-extrabold leading-tight">Cancel this visit?</h3>
+              <p class="text-[13px] text-slate-500 mt-1.5 leading-relaxed wrap-any"><span class="font-bold" x-text="activeBooking.parentName"></span>'s visit on <span x-text="formatDate(activeBooking.date)"></span> at <span x-text="slotLabel(activeBooking.hour)"></span> will be cancelled.</p>
+            </div>
+          </div>
+          <label class="flabel mt-4">Reason</label>
+          <select class="field" x-model="cancelReason">
+            <option>Parent request</option><option>Admin conflict</option><option>School event</option><option>Campus closure</option><option>Other</option>
+          </select>
+          <label class="flex items-center gap-2.5 mt-4 cursor-pointer">
+            <input type="checkbox" class="rounded text-brand focus:ring-brand/40" x-model="cancelNotify">
+            <span class="text-[13px] font-semibold text-slate-600">Send WhatsApp notification to parent</span>
+          </label>
+          <div class="flex justify-end gap-2.5 mt-6">
+            <button @click="closeCancel()" class="btn btn-secondary">Keep visit</button>
+            <button @click="confirmCancel()" class="btn btn-danger">Cancel visit</button>
+          </div>
+        </div>
+      </template>
+    </div>
+  </div>
+
+  <!-- BATCH CANCEL MODAL -->
+  <div x-show="showBatchCancel" x-cloak class="fixed inset-0 z-[60] flex items-center justify-center p-4 modal-back" @keydown.esc.window="closeBatchCancel()"
+    x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
+    <div class="absolute inset-0 bg-slate-900/55 backdrop-blur-sm" @click="closeBatchCancel()"></div>
+    <div tabindex="-1" x-effect="showBatchCancel && $nextTick(()=>$el.focus())" role="dialog" aria-modal="true" aria-labelledby="batch-title" class="modal-card relative w-full max-w-md max-h-[90vh] overflow-y-auto scroll-clean p-6">
+      <div class="flex items-center justify-between mb-1">
+        <h3 id="batch-title" class="text-lg font-extrabold">Batch cancel</h3>
+        <button @click="closeBatchCancel()" class="iconbtn text-slate-400 hover:bg-slate-100" aria-label="Close"><span class="material-symbols-outlined">close</span></button>
+      </div>
+      <div x-show="batchStep===1">
+        <p class="text-[13px] text-slate-500 mb-4">Select the date(s) to cancel all visits on.</p>
+        <div class="space-y-2">
+          <template x-if="datesWithBookings().length===0"><p class="text-[13px] text-slate-400 py-4 text-center">No upcoming dates with bookings.</p></template>
+          <template x-for="d in datesWithBookings()" :key="d.iso">
+            <button @click="toggleBatchDate(d.iso)" class="w-full flex items-center justify-between gap-3 rounded-xl border p-3 transition text-left" :class="batchCancelDates.includes(d.iso)?'border-red-300 bg-red-50':'border-slate-200 hover:border-slate-300'">
+              <div class="flex items-center gap-3">
+                <span class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" :class="batchCancelDates.includes(d.iso)?'bg-red-100 text-red-600':'bg-slate-100 text-slate-500'"><span class="material-symbols-outlined text-[18px]" x-text="batchCancelDates.includes(d.iso)?'check':'event'"></span></span>
+                <div><p class="text-[13px] font-bold" x-text="formatDate(d.iso)"></p><p class="text-[11px] text-slate-400" x-text="d.count+(d.count===1?' visit':' visits')"></p></div>
+              </div>
+            </button>
+          </template>
+        </div>
+        <div class="flex justify-end gap-2.5 mt-6">
+          <button @click="closeBatchCancel()" class="btn btn-secondary">Cancel</button>
+          <button @click="batchStep=2" :disabled="batchCancelDates.length===0" class="btn btn-primary">Continue</button>
+        </div>
+      </div>
+      <div x-show="batchStep===2">
+        <p class="text-[13px] text-slate-600 mb-3 font-semibold"><span x-text="batchAffected().length"></span> visit(s) will be cancelled:</p>
+        <div class="rounded-xl border border-slate-100 divide-y divide-slate-100 max-h-44 overflow-y-auto scroll-clean mb-4">
+          <template x-for="b in batchAffected()" :key="b.id">
+            <div class="px-3 py-2 flex items-center justify-between gap-2">
+              <div class="min-w-0"><p class="text-[12px] font-bold truncate" x-text="b.parentName"></p><p class="text-[11px] text-slate-400 num" x-text="formatDate(b.date)+' · '+slotLabel(b.hour)"></p></div>
+              <span class="status-pill" :class="statusPill(b.status)" x-text="statusLabel(b.status)"></span>
+            </div>
+          </template>
+        </div>
+        <label class="flabel">Reason</label>
+        <select class="field" x-model="batchCancelReason"><option>Campus closure</option><option>School event</option><option>Staff unavailable</option><option>Emergency</option><option>Other</option></select>
+        <label class="flex items-center gap-2.5 mt-4 cursor-pointer">
+          <input type="checkbox" class="rounded text-brand focus:ring-brand/40" x-model="batchCancelNotify">
+          <span class="text-[13px] font-semibold text-slate-600">Send WhatsApp notification to all parents</span>
+        </label>
+        <div x-show="batchCancelNotify && batchCancelProgress>0" class="mt-3 text-[12px] text-slate-500 num">Notifying <span x-text="batchCancelProgress"></span> of <span x-text="batchAffected().length"></span>…</div>
+        <div class="flex justify-end gap-2.5 mt-6">
+          <button @click="batchStep=1" class="btn btn-secondary">Back</button>
+          <button @click="confirmBatchCancel()" class="btn btn-danger"><span x-text="'Cancel '+batchAffected().length+' visit'+(batchAffected().length===1?'':'s')"></span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESCHEDULE MODAL -->
+  <div x-show="showReschedule" x-cloak class="fixed inset-0 z-[60] flex items-center justify-center p-4 modal-back" @keydown.esc.window="closeReschedule()"
+    x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
+    <div class="absolute inset-0 bg-slate-900/55 backdrop-blur-sm" @click="closeReschedule()"></div>
+    <div tabindex="-1" x-effect="showReschedule && $nextTick(()=>$el.focus())" role="dialog" aria-modal="true" aria-labelledby="resch-title" class="modal-card relative w-full max-w-md max-h-[92vh] overflow-y-auto scroll-clean p-6">
+      <template x-if="activeBooking">
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <h3 id="resch-title" class="text-lg font-extrabold">Reschedule visit</h3>
+            <button @click="closeReschedule()" class="iconbtn text-slate-400 hover:bg-slate-100" aria-label="Close"><span class="material-symbols-outlined">close</span></button>
+          </div>
+          <p class="text-[12px] text-slate-400 mb-4 num">Step <span x-text="rescheduleStep"></span> of 2 · current: <span x-text="formatDate(activeBooking.date)+', '+slotLabel(activeBooking.hour)"></span></p>
+
+          <div x-show="rescheduleStep===1">
+            <div class="rounded-2xl border border-slate-200 p-3">
+              <div class="flex items-center justify-between mb-2.5">
+                <button @click="rsPrevMonth()" class="navbtn !w-8 !h-8" aria-label="Previous month"><span class="material-symbols-outlined text-[16px]">chevron_left</span></button>
+                <p class="text-[13px] font-extrabold" x-text="miniMonthLabel(rsCalYear,rsCalMonth)"></p>
+                <button @click="rsNextMonth()" class="navbtn !w-8 !h-8" aria-label="Next month"><span class="material-symbols-outlined text-[16px]">chevron_right</span></button>
+              </div>
+              <div class="grid grid-cols-7 gap-1 mb-1">
+                <template x-for="(w,wi) in ['M','T','W','T','F','S','S']" :key="wi"><div class="text-center text-[10px] font-bold text-slate-400" x-text="w"></div></template>
+              </div>
+              <div class="grid grid-cols-7 gap-1">
+                <template x-for="day in miniCalDays(rsCalYear,rsCalMonth)" :key="day.iso">
+                  <button @click="day.selectable && rescheduleSelectDate(day.iso)" :disabled="!day.selectable"
+                    class="aspect-square rounded-lg text-[12px] font-bold transition num flex items-center justify-center relative"
+                    :class="miniDayClass(day, rescheduleDate, activeBooking.date)" x-text="day.day"></button>
+                </template>
+              </div>
+            </div>
+            <div class="flex items-center gap-x-3 gap-y-1 mt-3 text-[10.5px] text-slate-500 flex-wrap">
+              <span class="inline-flex items-center gap-1"><span class="w-2.5 h-2.5 rounded bg-brand"></span> Selected</span>
+              <span class="inline-flex items-center gap-1"><span class="w-2.5 h-2.5 rounded border-2 border-amber-300"></span> Current</span>
+              <span class="inline-flex items-center gap-1"><span class="w-2.5 h-2.5 rounded blocked-stripe border border-slate-200"></span> Blocked / unavailable</span>
+            </div>
+            <div class="flex justify-end gap-2.5 mt-5">
+              <button @click="closeReschedule()" class="btn btn-secondary">Cancel</button>
+            </div>
+          </div>
+
+          <div x-show="rescheduleStep===2">
+            <p class="text-[12px] font-bold text-slate-500 mb-2.5">Times on <span x-text="rescheduleDate?formatDate(rescheduleDate):''"></span></p>
+            <div class="flex flex-wrap gap-1.5 mb-4">
+              <template x-for="h in availableHoursForDate(rescheduleDate)" :key="h.hour">
+                <button @click="h.open && (rescheduleHour=h.hour)" :disabled="!h.open"
+                  class="px-3 py-2 rounded-xl text-[12px] font-bold border transition num"
+                  :class="rescheduleHour===h.hour ? 'bg-brand text-white border-brand' : h.open ? 'bg-white border-slate-200 text-slate-600 hover:border-brand-300' : 'bg-slate-50 border-slate-100 text-slate-300 cursor-not-allowed'">
+                  <span x-text="slotLabel(h.hour)"></span> <span class="opacity-70" x-text="'· '+h.booked+'/'+h.max"></span>
+                </button>
+              </template>
+            </div>
+            <label class="flabel">Reschedule initiated by</label>
+            <div class="inline-flex rounded-xl border border-slate-200 overflow-hidden mb-4" role="radiogroup" aria-label="Reschedule initiated by" @keydown.left.prevent="segNav($event,-1)" @keydown.right.prevent="segNav($event,1)">
+              <button role="radio" :aria-checked="rescheduleInitiator==='admin'" :tabindex="rescheduleInitiator==='admin'?0:-1" @click="rescheduleInitiator='admin'" class="seg !text-[12px]" :class="{'seg-on':rescheduleInitiator==='admin'}">Admin</button>
+              <button role="radio" :aria-checked="rescheduleInitiator==='parent'" :tabindex="rescheduleInitiator==='parent'?0:-1" @click="rescheduleInitiator='parent'" class="seg !text-[12px] border-l border-slate-200" :class="{'seg-on':rescheduleInitiator==='parent'}">Parent request</button>
+            </div>
+            <label class="flex items-center gap-2.5 cursor-pointer">
+              <input type="checkbox" class="rounded text-brand focus:ring-brand/40" x-model="rescheduleNotify">
+              <span class="text-[13px] font-semibold text-slate-600">Send WhatsApp notification to parent</span>
+            </label>
+            <div class="flex justify-end gap-2.5 mt-6">
+              <button @click="rescheduleStep=1" class="btn btn-secondary">Back</button>
+              <button @click="confirmReschedule()" :disabled="rescheduleHour===null" class="btn btn-primary">Confirm reschedule</button>
+            </div>
+          </div>
+        </div>
+      </template>
+    </div>
+  </div>
+
+  <!-- WHATSAPP COMPOSER MODAL -->
+  <div x-show="showWhatsApp" x-cloak class="fixed inset-0 z-[60] flex items-center justify-center p-4 modal-back" @keydown.esc.window="closeWhatsApp()"
+    x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
+    <div class="absolute inset-0 bg-slate-900/55 backdrop-blur-sm" @click="closeWhatsApp()"></div>
+    <div tabindex="-1" x-effect="showWhatsApp && $nextTick(()=>$el.focus())" role="dialog" aria-modal="true" aria-labelledby="wa-title" class="modal-card relative w-full max-w-md max-h-[92vh] overflow-y-auto scroll-clean p-6">
+      <div class="flex items-center justify-between mb-1">
+        <h3 id="wa-title" class="text-lg font-extrabold flex items-center gap-2"><span class="material-symbols-outlined text-emerald-600">chat</span> <span x-text="waMode==='single' ? 'Send WhatsApp' : 'Send reminders'"></span></h3>
+        <button @click="closeWhatsApp()" class="iconbtn text-slate-400 hover:bg-slate-100" aria-label="Close"><span class="material-symbols-outlined">close</span></button>
+      </div>
+
+      <div x-show="waMode==='single'">
+        <template x-if="activeBooking">
+          <div>
+            <p class="text-[13px] text-slate-500 mb-4">To <span class="font-bold text-slate-700" x-text="activeBooking.parentName"></span> · <span class="num" x-text="formatPhone(activeBooking.parentPhone)"></span></p>
+            <label class="flabel">Message type</label>
+            <div class="flex flex-wrap gap-1.5 mb-3">
+              <template x-for="t in ['reminder','confirmation','cancellation','reschedule']" :key="t">
+                <button @click="waMessageType=t; waMessage=buildMessage(activeBooking,t)" class="fpill !text-[11.5px]" :class="{'fpill-on':waMessageType===t}" x-text="t.charAt(0).toUpperCase()+t.slice(1)"></button>
+              </template>
+            </div>
+            <label class="flabel">Message</label>
+            <textarea class="field resize-none text-[13px] leading-relaxed" rows="6" x-model="waMessage"></textarea>
+            <div class="flex justify-end gap-2.5 mt-5">
+              <button @click="closeWhatsApp()" class="btn btn-secondary">Cancel</button>
+              <button @click="sendWhatsApp()" class="btn btn-wa"><span class="material-symbols-outlined text-[17px]">send</span> Open WhatsApp</button>
+            </div>
+          </div>
+        </template>
+      </div>
+
+      <div x-show="waMode==='bulk'">
+        <p class="text-[13px] text-slate-500 mb-2">Send a reminder to selected parents.</p>
+        <div class="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 mb-3"><p class="text-[11.5px] text-amber-800 leading-relaxed">Your browser may ask to allow popups. Please allow them to send all reminders.</p></div>
+        <div class="rounded-xl border border-slate-100 divide-y divide-slate-100 max-h-56 overflow-y-auto scroll-clean mb-4">
+          <template x-for="r in waRecipients" :key="r.id">
+            <label class="px-3 py-2.5 flex items-center gap-3 cursor-pointer">
+              <input type="checkbox" class="rounded text-brand focus:ring-brand/40" x-model="r.selected">
+              <div class="min-w-0 flex-1"><p class="text-[13px] font-bold truncate" x-text="r.parentName"></p><p class="text-[11px] text-slate-400 num" x-text="formatPhone(r.parentPhone)+' · '+formatDate(r.date)"></p></div>
+            </label>
+          </template>
+        </div>
+        <div x-show="waSending" class="mb-3"><div class="flex items-center gap-2 text-[12px] font-semibold text-slate-600"><span class="material-symbols-outlined text-[16px] animate-spin">progress_activity</span> Sent <span class="num" x-text="waSentCount"></span> of <span class="num" x-text="waRecipients.filter(r=>r.selected).length"></span></div></div>
+        <div class="flex justify-end gap-2.5">
+          <button @click="closeWhatsApp()" class="btn btn-secondary">Close</button>
+          <button @click="sendBulkWhatsApp()" :disabled="waSending || waRecipients.filter(r=>r.selected).length===0" class="btn btn-wa"><span class="material-symbols-outlined text-[17px]">send</span> <span x-text="'Send to '+waRecipients.filter(r=>r.selected).length+' selected'"></span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NO-SHOW RE-ENGAGEMENT PROMPT -->
+  <div x-show="noShowPrompt" x-cloak class="fixed bottom-24 left-1/2 -translate-x-1/2 z-[55] w-[calc(100vw-2rem)] max-w-sm" x-transition>
+    <div class="premium-card soft-shadow p-4 flex items-start gap-3">
+      <span class="w-9 h-9 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center flex-shrink-0"><span class="material-symbols-outlined text-[18px]">phone_missed</span></span>
+      <div class="min-w-0 flex-1">
+        <p class="text-[13px] font-bold text-slate-800">Didn't make it. Send a message?</p>
+        <p class="text-[12px] text-slate-500 mt-0.5" x-text="'Offer '+(noShowPromptBooking?noShowPromptBooking.parentName:'')+' a new visit slot.'"></p>
+        <div class="flex gap-2 mt-2.5">
+          <button @click="sendNoShowMessage()" class="btn btn-wa !min-h-[34px] !text-[12px] !px-3"><span class="material-symbols-outlined text-[15px]">chat</span> Send via WhatsApp</button>
+          <button @click="noShowPrompt=false" class="btn btn-secondary !min-h-[34px] !text-[12px] !px-3">Skip</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <main data-bg-inert class="visit-scroll-content max-w-7xl mx-auto px-10 py-6 md:py-8 pb-28">
+
+    <!-- HERO -->
+    <div class="visit-main-header visit-main-header--active mb-6" data-visit-main-title="Booked visits">
+      <h1 class="text-2xl md:text-3xl font-black tracking-tight">Booked visits</h1>
+      <p class="text-[14px] md:text-[15px] text-slate-500 mt-2 max-w-2xl leading-relaxed">Manage scheduled parent visits, send reminders, and track attendance and follow-ups.</p>
+    </div>
+
+    <!-- METRIC CARDS -->
+    <section aria-label="Visit summary" role="status" class="visit-section-heading--sticky grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mb-7" data-visit-sticky-title="Visit summary" data-visit-sticky-meta="Today, week, reminders, and utilization">
+      <div class="metric-card p-4 min-w-0" :class="todayCount>0 ? '!bg-brand-50/60 !border-brand-100' : ''">
+        <p class="text-[11px] font-semibold uppercase tracking-[0.06em] truncate" :class="todayCount>0?'text-brand/70':'text-slate-400'">Today's visits</p>
+        <p class="text-[26px] font-black tracking-tight mt-1 num" :class="todayCount>0?'text-brand':''" x-text="todayCount"></p>
+      </div>
+      <div class="metric-card p-4 min-w-0">
+        <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-[0.06em] truncate">This week</p>
+        <p class="text-[26px] font-black tracking-tight mt-1 num" x-text="weekCount"></p>
+      </div>
+      <div class="metric-card p-4 min-w-0" :class="remindersCount>0 ? '!bg-amber-50/70 !border-amber-100' : ''">
+        <p class="text-[11px] font-semibold uppercase tracking-[0.06em] truncate" :class="remindersCount>0?'text-amber-700/80':'text-slate-400'">Reminders due</p>
+        <p class="text-[26px] font-black tracking-tight mt-1 num" :class="remindersCount>0?'text-amber-700':''" x-text="remindersCount"></p>
+      </div>
+      <div class="metric-card p-4 min-w-0" :class="pendingCount>0 ? '!bg-amber-50/70 !border-amber-100' : ''">
+        <p class="text-[11px] font-semibold uppercase tracking-[0.06em] truncate" :class="pendingCount>0?'text-amber-700/80':'text-slate-400'">Pending confirmation</p>
+        <p class="text-[26px] font-black tracking-tight mt-1 num" :class="pendingCount>0?'text-amber-700':''" x-text="pendingCount"></p>
+      </div>
+      <div class="p-4 min-w-0 rounded-2xl border" :class="weekUtilization>=70 ? 'bg-brand-50/70 border-brand-100' : 'bg-white border-[#E8EDF5]'" style="box-shadow:0 1px 2px rgba(16,24,40,.04)">
+        <p class="text-[11px] font-semibold uppercase tracking-[0.06em] truncate" :class="weekUtilization>=70?'text-brand/70':'text-slate-400'">Week utilization</p>
+        <p class="text-[26px] font-black tracking-tight mt-1 num" :class="weekUtilization>=70?'text-brand':''" x-text="weekUtilization+'%'"></p>
+      </div>
+    </section>
+
+    <!-- TODAY CHECK-IN PANEL -->
+    <section x-show="todayVisits.length>0" class="visit-section premium-card mb-7 overflow-hidden">
+      <div class="visit-section-heading visit-section-heading--sticky px-4 md:px-5 py-3.5 flex items-center justify-between gap-3 border-b border-slate-100 bg-brand-50/30" data-visit-sticky-title="Today's visits" data-visit-sticky-meta="Check-in and attendance actions">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <span class="material-symbols-outlined text-brand text-[20px]">how_to_reg</span>
+          <div class="min-w-0">
+            <p class="text-[14px] font-extrabold leading-tight">Today's visits</p>
+            <p class="text-[11px] text-slate-500 num" x-text="todayCheckedIn+' of '+todayVisits.length+' checked in'"></p>
+          </div>
+        </div>
+        <button @click="checkInPanelOpen=!checkInPanelOpen" class="inline-flex items-center gap-1 text-[12px] font-bold text-brand" :aria-expanded="checkInPanelOpen">
+          <span x-text="checkInPanelOpen?'Collapse':'Expand'"></span>
+          <span class="material-symbols-outlined text-[16px] transition-transform" :class="{'rotate-180':checkInPanelOpen}">expand_more</span>
+        </button>
+      </div>
+      <div x-show="checkInPanelOpen" x-collapse class="divide-y divide-slate-100">
+        <template x-for="b in todayVisits" :key="b.id">
+          <div class="px-4 md:px-5 py-3 flex flex-col sm:flex-row sm:items-center gap-2.5 sm:gap-3" :class="b.status==='completed'?'bg-emerald-50/40':b.status==='no_show'?'bg-orange-50/40':''">
+            <div class="flex items-center gap-3 min-w-0 flex-1">
+              <span class="text-[13px] font-extrabold text-slate-700 num w-[72px] flex-shrink-0" x-text="slotLabel(b.hour).split(' – ')[0]"></span>
+              <div class="min-w-0">
+                <button @click="openDetail(b.id)" class="text-[14px] font-bold text-slate-900 hover:text-brand text-left truncate block" x-text="b.parentName"></button>
+                <p class="text-[12px] text-slate-400 truncate" x-text="b.childName+' · '+b.childAge+'y'"></p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 flex-shrink-0">
+              <template x-if="b.status!=='completed' && b.status!=='no_show'">
+                <div class="flex items-center gap-2">
+                  <button @click="markCompleted(b.id)" class="btn !min-h-[44px] bg-emerald-600 text-white hover:bg-emerald-700 !px-3.5 !text-[13px]" :aria-label="'Mark '+b.parentName+' as arrived'"><span class="material-symbols-outlined text-[17px]">check</span> Arrived</button>
+                  <button @click="markNoShow(b.id)" class="btn !min-h-[44px] btn-secondary !px-3.5 !text-[13px]" :aria-label="'Mark '+b.parentName+' as no-show'"><span class="material-symbols-outlined text-[17px]">close</span> No-show</button>
+                </div>
+              </template>
+              <template x-if="b.status==='completed' || b.status==='no_show'">
+                <span class="status-pill" :class="statusPill(b.status)"><span class="material-symbols-outlined text-[14px]" x-text="b.status==='completed'?'check_circle':'cancel'"></span> <span x-text="statusLabel(b.status)"></span></span>
+              </template>
+            </div>
+          </div>
+        </template>
+      </div>
+    </section>
+
+    <!-- TOOLBAR -->
+    <div class="visit-section visit-section-heading visit-section-heading--sticky premium-card p-3 mb-5 no-print" data-visit-sticky-title="Visit filters" data-visit-sticky-meta="List, calendar, date range, status, and search">
+      <div class="flex flex-wrap items-center gap-2.5 justify-between">
+        <div class="inline-flex rounded-xl border border-slate-200 overflow-hidden" role="radiogroup" aria-label="View mode" @keydown.left.prevent="segNav($event,-1)" @keydown.right.prevent="segNav($event,1)" @keydown.up.prevent="segNav($event,-1)" @keydown.down.prevent="segNav($event,1)">
+          <button role="radio" :aria-checked="view==='list'" :tabindex="view==='list'?0:-1" @click="view='list'" class="seg" :class="{'seg-on':view==='list'}"><span class="material-symbols-outlined text-[16px] mr-1">view_list</span> List</button>
+          <button role="radio" :aria-checked="view==='calendar'" :tabindex="view==='calendar'?0:-1" @click="view='calendar'" class="seg border-l border-slate-200" :class="{'seg-on':view==='calendar'}"><span class="material-symbols-outlined text-[16px] mr-1">calendar_month</span> Calendar</button>
+        </div>
+
+        <div x-show="view==='calendar'" class="flex items-center gap-2">
+          <button @click="prevCalendar()" class="navbtn" aria-label="Previous"><span class="material-symbols-outlined text-[18px]">chevron_left</span></button>
+          <span class="text-[13px] font-bold text-slate-700 min-w-[120px] text-center num" x-text="calendarRangeLabel()"></span>
+          <button @click="nextCalendar()" class="navbtn" aria-label="Next"><span class="material-symbols-outlined text-[18px]">chevron_right</span></button>
+          <div class="inline-flex rounded-lg border border-slate-200 overflow-hidden ml-1">
+            <button @click="calendarView='month'" class="seg !min-h-[34px] !px-3 !text-[11.5px]" :class="{'seg-on':calendarView==='month'}">Month</button>
+            <button @click="calendarView='week'" class="seg !min-h-[34px] !px-3 !text-[11.5px] border-l border-slate-200" :class="{'seg-on':calendarView==='week'}">Week</button>
+            <button @click="calendarView='day'" class="seg !min-h-[34px] !px-3 !text-[11.5px] border-l border-slate-200" :class="{'seg-on':calendarView==='day'}">Day</button>
+          </div>
+        </div>
+
+        <div x-show="view==='list'" class="flex items-center gap-1.5 flex-wrap">
+          <button @click="listDateRange='today'" class="fpill" :class="{'fpill-on':listDateRange==='today'}">Today</button>
+          <button @click="listDateRange='week'" class="fpill" :class="{'fpill-on':listDateRange==='week'}">This week</button>
+          <button @click="listDateRange='month'" class="fpill" :class="{'fpill-on':listDateRange==='month'}">This month</button>
+          <button @click="listDateRange='all'" class="fpill" :class="{'fpill-on':listDateRange==='all'}">All upcoming</button>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2.5 mt-3 pt-3 border-t border-slate-100">
+        <div class="flex items-center gap-1.5 flex-wrap">
+          <template x-for="s in ['all','pending','confirmed','completed','cancelled']" :key="s">
+            <button @click="filterStatus=s" class="fpill !text-[11.5px]" :class="{'fpill-on':filterStatus===s}" x-text="s==='all'?'All':statusLabel(s)"></button>
+          </template>
+        </div>
+        <div class="flex-1 min-w-[180px]">
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">search</span>
+            <input type="text" x-model="filterSearch" placeholder="Search parent, child, ID, phone" class="field !pl-10 !py-2 !text-[13px]" aria-label="Search bookings">
+          </div>
+          <label class="flex items-center gap-1.5 mt-1.5 pl-1 cursor-pointer">
+            <input type="checkbox" class="rounded text-brand focus:ring-brand/40 !w-3.5 !h-3.5" x-model="searchAllDates">
+            <span class="text-[11px] text-slate-500 font-medium">Search all dates</span>
+          </label>
+        </div>
+        <div class="flex items-center gap-2 flex-wrap">
+          <button @click="confirmAllPending()" :disabled="pendingInViewCount()===0" class="chip-btn"><span class="material-symbols-outlined text-[15px]">task_alt</span> Confirm all pending</button>
+          <button @click="openBulkWhatsApp()" :disabled="remindableInViewCount()===0" class="chip-btn !text-emerald-700 !border-emerald-200 hover:!bg-emerald-50"><span class="material-symbols-outlined text-[15px]">chat</span> <span x-text="'Send reminders ('+remindableInViewCount()+')'"></span></button>
+          <button @click="openBatchCancel()" class="chip-btn !text-red-600 hover:!border-red-200 hover:!bg-red-50"><span class="material-symbols-outlined text-[15px]">event_busy</span> Batch cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ LIST VIEW ============ -->
+    <div x-show="view==='list'" class="visit-section" data-visit-section="bookings-list">
+      <template x-if="filteredBookings.length===0">
+        <div class="premium-card p-10 text-center">
+          <span class="w-14 h-14 rounded-2xl bg-slate-100 text-slate-300 flex items-center justify-center mx-auto"><span class="material-symbols-outlined text-[30px]">event_busy</span></span>
+          <p class="text-[15px] font-bold text-slate-600 mt-3">No visits found</p>
+          <p class="text-[13px] text-slate-400 mt-1" x-text="emptyMessage()"></p>
+          <div class="flex items-center justify-center gap-2 mt-4">
+            <button @click="filterStatus='all'; filterSearch=''; listDateRange='all'" class="btn btn-secondary !min-h-[38px]">Clear filters</button>
+            <button @click="openNewBooking()" class="btn btn-primary !min-h-[38px]"><span class="material-symbols-outlined text-[17px]">add</span> Add a booking</button>
+          </div>
+        </div>
+      </template>
+
+      <div class="space-y-5">
+        <template x-for="group in groupedBookings" :key="group.dateISO">
+          <div class="premium-card overflow-hidden">
+            <div class="visit-section-heading visit-section-heading--sticky px-4 md:px-5 py-3 flex items-center justify-between gap-3 bg-slate-50/60 border-b border-slate-100" data-visit-sticky-meta="Bookings for this date">
+              <div class="flex items-center gap-2.5 min-w-0">
+                <span class="flex flex-col items-center justify-center w-10 h-10 rounded-xl bg-brand-50 border border-brand-100 flex-shrink-0">
+                  <span class="text-[14px] font-black text-brand leading-none num" x-text="new Date(group.dateISO+'T00:00:00').getDate()"></span>
+                  <span class="text-[8px] font-bold text-brand uppercase" x-text="new Date(group.dateISO+'T00:00:00').toLocaleDateString('en-IN',{month:'short'})"></span>
+                </span>
+                <div class="min-w-0">
+                  <p class="text-[14px] font-extrabold truncate" x-text="formatDateLong(group.dateISO)"></p>
+                  <p class="text-[11px] text-slate-400 num" x-text="group.bookings.length+(group.bookings.length===1?' visit':' visits')"></p>
+                </div>
+              </div>
+              <div class="flex items-center gap-1.5 flex-shrink-0">
+                <button @click="confirmGroupPending(group.dateISO)" x-show="group.bookings.some(b=>b.status==='pending')" class="chip-btn !min-h-[32px] !text-[11px] hidden sm:inline-flex">Confirm all</button>
+              </div>
+            </div>
+            <div class="divide-y divide-slate-100">
+              <template x-for="b in group.visible" :key="b.id">
+                <div class="px-4 md:px-5 py-3 flex flex-col md:flex-row md:items-center gap-2.5 md:gap-3 hover:bg-slate-50/50 transition" :class="b.status==='cancelled'?'opacity-60':''">
+                  <div class="flex items-center gap-2 md:hidden">
+                    <input type="checkbox" class="rounded text-brand focus:ring-brand/40 flex-shrink-0" :checked="selectedIds.includes(b.id)" @change="toggleSelect(b.id)" :aria-label="'Select '+b.parentName">
+                    <span class="status-pill" :class="statusPill(b.status)" x-text="statusLabel(b.status)"></span>
+                    <span class="status-pill" :class="typeChip(b.admissionType)" x-text="typeLabel(b.admissionType)"></span>
+                    <span x-show="b.isReturnVisitor" :title="returnVisitTitle(b)" class="status-pill bg-violet-50 text-violet-700 border border-violet-100"><span class="material-symbols-outlined text-[12px]">sync</span> Return</span>
+                  </div>
+                  <input type="checkbox" class="hidden md:block rounded text-brand focus:ring-brand/40 flex-shrink-0" :checked="selectedIds.includes(b.id)" @change="toggleSelect(b.id)" :aria-label="'Select '+b.parentName">
+                  <span class="text-[13px] font-bold text-slate-700 num md:w-[88px] flex-shrink-0" x-text="slotLabel(b.hour).split(' – ')[0]"></span>
+                  <div class="min-w-0 flex-1">
+                    <div class="flex items-center gap-1.5">
+                      <button @click="openDetail(b.id)" class="text-[14px] font-bold text-slate-900 hover:text-brand text-left truncate" x-text="b.parentName"></button>
+                      <span x-show="b.isReturnVisitor" class="hidden md:inline-flex items-center text-violet-500" :title="returnVisitTitle(b)"><span class="material-symbols-outlined text-[15px]">sync</span></span>
+                      <button @click="openDetail(b.id)" class="inline-flex items-center flex-shrink-0" :title="b.communications.length?'Messages sent':'No messages sent'"><span class="material-symbols-outlined text-[16px]" :class="b.communications.length?'text-brand':'text-slate-300'" x-text="b.communications.length?'notifications_active':'notifications_none'"></span></button>
+                    </div>
+                    <p class="text-[12px] text-slate-400 truncate" x-text="b.childName+' · '+b.childAge+'y'"></p>
+                    <p x-show="b.parentNotes" class="text-[11px] text-slate-400 italic truncate md:max-w-md" x-text="'“'+b.parentNotes+'”'"></p>
+                    <p class="text-[10.5px] text-slate-400 num mt-0.5" x-text="b.communications.length ? ('Reminded '+timeAgo(b.communications[b.communications.length-1].sentAt)) : 'No reminder sent'"></p>
+                  </div>
+                  <span class="hidden lg:inline text-[12px] text-slate-500 w-[110px] truncate flex-shrink-0" x-text="b.assignedTo||'—'"></span>
+                  <span class="hidden md:inline-flex status-pill flex-shrink-0" :class="typeChip(b.admissionType)" x-text="typeLabel(b.admissionType)"></span>
+                  <span class="hidden md:inline-flex status-pill flex-shrink-0" :class="statusPill(b.status)" x-text="statusLabel(b.status)"></span>
+                  <div class="flex items-center gap-1.5 flex-shrink-0">
+                    <button @click="openWhatsApp(b.id,'reminder')" class="iconbtn text-emerald-600 hover:bg-emerald-50" aria-label="Send WhatsApp"><span class="material-symbols-outlined text-[19px]">chat</span></button>
+                    <button @click="promptReschedule(b.id)" class="iconbtn text-slate-400 hover:bg-slate-100 hover:text-brand" aria-label="Reschedule"><span class="material-symbols-outlined text-[19px]">edit_calendar</span></button>
+                    <div class="relative" x-data="{open:false}" @click.outside="open=false">
+                      <button @click="open=!open" class="iconbtn text-slate-400 hover:bg-slate-100" aria-label="More actions"><span class="material-symbols-outlined text-[19px]">more_vert</span></button>
+                      <div x-show="open" x-cloak x-transition class="absolute right-0 top-full mt-1 w-44 bg-white rounded-xl border border-slate-200 shadow-lg py-1 z-20">
+                        <button @click="confirmBooking(b.id); open=false" class="w-full text-left px-3 py-2 text-[13px] font-semibold text-slate-700 hover:bg-slate-50 flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">check_circle</span> Confirm</button>
+                        <button @click="markCompleted(b.id); open=false" class="w-full text-left px-3 py-2 text-[13px] font-semibold text-slate-700 hover:bg-slate-50 flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">task_alt</span> Mark completed</button>
+                        <button @click="markNoShow(b.id); open=false" class="w-full text-left px-3 py-2 text-[13px] font-semibold text-slate-700 hover:bg-slate-50 flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">person_off</span> Mark no-show</button>
+                        <button @click="openDetail(b.id); open=false" class="w-full text-left px-3 py-2 text-[13px] font-semibold text-slate-700 hover:bg-slate-50 flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">info</span> View details</button>
+                        <div class="h-px bg-slate-100 my-1"></div>
+                        <button @click="promptCancel(b.id); open=false" class="w-full text-left px-3 py-2 text-[13px] font-semibold text-red-600 hover:bg-red-50 flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">event_busy</span> Cancel</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </template>
+            </div>
+            <div x-show="group.bookings.length > group.visible.length" class="px-4 py-3 border-t border-slate-100 text-center">
+              <button @click="showMore(group.dateISO)" class="text-[13px] font-bold text-brand hover:underline" x-text="'Show '+(group.bookings.length-group.visible.length)+' more'"></button>
+            </div>
+          </div>
+        </template>
+      </div>
+      <p x-show="filteredBookings.length>0" class="text-center text-[12px] text-slate-400 mt-5 num" x-text="'Showing '+shownCount()+' of '+filteredBookings.length+' bookings'"></p>
+    </div>
+
+    <!-- ============ CALENDAR VIEW ============ -->
+    <div x-show="view==='calendar'" class="visit-section premium-card overflow-hidden">
+
+      <!-- WEEK VIEW -->
+      <div x-show="calendarView==='week'" class="visit-section-heading--sticky overflow-x-auto scroll-clean" data-visit-sticky-title="Visit calendar" data-visit-sticky-meta="Weekly booking calendar">
+        <div class="min-w-[760px]">
+          <div role="grid" :aria-label="'Week of '+calendarRangeLabel()">
+            <div role="row" class="grid border-b border-slate-100" style="grid-template-columns:64px repeat(7,1fr)">
+              <div role="columnheader" class="p-2"></div>
+              <template x-for="d in calendarWeekDays()" :key="d.iso">
+                <div role="columnheader" class="p-2 text-center border-l border-slate-100" :class="isToday(d.iso)?'bg-brand-50/50':''">
+                  <p class="text-[10px] font-bold uppercase" :class="isToday(d.iso)?'text-brand':'text-slate-400'" x-text="d.dow"></p>
+                  <p class="text-[15px] font-extrabold num" :class="isToday(d.iso)?'text-brand':'text-slate-700'" x-text="d.day"></p>
+                </div>
+              </template>
+            </div>
+            <template x-for="hr in calendarHours" :key="hr">
+              <div role="row" class="grid border-b border-slate-50 last:border-0" style="grid-template-columns:64px repeat(7,1fr)">
+                <div class="p-2 text-right text-[10px] font-bold text-slate-400 num border-r border-slate-100" x-text="slotLabelShort(hr)"></div>
+                <template x-for="d in calendarWeekDays()" :key="d.iso+'-'+hr">
+                  <div role="gridcell" class="border-l border-slate-50 p-1 min-h-[60px] relative" :class="isBlocked(d.iso)?'blocked-stripe':slotFull(d.iso,hr)?'border-t-2 border-t-red-200':''">
+                    <span x-show="!isBlocked(d.iso) && slotInSchedule(d.iso,hr)" class="absolute top-0.5 right-1 text-[8.5px] font-bold num" :class="slotCapacityTextClass(d.iso,hr)" x-text="bookedCountForSlot(d.iso,hr)+'/'+maxForDate(d.iso)"></span>
+                    <div class="space-y-1 mt-3">
+                      <template x-for="b in bookingsForSlot(d.iso,hr)" :key="b.id">
+                        <button @click="openDetail(b.id)" class="ev-chip" :class="chipClass(b.status)" x-text="b.parentName"></button>
+                      </template>
+                    </div>
+                  </div>
+                </template>
+              </div>
+            </template>
+          </div>
+        </div>
+      </div>
+
+      <!-- MONTH VIEW -->
+      <div x-show="calendarView==='month'" class="visit-section-heading--sticky p-3 md:p-4" data-visit-sticky-title="Visit calendar" data-visit-sticky-meta="Monthly booking calendar">
+        <div role="grid" :aria-label="miniMonthLabel(calMonthYear(),calMonthMonth())">
+          <div role="row" class="grid grid-cols-7 gap-1 mb-1.5">
+            <template x-for="w in ['Mon','Tue','Wed','Thu','Fri','Sat','Sun']" :key="w"><div role="columnheader" class="text-center text-[10px] font-bold text-slate-400 uppercase py-1" x-text="w"></div></template>
+          </div>
+          <template x-for="(week,wi) in calendarWeeks()" :key="wi">
+            <div role="row" class="grid grid-cols-7 gap-1 mb-1">
+              <template x-for="day in week" :key="day.iso">
+                <div role="gridcell" class="rounded-xl border p-1.5 min-h-[88px] transition"
+                  :class="isBlocked(day.iso)?'blocked-stripe border-slate-100':day.currentMonth?'border-slate-200 hover:border-brand-200 cursor-pointer':'border-transparent bg-slate-50/40'"
+                  @click="day.currentMonth && !isBlocked(day.iso) && (calendarDate=new Date(day.iso+'T00:00:00'), calendarView='day')">
+                  <div class="flex items-center justify-between">
+                    <span class="text-[12px] font-bold num" :class="isToday(day.iso)?'w-5 h-5 rounded-full bg-brand text-white flex items-center justify-center text-[11px]':day.currentMonth?'text-slate-700':'text-slate-300'" x-text="day.day"></span>
+                    <span x-show="bookingsForDay(day.iso).length>0" class="text-[9px] font-bold text-brand num" x-text="bookingsForDay(day.iso).length+'v'"></span>
+                  </div>
+                  <div class="space-y-0.5 mt-1">
+                    <template x-for="b in bookingsForDay(day.iso).slice(0,2)" :key="b.id">
+                      <button @click.stop="openDetail(b.id)" class="ev-chip !text-[9.5px] !px-1.5 !py-0.5" :class="chipClass(b.status)" x-text="slotLabelShort(b.hour).split(' ')[0]+' '+b.parentName.split(' ')[0]"></button>
+                    </template>
+                    <p x-show="bookingsForDay(day.iso).length>2" class="text-[9px] font-bold text-slate-400 pl-1" x-text="'+'+(bookingsForDay(day.iso).length-2)+' more'"></p>
+                  </div>
+                </div>
+              </template>
+            </div>
+          </template>
+        </div>
+      </div>
+
+      <!-- DAY VIEW -->
+      <div x-show="calendarView==='day'">
+        <div class="visit-section-heading visit-section-heading--sticky px-4 py-3 border-b border-slate-100 bg-slate-50/40" data-visit-sticky-meta="Day schedule">
+          <p class="text-[14px] font-extrabold num" x-text="formatDateLong(dateToISO(calendarDate))"></p>
+          <p class="text-[11px] text-slate-400 num" x-text="bookingsForDay(dateToISO(calendarDate)).length+' visits'"></p>
+        </div>
+        <div class="overflow-y-auto scroll-clean" style="max-height:calc(100vh - 280px)" x-ref="dayScroll">
+          <template x-for="hr in calendarHours" :key="'day'+hr">
+            <div class="flex border-b border-slate-50 last:border-0 min-h-[64px]" :data-hour="hr" :class="isBlocked(dateToISO(calendarDate))?'blocked-stripe':''">
+              <div class="w-16 flex-shrink-0 p-2 text-right text-[11px] font-bold text-slate-400 num border-r border-slate-100 sticky left-0 bg-white" x-text="slotLabelShort(hr)"></div>
+              <div class="flex-1 p-2 relative">
+                <span x-show="!isBlocked(dateToISO(calendarDate)) && slotInSchedule(dateToISO(calendarDate),hr)" class="absolute top-1 right-2 text-[9px] font-bold num" :class="slotCapacityTextClass(dateToISO(calendarDate),hr)" x-text="bookedCountForSlot(dateToISO(calendarDate),hr)+'/'+maxForDate(dateToISO(calendarDate))"></span>
+                <div class="space-y-1.5 mt-3">
+                  <template x-for="b in bookingsForSlot(dateToISO(calendarDate),hr)" :key="b.id">
+                    <button @click="openDetail(b.id)" class="w-full text-left rounded-xl border p-2.5 transition card-hover" :class="chipBoxClass(b.status)">
+                      <div class="flex items-center justify-between gap-2">
+                        <span class="text-[13px] font-bold" x-text="b.parentName"></span>
+                        <span class="status-pill" :class="statusPill(b.status)" x-text="statusLabel(b.status)"></span>
+                      </div>
+                      <p class="text-[11px] text-slate-500 mt-0.5" x-text="b.childName+' · '+b.childAge+'y · '+typeLabel(b.admissionType)"></p>
+                    </button>
+                  </template>
+                </div>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- FAB (mobile) -->
+  <button @click="openNewBooking()" data-bg-inert class="mobile-new-booking-fab sm:hidden fixed bottom-4 right-4 z-30 w-10 h-10 rounded-full bg-brand text-white shadow-lg flex items-center justify-center no-print" style="box-shadow:0 8px 24px -6px rgba(40,76,165,.6)" aria-label="Open new booking bottom sheet" title="New booking"><span class="material-symbols-outlined text-[20px]">add</span></button>
+
+  <!-- BULK ACTION BAR -->
+  <div x-show="selectedIds.length>0" data-bg-inert x-cloak class="fixed bottom-0 inset-x-0 z-40 glass-bar dock-shadow border-t border-slate-200/70 no-print" x-transition>
+    <div class="max-w-7xl mx-auto px-10 py-3 flex items-center justify-between gap-3">
+      <p class="text-[13px] font-bold num"><span x-text="selectedIds.length"></span> selected</p>
+      <div class="flex items-center gap-2">
+        <button @click="clearSelection()" class="btn btn-secondary !min-h-[38px]">Clear</button>
+        <button @click="bulkConfirmSelected()" class="btn btn-secondary !min-h-[38px]"><span class="material-symbols-outlined text-[16px]">check_circle</span> <span class="hidden sm:inline">Confirm</span></button>
+        <button @click="bulkRemindSelected()" class="btn btn-wa !min-h-[38px]"><span class="material-symbols-outlined text-[16px]">chat</span> <span class="hidden sm:inline">Remind</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div x-show="toast" x-transition.opacity x-cloak class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white text-[13px] font-semibold rounded-xl px-4 py-2.5 shadow-lg flex items-center gap-3 max-w-[calc(100vw-2rem)] no-print">
+    <span class="material-symbols-outlined text-[17px] text-emerald-400 flex-shrink-0">check_circle</span>
+    <span x-text="toast" class="min-w-0"></span>
+    <button x-show="toastHasUndo" @click="toastUndoAction()" class="ml-1 text-[12px] font-black text-brand-300 hover:text-white underline flex-shrink-0">Undo</button>
+  </div>
+
+  <!-- PRINT REGION -->
+  <div class="print-schedule">
+    <div class="print-header">
+      <h1 x-text="schoolName+' — Visit Schedule'"></h1>
+      <p x-text="'Printed: '+formatDateLong(todayISO)"></p>
+    </div>
+    <table>
+      <thead><tr><th>Time</th><th>Parent</th><th>Child</th><th>Type</th><th>Status</th><th>Assigned</th><th>Notes</th></tr></thead>
+      <tbody>
+        <template x-for="b in todayVisits" :key="'p'+b.id">
+          <tr :class="b.status">
+            <td x-text="slotLabel(b.hour)"></td>
+            <td x-text="b.parentName + ' (' + formatPhone(b.parentPhone) + ')'"></td>
+            <td x-text="b.childName+', '+b.childAge+'y'"></td>
+            <td x-text="typeLabel(b.admissionType)"></td>
+            <td x-text="statusLabel(b.status)"></td>
+            <td x-text="b.assignedTo||'—'"></td>
+            <td x-text="b.parentNotes||b.adminNotes||'—'"></td>
+          </tr>
+        </template>
+      </tbody>
+    </table>
+  </div>
+
+  
+  </div>
+
+<script src="../../lib/crm-store.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script>
+    function visitManager(){
+  const pad = n => String(n).padStart(2,'0');
+  const toISO = d => d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+  const rel = n => { const d=new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()+n); return toISO(d); };
+  const isoAgo = (days,hrs) => { const d=new Date(); d.setDate(d.getDate()-days); if(hrs) d.setHours(d.getHours()-hrs); return d.toISOString(); };
+  const TODAY = (()=>{ const d=new Date(); d.setHours(0,0,0,0); return toISO(d); })();
+
+  const seed = () => ([
+    { id:'VB-001', parentName:'Priya Sharma', parentPhone:'919845001234', childName:'Aryan Sharma', childAge:4.5, admissionType:'preschool',
+      date:rel(0), hour:10, status:'confirmed', parentNotes:'Interested in the Montessori programme. Aryan is shy with new people.', adminNotes:'',
+      communications:[{type:'reminder',sentAt:isoAgo(1,2),channel:'whatsapp',preview:'Hello Priya Sharma, this is a reminder'}], assignedTo:'Ramya Krishnan',
+      rescheduledFrom:null, rescheduleInitiatedBy:null, isReturnVisitor:false, previousBookingId:null,
+      followUp:{required:false,dueDate:null,note:'',completed:false,completedAt:null}, applicationSubmitted:false, applicationSubmittedAt:null,
+      source:'website', cancelReason:null, bookedAt:isoAgo(8,0) },
+    { id:'VB-002', parentName:'Rahul Mehta', parentPhone:'919900112233', childName:'Sia Mehta', childAge:3.0, admissionType:'preschool',
+      date:rel(0), hour:11, status:'pending', parentNotes:'', adminNotes:'',
+      communications:[], assignedTo:'Self', rescheduledFrom:null, rescheduleInitiatedBy:null, isReturnVisitor:false, previousBookingId:null,
+      followUp:{required:false,dueDate:null,note:'',completed:false,completedAt:null}, applicationSubmitted:false, applicationSubmittedAt:null,
+      source:'phone', cancelReason:null, bookedAt:isoAgo(5,0) },
+    { id:'VB-003', parentName:'Anjali Desai', parentPhone:'919812345678', childName:'Vivaan Desai', childAge:5.0, admissionType:'day school',
+      date:rel(0), hour:14, status:'confirmed', parentNotes:'', adminNotes:'Father asked about transport routes.',
+      communications:[], assignedTo:'Aditya Nair', rescheduledFrom:null, rescheduleInitiatedBy:null, isReturnVisitor:false, previousBookingId:null,
+      followUp:{required:false,dueDate:null,note:'',completed:false,completedAt:null}, applicationSubmitted:false, applicationSubmittedAt:null,
+      source:'walk-in', cancelReason:null, bookedAt:isoAgo(3,0) },
+    { id:'VB-004', parentName:'Sneha Reddy', parentPhone:'919823456789', childName:'Diya Reddy', childAge:4.0, admissionType:'preschool',
+      date:rel(1), hour:9, status:'confirmed', parentNotes:'', adminNotes:'',
+      communications:[{type:'reminder',sentAt:isoAgo(0,3),channel:'whatsapp',preview:'Hello Sneha Reddy, this is a reminder'}], assignedTo:'Meera Pillai',
+      rescheduledFrom:null, rescheduleInitiatedBy:null, isReturnVisitor:false, previousBookingId:null,
+      followUp:{required:false,dueDate:null,note:'',completed:false,completedAt:null}, applicationSubmitted:false, applicationSubmittedAt:null,
+      source:'website', cancelReason:null, bookedAt:isoAgo(6,0) },
+    { id:'VB-005', parentName:'Karthik Iyer', parentPhone:'919834567890', childName:'Aadya Iyer', childAge:6.0, admissionType:'day school',
+      date:rel(2), hour:12, status:'pending', parentNotes:'', adminNotes:'',
+      communications:[], assignedTo:'Self', rescheduledFrom:null, rescheduleInitiatedBy:null, isReturnVisitor:false, previousBookingId:null,
+      followUp:{required:false,dueDate:null,note:'',completed:false,completedAt:null}, applicationSubmitted:false, applicationSubmittedAt:null,
+      source:'website', cancelReason:null, bookedAt:isoAgo(2,0) },
+    { id:'VB-006', parentName:'Pooja Nair', parentPhone:'919845678901', childName:'Ishaan Nair', childAge:4.5, admissionType:'preschool',
+      date:rel(-1), hour:10, status:'completed', parentNotes:'', adminNotes:'Very positive visit. Parents liked the play area.',
+      communications:[{type:'reminder',sentAt:isoAgo(2,0),channel:'whatsapp',preview:'Hello Pooja Nair'}], assignedTo:'Ramya Krishnan',
+      rescheduledFrom:null, rescheduleInitiatedBy:null, isReturnVisitor:false, previousBookingId:null,
+      followUp:{required:false,dueDate:null,note:'',completed:false,completedAt:null}, applicationSubmitted:true, applicationSubmittedAt:isoAgo(0,5),
+      source:'website', cancelReason:null, bookedAt:isoAgo(9,0) },
+    { id:'VB-007', parentName:'Vikram Singh', parentPhone:'919856789012', childName:'Kabir Singh', childAge:5.5, admissionType:'day school',
+      date:rel(-1), hour:11, status:'no_show', parentNotes:'', adminNotes:'',
+      communications:[{type:'reminder',sentAt:isoAgo(2,0),channel:'whatsapp',preview:'Hello Vikram Singh'}], assignedTo:'Aditya Nair',
+      rescheduledFrom:null, rescheduleInitiatedBy:null, isReturnVisitor:false, previousBookingId:null,
+      followUp:{required:true,dueDate:rel(2),note:'Call to offer a new visit slot',completed:false,completedAt:null}, applicationSubmitted:false, applicationSubmittedAt:null,
+      source:'phone', cancelReason:null, bookedAt:isoAgo(7,0) },
+    { id:'VB-008', parentName:'Pooja Nair', parentPhone:'919845678901', childName:'Ishaan Nair', childAge:4.5, admissionType:'preschool',
+      date:rel(3), hour:15, status:'confirmed', parentNotes:'Second visit — wants to meet the principal this time.', adminNotes:'',
+      communications:[], assignedTo:'Meera Pillai', rescheduledFrom:null, rescheduleInitiatedBy:null, isReturnVisitor:true, previousBookingId:'VB-006',
+      followUp:{required:false,dueDate:null,note:'',completed:false,completedAt:null}, applicationSubmitted:false, applicationSubmittedAt:null,
+      source:'walk-in', cancelReason:null, bookedAt:isoAgo(0,2) },
+    { id:'VB-009', parentName:'Meena Gupta', parentPhone:'919867890123', childName:'Riya Gupta', childAge:3.5, admissionType:'preschool',
+      date:rel(4), hour:9, status:'pending', parentNotes:'', adminNotes:'',
+      communications:[], assignedTo:'Self', rescheduledFrom:null, rescheduleInitiatedBy:null, isReturnVisitor:false, previousBookingId:null,
+      followUp:{required:false,dueDate:null,note:'',completed:false,completedAt:null}, applicationSubmitted:false, applicationSubmittedAt:null,
+      source:'website', cancelReason:null, bookedAt:isoAgo(1,0) },
+    { id:'VB-010', parentName:'Arjun Patel', parentPhone:'919878901234', childName:'Aarav Patel', childAge:6.0, admissionType:'day school',
+      date:rel(7), hour:10, status:'confirmed', parentNotes:'', adminNotes:'',
+      communications:[], assignedTo:'Ramya Krishnan', rescheduledFrom:null, rescheduleInitiatedBy:null, isReturnVisitor:false, previousBookingId:null,
+      followUp:{required:false,dueDate:null,note:'',completed:false,completedAt:null}, applicationSubmitted:false, applicationSubmittedAt:null,
+      source:'website', cancelReason:null, bookedAt:isoAgo(2,0) },
+    { id:'VB-011', parentName:'Lakshmi Menon', parentPhone:'919889012345', childName:'Anika Menon', childAge:11.0, admissionType:'boarding',
+      date:rel(8), hour:11, status:'confirmed', parentNotes:'Considering boarding for Grade 6. Lives in Chennai.', adminNotes:'',
+      communications:[], assignedTo:'Aditya Nair', rescheduledFrom:null, rescheduleInitiatedBy:null, isReturnVisitor:false, previousBookingId:null,
+      followUp:{required:false,dueDate:null,note:'',completed:false,completedAt:null}, applicationSubmitted:false, applicationSubmittedAt:null,
+      source:'phone', cancelReason:null, bookedAt:isoAgo(3,0) },
+    { id:'VB-012', parentName:'Rohan Joshi', parentPhone:'919890123456', childName:'Veer Joshi', childAge:5.0, admissionType:'day school',
+      date:rel(9), hour:13, status:'pending', parentNotes:'', adminNotes:'',
+      communications:[], assignedTo:'Self', rescheduledFrom:null, rescheduleInitiatedBy:null, isReturnVisitor:false, previousBookingId:null,
+      followUp:{required:false,dueDate:null,note:'',completed:false,completedAt:null}, applicationSubmitted:false, applicationSubmittedAt:null,
+      source:'website', cancelReason:null, bookedAt:isoAgo(1,0) },
+    { id:'VB-013', parentName:'Divya Rao', parentPhone:'919801234567', childName:'Tara Rao', childAge:4.0, admissionType:'preschool',
+      date:rel(3), hour:16, status:'cancelled', parentNotes:'', adminNotes:'',
+      communications:[], assignedTo:'Meera Pillai', rescheduledFrom:null, rescheduleInitiatedBy:null, isReturnVisitor:false, previousBookingId:null,
+      followUp:{required:false,dueDate:null,note:'',completed:false,completedAt:null}, applicationSubmitted:false, applicationSubmittedAt:null,
+      source:'website', cancelReason:'Parent request', bookedAt:isoAgo(4,0) },
+    { id:'VB-014', parentName:'Sanjay Kumar', parentPhone:'919812340987', childName:'Myra Kumar', childAge:5.5, admissionType:'day school',
+      date:rel(5), hour:10, status:'rescheduled', parentNotes:'', adminNotes:'',
+      communications:[{type:'reschedule',sentAt:isoAgo(1,0),channel:'whatsapp',preview:'Hello Sanjay Kumar, your visit has been rescheduled'}], assignedTo:'Ramya Krishnan',
+      rescheduledFrom:{date:rel(2),hour:14}, rescheduleInitiatedBy:'parent', isReturnVisitor:false, previousBookingId:null,
+      followUp:{required:false,dueDate:null,note:'',completed:false,completedAt:null}, applicationSubmitted:false, applicationSubmittedAt:null,
+      source:'website', cancelReason:null, bookedAt:isoAgo(6,0) }
+  ]);
+
+  return {
+    bookings: (window.CRM ? CRM.bookings() : seed()),
+    availableSlots: {
+      mon:{enabled:true,hours:[9,10,11,12,13,14,15,16],maxPerHour:4},
+      tue:{enabled:true,hours:[9,10,11,12,13,14,15,16],maxPerHour:4},
+      wed:{enabled:true,hours:[9,10,11,12],maxPerHour:4},
+      thu:{enabled:true,hours:[9,10,11,12,13,14,15,16],maxPerHour:4},
+      fri:{enabled:true,hours:[9,10,11,12,13,14],maxPerHour:3},
+      sat:{enabled:false,hours:[],maxPerHour:0},
+      sun:{enabled:false,hours:[],maxPerHour:0}
+    },
+    blockedDates: [rel(10), rel(11)],
+    staffList: (window.CRM ? CRM.staffNames().concat(['Self']) : ['Ramya Krishnan','Aditya Nair','Meera Pillai','Self']),
+    schoolName: 'Sunshine International School',
+    todayISO: TODAY,
+    calendarHours: [9,10,11,12,13,14,15,16],
+
+    view:'list', calendarView:'week', calendarDate:new Date(), listDateRange:'all', checkInPanelOpen:true,
+    filterStatus:'all', filterSearch:'', searchAllDates:false,
+    selectedIds:[], shownPerGroup:{}, pageSize:20,
+    showDetail:false, showNewBooking:false, showCancel:false, showBatchCancel:false, showReschedule:false, showWhatsApp:false,
+    activeBooking:null, _modalTrigger:null,
+    cancelReason:'Parent request', cancelNotify:true,
+    batchStep:1, batchCancelDates:[], batchCancelReason:'Campus closure', batchCancelNotify:true, batchCancelProgress:0,
+    rescheduleStep:1, rescheduleDate:'', rescheduleHour:null, rescheduleNotify:true, rescheduleInitiator:'admin',
+    rsCalMonth:new Date().getMonth(), rsCalYear:new Date().getFullYear(),
+    nbCalMonth:new Date().getMonth(), nbCalYear:new Date().getFullYear(),
+    newBooking:{ parentName:'', parentPhone:'', childName:'', childAge:'', admissionType:'preschool', source:'walk-in', assignedTo:'Self', date:'', hour:null, parentNotes:'', notify:true },
+    waMode:'single', waMessageType:'reminder', waMessage:'', waRecipients:[], waSentCount:0, waSending:false,
+    toast:'', toastHasUndo:false, undoStack:[],
+    noShowPrompt:false, noShowPromptBooking:null,
+    winW:1280,
+
+    init(){
+      try{ const raw=localStorage.getItem('superschools.visitSlots.v5prod.v1'); if(raw){ const p=JSON.parse(raw); if(p.days) this.availableSlots=this.transformDaysToSlots(p.days); if(Array.isArray(p.blockedDates)&&p.blockedDates.length) this.blockedDates=p.blockedDates.map(b=>b.date||b); } }catch(e){}
+      if(window.CRM){
+        this.bookings = CRM.bookings();
+        this.staffList = CRM.staffNames().concat(['Self']);
+        this._crmOnChange = ()=>{ this.bookings = CRM.bookings(); this.staffList = CRM.staffNames().concat(['Self']); };
+        CRM.onChange(this._crmOnChange);
+      }
+      this.calendarDate = new Date();
+      this.winW = window.innerWidth;
+      window.addEventListener('resize', ()=>{ this.winW=window.innerWidth; });
+      if(this.winW < 768) this.calendarView='day';
+      this.$watch('calendarView', v=>{ if(v==='day' && this.view==='calendar') this.scrollDayToFirst(); });
+      this.$watch('view', v=>{ if(v==='calendar' && this.calendarView==='day') this.scrollDayToFirst(); });
+      this.$watch('calendarDate', ()=>{ if(this.view==='calendar' && this.calendarView==='day') this.scrollDayToFirst(); });
+      window.addEventListener('message', (e)=>{ if(e && e.data && e.data.type==='ss-visit-action'){ var a=e.data.action; if(a==='print') this.printToday(); else if(a==='export') this.exportCSV(); else if(a==='new-booking') this.openNewBooking(); } });
+      this.$watch('anyModalOpen', v=>{ try{ if(window.parent && window.parent!==window){ window.parent.postMessage({type:'ss-visit-modal', open:!!v},'*'); } }catch(e){} });
+    },
+    scrollDayToFirst(){ this.$nextTick(()=>{ const iso=this.dateToISO(this.calendarDate); const list=this.bookingsForDay(iso); const hr=list.length?list[0].hour:9; const sc=this.$refs.dayScroll; const row=sc&&sc.querySelector('[data-hour="'+hr+'"]'); if(sc&&row){ sc.scrollTop += row.getBoundingClientRect().top - sc.getBoundingClientRect().top; } }); },
+    segNav(e,dir){ const radios=[...e.currentTarget.querySelectorAll('[role=radio]')]; if(!radios.length) return; let i=radios.indexOf(document.activeElement); i=i<0?0:(i+dir+radios.length)%radios.length; radios[i].focus(); radios[i].click(); },
+
+    transformDaysToSlots(days){
+      const keys=['mon','tue','wed','thu','fri','sat','sun']; const result={};
+      keys.forEach(k=>{ const d=days[k]||{enabled:false,slots:[]}; const on=(d.slots||[]).filter(s=>s.on); result[k]={ enabled:!!d.enabled, hours:on.map(s=>s.h), maxPerHour:on[0]?.max||4 }; });
+      return result;
+    },
+    applyPublishedSlots(detail){ if(!detail) return; if(detail.days) this.availableSlots=this.transformDaysToSlots(detail.days); this.blockedDates=(detail.blockedDates||[]).map(b=> (b&&b.date)?b.date:b); this.flash('Availability updated from the Slots manager', false); },
+
+    // ── formatting ──
+    pad2(n){ return String(n).padStart(2,'0'); },
+    dateToISO(d){ return d.getFullYear()+'-'+this.pad2(d.getMonth()+1)+'-'+this.pad2(d.getDate()); },
+    dayKeyForDate(iso){ return ['sun','mon','tue','wed','thu','fri','sat'][new Date(iso+'T00:00:00').getDay()]; },
+    _dow(d,long){ return (long?['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday']:['Sun','Mon','Tue','Wed','Thu','Fri','Sat'])[d.getDay()]; },
+    _mon(d,long){ return (long?['January','February','March','April','May','June','July','August','September','October','November','December']:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'])[d.getMonth()]; },
+    formatDate(iso){ const d=new Date(iso+'T00:00:00'); return this._dow(d)+', '+d.getDate()+' '+this._mon(d)+' '+d.getFullYear(); },
+    formatDateLong(iso){ const d=new Date(iso+'T00:00:00'); return this._dow(d,true)+', '+d.getDate()+' '+this._mon(d,true)+' '+d.getFullYear(); },
+    formatDateTime(iso){ const d=new Date(iso); let h=d.getHours(); const ap=h<12?'AM':'PM'; h=h%12; if(h===0)h=12; return d.getDate()+' '+this._mon(d)+' '+d.getFullYear()+', '+h+':'+this.pad2(d.getMinutes())+' '+ap; },
+    slotLabel(h){ const ap=x=>x<12?'AM':'PM'; const h12=x=>{const v=x%12;return v===0?12:v;}; return h12(h)+' '+ap(h)+' \u2013 '+h12(h+1)+' '+ap(h+1); },
+    slotLabelShort(h){ const ap=x=>x<12?'AM':'PM'; const h12=x=>{const v=x%12;return v===0?12:v;}; return h12(h)+' '+ap(h); },
+    formatPhone(p){ if(!p) return ''; return '+'+p.slice(0,2)+' '+p.slice(2,7)+' '+p.slice(7); },
+    timeAgo(iso){ const diff=Date.now()-new Date(iso).getTime(); const m=Math.floor(diff/60000); if(m<2) return 'just now'; if(m<60) return m+' min ago'; const h=Math.floor(m/60); if(h<24) return h+(h===1?' hour':' hours')+' ago'; const d=Math.floor(h/24); return d+(d===1?' day':' days')+' ago'; },
+
+    statusLabel(s){ return ({pending:'Pending',confirmed:'Confirmed',cancelled:'Cancelled',completed:'Completed',no_show:'No-show',rescheduled:'Rescheduled'})[s]||s; },
+    statusPill(s){ return ({
+      pending:'bg-amber-50 text-amber-700 border border-amber-200',
+      confirmed:'bg-brand-50 text-brand border border-brand-100',
+      cancelled:'bg-slate-100 text-slate-500 border border-slate-200',
+      completed:'bg-emerald-50 text-emerald-700 border border-emerald-100',
+      no_show:'bg-orange-50 text-orange-700 border border-orange-200',
+      rescheduled:'bg-violet-50 text-violet-700 border border-violet-100'
+    })[s]||'bg-slate-100 text-slate-500'; },
+    typeLabel(t){ return ({preschool:'Preschool','day school':'Day school',boarding:'Boarding'})[t]||t; },
+    returnVisitTitle(b){ if(!b.isReturnVisitor) return ''; const prev=this.findBooking(b.previousBookingId); return prev ? ('Previously visited on '+this.formatDate(prev.date)) : 'Return visitor'; },
+    typeChip(t){ return ({
+      preschool:'bg-sky-50 text-sky-700 border border-sky-100',
+      'day school':'bg-indigo-50 text-indigo-700 border border-indigo-100',
+      boarding:'bg-purple-50 text-purple-700 border border-purple-100'
+    })[t]||'bg-slate-100 text-slate-600'; },
+    chipClass(s){ return ({
+      pending:'bg-amber-50 text-amber-800 border border-amber-200',
+      confirmed:'bg-brand-50 text-brand border border-brand-100',
+      cancelled:'bg-slate-100 text-slate-400 border border-slate-200 line-through',
+      completed:'bg-emerald-50 text-emerald-800 border border-emerald-100',
+      no_show:'bg-orange-50 text-orange-800 border border-orange-200',
+      rescheduled:'bg-violet-50 text-violet-800 border border-violet-100'
+    })[s]||'bg-slate-50 text-slate-700 border border-slate-200'; },
+    chipBoxClass(s){ return ({
+      pending:'border-amber-200 bg-amber-50/50',
+      confirmed:'border-brand-100 bg-brand-50/40',
+      cancelled:'border-slate-200 bg-slate-50 opacity-60',
+      completed:'border-emerald-100 bg-emerald-50/50',
+      no_show:'border-orange-200 bg-orange-50/50',
+      rescheduled:'border-violet-100 bg-violet-50/50'
+    })[s]||'border-slate-200 bg-white'; },
+
+    // ── week helpers ──
+    weekDaysFor(date){ const d=new Date(date); d.setHours(0,0,0,0); const mi=(d.getDay()+6)%7; d.setDate(d.getDate()-mi); const out=[]; for(let i=0;i<7;i++){ const x=new Date(d); x.setDate(d.getDate()+i); out.push(x); } return out; },
+    calendarWeekDays(){ return this.weekDaysFor(this.calendarDate).map(d=>({ iso:this.dateToISO(d), day:d.getDate(), dow:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][(d.getDay()+6)%7] })); },
+    calMonthYear(){ return this.calendarDate.getFullYear(); },
+    calMonthMonth(){ return this.calendarDate.getMonth(); },
+    calendarWeeks(){ const y=this.calendarDate.getFullYear(), m=this.calendarDate.getMonth(); const first=new Date(y,m,1); const start=new Date(first); const mi=(first.getDay()+6)%7; start.setDate(first.getDate()-mi); const weeks=[]; for(let w=0;w<6;w++){ const row=[]; for(let i=0;i<7;i++){ const x=new Date(start); x.setDate(start.getDate()+w*7+i); row.push({ iso:this.dateToISO(x), day:x.getDate(), currentMonth:x.getMonth()===m }); } weeks.push(row); } let last=0; weeks.forEach((row,i)=>{ if(row.some(x=>x.currentMonth)) last=i; }); return weeks.slice(0,last+1); },
+    isToday(iso){ return iso===this.todayISO; },
+    isBlocked(iso){ return this.blockedDates.includes(iso); },
+    prevCalendar(){ const d=new Date(this.calendarDate); if(this.calendarView==='month'){ d.setMonth(d.getMonth()-1); } else if(this.calendarView==='week'){ d.setDate(d.getDate()-7); } else { d.setDate(d.getDate()-1); } this.calendarDate=d; },
+    nextCalendar(){ const d=new Date(this.calendarDate); if(this.calendarView==='month'){ d.setMonth(d.getMonth()+1); } else if(this.calendarView==='week'){ d.setDate(d.getDate()+7); } else { d.setDate(d.getDate()+1); } this.calendarDate=d; },
+    calendarRangeLabel(){ if(this.calendarView==='month'){ return new Date(this.calendarDate.getFullYear(),this.calendarDate.getMonth(),1).toLocaleDateString('en-IN',{month:'long',year:'numeric'}); } if(this.calendarView==='day'){ return this.calendarDate.toLocaleDateString('en-IN',{day:'numeric',month:'short'}); } const w=this.weekDaysFor(this.calendarDate); return w[0].getDate()+'–'+w[6].getDate()+' '+w[6].toLocaleDateString('en-IN',{month:'short'}); },
+
+    // ── capacity ──
+    bookedCountForSlot(iso,hour){ return this.bookings.filter(b=> b.date===iso && b.hour===hour && ['pending','confirmed','rescheduled'].includes(b.status)).length; },
+    maxForDate(iso){ const s=this.availableSlots[this.dayKeyForDate(iso)]; return s?s.maxPerHour:0; },
+    slotInSchedule(iso,hour){ const s=this.availableSlots[this.dayKeyForDate(iso)]; return !!(s&&s.enabled&&s.hours.includes(hour)); },
+    slotFull(iso,hour){ return this.slotInSchedule(iso,hour) && !this.isBlocked(iso) && this.bookedCountForSlot(iso,hour)>=this.maxForDate(iso); },
+    slotAvailable(iso,hour){ const s=this.availableSlots[this.dayKeyForDate(iso)]; if(!s||!s.enabled) return false; if(!s.hours.includes(hour)) return false; if(this.isBlocked(iso)) return false; return this.bookedCountForSlot(iso,hour)<s.maxPerHour; },
+    slotCapacityTextClass(iso,hour){ const n=this.bookedCountForSlot(iso,hour); const max=this.maxForDate(iso); if(n>=max) return 'text-red-600'; if(n===0) return 'text-emerald-600'; return 'text-brand'; },
+    bookingsForSlot(iso,hour){ return this.bookings.filter(b=> b.date===iso && b.hour===hour && b.status!=='cancelled').sort((a,b)=>a.parentName.localeCompare(b.parentName)); },
+    bookingsForDay(iso){ return this.bookings.filter(b=> b.date===iso && b.status!=='cancelled').sort((a,b)=>a.hour-b.hour); },
+
+    // ── metrics ──
+    get todayCount(){ return this.bookings.filter(b=> b.date===this.todayISO && b.status!=='cancelled').length; },
+    get weekCount(){ const isos=this.weekDaysFor(new Date()).map(d=>this.dateToISO(d)); return this.bookings.filter(b=> isos.includes(b.date) && b.status!=='cancelled').length; },
+    get remindersCount(){ const limit=rel(7); return this.bookings.filter(b=> ['confirmed','pending'].includes(b.status) && b.date>=this.todayISO && b.date<=limit && b.communications.length===0).length; },
+    get pendingCount(){ return this.bookings.filter(b=> b.status==='pending').length; },
+    get weekUtilization(){ const days=this.weekDaysFor(new Date()); let avail=0,booked=0; days.forEach(d=>{ const iso=this.dateToISO(d); const s=this.availableSlots[this.dayKeyForDate(iso)]; if(!s||!s.enabled||this.isBlocked(iso)) return; avail+=s.hours.length*s.maxPerHour; booked+=s.hours.reduce((n,h)=>n+this.bookedCountForSlot(iso,h),0); }); if(avail===0) return 0; return Math.round((booked/avail)*100); },
+
+    // ── today check-in ──
+    get todayVisits(){ return this.bookings.filter(b=> b.date===this.todayISO && b.status!=='cancelled').sort((a,b)=>a.hour-b.hour); },
+    get todayCheckedIn(){ return this.todayVisits.filter(b=> b.status==='completed'||b.status==='no_show').length; },
+
+    // ── list filtering ──
+    inRange(iso){ if(this.searchAllDates && this.filterSearch.trim()) return true; if(this.listDateRange==='all') return iso>=this.todayISO; if(this.listDateRange==='today') return iso===this.todayISO; if(this.listDateRange==='week'){ const isos=this.weekDaysFor(new Date()).map(d=>this.dateToISO(d)); return isos.includes(iso); } if(this.listDateRange==='month'){ const n=new Date(); return iso.slice(0,7)===this.dateToISO(n).slice(0,7); } return true; },
+    get filteredBookings(){ const q=this.filterSearch.trim().toLowerCase(); return this.bookings.filter(b=>{ if(this.filterStatus!=='all' && b.status!==this.filterStatus) return false; if(!this.inRange(b.date)) return false; if(q){ const hay=(b.parentName+' '+b.childName+' '+b.id+' '+b.parentPhone).toLowerCase(); if(!hay.includes(q)) return false; } return true; }); },
+    get groupedBookings(){ const map={}; this.filteredBookings.forEach(b=>{ (map[b.date]=map[b.date]||[]).push(b); }); return Object.keys(map).sort().map(iso=>{ const list=map[iso].sort((a,b)=>a.hour-b.hour); const shown=this.shownPerGroup[iso]||this.pageSize; return { dateISO:iso, bookings:list, visible:list.slice(0,shown) }; }); },
+    showMore(iso){ this.shownPerGroup[iso]=(this.shownPerGroup[iso]||this.pageSize)+this.pageSize; },
+    shownCount(){ return this.groupedBookings.reduce((n,g)=>n+g.visible.length,0); },
+    emptyMessage(){ if(this.filterSearch.trim()) return 'No results for "'+this.filterSearch.trim()+'".'; if(this.filterStatus!=='all') return 'No '+this.statusLabel(this.filterStatus).toLowerCase()+' bookings in this range.'; if(this.listDateRange==='today') return 'No visits scheduled for today.'; return 'No visits in this range.'; },
+
+    // ── mini calendar (new booking + reschedule) ──
+    miniMonthLabel(y,m){ return new Date(y,m,1).toLocaleDateString('en-IN',{month:'long',year:'numeric'}); },
+    miniCalDays(y,m){ const first=new Date(y,m,1); const start=new Date(first); const mi=(first.getDay()+6)%7; start.setDate(first.getDate()-mi); const out=[]; for(let i=0;i<42;i++){ const x=new Date(start); x.setDate(start.getDate()+i); const iso=this.dateToISO(x); const cur=x.getMonth()===m; const notPast=iso>=this.todayISO; const hasOpen=this.availableHoursForDate(iso).some(h=>h.open); const selectable=cur && notPast && !this.isBlocked(iso) && hasOpen; out.push({ iso, day:x.getDate(), currentMonth:cur, selectable }); } return out; },
+    miniDayClass(day, selectedISO, currentISO){ if(!day.currentMonth) return 'text-slate-300 cursor-default'; if(day.iso===selectedISO) return 'bg-brand text-white'; if(currentISO && day.iso===currentISO) return 'ring-2 ring-amber-300 text-slate-700 bg-amber-50'; if(this.isBlocked(day.iso)) return 'blocked-stripe text-slate-300 cursor-not-allowed'; if(!day.selectable) return 'text-slate-300 cursor-not-allowed'; return 'text-slate-700 hover:bg-brand-50 hover:text-brand cursor-pointer'; },
+    availableHoursForDate(iso){ if(!iso) return []; const s=this.availableSlots[this.dayKeyForDate(iso)]; if(!s||!s.enabled||this.isBlocked(iso)) return []; return s.hours.map(h=>{ const booked=this.bookedCountForSlot(iso,h); return { hour:h, max:s.maxPerHour, booked, open:booked<s.maxPerHour }; }); },
+    nbPrevMonth(){ if(this.nbCalMonth===0){ this.nbCalMonth=11; this.nbCalYear--; } else this.nbCalMonth--; },
+    nbNextMonth(){ if(this.nbCalMonth===11){ this.nbCalMonth=0; this.nbCalYear++; } else this.nbCalMonth++; },
+    rsPrevMonth(){ if(this.rsCalMonth===0){ this.rsCalMonth=11; this.rsCalYear--; } else this.rsCalMonth--; },
+    rsNextMonth(){ if(this.rsCalMonth===11){ this.rsCalMonth=0; this.rsCalYear++; } else this.rsCalMonth++; },
+
+    // ── modal open/close ──
+    findBooking(id){ return this.bookings.find(b=>b.id===id); },
+    openDetail(id){ this._modalTrigger=document.activeElement; this.activeBooking=this.findBooking(id); this.showDetail=true; },
+    closeDetail(){ this.showDetail=false; this._returnFocus(); },
+    openNewBooking(){ this._modalTrigger=document.activeElement; this.newBooking={ parentName:'', parentPhone:'', childName:'', childAge:'', admissionType:'preschool', source:'walk-in', assignedTo:'Self', date:'', hour:null, parentNotes:'', notify:true }; this.nbCalMonth=new Date().getMonth(); this.nbCalYear=new Date().getFullYear(); this.showNewBooking=true; },
+    closeNewBooking(){ this.showNewBooking=false; this._returnFocus(); },
+    promptCancel(id){ this._modalTrigger=document.activeElement; this.activeBooking=this.findBooking(id); this.cancelReason='Parent request'; this.cancelNotify=true; this.showDetail=false; this.showCancel=true; },
+    closeCancel(){ this.showCancel=false; this._returnFocus(); },
+    openBatchCancel(){ this._modalTrigger=document.activeElement; this.batchStep=1; this.batchCancelDates=[]; this.batchCancelReason='Campus closure'; this.batchCancelNotify=true; this.batchCancelProgress=0; this.showBatchCancel=true; },
+    closeBatchCancel(){ this.showBatchCancel=false; this._returnFocus(); },
+    promptReschedule(id){ this._modalTrigger=document.activeElement; this.activeBooking=this.findBooking(id); this.rescheduleStep=1; this.rescheduleDate=''; this.rescheduleHour=null; this.rescheduleNotify=true; this.rescheduleInitiator='admin'; const d=new Date(this.activeBooking.date+'T00:00:00'); this.rsCalMonth=d.getMonth(); this.rsCalYear=d.getFullYear(); this.showDetail=false; this.showReschedule=true; },
+    closeReschedule(){ this.showReschedule=false; this._returnFocus(); },
+    _returnFocus(){ this.$nextTick(()=>{ try{ this._modalTrigger&&this._modalTrigger.focus(); }catch(e){} }); },
+
+    // ── new booking ──
+    normalizePhone(){ let p=(this.newBooking.parentPhone||'').replace(/\D/g,''); if(p.length===10) p='91'+p; this.newBooking.parentPhone=p; },
+    newBookingValid(){ const n=this.newBooking; return !!(n.parentName.trim() && n.childName.trim() && (n.parentPhone||'').replace(/\D/g,'').length>=10 && n.childAge!=='' && n.date && n.hour!==null && this.slotAvailable(n.date,n.hour)); },
+    createBooking(){ if(!this.newBookingValid()) return; if(!this.slotAvailable(this.newBooking.date,this.newBooking.hour)){ this.flash('That time just filled up. Please choose another slot.', false); this.newBooking.hour=null; return; } this.normalizePhone(); this.pushUndo(); const n=this.newBooking; const id='VB-'+Date.now().toString(36).toUpperCase().slice(-5); const bk={ id, parentName:n.parentName.trim(), parentPhone:n.parentPhone, childName:n.childName.trim(), childAge:parseFloat(n.childAge), admissionType:n.admissionType, date:n.date, hour:n.hour, status:'confirmed', parentNotes:n.parentNotes.trim(), adminNotes:'', communications:[], assignedTo:n.assignedTo, rescheduledFrom:null, rescheduleInitiatedBy:null, isReturnVisitor:false, previousBookingId:null, followUp:{required:false,dueDate:null,note:'',completed:false,completedAt:null}, applicationSubmitted:false, applicationSubmittedAt:null, source:n.source, cancelReason:null, bookedAt:new Date().toISOString() }; let created=bk; if(window.CRM){ created=CRM.addBooking(bk)||bk; this.bookings=CRM.bookings(); } else { this.bookings.push(bk); } const notify=n.notify; this.showNewBooking=false; this._returnFocus(); if(notify){ this.openWhatsAppFor(created,'confirmation'); } this.flash('Booking created · '+(created.id||id), true); },
+
+    // ── status actions ──
+    _commitBooking(id,patch){ if(window.CRM){ CRM.updateBooking(id,patch); this.bookings=CRM.bookings(); if(this.activeBooking&&this.activeBooking.id===id){ this.activeBooking=this.findBooking(id); } } },
+    confirmBooking(id){ const b=this.findBooking(id); if(!b||b.status==='confirmed') return; this.pushUndo(); b.status='confirmed'; this._commitBooking(id,{status:'confirmed'}); this.flash('Visit confirmed', true); },
+    markCompleted(id){ const b=this.findBooking(id); if(!b) return; this.pushUndo(); b.status='completed'; this._commitBooking(id,{status:'completed'}); this.flash('Marked as arrived', true); },
+    markNoShow(id){ const b=this.findBooking(id); if(!b) return; this.pushUndo(); b.status='no_show'; this._commitBooking(id,{status:'no_show'}); this.flash('Marked as no-show', true); setTimeout(()=>{ this.noShowPromptBooking=this.findBooking(id)||b; this.noShowPrompt=true; }, 800); },
+    updateAdminNotes(id,text){ const b=this.findBooking(id); if(!b||b.adminNotes===text) return; this.pushUndo(); b.adminNotes=text; this._commitBooking(id,{adminNotes:text}); },
+    updateAssignedTo(id,staff){ const b=this.findBooking(id); if(!b||(b.assignedTo||'')===(staff||'')) return; this.pushUndo(); b.assignedTo=staff||null; this._commitBooking(id,{assignedTo:staff||null}); this.flash('Assigned to '+(staff||'no one'), true); },
+    toggleFollowUp(id,val){ const b=this.findBooking(id); if(!b) return; this.pushUndo(); b.followUp.required=val; this._commitBooking(id,{followUp:b.followUp}); },
+    setFollowUpDate(id,val){ const b=this.findBooking(id); if(!b) return; this.pushUndo(); b.followUp.dueDate=val; this._commitBooking(id,{followUp:b.followUp}); },
+    setFollowUpNote(id,val){ const b=this.findBooking(id); if(!b||b.followUp.note===val) return; this.pushUndo(); b.followUp.note=val; this._commitBooking(id,{followUp:b.followUp}); },
+    markApplicationSubmitted(id,val){ const b=this.findBooking(id); if(!b) return; this.pushUndo(); b.applicationSubmitted=val; b.applicationSubmittedAt=val?new Date().toISOString():null; this._commitBooking(id,{applicationSubmitted:b.applicationSubmitted,applicationSubmittedAt:b.applicationSubmittedAt}); this.flash(val?'Marked as application submitted':'Application unmarked', true); },
+
+    // ── cancel ──
+    confirmCancel(){ const b=this.activeBooking; if(!b) return; this.pushUndo(); b.status='cancelled'; b.cancelReason=this.cancelReason; this._commitBooking(b.id,{status:'cancelled',cancelReason:this.cancelReason}); const notify=this.cancelNotify; this.showCancel=false; this._returnFocus(); if(notify){ this.openWhatsAppFor(b,'cancellation'); } this.flash('Visit cancelled', true); },
+
+    // ── batch cancel ──
+    datesWithBookings(){ const map={}; this.bookings.forEach(b=>{ if(b.date>=this.todayISO && b.status!=='cancelled'){ map[b.date]=(map[b.date]||0)+1; } }); return Object.keys(map).sort().map(iso=>({iso,count:map[iso]})); },
+    toggleBatchDate(iso){ const i=this.batchCancelDates.indexOf(iso); if(i>=0) this.batchCancelDates.splice(i,1); else this.batchCancelDates.push(iso); },
+    batchAffected(){ return this.bookings.filter(b=> this.batchCancelDates.includes(b.date) && b.status!=='cancelled'); },
+    confirmBatchCancel(){ const affected=this.batchAffected(); if(affected.length===0){ this.showBatchCancel=false; return; } this.pushUndo(); affected.forEach(b=>{ b.status='cancelled'; b.cancelReason=this.batchCancelReason; if(window.CRM) CRM.updateBooking(b.id,{status:'cancelled',cancelReason:this.batchCancelReason}); }); if(window.CRM) this.bookings=CRM.bookings(); const notify=this.batchCancelNotify; const n=affected.length; if(notify){ this.batchCancelProgress=0; affected.forEach((b,idx)=>{ setTimeout(()=>{ this.openWhatsAppFor(b,'cancellation'); this.batchCancelProgress=idx+1; if(idx===affected.length-1){ setTimeout(()=>{ this.showBatchCancel=false; this._returnFocus(); }, 400); } }, idx*600); }); } else { this.showBatchCancel=false; this._returnFocus(); } this.flash(n+' visit'+(n===1?'':'s')+' cancelled', true); },
+
+    // ── reschedule ──
+    rescheduleSelectDate(iso){ this.rescheduleDate=iso; const sameOpen=this.availableHoursForDate(iso).find(h=>h.hour===this.activeBooking.hour && h.open); this.rescheduleHour = sameOpen ? this.activeBooking.hour : null; this.rescheduleStep=2; },
+    confirmReschedule(){ const b=this.activeBooking; if(!b||this.rescheduleHour===null) return; if(this.rescheduleDate===b.date && this.rescheduleHour===b.hour){ this.flash('Pick a different date or time to reschedule.', false); return; } this.pushUndo(); b.rescheduledFrom={date:b.date,hour:b.hour}; b.date=this.rescheduleDate; b.hour=this.rescheduleHour; b.status='confirmed'; b.rescheduleInitiatedBy=this.rescheduleInitiator; this._commitBooking(b.id,{rescheduledFrom:b.rescheduledFrom,date:b.date,hour:b.hour,status:'confirmed',rescheduleInitiatedBy:b.rescheduleInitiatedBy}); const notify=this.rescheduleNotify; const lbl=this.formatDate(this.rescheduleDate); this.showReschedule=false; this._returnFocus(); if(notify){ this.openWhatsAppFor(b,'reschedule'); } this.flash('Visit rescheduled to '+lbl, true); },
+
+    // ── whatsapp ──
+    buildReminderMessage(b){ return 'Hello '+b.parentName+', this is a reminder from '+this.schoolName+'. Your visit is scheduled for '+this.formatDate(b.date)+' at '+this.slotLabel(b.hour)+'.\n\nPlease reply YES to confirm your attendance. For any changes, call us directly. We look forward to meeting you and '+b.childName+'.'; },
+    buildConfirmMessage(b){ return 'Hello '+b.parentName+', your visit to '+this.schoolName+' has been confirmed.\n\nDate: '+this.formatDate(b.date)+'\nTime: '+this.slotLabel(b.hour)+'\n\nWe look forward to welcoming you and '+b.childName+'. Feel free to reach out if you have any questions.'; },
+    buildCancelMessage(b){ const map={'Parent request':'at your request','Admin conflict':'due to an internal conflict','School event':'due to a school event','Campus closure':'due to a campus closure','Staff unavailable':'as our team is unavailable','Emergency':'due to an emergency','Other':'due to unforeseen circumstances'}; const r=map[b.cancelReason]||'due to unforeseen circumstances'; return 'Hello '+b.parentName+', we regret to inform you that your visit to '+this.schoolName+' on '+this.formatDate(b.date)+' has been cancelled '+r+'.\n\nWe apologise for the inconvenience. Please contact us to reschedule at a convenient time.'; },
+    buildRescheduleMessage(b){ return 'Hello '+b.parentName+', your visit to '+this.schoolName+' has been rescheduled.\n\nNew date: '+this.formatDate(b.date)+'\nNew time: '+this.slotLabel(b.hour)+'\n\nIf this does not suit you, please call us and we will find a convenient time. We look forward to seeing you.'; },
+    buildNoShowMessage(b){ const d=(b.rescheduledFrom&&b.rescheduledFrom.date)?b.rescheduledFrom.date:b.date; return 'Hello '+b.parentName+', we noticed you could not make it to your scheduled visit on '+this.formatDate(d)+' at '+this.schoolName+'. We would love to meet you and '+b.childName+'.\n\nPlease contact us to book a new visit at your convenience.'; },
+    buildMessage(b,type){ if(type==='reminder') return this.buildReminderMessage(b); if(type==='confirmation') return this.buildConfirmMessage(b); if(type==='cancellation') return this.buildCancelMessage(b); if(type==='reschedule') return this.buildRescheduleMessage(b); if(type==='noshow') return this.buildNoShowMessage(b); return ''; },
+    waLink(phone,text){ return 'https://wa.me/'+phone+'?text='+encodeURIComponent(text); },
+    openWhatsApp(id,type){ this._modalTrigger=document.activeElement; this.activeBooking=this.findBooking(id); this.waMode='single'; this.waMessageType=type||'reminder'; this.waMessage=this.buildMessage(this.activeBooking,this.waMessageType); this.showDetail=false; this.showWhatsApp=true; },
+    openWhatsAppFor(b,type){ const msg=this.buildMessage(b,type); window.open(this.waLink(b.parentPhone,msg),'_blank','noopener'); this.logCommunication(b.id,type,msg); },
+    openBulkWhatsApp(){ this._modalTrigger=document.activeElement; this.waMode='bulk'; this.waSentCount=0; this.waSending=false; this.waRecipients=this.filteredBookings.filter(b=>['confirmed','pending'].includes(b.status)).map(b=>({ id:b.id, parentName:b.parentName, parentPhone:b.parentPhone, date:b.date, selected:b.communications.length===0 })); this.showWhatsApp=true; },
+    closeWhatsApp(){ this.showWhatsApp=false; this.waSending=false; this._returnFocus(); },
+    sendWhatsApp(){ const b=this.activeBooking; if(!b) return; window.open(this.waLink(b.parentPhone,this.waMessage),'_blank','noopener'); this.logCommunication(b.id,this.waMessageType,this.waMessage); this.showWhatsApp=false; this._returnFocus(); this.flash('WhatsApp opened for '+b.parentName, false); },
+    sendBulkWhatsApp(){ const sel=this.waRecipients.filter(r=>r.selected); if(sel.length===0) return; this.waSending=true; this.waSentCount=0; sel.forEach((r,idx)=>{ setTimeout(()=>{ const b=this.findBooking(r.id); if(b){ const msg=this.buildReminderMessage(b); window.open(this.waLink(b.parentPhone,msg),'_blank','noopener'); this.logCommunication(b.id,'reminder',msg); } this.waSentCount=idx+1; if(idx===sel.length-1){ setTimeout(()=>{ this.waSending=false; this.showWhatsApp=false; this._returnFocus(); this.flash('Reminders sent to '+sel.length+' parents', false); }, 500); } }, idx*600); }); },
+    logCommunication(id,type,message){ const b=this.findBooking(id); if(!b) return; b.communications=(b.communications||[]).concat([{ type, sentAt:new Date().toISOString(), channel:'whatsapp', preview:(message||'').slice(0,60) }]); if(window.CRM){ CRM.updateBooking(id,{communications:b.communications}); this.bookings=CRM.bookings(); } },
+    sendNoShowMessage(){ const b=this.noShowPromptBooking; if(b){ this.openWhatsAppFor(b,'noshow'); } this.noShowPrompt=false; },
+
+    // ── bulk / selection ──
+    toggleSelect(id){ const i=this.selectedIds.indexOf(id); if(i>=0) this.selectedIds.splice(i,1); else this.selectedIds.push(id); },
+    clearSelection(){ this.selectedIds=[]; },
+    bulkConfirmSelected(){ this.pushUndo(); this.selectedIds.forEach(id=>{ const b=this.findBooking(id); if(b && b.status==='pending'){ b.status='confirmed'; if(window.CRM) CRM.updateBooking(id,{status:'confirmed'}); } }); if(window.CRM) this.bookings=CRM.bookings(); const n=this.selectedIds.length; this.selectedIds=[]; this.flash(n+' booking'+(n===1?'':'s')+' confirmed', true); },
+    bulkRemindSelected(){ const ids=[...this.selectedIds]; this.waMode='bulk'; this.waSentCount=0; this.waSending=false; this.waRecipients=ids.map(id=>this.findBooking(id)).filter(Boolean).map(b=>({ id:b.id, parentName:b.parentName, parentPhone:b.parentPhone, date:b.date, selected:true })); this._modalTrigger=document.activeElement; this.showWhatsApp=true; },
+    pendingInViewCount(){ return this.filteredBookings.filter(b=>b.status==='pending').length; },
+    remindableInViewCount(){ return this.filteredBookings.filter(b=>['confirmed','pending'].includes(b.status) && b.communications.length===0).length; },
+    confirmAllPending(){ const pend=this.filteredBookings.filter(b=>b.status==='pending'); if(pend.length===0) return; this.pushUndo(); pend.forEach(b=>{ b.status='confirmed'; if(window.CRM) CRM.updateBooking(b.id,{status:'confirmed'}); }); if(window.CRM) this.bookings=CRM.bookings(); this.flash(pend.length+' booking'+(pend.length===1?'':'s')+' confirmed', true); },
+    confirmGroupPending(iso){ const pend=this.bookings.filter(b=>b.date===iso && b.status==='pending'); if(pend.length===0) return; this.pushUndo(); pend.forEach(b=>{ b.status='confirmed'; if(window.CRM) CRM.updateBooking(b.id,{status:'confirmed'}); }); if(window.CRM) this.bookings=CRM.bookings(); this.flash(pend.length+' confirmed for '+this.formatDate(iso), true); },
+
+    // ── export / print ──
+    printToday(){ window.print(); },
+    exportCSV(){ const header=['ID','Date','Time','Parent Name','Phone','Child Name','Age','Type','Status','Assigned To','Reminder Sent','Parent Notes','Admin Notes','Booked At']; const rows=this.filteredBookings.map(b=>[ b.id, b.date, this.slotLabel(b.hour), b.parentName, this.formatPhone(b.parentPhone), b.childName, b.childAge, this.typeLabel(b.admissionType), this.statusLabel(b.status), b.assignedTo||'', b.communications.length?b.communications[b.communications.length-1].sentAt:'', (b.parentNotes||'').replace(/[,\n]/g,' '), (b.adminNotes||'').replace(/[,\n]/g,' '), b.bookedAt ]); const csv=[header,...rows].map(r=>r.map(v=>'"'+String(v)+'"').join(',')).join('\n'); const a=document.createElement('a'); a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv); a.download='visits-'+this.listDateRange+'-'+this.todayISO+'.csv'; document.body.appendChild(a); a.click(); a.remove(); this.flash('CSV exported', false); },
+
+    // ── undo / toast ──
+    snapshot(){ return JSON.stringify(this.bookings); },
+    pushUndo(){ try{ this.undoStack.push(this.snapshot()); if(this.undoStack.length>40) this.undoStack.shift(); }catch(e){} },
+    get canUndo(){ return this.undoStack.length>0; },
+    get anyModalOpen(){ return this.showDetail||this.showNewBooking||this.showCancel||this.showBatchCancel||this.showReschedule||this.showWhatsApp; },
+    undo(){ if(!this.undoStack.length) return; try{ const restored=JSON.parse(this.undoStack.pop()); if(window.CRM&&CRM.setBookings){ CRM.setBookings(restored); this.bookings=CRM.bookings(); } else { this.bookings=restored; } }catch(e){} this.flash('Change undone', false); },
+    flash(msg,hasUndo){ this.toast=msg; this.toastHasUndo=!!hasUndo && this.canUndo; clearTimeout(this._t); this._t=setTimeout(()=>{ this.toast=''; this.toastHasUndo=false; }, 4000); },
+    toastUndoAction(){ clearTimeout(this._t); this.toastHasUndo=false; this.undo(); }
+  };
+}
+
+  </script>
+
+
+
+<script>
+(function(){
+  'use strict';
+  var lastY = 0;
+  var ticking = false;
+  var threshold = 10;
+  var tracked = [];
+
+  function isScrollable(el){
+    if (!el || el === document.body || el === document.documentElement) return false;
+    var cs = window.getComputedStyle(el);
+    var oy = cs.overflowY;
+    return (oy === 'auto' || oy === 'scroll') && el.scrollHeight > el.clientHeight + 8;
+  }
+
+  function getScrollTop(){
+    var root = document.scrollingElement || document.documentElement || document.body;
+    var y = Math.max(0, window.pageYOffset || root.scrollTop || document.documentElement.scrollTop || document.body.scrollTop || 0);
+    for (var i = 0; i < tracked.length; i++) {
+      var el = tracked[i];
+      if (el && el.scrollTop > y) y = el.scrollTop;
+    }
+    return y;
+  }
+
+  function send(type, payload){
+    try {
+      if (window.parent && window.parent !== window) {
+        window.parent.postMessage(Object.assign({ type: type }, payload || {}), '*');
+      }
+    } catch (err) {}
+  }
+
+  function update(){
+    ticking = false;
+    var y = getScrollTop();
+    if (y <= 4) {
+      lastY = y;
+      send('ss-visit-scroll-top', { scrollTop: y });
+      return;
+    }
+    var delta = y - lastY;
+    if (Math.abs(delta) < threshold) return;
+    var direction = delta > 0 ? 'down' : 'up';
+    lastY = y;
+    send('ss-visit-scroll', { direction: direction, scrollTop: y });
+  }
+
+  function schedule(){
+    if (ticking) return;
+    ticking = true;
+    window.requestAnimationFrame(update);
+  }
+
+  function bindScrollableContainers(){
+    tracked.forEach(function(el){ try { el.removeEventListener('scroll', schedule); } catch(e) {} });
+    tracked = Array.prototype.slice.call(document.querySelectorAll('*')).filter(isScrollable);
+    tracked.forEach(function(el){ el.addEventListener('scroll', schedule, { passive: true }); });
+  }
+
+  window.addEventListener('scroll', schedule, { passive: true });
+  window.addEventListener('wheel', schedule, { passive: true });
+  window.addEventListener('touchmove', schedule, { passive: true });
+  window.addEventListener('keydown', function(event){
+    var k = event.key;
+    if (k === 'PageDown' || k === 'PageUp' || k === 'ArrowDown' || k === 'ArrowUp' || k === 'Home' || k === 'End' || k === ' ') schedule();
+  }, { passive: true });
+  window.addEventListener('resize', function(){ bindScrollableContainers(); schedule(); }, { passive: true });
+  window.addEventListener('orientationchange', function(){ setTimeout(function(){ bindScrollableContainers(); schedule(); }, 80); }, { passive: true });
+  window.addEventListener('load', function(){ bindScrollableContainers(); schedule(); });
+  document.addEventListener('DOMContentLoaded', function(){ bindScrollableContainers(); schedule(); });
+  document.addEventListener('alpine:initialized', function(){ bindScrollableContainers(); schedule(); });
+  document.addEventListener('click', function(){ setTimeout(function(){ bindScrollableContainers(); schedule(); }, 80); }, true);
+  window.addEventListener('message', function(event){
+    if (event && event.data && event.data.type === 'ss-visit-view') {
+      lastY = getScrollTop();
+      send(lastY <= 4 ? 'ss-visit-scroll-top' : 'ss-visit-scroll', { direction: 'up', scrollTop: lastY });
+      setTimeout(function(){ bindScrollableContainers(); schedule(); }, 80);
+      setTimeout(function(){ bindScrollableContainers(); schedule(); }, 240);
+    }
+  });
+  if ('MutationObserver' in window) {
+    new MutationObserver(function(){ bindScrollableContainers(); schedule(); }).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class', 'style', 'aria-expanded'] });
+  }
+  bindScrollableContainers();
+})();
+</script>
+
+<script>
+  // Shell level-2 bar bridge: the shell renders Print/Export/New-booking actions and posts { type:'ss-action', action } here.
+  window.addEventListener('message', function(e){
+    var d = e && e.data;
+    if(!d || d.type !== 'ss-action') return;
+    var el = document.querySelector('[data-visit-view="bookings"]');
+    if(!el || !window.Alpine) return;
+    var c = Alpine.$data(el);
+    if(d.action === 'print') c.printToday();
+    else if(d.action === 'export') c.exportCSV();
+    else if(d.action === 'new-booking') c.openNewBooking();
+  });
+</script>
+
+<script src="../../components/RouteLoader.js"></script>
+</body>
+</html>

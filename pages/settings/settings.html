@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Settings &middot; SuperSchools Console</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="../../styles/tailwind-config.js"></script>
+  <link rel="stylesheet" href="../../styles/dashboard.css" />
+</head>
+<body class="bg-slate-200 text-slate-900 min-h-screen" x-data="schoolConsole({ module: 'settings', sub: 'settings' })">
+  <div id="routeLoader" class="route-loader" role="status" aria-live="polite" aria-label="Loading">
+    <div class="route-loader__box"><div class="route-loader__spinner"></div><div class="route-loader__text">Loading&hellip;</div></div>
+  </div>
+  <div class="ss-app min-h-screen h-screen w-full flex bg-mobile-background md:bg-background relative">
+    <div data-shell="sidebar"></div>
+    <main class="flex-1 flex flex-col overflow-hidden bg-mobile-background md:bg-background">
+      <div data-shell="header"></div>
+      <section class="flex-1 custom-scrollbar overflow-y-auto" :class="isFullScreenPage ? 'pb-0' : 'pb-20 md:pb-0'">
+        <div class="w-full" :class="isFullScreenPage ? 'min-h-full px-5 py-4 md:px-10 md:py-5 lg:px-[56px]' : 'px-5 py-5 md:px-10 md:py-6 lg:px-[56px] lg:py-8'">
+          <div x-show="!isFullScreenPage" class="lg:hidden mb-4 relative">
+            <input class="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-2xl text-sm focus:ring-primary focus:border-primary text-slate-700 shadow-sm" placeholder="Search" type="text" x-model="search" />
+            <span class="material-icons-outlined absolute left-3 text-slate-400 text-lg top-1/2 -translate-y-1/2">search</span>
+          </div>
+          <template x-if="activePage === 'settings'">
+            <div>
+              <!-- ================================================== -->
+              <!-- CONFIGURATIONS                                     -->
+              <!-- ================================================== -->
+              <div class="space-y-2">
+                <!-- Page-level: full loading -->
+                <template x-if="config.pageState === 'loading'">
+                  <div class="space-y-4">
+                    <template x-for="i in 3" :key="i">
+                      <div class="bg-white rounded-2xl shadow-card border border-slate-100 p-3 md:p-4">
+                        <div class="flex items-start gap-4">
+                          <div class="cfg-skel w-11 h-11 rounded-[14px]"></div>
+                          <div class="flex-1 space-y-3">
+                            <div class="cfg-skel h-4 w-1/3"></div>
+                            <div class="cfg-skel h-3 w-2/3"></div>
+                            <div class="cfg-skel h-3 w-1/2"></div>
+                          </div>
+                          <div class="cfg-skel w-24 h-9 rounded-full"></div>
+                        </div>
+                      </div>
+                    </template>
+                  </div>
+                </template>
+
+                <!-- Page-level: network failure -->
+                <template x-if="config.pageState === 'network_failure'">
+                  <div class="bg-white rounded-2xl shadow-card border border-rose-100 p-6 text-center">
+                    <div class="w-12 h-12 rounded-full bg-rose-50 text-rose-600 inline-flex items-center justify-center mx-auto"><span class="material-symbols-outlined">cloud_off</span></div>
+                    <h3 class="mt-3 font-semibold text-slate-900">Couldn't load configurations</h3>
+                    <p class="mt-1 text-sm text-slate-500 max-w-md mx-auto">We couldn't reach the configuration service. Check your connection or try again.</p>
+                    <button @click="config.pageState='ready'; pushToast('info','Configurations reloaded')" type="button" class="mt-4 inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm text-slate-700 hover:border-primary hover:text-primary">
+                      <span class="material-symbols-outlined text-[18px]">refresh</span> Retry
+                    </button>
+                  </div>
+                </template>
+
+                <!-- ============================================ -->
+                <!-- CATEGORY NAVIGATION + ACTIVE SECTION         -->
+                <!-- ============================================ -->
+                <template x-if="config.pageState === 'ready'">
+                  <div class="flex flex-col lg:flex-row gap-2 lg:gap-3">
+
+                    <!-- Category toggle: horizontal scroll on mobile/tablet, vertical sidebar on desktop -->
+                    <nav class="lg:w-48 lg:flex-shrink-0" aria-label="Settings categories">
+                      <div class="flex lg:flex-col gap-1 overflow-x-auto scroll-clean lg:overflow-visible pb-1.5 lg:pb-0">
+                        <template x-for="tab in config.settingsTabs" :key="tab.id">
+                          <button @click="config.settingsTab = tab.id" type="button"
+                            :aria-current="config.settingsTab === tab.id ? 'page' : false"
+                            :class="config.settingsTab === tab.id ? 'bg-primary text-white' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'"
+                            class="flex-shrink-0 lg:w-full rounded-lg px-3 py-2 text-sm font-medium transition whitespace-nowrap lg:whitespace-normal text-left">
+                            <span x-text="tab.label"></span>
+                          </button>
+                        </template>
+                      </div>
+                    </nav>
+
+                    <!-- Active category configuration -->
+                    <div class="flex-1 min-w-0">
+
+                <!-- ============================================ -->
+                <!-- 1. VISIT SLOTS                               -->
+                <!-- ============================================ -->
+                <template x-if="config.settingsTab === 'scheduling'">
+                  <div class="hs-root">
+
+                    <!-- Header -->
+                    <div class="hs-header">
+                      <div class="flex items-start gap-3 min-w-0">
+                        <div class="hs-icon"><span class="material-symbols-outlined text-[22px]">schedule</span></div>
+                        <div class="min-w-0">
+                          <h3 class="hs-title">Admission visit slots</h3>
+                          <p class="hs-sub">Fixed one-hour slots from 9 AM to 5 PM. Switch on the days you take visits, enable the hours that work, and set how many visits each hour can take.</p>
+                        </div>
+                      </div>
+                      <span class="hs-badge"><span class="material-symbols-outlined text-[14px]">today</span> 9 AM – 5 PM</span>
+                    </div>
+
+                    <!-- Toolbar -->
+                    <div class="hs-toolbar">
+                      <span class="text-[12px] text-slate-500"><b class="text-slate-700" x-text="enabledDaysCount"></b> of 7 days open · 8 one-hour slots each</span>
+                      <button @click="applyMondayToAll()" :disabled="schedulingSynced" type="button" class="hs-btn-ghost"><span class="material-symbols-outlined text-[15px]">content_copy</span> Copy Monday to all</button>
+                    </div>
+
+                    <!-- Day cards -->
+                    <div class="hs-body">
+                      <template x-for="d in dayList" :key="d.key">
+                        <div class="hs-daycard" :class="{'is-open': config.scheduling.days[d.key].expanded}">
+                          <!-- Day header: row click = accordion only; checkbox = enable only -->
+                          <div class="hs-dayhead" @click="toggleExpand(d.key)" :aria-expanded="config.scheduling.days[d.key].expanded">
+                            <div class="flex items-center gap-3 min-w-0">
+                              <button type="button" @click.stop="toggleDay(d.key)" class="hs-check hs-check-lg" :class="{'on': config.scheduling.days[d.key].enabled}" role="checkbox" :aria-checked="config.scheduling.days[d.key].enabled" title="Open or close this day for visits">
+                                <span x-show="config.scheduling.days[d.key].enabled" class="material-symbols-outlined text-white text-[15px] leading-none">check</span>
+                              </button>
+                              <div class="min-w-0">
+                                <p class="hs-dayname" x-text="d.label"></p>
+                                <p class="hs-daymeta" :class="{'is-on': config.scheduling.days[d.key].enabled}"
+                                   x-text="config.scheduling.days[d.key].enabled ? (activeSlotCount(d.key) + ' of 8 slots open') : 'Closed \u2014 no visits'"></p>
+                              </div>
+                            </div>
+                            <span class="material-symbols-outlined hs-chev" :class="{'is-open': config.scheduling.days[d.key].expanded}">expand_more</span>
+                          </div>
+                          <!-- Accordion body: expand/collapse only; independent of enabled state -->
+                          <div x-show="config.scheduling.days[d.key].expanded" x-collapse>
+                            <div class="hs-slotwrap">
+                              <template x-if="!config.scheduling.days[d.key].enabled">
+                                <div class="hs-closed-note">
+                                  <span class="material-symbols-outlined text-[18px]">do_not_disturb_on</span>
+                                  This day is closed. Tick the checkbox to open it for admission visits.
+                                </div>
+                              </template>
+                              <template x-if="config.scheduling.days[d.key].enabled">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                  <template x-for="slot in config.scheduling.days[d.key].slots" :key="slot.h">
+                                    <!-- Compact single-row slot: time + max visits inline, wraps if tight -->
+                                    <div @click="toggleSlot(d.key, slot.h)" class="hs-slot hs-slot-compact" :class="slot.on ? 'on' : 'off'">
+                                      <span class="hs-check" :class="{'on': slot.on}">
+                                        <span x-show="slot.on" class="material-symbols-outlined text-white text-[13px] leading-none">check</span>
+                                      </span>
+                                      <span class="hs-slot-time" :class="{'is-on': slot.on}" x-text="slotLabel(slot.h)"></span>
+                                      <div class="flex items-center gap-1.5 ml-auto" @click.stop>
+                                        <span class="hs-max-label" :class="{'is-on': slot.on}">Max</span>
+                                        <div class="hs-step" :class="{'is-off': !slot.on}">
+                                          <button @click="adjustMax(d.key, slot.h, -1)" :disabled="!slot.on || slot.max <= 2" type="button" title="Decrease"><span class="material-symbols-outlined text-[15px]">remove</span></button>
+                                          <span class="v" x-text="slot.max"></span>
+                                          <button @click="adjustMax(d.key, slot.h, 1)" :disabled="!slot.on || slot.max >= 10" type="button" title="Increase"><span class="material-symbols-outlined text-[15px]">add</span></button>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </template>
+                                </div>
+                              </template>
+                            </div>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+
+                    <!-- Blocked dates -->
+                    <div class="hs-blocked">
+                      <p class="hs-divlabel mb-1"><span class="material-symbols-outlined text-[18px] text-rose-500">event_busy</span> Blocked dates</p>
+                      <p class="text-[12px] text-slate-500 mb-3">Holidays, festivals, exams or closures — no visits on these days.</p>
+                      <div class="flex flex-col sm:flex-row gap-2 mb-3">
+                        <input type="date" x-model="config.scheduling.newBlockDate" :min="todayISO" class="hs-blk-input w-full sm:w-44" />
+                        <input type="text" x-model="config.scheduling.newBlockReason" @keydown.enter="addBlockedDate()" placeholder="Reason (optional) — e.g. Diwali" class="hs-blk-input flex-1 min-w-0" />
+                        <button @click="addBlockedDate()" :disabled="!config.scheduling.newBlockDate" type="button" class="hs-blk-add flex-shrink-0"><span class="material-symbols-outlined text-[16px]">add</span> Block date</button>
+                      </div>
+                      <template x-if="config.scheduling.blockedDates.length === 0">
+                        <div class="rounded-xl border border-dashed border-slate-200 bg-slate-50/60 px-4 py-6 text-center">
+                          <span class="material-symbols-outlined text-slate-300 text-[26px]">calendar_month</span>
+                          <p class="text-[12px] text-slate-500 mt-1">No blocked dates. Visits available on all open days.</p>
+                        </div>
+                      </template>
+                      <template x-if="config.scheduling.blockedDates.length > 0">
+                        <div class="max-h-[260px] overflow-y-auto scroll-clean">
+                          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            <template x-for="b in config.scheduling.blockedDates" :key="b.id">
+                              <div class="hs-blk-card">
+                                <span class="hs-blk-ico"><span class="material-symbols-outlined text-[17px]">event_busy</span></span>
+                                <div class="min-w-0 flex-1">
+                                  <p class="text-[13px] font-bold text-slate-800 truncate" x-text="formatBlockDate(b.date)"></p>
+                                  <p class="text-[11.5px] text-slate-500 truncate" x-text="b.reason || 'No reason added'"></p>
+                                </div>
+                                <button @click="removeBlockedDate(b.id)" type="button" class="w-8 h-8 rounded-lg hover:bg-rose-50 text-slate-400 hover:text-rose-600 inline-flex items-center justify-center transition flex-shrink-0" title="Remove"><span class="material-symbols-outlined text-[18px]">close</span></button>
+                              </div>
+                            </template>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+
+                    <!-- Save bar -->
+                    <div class="hs-savebar">
+                      <div class="flex items-center gap-2 text-[13px]">
+                        <template x-if="config.scheduling.dirty && config.scheduling.state!=='saving'">
+                          <span class="inline-flex items-center gap-1.5 text-amber-600 font-medium"><span class="material-symbols-outlined text-[18px]">edit_note</span> Unsaved changes</span>
+                        </template>
+                        <template x-if="config.scheduling.state==='saving'">
+                          <span class="inline-flex items-center gap-1.5 text-indigo-600 font-medium"><span class="material-symbols-outlined text-[18px] cfg-spin">progress_activity</span> Saving…</span>
+                        </template>
+                        <template x-if="config.scheduling.state==='saved' && !config.scheduling.dirty">
+                          <span class="inline-flex items-center gap-1.5 text-emerald-600 font-medium"><span class="material-symbols-outlined text-[18px]">check_circle</span> All changes saved</span>
+                        </template>
+                        <template x-if="config.scheduling.state==='save_failed'">
+                          <span class="inline-flex items-center gap-1.5 text-rose-600 font-medium"><span class="material-symbols-outlined text-[18px]">error</span> Save failed — retry</span>
+                        </template>
+                        <template x-if="!config.scheduling.dirty && config.scheduling.state==='idle'">
+                          <span class="text-slate-400">No changes</span>
+                        </template>
+                      </div>
+                      <div class="flex items-center gap-2">
+                        <button @click="resetScheduling()" :disabled="!config.scheduling.dirty || config.scheduling.state==='saving'" type="button" class="hs-discard-btn">Discard</button>
+                        <button @click="saveScheduling()" :disabled="!config.scheduling.dirty || config.scheduling.state==='saving'" type="button" class="hs-save-btn">
+                          <span x-show="config.scheduling.state==='saving'" class="material-symbols-outlined text-[18px] cfg-spin">progress_activity</span>
+                          <span x-text="config.scheduling.state==='saving' ? 'Saving\u2026' : 'Save changes'"></span>
+                        </button>
+                      </div>
+                    </div>
+
+                  </div>
+                </template>
+
+                                <!-- ============================================ -->
+                <!-- 2. WHATSAPP INTEGRATION                      -->
+                <!-- ============================================ -->
+                <template x-if="config.settingsTab === 'whatsapp'">
+                  <div class="bg-white rounded-2xl shadow-card border border-slate-100 overflow-hidden">
+                    <!-- Header -->
+                    <div class="p-3 md:p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                      <div class="flex items-start gap-4 min-w-0">
+                        <div class="cfg-brand-tile is-whatsapp"><span class="material-symbols-outlined text-[24px]">chat</span></div>
+                        <div class="min-w-0">
+                          <div class="flex items-center flex-wrap gap-2">
+                            <h3 class="font-semibold text-slate-900">WhatsApp Business</h3>
+                            <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold" :class="whatsappBadgeClass">
+                              <span class="cfg-status-dot" :class="whatsappDotClass" :style="`color:${whatsappDotColor}`"></span>
+                              <span x-text="whatsappStatusLabel"></span>
+                            </span>
+                          </div>
+                          <p class="mt-1 text-sm text-slate-500">Send admission updates, interview reminders, and parent confirmations through WhatsApp.</p>
+                        </div>
+                      </div>
+                      <div class="flex items-center gap-2 flex-shrink-0">
+                        <select x-model="config.whatsapp.state" class="rounded-full border border-slate-200 px-3 py-1.5 text-xs text-slate-700 bg-white focus:border-primary focus:ring-1 focus:ring-primary" title="Demo state">
+                          <option value="disconnected">Disconnected</option>
+                          <option value="connecting">Connecting</option>
+                          <option value="verification_pending">Verification pending</option>
+                          <option value="invalid_creds">Invalid credentials</option>
+                          <option value="connected">Connected</option>
+                          <option value="webhook_failed">Webhook failed</option>
+                          <option value="reconnect_required">Reconnect required</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <!-- State banner -->
+                    <template x-if="['invalid_creds','webhook_failed','reconnect_required'].includes(config.whatsapp.state)">
+                      <div class="mx-5 md:mx-6 mb-4 p-3 rounded-xl border border-rose-100 bg-rose-50 flex items-start gap-3">
+                        <span class="material-symbols-outlined text-rose-600 text-[20px]">error</span>
+                        <div class="text-sm text-rose-700">
+                          <p class="font-medium" x-text="whatsappBannerTitle"></p>
+                          <p class="text-rose-600/90 mt-0.5" x-text="whatsappBannerDesc"></p>
+                        </div>
+                      </div>
+                    </template>
+                    <template x-if="config.whatsapp.state === 'verification_pending'">
+                      <div class="mx-5 md:mx-6 mb-4 p-3 rounded-xl border border-amber-100 bg-amber-50 flex items-start gap-3">
+                        <span class="material-symbols-outlined text-amber-600 text-[20px]">schedule</span>
+                        <div class="text-sm text-amber-800">
+                          <p class="font-medium">Awaiting WhatsApp verification</p>
+                          <p class="text-amber-700/90 mt-0.5">Meta typically reviews business numbers within a few hours.</p>
+                        </div>
+                      </div>
+                    </template>
+
+                    <!-- Body: connected/setup -->
+                    <div class="px-5 md:px-6 pb-5 md:pb-6 grid grid-cols-1 lg:grid-cols-5 gap-6">
+                      <!-- Left: credentials form -->
+                      <div class="lg:col-span-3 space-y-4">
+                        <template x-if="config.whatsapp.state === 'disconnected'">
+                          <div class="rounded-2xl border border-dashed border-slate-200 bg-slate-50/60 p-6 text-center">
+                            <div class="w-11 h-11 rounded-full bg-white border border-slate-200 inline-flex items-center justify-center mx-auto text-slate-500"><span class="material-symbols-outlined">link_off</span></div>
+                            <p class="mt-3 font-medium text-slate-900 text-sm">WhatsApp is not connected</p>
+                            <p class="text-xs text-slate-500 max-w-xs mx-auto mt-1">Connect your WhatsApp Business number to send automated messages from the CRM.</p>
+                            <button @click="connectWhatsApp()" type="button" class="mt-4 inline-flex items-center gap-2 rounded-full bg-primary text-white px-5 py-2 text-sm font-medium hover:bg-primary-hover">
+                              <span class="material-symbols-outlined text-[18px]">link</span> Connect WhatsApp
+                            </button>
+                          </div>
+                        </template>
+
+                        <template x-if="config.whatsapp.state !== 'disconnected'">
+                          <div class="space-y-4">
+                            <div>
+                              <label class="text-xs font-medium text-slate-600">Business phone number</label>
+                              <div class="mt-1 relative">
+                                <input type="text" x-model="config.whatsapp.phone" :disabled="config.whatsapp.state==='connecting'" class="w-full rounded-xl border border-slate-200 bg-white pl-10 pr-3 py-2.5 text-sm text-slate-800 focus:border-primary focus:ring-1 focus:ring-primary disabled:bg-slate-50" />
+                                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">call</span>
+                              </div>
+                            </div>
+                            <div>
+                              <label class="text-xs font-medium text-slate-600">Webhook URL</label>
+                              <div class="mt-1 flex gap-2">
+                                <input readonly :value="config.whatsapp.webhook" class="cfg-mono-input flex-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-slate-700" />
+                                <button @click="copy(config.whatsapp.webhook, 'Webhook URL copied')" type="button" class="rounded-xl border border-slate-200 px-3 text-slate-600 hover:border-primary hover:text-primary" title="Copy"><span class="material-symbols-outlined text-[18px]">content_copy</span></button>
+                              </div>
+                            </div>
+                            <div>
+                              <label class="text-xs font-medium text-slate-600">API token</label>
+                              <div class="mt-1 flex gap-2">
+                                <input :type="config.whatsapp.showToken?'text':'password'" x-model="config.whatsapp.apiToken" class="cfg-mono-input flex-1 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-slate-800 focus:border-primary focus:ring-1 focus:ring-primary" />
+                                <button @click="config.whatsapp.showToken = !config.whatsapp.showToken" type="button" class="rounded-xl border border-slate-200 px-3 text-slate-600 hover:border-primary hover:text-primary" title="Toggle visibility"><span class="material-symbols-outlined text-[18px]" x-text="config.whatsapp.showToken?'visibility_off':'visibility'"></span></button>
+                              </div>
+                              <p class="mt-1.5 text-[11px] text-slate-500">Stored encrypted. Rotate every 90 days.</p>
+                            </div>
+
+                            <div class="flex flex-wrap items-center gap-2 pt-1">
+                              <button @click="sendWhatsAppTest()" type="button"
+                                :disabled="config.whatsapp.state!=='connected' || config.whatsapp.sendingTest"
+                                class="inline-flex items-center gap-2 rounded-full bg-primary text-white px-4 py-2 text-sm font-medium hover:bg-primary-hover disabled:bg-slate-300 disabled:cursor-not-allowed">
+                                <span x-show="!config.whatsapp.sendingTest" class="material-symbols-outlined text-[18px]">send</span>
+                                <span x-show="config.whatsapp.sendingTest" class="material-symbols-outlined text-[18px] cfg-spin">progress_activity</span>
+                                <span x-text="config.whatsapp.sendingTest ? 'Sending…' : 'Send test message'"></span>
+                              </button>
+                              <template x-if="['invalid_creds','reconnect_required','webhook_failed'].includes(config.whatsapp.state)">
+                                <button @click="connectWhatsApp()" type="button" class="inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm text-slate-700 hover:border-primary hover:text-primary"><span class="material-symbols-outlined text-[18px]">refresh</span> Retry connection</button>
+                              </template>
+                              <template x-if="['connected','verification_pending'].includes(config.whatsapp.state)">
+                                <button @click="disconnectWhatsApp()" type="button" class="inline-flex items-center gap-2 rounded-full border border-rose-200 text-rose-600 px-4 py-2 text-sm hover:bg-rose-50"><span class="material-symbols-outlined text-[18px]">link_off</span> Disconnect</button>
+                              </template>
+                            </div>
+
+                            <template x-if="config.whatsapp.testResult === 'success'">
+                              <div class="p-3 rounded-xl border border-emerald-100 bg-emerald-50 text-emerald-700 text-sm flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">check_circle</span> Test message delivered to +91 98765 43210.</div>
+                            </template>
+                            <template x-if="config.whatsapp.testResult === 'failed'">
+                              <div class="p-3 rounded-xl border border-rose-100 bg-rose-50 text-rose-700 text-sm flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">error</span> Couldn't deliver test message. Webhook may be unreachable.</div>
+                            </template>
+                          </div>
+                        </template>
+                      </div>
+
+                      <!-- Right: setup checklist -->
+                      <div class="lg:col-span-2 rounded-2xl bg-slate-50 border border-slate-100 p-4">
+                        <div class="flex items-center justify-between mb-3">
+                          <h4 class="text-sm font-semibold text-slate-900">Setup progress</h4>
+                          <span class="text-xs font-medium text-slate-500" x-text="config.whatsapp.completed.filter(Boolean).length + '/' + config.whatsapp.completed.length"></span>
+                        </div>
+                        <div class="h-1.5 rounded-full bg-white overflow-hidden mb-4">
+                          <div class="h-full bg-primary rounded-full transition-all" :style="`width: ${(config.whatsapp.completed.filter(Boolean).length/config.whatsapp.completed.length)*100}%`"></div>
+                        </div>
+                        <div class="space-y-1">
+                          <template x-for="(step, idx) in whatsappSteps" :key="idx">
+                            <div class="cfg-accordion-item rounded-xl bg-white border border-slate-100" :class="{'is-open': config.whatsapp.onboardingOpen === idx}">
+                              <button @click="config.whatsapp.onboardingOpen = config.whatsapp.onboardingOpen === idx ? -1 : idx" type="button" class="w-full flex items-center gap-3 px-3 py-2.5 text-left">
+                                <span class="cfg-step-num" :class="{'is-done': config.whatsapp.completed[idx]}">
+                                  <template x-if="config.whatsapp.completed[idx]"><span class="material-symbols-outlined text-[16px]">check</span></template>
+                                  <template x-if="!config.whatsapp.completed[idx]"><span x-text="idx+1"></span></template>
+                                </span>
+                                <span class="flex-1 text-xs font-medium text-slate-800" x-text="step.title"></span>
+                                <span class="material-symbols-outlined text-slate-400 text-[18px] cfg-accordion-chevron">expand_more</span>
+                              </button>
+                              <div x-show="config.whatsapp.onboardingOpen === idx" x-collapse class="px-3 pb-3 pl-12 text-xs text-slate-600" x-text="step.desc"></div>
+                            </div>
+                          </template>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </template>
+
+                <!-- ============================================ -->
+                <!-- 3. GOOGLE CALENDAR INTEGRATION               -->
+                <!-- ============================================ -->
+                <template x-if="config.settingsTab === 'calendar'">
+                  <div class="bg-white rounded-2xl shadow-card border border-slate-100 overflow-hidden">
+                    <div class="p-3 md:p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                      <div class="flex items-start gap-4 min-w-0">
+                        <div class="cfg-brand-tile is-calendar"><span class="material-symbols-outlined text-[24px]">calendar_month</span></div>
+                        <div class="min-w-0">
+                          <div class="flex items-center flex-wrap gap-2">
+                            <h3 class="font-semibold text-slate-900">Google Calendar</h3>
+                            <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold" :class="calendarBadgeClass">
+                              <span class="cfg-status-dot" :class="calendarDotClass" :style="`color:${calendarDotColor}`"></span>
+                              <span x-text="calendarStatusLabel"></span>
+                            </span>
+                          </div>
+                          <p class="mt-1 text-sm text-slate-500">Sync school visits and interview slots to your team's Google Calendar.</p>
+                        </div>
+                      </div>
+                      <div class="flex items-center gap-2 flex-shrink-0">
+                        <select x-model="config.calendar.state" class="rounded-full border border-slate-200 px-3 py-1.5 text-xs text-slate-700 bg-white focus:border-primary focus:ring-1 focus:ring-primary" title="Demo state">
+                          <option value="disconnected">Disconnected</option>
+                          <option value="oauth_loading">OAuth loading</option>
+                          <option value="syncing">Syncing</option>
+                          <option value="connected">Connected</option>
+                          <option value="permission_denied">Permission denied</option>
+                          <option value="token_expired">Token expired</option>
+                          <option value="reconnect_required">Reconnect required</option>
+                          <option value="sync_failed">Sync failed</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <!-- State banners -->
+                    <template x-if="['permission_denied','token_expired','reconnect_required','sync_failed'].includes(config.calendar.state)">
+                      <div class="mx-5 md:mx-6 mb-4 p-3 rounded-xl border border-rose-100 bg-rose-50 flex items-start gap-3">
+                        <span class="material-symbols-outlined text-rose-600 text-[20px]">error</span>
+                        <div class="text-sm text-rose-700 flex-1">
+                          <p class="font-medium" x-text="calendarBannerTitle"></p>
+                          <p class="text-rose-600/90 mt-0.5" x-text="calendarBannerDesc"></p>
+                        </div>
+                        <button @click="connectCalendar()" type="button" class="text-xs font-semibold text-rose-700 hover:text-rose-900 whitespace-nowrap">Reconnect</button>
+                      </div>
+                    </template>
+
+                    <div class="px-5 md:px-6 pb-5 md:pb-6 grid grid-cols-1 lg:grid-cols-5 gap-6">
+                      <!-- Left: account + controls -->
+                      <div class="lg:col-span-3 space-y-4">
+                        <template x-if="config.calendar.state === 'disconnected'">
+                          <div class="rounded-2xl border border-dashed border-slate-200 bg-slate-50/60 p-6 text-center">
+                            <div class="w-11 h-11 rounded-full bg-white border border-slate-200 inline-flex items-center justify-center mx-auto text-slate-500"><span class="material-symbols-outlined">event_busy</span></div>
+                            <p class="mt-3 font-medium text-slate-900 text-sm">Google Calendar isn't connected</p>
+                            <p class="text-xs text-slate-500 max-w-xs mx-auto mt-1">Connect a Google account to auto-create calendar events for school visits and interviews.</p>
+                            <button @click="connectCalendar()" type="button" class="mt-4 inline-flex items-center gap-2 rounded-full bg-primary text-white px-5 py-2 text-sm font-medium hover:bg-primary-hover">
+                              <span class="material-symbols-outlined text-[18px]">login</span> Connect Google account
+                            </button>
+                          </div>
+                        </template>
+
+                        <template x-if="config.calendar.state === 'oauth_loading'">
+                          <div class="rounded-2xl border border-slate-200 bg-white p-6 text-center">
+                            <span class="material-symbols-outlined text-primary text-[36px] cfg-spin">progress_activity</span>
+                            <p class="mt-2 font-medium text-slate-900 text-sm">Opening Google sign-in…</p>
+                            <p class="text-xs text-slate-500 mt-1">A popup window will ask you to grant permissions.</p>
+                          </div>
+                        </template>
+
+                        <template x-if="!['disconnected','oauth_loading'].includes(config.calendar.state)">
+                          <div class="space-y-4">
+                            <!-- Connected account preview -->
+                            <div class="rounded-2xl border border-slate-200 bg-white p-4 flex items-center gap-3">
+                              <div class="w-10 h-10 rounded-full bg-primary-soft text-primary flex items-center justify-center font-semibold text-sm">AO</div>
+                              <div class="min-w-0 flex-1">
+                                <p class="text-sm font-semibold text-slate-900 truncate" x-text="config.calendar.accountName"></p>
+                                <p class="text-xs text-slate-500 truncate" x-text="config.calendar.account"></p>
+                              </div>
+                              <span class="text-[11px] font-medium text-emerald-700 bg-emerald-50 px-2 py-1 rounded-full">Linked</span>
+                            </div>
+
+                            <!-- Sync toggle -->
+                            <div class="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50/60 px-4 py-3">
+                              <div>
+                                <p class="text-sm font-medium text-slate-900">Two-way calendar sync</p>
+                                <p class="text-xs text-slate-500">Push CRM events to Google and pull busy slots back.</p>
+                              </div>
+                              <div class="cfg-switch" :class="{'is-on': config.calendar.syncEnabled}" @click="config.calendar.syncEnabled = !config.calendar.syncEnabled" role="switch" :aria-checked="config.calendar.syncEnabled" tabindex="0"></div>
+                            </div>
+
+                            <!-- Calendar dropdown -->
+                            <div>
+                              <label class="text-xs font-medium text-slate-600">Target calendar</label>
+                              <select x-model="config.calendar.selectedCalendar" class="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 focus:border-primary focus:ring-1 focus:ring-primary">
+                                <option value="primary">Primary calendar — admissions@stmarys.edu.in</option>
+                                <option value="admissions">Admissions team</option>
+                                <option value="interviews">Teacher interviews</option>
+                                <option value="visits">Campus visits</option>
+                              </select>
+                            </div>
+
+                            <!-- Auto reminders -->
+                            <div class="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50/60 px-4 py-3">
+                              <div>
+                                <p class="text-sm font-medium text-slate-900">Auto reminders</p>
+                                <p class="text-xs text-slate-500">Email parents and candidates 24 hours and 1 hour before.</p>
+                              </div>
+                              <div class="cfg-switch" :class="{'is-on': config.calendar.autoReminder}" @click="config.calendar.autoReminder = !config.calendar.autoReminder" role="switch" :aria-checked="config.calendar.autoReminder" tabindex="0"></div>
+                            </div>
+
+                            <!-- Sync status + actions -->
+                            <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
+                              <div class="flex items-center gap-2 text-xs text-slate-600">
+                                <template x-if="config.calendar.state === 'syncing'">
+                                  <span class="inline-flex items-center gap-1.5 text-primary"><span class="material-symbols-outlined text-[16px] cfg-spin">sync</span> Syncing now…</span>
+                                </template>
+                                <template x-if="config.calendar.state === 'connected'">
+                                  <span class="inline-flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px] text-emerald-600">check_circle</span> Last synced <span x-text="config.calendar.lastSynced"></span></span>
+                                </template>
+                                <template x-if="config.calendar.state === 'sync_failed'">
+                                  <span class="inline-flex items-center gap-1.5 text-rose-700"><span class="material-symbols-outlined text-[16px]">error</span> Last sync failed</span>
+                                </template>
+                              </div>
+                              <div class="flex items-center gap-2">
+                                <button @click="syncCalendar()" :disabled="config.calendar.state==='syncing'" type="button" class="inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm text-slate-700 hover:border-primary hover:text-primary disabled:opacity-60"><span class="material-symbols-outlined text-[18px]" :class="{'cfg-spin': config.calendar.state==='syncing'}">sync</span> Sync now</button>
+                                <button @click="disconnectCalendar()" type="button" class="inline-flex items-center gap-2 rounded-full border border-rose-200 text-rose-600 px-4 py-2 text-sm hover:bg-rose-50"><span class="material-symbols-outlined text-[18px]">link_off</span> Disconnect</button>
+                              </div>
+                            </div>
+                          </div>
+                        </template>
+                      </div>
+
+                      <!-- Right: onboarding accordion -->
+                      <div class="lg:col-span-2 rounded-2xl bg-slate-50 border border-slate-100 p-4">
+                        <div class="flex items-center justify-between mb-3">
+                          <h4 class="text-sm font-semibold text-slate-900">Setup guide</h4>
+                          <span class="text-xs font-medium text-slate-500" x-text="config.calendar.completed.filter(Boolean).length + '/' + config.calendar.completed.length"></span>
+                        </div>
+                        <div class="h-1.5 rounded-full bg-white overflow-hidden mb-4">
+                          <div class="h-full bg-primary rounded-full transition-all" :style="`width: ${(config.calendar.completed.filter(Boolean).length/config.calendar.completed.length)*100}%`"></div>
+                        </div>
+                        <div class="space-y-1">
+                          <template x-for="(step, idx) in calendarSteps" :key="idx">
+                            <div class="cfg-accordion-item rounded-xl bg-white border border-slate-100" :class="{'is-open': config.calendar.onboardingOpen === idx}">
+                              <button @click="config.calendar.onboardingOpen = config.calendar.onboardingOpen === idx ? -1 : idx" type="button" class="w-full flex items-center gap-3 px-3 py-2.5 text-left">
+                                <span class="cfg-step-num" :class="{'is-done': config.calendar.completed[idx]}">
+                                  <template x-if="config.calendar.completed[idx]"><span class="material-symbols-outlined text-[16px]">check</span></template>
+                                  <template x-if="!config.calendar.completed[idx]"><span x-text="idx+1"></span></template>
+                                </span>
+                                <span class="flex-1 text-xs font-medium text-slate-800" x-text="step.title"></span>
+                                <span class="material-symbols-outlined text-slate-400 text-[18px] cfg-accordion-chevron">expand_more</span>
+                              </button>
+                              <div x-show="config.calendar.onboardingOpen === idx" x-collapse class="px-3 pb-3 pl-12 text-xs text-slate-600" x-text="step.desc"></div>
+                            </div>
+                          </template>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </template>
+
+                <!-- ============================================ -->
+                <!-- 4. GOOGLE MEET CONFIGURATION                 -->
+                <!-- ============================================ -->
+                <template x-if="config.settingsTab === 'meet'">
+                  <div class="bg-white rounded-2xl shadow-card border border-slate-100 overflow-hidden">
+                    <div class="p-3 md:p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                      <div class="flex items-start gap-4 min-w-0">
+                        <div class="cfg-brand-tile is-meet"><span class="material-symbols-outlined text-[24px]">videocam</span></div>
+                        <div class="min-w-0">
+                          <div class="flex items-center flex-wrap gap-2">
+                            <h3 class="font-semibold text-slate-900">Google Meet</h3>
+                            <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold" :class="meetBadgeClass">
+                              <span class="cfg-status-dot" :class="meetDotClass" :style="`color:${meetDotColor}`"></span>
+                              <span x-text="meetStatusLabel"></span>
+                            </span>
+                          </div>
+                          <p class="mt-1 text-sm text-slate-500">Auto-create Meet links for online interviews and demo classes.</p>
+                        </div>
+                      </div>
+                      <div class="flex items-center gap-2 flex-shrink-0">
+                        <select x-model="config.meet.state" class="rounded-full border border-slate-200 px-3 py-1.5 text-xs text-slate-700 bg-white focus:border-primary focus:ring-1 focus:ring-primary" title="Demo state">
+                          <option value="available">Available</option>
+                          <option value="generating">Generating link</option>
+                          <option value="generation_failed">Generation failed</option>
+                          <option value="calendar_disconnected">Calendar disconnected</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <!-- Dependency banner -->
+                    <template x-if="config.meet.state === 'calendar_disconnected' || ['disconnected','token_expired','reconnect_required','permission_denied'].includes(config.calendar.state)">
+                      <div class="mx-5 md:mx-6 mb-4 p-3 rounded-xl border border-amber-100 bg-amber-50 flex items-start gap-3">
+                        <span class="material-symbols-outlined text-amber-600 text-[20px]">info</span>
+                        <div class="text-sm text-amber-800 flex-1">
+                          <p class="font-medium">Google Calendar required</p>
+                          <p class="text-amber-700/90 mt-0.5">Meet links are generated through your linked Google Calendar. Connect it first.</p>
+                        </div>
+                      </div>
+                    </template>
+
+                    <div class="px-5 md:px-6 pb-5 md:pb-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+                      <!-- Left: settings -->
+                      <div class="space-y-4">
+                        <div class="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50/60 px-4 py-3">
+                          <div>
+                            <p class="text-sm font-medium text-slate-900">Auto-generate Meet links</p>
+                            <p class="text-xs text-slate-500">When an online interview or demo is scheduled.</p>
+                          </div>
+                          <div class="cfg-switch" :class="{'is-on': config.meet.autoGenerate, 'is-disabled': meetDisabled}" @click="!meetDisabled && (config.meet.autoGenerate = !config.meet.autoGenerate)" role="switch" :aria-checked="config.meet.autoGenerate" tabindex="0"></div>
+                        </div>
+
+                        <div>
+                          <label class="text-xs font-medium text-slate-600">Default meeting duration</label>
+                          <select x-model.number="config.meet.defaultDuration" :disabled="meetDisabled" class="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 focus:border-primary focus:ring-1 focus:ring-primary disabled:bg-slate-50">
+                            <option :value="15">15 minutes</option>
+                            <option :value="30">30 minutes</option>
+                            <option :value="45">45 minutes</option>
+                            <option :value="60">1 hour</option>
+                            <option :value="90">1 hour 30 minutes</option>
+                          </select>
+                        </div>
+
+                        <div>
+                          <label class="text-xs font-medium text-slate-600">Apply to interview type</label>
+                          <select x-model="config.meet.interviewType" :disabled="meetDisabled" class="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 focus:border-primary focus:ring-1 focus:ring-primary disabled:bg-slate-50">
+                            <option value="all">All interviews</option>
+                            <option value="phone">Phone screening only</option>
+                            <option value="panel">Panel interviews</option>
+                            <option value="demo">Demo classes</option>
+                          </select>
+                        </div>
+
+                        <button @click="generateMeetLink()" :disabled="meetDisabled || config.meet.state==='generating'" type="button" class="inline-flex items-center gap-2 rounded-full bg-primary text-white px-4 py-2 text-sm font-medium hover:bg-primary-hover disabled:bg-slate-300 disabled:cursor-not-allowed">
+                          <span x-show="config.meet.state!=='generating'" class="material-symbols-outlined text-[18px]">add_link</span>
+                          <span x-show="config.meet.state==='generating'" class="material-symbols-outlined text-[18px] cfg-spin">progress_activity</span>
+                          <span x-text="config.meet.state==='generating' ? 'Generating…' : 'Generate sample link'"></span>
+                        </button>
+
+                        <template x-if="config.meet.state === 'generation_failed'">
+                          <div class="p-3 rounded-xl border border-rose-100 bg-rose-50 text-rose-700 text-sm flex items-start gap-2"><span class="material-symbols-outlined text-[18px]">error</span><span>Couldn't generate Meet link. Google Calendar may have revoked access — try reconnecting.</span></div>
+                        </template>
+                      </div>
+
+                      <!-- Right: generated meeting preview -->
+                      <div>
+                        <div class="rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-4">
+                          <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                              <span class="material-symbols-outlined text-[16px] text-emerald-600">videocam</span> Sample meeting
+                            </div>
+                            <span class="text-[11px] text-slate-500" x-text="config.meet.defaultDuration + ' min'"></span>
+                          </div>
+                          <p class="mt-3 text-sm font-semibold text-slate-900">Demo class · Aditi Rao (English Lit.)</p>
+                          <p class="text-xs text-slate-500">Tomorrow, 11:00 AM IST</p>
+
+                          <div class="mt-4 flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2">
+                            <span class="material-symbols-outlined text-emerald-600 text-[18px]">link</span>
+                            <input readonly :value="config.meet.generatedLink" class="cfg-mono-input flex-1 bg-transparent text-slate-700 outline-none" />
+                            <button @click="copyMeetLink()" :disabled="meetDisabled" type="button" class="text-xs font-semibold text-primary hover:text-primary-hover disabled:text-slate-400" x-text="config.meet.copied ? 'Copied' : 'Copy'"></button>
+                          </div>
+
+                          <p class="mt-4 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Attendees</p>
+                          <div class="mt-2 flex items-center gap-2">
+                            <div class="flex -space-x-2">
+                              <div class="w-7 h-7 rounded-full bg-pink-500 text-white text-[10px] font-semibold flex items-center justify-center border-2 border-white">AR</div>
+                              <div class="w-7 h-7 rounded-full bg-blue-500 text-white text-[10px] font-semibold flex items-center justify-center border-2 border-white">MK</div>
+                              <div class="w-7 h-7 rounded-full bg-emerald-500 text-white text-[10px] font-semibold flex items-center justify-center border-2 border-white">SP</div>
+                            </div>
+                            <span class="text-xs text-slate-600">Aditi Rao, Meera Kumar, Principal Sharma</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </template>
+
+                <!-- ============================================ -->
+                <!-- 5. NOTIFICATION PREFERENCES                  -->
+                <!-- ============================================ -->
+                <template x-if="config.settingsTab === 'notifications'">
+                  <div class="bg-white rounded-2xl shadow-card border border-slate-100 overflow-hidden">
+                    <div class="p-3 md:p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                      <div class="flex items-start gap-4 min-w-0">
+                        <div class="cfg-brand-tile is-notif"><span class="material-symbols-outlined text-[24px]">notifications_active</span></div>
+                        <div class="min-w-0">
+                          <h3 class="font-semibold text-slate-900">Notification preferences</h3>
+                          <p class="mt-1 text-sm text-slate-500">Choose which channels deliver which event notifications to parents, candidates, and staff.</p>
+                        </div>
+                      </div>
+                      <div class="flex items-center gap-2 flex-shrink-0">
+                        <select x-model="config.notifications.state" class="rounded-full border border-slate-200 px-3 py-1.5 text-xs text-slate-700 bg-white focus:border-primary focus:ring-1 focus:ring-primary" title="Demo state">
+                          <option value="idle">Idle</option>
+                          <option value="saving">Saving</option>
+                          <option value="saved">Saved</option>
+                          <option value="save_failed">Save failed</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div class="px-5 md:px-6 pb-5 md:pb-6 space-y-5">
+                      <!-- Channel toggles -->
+                      <div>
+                        <h4 class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Channels</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                          <template x-for="ch in notificationChannels" :key="ch.id">
+                            <div class="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50/60 px-4 py-3">
+                              <div class="flex items-center gap-2 min-w-0">
+                                <span class="material-symbols-outlined text-[20px] text-slate-500" x-text="ch.icon"></span>
+                                <div class="min-w-0">
+                                  <p class="text-sm font-medium text-slate-900 truncate" x-text="ch.label"></p>
+                                  <template x-if="ch.id==='whatsapp' && config.whatsapp.state !== 'connected'">
+                                    <p class="text-[11px] text-amber-700">WhatsApp not connected</p>
+                                  </template>
+                                </div>
+                              </div>
+                              <div class="cfg-switch" :class="{'is-on': config.notifications.channels[ch.id], 'is-disabled': ch.id==='whatsapp' && config.whatsapp.state !== 'connected'}" @click="toggleNotifChannel(ch.id)" role="switch" :aria-checked="config.notifications.channels[ch.id]" tabindex="0"></div>
+                            </div>
+                          </template>
+                        </div>
+                      </div>
+
+                      <!-- Event matrix -->
+                      <div>
+                        <h4 class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Events</h4>
+                        <div class="overflow-x-auto -mx-5 md:-mx-6 px-5 md:px-6">
+                          <table class="w-full text-sm">
+                            <thead>
+                              <tr class="text-left text-xs font-semibold text-slate-500 uppercase tracking-wider border-b border-slate-100">
+                                <th class="py-2.5 pr-3 font-semibold">Event</th>
+                                <th class="py-2.5 px-2 text-center font-semibold">WhatsApp</th>
+                                <th class="py-2.5 px-2 text-center font-semibold">SMS</th>
+                                <th class="py-2.5 px-2 text-center font-semibold">Email</th>
+                                <th class="py-2.5 px-2 text-center font-semibold">Calendar</th>
+                              </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                              <template x-for="ev in notificationEvents" :key="ev.id">
+                                <tr>
+                                  <td class="py-3 pr-3">
+                                    <p class="text-sm font-medium text-slate-900" x-text="ev.label"></p>
+                                    <p class="text-xs text-slate-500" x-text="ev.desc"></p>
+                                  </td>
+                                  <template x-for="ch in ['whatsapp','sms','email','calendar']" :key="ch">
+                                    <td class="py-3 px-2 text-center">
+                                      <div class="cfg-switch mx-auto" :class="{'is-on': config.notifications.events[ev.id][ch] && config.notifications.channels[ch], 'is-disabled': !config.notifications.channels[ch] || (ch==='whatsapp' && config.whatsapp.state!=='connected')}" @click="toggleNotifEvent(ev.id, ch)" role="switch" tabindex="0"></div>
+                                    </td>
+                                  </template>
+                                </tr>
+                              </template>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+
+                      <!-- Save bar -->
+                      <div class="cfg-sticky-save rounded-2xl px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 -mx-1 mt-2">
+                        <div class="flex items-center gap-2 text-sm">
+                          <template x-if="config.notifications.dirty && config.notifications.state!=='saving'">
+                            <span class="inline-flex items-center gap-1.5 text-amber-700"><span class="material-symbols-outlined text-[18px]">edit_note</span> Unsaved changes</span>
+                          </template>
+                          <template x-if="config.notifications.state==='saving'">
+                            <span class="inline-flex items-center gap-1.5 text-primary"><span class="material-symbols-outlined text-[18px] cfg-spin">progress_activity</span> Saving preferences…</span>
+                          </template>
+                          <template x-if="config.notifications.state==='saved' && !config.notifications.dirty">
+                            <span class="inline-flex items-center gap-1.5 text-emerald-700"><span class="material-symbols-outlined text-[18px]">check_circle</span> All changes saved</span>
+                          </template>
+                          <template x-if="config.notifications.state==='save_failed'">
+                            <span class="inline-flex items-center gap-1.5 text-rose-700"><span class="material-symbols-outlined text-[18px]">error</span> Save failed — check your connection and retry</span>
+                          </template>
+                          <template x-if="!config.notifications.dirty && config.notifications.state==='idle'">
+                            <span class="text-slate-500">No changes</span>
+                          </template>
+                        </div>
+                        <div class="flex items-center gap-2">
+                          <button @click="resetNotifications()" :disabled="!config.notifications.dirty || config.notifications.state==='saving'" type="button" class="rounded-full border border-slate-200 px-4 py-2 text-sm text-slate-700 hover:border-slate-300 disabled:opacity-50 disabled:cursor-not-allowed">Discard</button>
+                          <button @click="saveNotifications()" :disabled="!config.notifications.dirty || config.notifications.state==='saving'" type="button" class="inline-flex items-center gap-2 rounded-full bg-primary text-white px-5 py-2 text-sm font-medium hover:bg-primary-hover disabled:bg-slate-300 disabled:cursor-not-allowed">
+                            <span x-show="config.notifications.state==='saving'" class="material-symbols-outlined text-[18px] cfg-spin">progress_activity</span>
+                            <span x-text="config.notifications.state==='saving' ? 'Saving…' : 'Save preferences'"></span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </template>
+
+                <!-- ============================================ -->
+                <!-- 6. ACTIVITY LOGS                             -->
+                <!-- ============================================ -->
+                <template x-if="config.settingsTab === 'logs'">
+                  <div class="bg-white rounded-2xl shadow-card border border-slate-100 overflow-hidden">
+                    <div class="p-3 md:p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-100">
+                      <div class="flex items-start gap-4 min-w-0">
+                        <div class="cfg-brand-tile is-logs"><span class="material-symbols-outlined text-[24px]">history</span></div>
+                        <div class="min-w-0">
+                          <h3 class="font-semibold text-slate-900">Activity logs</h3>
+                          <p class="mt-1 text-sm text-slate-500">Recent integration events. Useful when debugging webhooks or token issues.</p>
+                        </div>
+                      </div>
+                      <div class="flex items-center gap-2 flex-shrink-0">
+                        <select x-model="config.activityLogs.state" @change="config.activityLogs.state==='loading' && reloadLogs()" class="rounded-full border border-slate-200 px-3 py-1.5 text-xs text-slate-700 bg-white focus:border-primary focus:ring-1 focus:ring-primary" title="Demo state">
+                          <option value="loaded">Loaded</option>
+                          <option value="loading">Loading</option>
+                          <option value="empty">Empty</option>
+                          <option value="failed">Failed to load</option>
+                        </select>
+                        <button @click="reloadLogs()" type="button" class="inline-flex items-center gap-2 rounded-full border border-slate-200 px-3 py-1.5 text-xs text-slate-700 hover:border-primary hover:text-primary"><span class="material-symbols-outlined text-[16px]">refresh</span> Refresh</button>
+                      </div>
+                    </div>
+
+                    <!-- Loading state -->
+                    <template x-if="config.activityLogs.state === 'loading'">
+                      <div class="p-3 md:p-4 space-y-3">
+                        <template x-for="i in 4" :key="i">
+                          <div class="flex items-center gap-3">
+                            <div class="cfg-skel w-9 h-9 rounded-full"></div>
+                            <div class="flex-1 space-y-2">
+                              <div class="cfg-skel h-3 w-1/3"></div>
+                              <div class="cfg-skel h-3 w-1/5"></div>
+                            </div>
+                            <div class="cfg-skel h-3 w-16"></div>
+                          </div>
+                        </template>
+                      </div>
+                    </template>
+
+                    <!-- Empty state -->
+                    <template x-if="config.activityLogs.state === 'empty'">
+                      <div class="p-8 text-center">
+                        <div class="w-12 h-12 rounded-full bg-slate-50 text-slate-400 inline-flex items-center justify-center mx-auto"><span class="material-symbols-outlined">inbox</span></div>
+                        <p class="mt-3 font-medium text-slate-900 text-sm">No activity yet</p>
+                        <p class="text-xs text-slate-500 mt-1 max-w-xs mx-auto">Integration events will appear here once your connections start syncing.</p>
+                      </div>
+                    </template>
+
+                    <!-- Failed state -->
+                    <template x-if="config.activityLogs.state === 'failed'">
+                      <div class="p-8 text-center">
+                        <div class="w-12 h-12 rounded-full bg-rose-50 text-rose-600 inline-flex items-center justify-center mx-auto"><span class="material-symbols-outlined">cloud_off</span></div>
+                        <p class="mt-3 font-medium text-slate-900 text-sm">Couldn't load activity logs</p>
+                        <p class="text-xs text-slate-500 mt-1">Please try again in a moment.</p>
+                        <button @click="reloadLogs()" type="button" class="mt-4 inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm text-slate-700 hover:border-primary hover:text-primary"><span class="material-symbols-outlined text-[18px]">refresh</span> Retry</button>
+                      </div>
+                    </template>
+
+                    <!-- Loaded state -->
+                    <template x-if="config.activityLogs.state === 'loaded'">
+                      <div class="divide-y divide-slate-100">
+                        <template x-for="log in config.activityLogs.items" :key="log.id">
+                          <div class="flex items-start gap-3 px-5 md:px-6 py-3.5">
+                            <div class="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0" :class="logIconBg(log.severity)">
+                              <span class="material-symbols-outlined text-[18px]" :class="logIconColor(log.severity)" x-text="log.icon"></span>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                              <div class="flex items-center flex-wrap gap-2">
+                                <p class="text-sm font-medium text-slate-900" x-text="log.title"></p>
+                                <span class="text-[11px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded" :class="logBadgeClass(log.severity)" x-text="log.severity"></span>
+                              </div>
+                              <p class="text-xs text-slate-500 mt-0.5" x-text="log.desc"></p>
+                            </div>
+                            <span class="text-[11px] text-slate-400 whitespace-nowrap" x-text="log.time"></span>
+                          </div>
+                        </template>
+                      </div>
+                    </template>
+                  </div>
+                </template>
+                    </div>
+                  </div>
+                </template>
+              </div>
+            </div>
+          </template>
+        </div>
+      </section>
+    </main>
+    <div data-shell="chrome-inner"></div>
+  </div>
+  <div data-shell="chrome-outer"></div>
+
+  <script src="../../lib/navigation.js"></script>
+  <script src="../../lib/store.js"></script>
+  <script src="../../lib/charts.js"></script>
+  <script src="../../components/Sidebar.js"></script>
+  <script src="../../components/TopNav.js"></script>
+  <script src="../../components/MobileNav.js"></script>
+  <script src="../../components/HamburgerMenu.js"></script>
+  <script src="../../components/Toast.js"></script>
+  <script src="../../components/RouteLoader.js"></script>
+  <script src="../../components/AppShell.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</body>
+</html>

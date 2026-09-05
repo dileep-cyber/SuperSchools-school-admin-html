@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Super School &middot; SuperSchools Console</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="../../styles/tailwind-config.js"></script>
+  <link rel="stylesheet" href="../../styles/dashboard.css" />
+</head>
+<body class="bg-slate-200 text-slate-900 min-h-screen" x-data="schoolConsole({ module: 'school', sub: 'school' })">
+  <div id="routeLoader" class="route-loader" role="status" aria-live="polite" aria-label="Loading">
+    <div class="route-loader__box"><div class="route-loader__spinner"></div><div class="route-loader__text">Loading&hellip;</div></div>
+  </div>
+  <div class="ss-app min-h-screen h-screen w-full flex bg-mobile-background md:bg-background relative">
+    <div data-shell="sidebar"></div>
+    <main class="flex-1 flex flex-col overflow-hidden bg-mobile-background md:bg-background">
+      <div data-shell="header"></div>
+      <section class="flex-1 custom-scrollbar overflow-y-auto" :class="isFullScreenPage ? 'pb-0' : 'pb-20 md:pb-0'">
+        <div class="w-full" :class="isFullScreenPage ? 'min-h-full px-5 py-4 md:px-10 md:py-5 lg:px-[56px]' : 'px-5 py-5 md:px-10 md:py-6 lg:px-[56px] lg:py-8'">
+          <div x-show="!isFullScreenPage" class="lg:hidden mb-4 relative">
+            <input class="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-2xl text-sm focus:ring-primary focus:border-primary text-slate-700 shadow-sm" placeholder="Search" type="text" x-model="search" />
+            <span class="material-icons-outlined absolute left-3 text-slate-400 text-lg top-1/2 -translate-y-1/2">search</span>
+          </div>
+          <template x-if="activePage === 'school'">
+            <div class="space-y-6">
+              <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
+                <div class="lg:col-span-2 bg-white rounded-2xl shadow-card border border-slate-100 p-5 md:p-6">
+                  <div class="flex items-start justify-between gap-4">
+                    <div>
+                      <p class="text-sm font-medium text-primary">School profile</p>
+                      <h2 class="mt-1 text-2xl font-semibold text-slate-900">Green Valley International School</h2>
+                      <p class="mt-2 text-sm text-slate-500 max-w-2xl">CBSE school profile, admissions demand, hiring status, and profile completeness in one operating view.</p>
+                    </div>
+                    <div class="hidden sm:flex w-14 h-14 rounded-2xl bg-primary-soft items-center justify-center text-primary">
+                      <span class="material-symbols-outlined text-3xl">apartment</span>
+                    </div>
+                  </div>
+                  <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-6">
+                    <template x-for="stat in schoolStats" :key="stat.label">
+                      <div class="rounded-2xl bg-slate-50 border border-slate-100 p-4">
+                        <p class="text-2xl font-semibold text-slate-900" x-text="stat.value"></p>
+                        <p class="text-xs text-slate-500 mt-1" x-text="stat.label"></p>
+                      </div>
+                    </template>
+                  </div>
+                </div>
+                <div class="bg-white rounded-2xl shadow-card border border-slate-100 p-5 md:p-6">
+                  <div class="flex items-center justify-between">
+                    <h3 class="font-semibold text-slate-900">Profile strength</h3>
+                    <span class="text-sm font-semibold text-primary">82%</span>
+                  </div>
+                  <div class="mt-4 h-2 rounded-full bg-slate-100 overflow-hidden"><div class="h-full w-[82%] bg-primary rounded-full"></div></div>
+                  <ul class="mt-5 space-y-3 text-sm text-slate-600">
+                    <li class="flex items-center gap-2"><span class="material-symbols-outlined text-primary text-[20px]">check_circle</span> Photos added</li>
+                    <li class="flex items-center gap-2"><span class="material-symbols-outlined text-primary text-[20px]">check_circle</span> Fee range verified</li>
+                    <li class="flex items-center gap-2"><span class="material-symbols-outlined text-amber-500 text-[20px]">pending</span> Transport details pending</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 lg:gap-6">
+                <div class="bg-white rounded-2xl shadow-card border border-slate-100 p-5">
+                  <h3 class="font-semibold text-slate-900 mb-4">Today’s operating checklist</h3>
+                  <div class="space-y-3">
+                    <template x-for="task in schoolTasks" :key="task">
+                      <div class="flex items-center justify-between rounded-xl border border-slate-100 p-3">
+                        <span class="text-sm text-slate-700" x-text="task"></span>
+                        <span class="material-symbols-outlined text-slate-400 text-[20px]">chevron_right</span>
+                      </div>
+                    </template>
+                  </div>
+                </div>
+                <div class="bg-white rounded-2xl shadow-card border border-slate-100 p-5">
+                  <h3 class="font-semibold text-slate-900 mb-4">Recent school activity</h3>
+                  <div class="space-y-4">
+                    <template x-for="activity in activities" :key="activity.title">
+                      <div class="flex gap-3">
+                        <div class="w-9 h-9 rounded-full bg-primary/10 text-primary flex items-center justify-center flex-shrink-0"><span class="material-symbols-outlined text-[20px]" x-text="activity.icon"></span></div>
+                        <div><p class="text-sm font-medium text-slate-800" x-text="activity.title"></p><p class="text-xs text-slate-500" x-text="activity.time"></p></div>
+                      </div>
+                    </template>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </template>
+        </div>
+      </section>
+    </main>
+    <div data-shell="chrome-inner"></div>
+  </div>
+  <div data-shell="chrome-outer"></div>
+
+  <script src="../../lib/navigation.js"></script>
+  <script src="../../lib/store.js"></script>
+  <script src="../../lib/charts.js"></script>
+  <script src="../../components/Sidebar.js"></script>
+  <script src="../../components/TopNav.js"></script>
+  <script src="../../components/MobileNav.js"></script>
+  <script src="../../components/HamburgerMenu.js"></script>
+  <script src="../../components/Toast.js"></script>
+  <script src="../../components/RouteLoader.js"></script>
+  <script src="../../components/AppShell.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</body>
+</html>

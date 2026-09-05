@@ -1,0 +1,1525 @@
+<!DOCTYPE html>
+<!-- Standalone Visit Module extracted from the Super CRM project. Other console pages, side menu, and global CRM HTML were removed. -->
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Visit Module — Super CRM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = { theme: { extend: { fontFamily: { sans:['Plus Jakarta Sans','system-ui','sans-serif'], display:['Fraunces','Georgia','serif'], mono:['JetBrains Mono','ui-monospace','monospace'] }, colors: { brand: { DEFAULT:'#284CA5', 50:'#EEF2FB', 100:'#DCE4F6', 200:'#B9C8EA', 300:'#8AA1D6', 600:'#284CA5', 700:'#1F3C84' } } } } };
+  </script>
+  <style>
+    body { font-family:var(--font-body); font-size:16px; font-weight:400; color:#0F172A; }
+    h1,h2,h3,.visit-section-heading,.font-display{ font-family:var(--font-display); letter-spacing:-0.012em; }
+    [x-cloak]{ display:none !important; }
+    .material-symbols-outlined{ font-variation-settings:'wght' 500; }
+    *:focus-visible{ outline:2px solid #284CA5; outline-offset:2px; border-radius:8px; }
+    .scroll-clean::-webkit-scrollbar{ height:7px;width:7px } .scroll-clean::-webkit-scrollbar-thumb{ background:#cbd5e1;border-radius:10px } .scroll-clean::-webkit-scrollbar-track{ background:transparent }
+    .app-bg{ background:radial-gradient(1100px 460px at 50% -160px,rgba(40,76,165,.10),transparent 62%),linear-gradient(180deg,#F5F7FC 0%,#EEF1F8 55%,#F6F8FC 100%); background-attachment:fixed; }
+    .premium-card{ background:#fff; border:1px solid #E8EDF5; border-radius:18px; box-shadow:0 1px 2px rgba(16,24,40,.04); }
+    .metric-card{ background:#fff; border:1px solid #E8EDF5; border-radius:16px; box-shadow:0 1px 2px rgba(16,24,40,.04); }
+    .soft-shadow{ box-shadow:0 6px 22px -10px rgba(16,24,40,.12),0 2px 6px -3px rgba(16,24,40,.06); }
+    .card-hover{ transition:box-shadow .2s,border-color .2s,transform .2s; }
+    .card-hover:hover{ box-shadow:0 10px 28px -12px rgba(16,24,40,.18),0 3px 8px -4px rgba(16,24,40,.08); }
+    .glass-bar{ background:rgba(255,255,255,.82); backdrop-filter:blur(14px) saturate(140%); -webkit-backdrop-filter:blur(14px) saturate(140%); }
+    .dock-shadow{ box-shadow:0 -8px 28px -12px rgba(16,24,40,.16); }
+    .status-pill{ display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:700; line-height:1; border-radius:999px; padding:4px 9px; white-space:nowrap; }
+    .num{ font-variant-numeric:tabular-nums; }
+    .wrap-any{ overflow-wrap:anywhere; }
+    .btn{ display:inline-flex; align-items:center; justify-content:center; gap:7px; min-height:42px; padding:0 16px; border-radius:12px; font-size:13px; font-weight:700; transition:.15s; flex-shrink:0; }
+    .btn-primary{ background:#284CA5; color:#fff; box-shadow:0 1px 2px rgba(40,76,165,.45),0 6px 16px -6px rgba(40,76,165,.5); }
+    .btn-primary:hover:not(:disabled){ background:#1F3C84; }
+    .btn-secondary{ background:#fff; color:#334155; border:1px solid #E2E8F0; box-shadow:0 1px 2px rgba(16,24,40,.04); }
+    .btn-secondary:hover:not(:disabled){ background:#F8FAFC; border-color:#CBD5E1; }
+    .btn-danger{ background:#DC2626; color:#fff; box-shadow:none; }
+    .btn-danger:hover:not(:disabled){ background:#B91C1C; }
+    .btn-wa{ background:#16A34A; color:#fff; }
+    .btn-wa:hover:not(:disabled){ background:#15803D; }
+    .btn:disabled{ opacity:.45; cursor:not-allowed; box-shadow:none; }
+    .chip-btn{ display:inline-flex; align-items:center; gap:6px; min-height:36px; padding:0 11px; border-radius:10px; font-size:12px; font-weight:700; color:#334155; background:#fff; border:1px solid #E2E8F0; transition:.14s; white-space:nowrap; }
+    .chip-btn:hover{ border-color:#284CA5; color:#284CA5; background:#F6F9FF; }
+    .chip-btn:disabled{ opacity:.4; cursor:not-allowed; }
+    .seg{ display:inline-flex; align-items:center; min-height:38px; padding:0 14px; font-size:12.5px; font-weight:700; color:#475569; background:#fff; white-space:nowrap; transition:.12s; cursor:pointer; }
+    .seg:hover{ background:#F1F5F9; color:#284CA5; }
+    .seg-on{ background:#284CA5; color:#fff; } .seg-on:hover{ background:#1F3C84; color:#fff; }
+    .fpill{ display:inline-flex; align-items:center; gap:5px; min-height:34px; padding:0 12px; border-radius:999px; font-size:12px; font-weight:700; color:#475569; background:#fff; border:1px solid #E2E8F0; transition:.12s; cursor:pointer; white-space:nowrap; }
+    .fpill:hover{ border-color:#B9C8EA; color:#284CA5; }
+    .fpill-on{ background:#EEF2FB; border-color:#B9C8EA; color:#284CA5; }
+    .navbtn{ width:36px; height:36px; border-radius:11px; border:1px solid #E2E8F0; display:inline-flex; align-items:center; justify-content:center; color:#475569; background:#fff; transition:.12s; }
+    .navbtn:hover{ border-color:#284CA5; color:#284CA5; background:#F6F9FF; }
+    .iconbtn{ width:36px; height:36px; border-radius:10px; display:inline-flex; align-items:center; justify-content:center; transition:.12s; flex-shrink:0; }
+    .field{ width:100%; border-radius:11px; border:1px solid #E2E8F0; padding:9px 12px; font-size:14px; font-weight:500; color:#0F172A; background:#fff; }
+    .field:focus{ outline:none; border-color:#284CA5; box-shadow:0 0 0 3px rgba(40,76,165,.12); }
+    .flabel{ font-size:11px; font-weight:700; color:#64748B; text-transform:uppercase; letter-spacing:.06em; margin-bottom:5px; display:block; }
+    .ev-chip{ border-radius:6px; padding:3px 7px; font-size:11px; font-weight:700; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; cursor:pointer; transition:opacity .12s,box-shadow .12s; display:block; width:100%; text-align:left; }
+    .ev-chip:hover{ opacity:.85; box-shadow:0 2px 6px rgba(0,0,0,.14); }
+    .blocked-stripe{ background-image:repeating-linear-gradient(45deg,transparent,transparent 4px,rgba(148,163,184,.14) 4px,rgba(148,163,184,.14) 8px); }
+    .modal-card{ background:#fff; border-radius:20px; box-shadow:0 24px 60px -20px rgba(16,24,40,.4); }
+    .new-booking-overlay{ align-items:flex-end !important; justify-content:center !important; padding:0 !important; }
+    .new-booking-sheet{ width:100%; max-height:calc(100dvh - 18px); border-radius:24px 24px 0 0 !important; overflow:hidden; display:flex; flex-direction:column; box-shadow:0 -18px 54px -22px rgba(15,23,42,.46); }
+    .new-booking-sheet__handle{ width:42px; height:4px; border-radius:999px; background:#CBD5E1; margin:10px auto 6px; flex-shrink:0; }
+    .new-booking-sheet__body{ overflow-y:auto; -webkit-overflow-scrolling:touch; }
+    @media (min-width:1024px){
+      .new-booking-overlay{ align-items:center !important; padding:1rem !important; }
+      .new-booking-sheet{ max-width:36rem; max-height:92vh; border-radius:20px !important; box-shadow:0 24px 60px -20px rgba(16,24,40,.4); }
+      .new-booking-sheet__handle{ display:none; }
+    }
+    .print-schedule{ display:none; }
+    @media (prefers-reduced-motion: reduce){ *,*::before,*::after{ transition-duration:.01ms !important; animation-duration:.01ms !important; scroll-behavior:auto !important; } }
+    @media print{
+      header, .no-print, .glass-bar, .dock-shadow, .modal-back { display:none !important; }
+      .print-schedule{ display:block !important; }
+      body{ background:#fff; font-size:12px; }
+      .print-header{ margin-bottom:16px; } .print-header h1{ font-size:18px; font-weight:800; } .print-header p{ color:#475569; }
+      table{ width:100%; border-collapse:collapse; }
+      th{ background:#F1F5F9; font-weight:700; padding:8px; text-align:left; border:1px solid #E2E8F0; font-size:11px; }
+      td{ padding:8px; border:1px solid #E2E8F0; font-size:11px; }
+      tr.completed td{ color:#15803D; } tr.no_show td{ color:#9A3412; } tr.cancelled td{ color:#94A3B8; text-decoration:line-through; }
+    }
+  
+    /* ---- slots: toggles, steppers, checkboxes ---- */
+    .switch   { position:relative; width:44px; height:26px; border-radius:999px; background:#CBD5E1; transition:.18s; flex-shrink:0; cursor:pointer; }
+    .switch.on{ background:#284CA5; box-shadow:0 1px 4px rgba(40,76,165,.4); }
+    .switch::after { content:''; position:absolute; top:3px; left:3px; width:20px; height:20px; border-radius:50%; background:#fff; transition:.18s; box-shadow:0 1px 2px rgba(0,0,0,.25); }
+    .switch.on::after { transform:translateX(18px); }
+    .step         { display:inline-flex; align-items:center; border:1px solid #E2E8F0; border-radius:11px; overflow:hidden; background:#fff; height:36px; flex-shrink:0; box-shadow:0 1px 2px rgba(16,24,40,.04); }
+    .step button  { width:36px; height:100%; display:flex; align-items:center; justify-content:center; color:#334155; transition:.12s; }
+    .step button:hover:not(:disabled){ background:#EEF2FB; color:#284CA5; }
+    .step button:disabled { opacity:.3; cursor:not-allowed; }
+    .step .v      { min-width:30px; text-align:center; font-size:14px; font-weight:800; color:#0F172A; font-variant-numeric:tabular-nums; }
+    .step.full    { display:flex; width:100%; } .step.full .v { flex:1; }
+    .step.compact { height:30px; } .step.compact button { width:30px; } .step.compact .v { min-width:24px; font-size:13px; }
+    .chk          { width:24px; height:24px; border-radius:8px; border:2px solid #CBD5E1; background:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:.15s; }
+    .chk.on       { background:#284CA5; border-color:#284CA5; box-shadow:0 1px 3px rgba(40,76,165,.4); }
+    /* ---- visit module tabs ---- */
+    .mod-tab{ display:inline-flex; align-items:center; gap:6px; min-height:34px; padding:0 11px; border-radius:9px; font-size:12.5px; font-weight:700; color:#64748B; transition:.14s; white-space:nowrap; cursor:pointer; }
+    .mod-tab:hover{ color:#284CA5; }
+    .mod-tab-on{ background:#fff; color:#284CA5; box-shadow:0 1px 2px rgba(16,24,40,.08); }
+  
+
+    /* ===== Superschools Design System (.fig) alignment — embedded visit module ===== */
+    :root{
+      --ss-primary:#284CA5;
+      --ss-primary-hover:#1F3C84;
+      --ss-primary-soft:#EEF2FB;
+      --ss-primary-soft-2:#DCE4F6;
+      --ss-primary-border:#B9C8EA;
+      --ss-bg:#F5F7FC;
+      --ss-surface:#FFFFFF;
+      --ss-surface-soft:#F8FAFC;
+      --ss-border:#E2E8F0;
+      --ss-border-strong:#CBD5E1;
+      --ss-text:#0F172A;
+      --ss-muted:#64748B;
+      --ss-radius-md:12px;
+      --ss-radius-lg:16px;
+      --ss-radius-xl:20px;
+      --ss-shadow-card:0 1px 2px rgba(16,24,40,.04),0 8px 24px -18px rgba(16,24,40,.18);
+      --ss-shadow-hover:0 2px 6px rgba(16,24,40,.06),0 18px 36px -22px rgba(16,24,40,.24);
+      --ss-focus:0 0 0 3px rgba(40,76,165,.14);
+    }
+    body{ color:var(--ss-text); letter-spacing:-0.01em; }
+    .app-bg{ background:linear-gradient(180deg,#F9FBFF 0%,var(--ss-bg) 58%,#F9FBFF 100%) !important; background-attachment:fixed; }
+    .premium-card,.metric-card,.modal-card{
+      background:var(--ss-surface) !important;
+      border-color:var(--ss-border) !important;
+      border-radius:var(--ss-radius-xl) !important;
+      box-shadow:var(--ss-shadow-card) !important;
+    }
+    .metric-card{ border-radius:var(--ss-radius-lg) !important; }
+    .premium-card:hover,.metric-card:hover{ border-color:var(--ss-border-strong) !important; box-shadow:var(--ss-shadow-hover) !important; }
+    .btn{ border-radius:var(--ss-radius-md) !important; font-weight:700 !important; }
+    .btn-primary{ background:var(--ss-primary) !important; color:#fff !important; box-shadow:0 1px 2px rgba(40,76,165,.34),0 8px 18px -10px rgba(40,76,165,.55) !important; }
+    .btn-primary:hover:not(:disabled){ background:var(--ss-primary-hover) !important; }
+    .btn-secondary{ background:var(--ss-surface) !important; color:#334155 !important; border-color:var(--ss-border) !important; }
+    .btn-secondary:hover:not(:disabled){ background:var(--ss-surface-soft) !important; border-color:var(--ss-border-strong) !important; }
+    .iconbtn,.navbtn{ border-radius:var(--ss-radius-md) !important; }
+    .iconbtn:hover,.navbtn:hover{ background:var(--ss-primary-soft) !important; color:var(--ss-primary) !important; border-color:var(--ss-primary-border) !important; }
+    .field{ border-color:var(--ss-border) !important; border-radius:var(--ss-radius-md) !important; }
+    .field:focus{ border-color:var(--ss-primary) !important; box-shadow:var(--ss-focus) !important; }
+    .fpill{ border-color:var(--ss-border) !important; border-radius:999px !important; background:var(--ss-surface) !important; color:#475569 !important; }
+    .fpill:hover{ border-color:var(--ss-primary-border) !important; color:var(--ss-primary) !important; background:var(--ss-primary-soft) !important; }
+    .fpill-on,
+    .fpill-on:hover,
+    .seg-on,
+    .seg-on:hover{
+      background:var(--ss-primary) !important;
+      border-color:var(--ss-primary) !important;
+      color:#fff !important;
+      box-shadow:0 1px 2px rgba(40,76,165,.34) !important;
+    }
+    .mod-tab-on{ color:var(--ss-primary) !important; background:#fff !important; box-shadow:0 1px 2px rgba(16,24,40,.08) !important; }
+    .bg-brand,.bg-brand-600{ background-color:var(--ss-primary) !important; }
+    .text-brand{ color:var(--ss-primary) !important; }
+    .border-brand-100{ border-color:var(--ss-primary-border) !important; }
+    .bg-brand-50,.bg-brand-50\/30,.bg-brand-50\/60,.bg-brand-50\/70{ background-color:var(--ss-primary-soft) !important; }
+    button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{ outline:none !important; box-shadow:var(--ss-focus) !important; }
+    .mobile-new-booking-fab{ border-radius:9999px !important; background:var(--ss-primary) !important; box-shadow:0 12px 24px -10px rgba(40,76,165,.72) !important; }
+    .mobile-new-booking-fab:hover{ background:var(--ss-primary-hover) !important; }
+    @media (max-width:640px){
+      main[data-bg-inert]{ padding-left:16px !important; padding-right:16px !important; padding-top:18px !important; }
+      .premium-card,.metric-card{ border-radius:16px !important; }
+      .btn{ min-height:40px !important; }
+      .mobile-new-booking-fab{ width:40px !important; height:40px !important; right:14px !important; bottom:14px !important; }
+      .fpill{ min-height:34px !important; padding-left:12px !important; padding-right:12px !important; }
+    }
+
+
+    /* ===== Standalone shell header: matched to the full Super CRM HTML page ===== */
+    :root{
+      --standalone-main-header-height:64px;
+      --standalone-sub-header-height:64px;
+
+      /* ── Superschools design-system foundation (fallback snapshot — Figma sync pending) ── */
+      /* Typography */
+      --font-display:'Fraunces', Georgia, serif;
+      --font-body:'Plus Jakarta Sans', system-ui, sans-serif;
+      --font-mono:'JetBrains Mono', ui-monospace, monospace;
+
+      /* Spacing scale (4px base) */
+      --sp-1:4px;  --sp-2:8px;  --sp-3:12px; --sp-4:16px; --sp-5:20px;
+      --sp-6:24px; --sp-8:32px; --sp-10:40px; --sp-12:48px; --sp-16:64px; --sp-20:80px;
+
+      /* Radius */
+      --r-sm:8px; --r-md:12px; --r-lg:20px; --r-xl:28px; --r-pill:999px;
+
+      /* Brand (matches existing #284CA5) */
+      --ss-blue:#284CA5; --ss-blue-dark:#1d3b85; --ss-blue-soft:#e8eefa;
+
+      /* Layout */
+      --container-max:1240px;
+      --container-pad:clamp(16px, 4vw, 32px);
+    }
+    .no-scrollbar::-webkit-scrollbar{ display:none; }
+    .no-scrollbar{ -ms-overflow-style:none; scrollbar-width:none; }
+    .ss-main-header{
+      height:var(--standalone-main-header-height);
+      position:fixed;
+      top:0;
+      left:0;
+      right:0;
+      z-index:70;
+      display:flex;
+      align-items:center;
+      flex-shrink:0;
+      border-bottom:1px solid #284CA5;
+      background:#284CA5;
+      color:#fff;
+      box-shadow:0 1px 2px rgba(16,24,40,.06);
+    }
+    .ss-main-header .ss-top-nav-link{
+      position:relative;
+      height:100%;
+      display:inline-flex;
+      align-items:center;
+      flex-shrink:0;
+      padding-left:0.75rem;
+      padding-right:0.75rem;
+      white-space:nowrap;
+      font-size:0.875rem;
+      line-height:1.25rem;
+      font-weight:500;
+      color:rgba(255,255,255,.72);
+      transition:color .15s ease;
+    }
+    .ss-main-header .ss-top-nav-link:hover{ color:#fff; }
+    .ss-main-header .ss-top-nav-link.is-active{ color:#fff; font-weight:700; }
+    .ss-main-header .ss-top-nav-link.is-active::after{
+      content:'';
+      position:absolute;
+      left:.5rem;
+      right:.5rem;
+      bottom:0;
+      height:2.5px;
+      border-radius:999px 999px 0 0;
+      background:#fff;
+    }
+    .ss-nav-icon-btn{
+      width:36px;
+      height:36px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.18);
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      color:rgba(255,255,255,.86);
+      background:rgba(255,255,255,.08);
+      transition:background-color .15s ease,color .15s ease,border-color .15s ease;
+    }
+    .ss-nav-icon-btn:hover{ background:rgba(255,255,255,.16); color:#fff; border-color:rgba(255,255,255,.28); }
+    .ss-logo-btn{
+      width:36px; height:36px; border-radius:10px;
+      border:1px solid rgba(255,255,255,.30);
+      display:inline-flex; align-items:center; justify-content:center;
+      color:#fff; background:rgba(255,255,255,.10);
+      transition:background-color .15s ease,border-color .15s ease;
+    }
+    .ss-logo-btn:hover{ background:rgba(255,255,255,.18); border-color:rgba(255,255,255,.42); }
+    .visit-subheader-ds.standalone-visit-subheader{
+      position:fixed !important;
+      top:var(--standalone-main-header-height) !important;
+      left:0 !important;
+      right:0 !important;
+      z-index:65 !important;
+      height:var(--standalone-sub-header-height) !important;
+      min-height:var(--standalone-sub-header-height) !important;
+      display:flex !important;
+      align-items:stretch !important;
+      justify-content:space-between !important;
+      gap:.75rem !important;
+      padding-left:1rem !important;
+      padding-right:1rem !important;
+      border-bottom:1px solid #E2E8F0 !important;
+      background:rgba(255,255,255,.98) !important;
+      backdrop-filter:blur(12px) saturate(140%);
+      -webkit-backdrop-filter:blur(12px) saturate(140%);
+      box-shadow:0 1px 2px rgba(16,24,40,.04) !important;
+    }
+    /* Embedded secondary toolbar removed — its Undo/Reset/Publish actions now live in the
+       shell's level-2 bar. The sticky bar styles (and their reserved min-height offset) are
+       gone so no empty gap remains at the top of the content. */
+    .visit-subheader-ds [role='tablist']{
+      display:flex;
+      align-items:stretch;
+      min-width:0;
+      overflow-x:auto;
+      overflow-y:hidden;
+    }
+    .visit-subheader-ds [role='tab']{
+      position:relative;
+      display:inline-flex;
+      height:100%;
+      align-items:center;
+      padding-left:.75rem;
+      padding-right:.75rem;
+      white-space:nowrap;
+      font-size:.875rem;
+      line-height:1.25rem;
+      transition:color .15s ease;
+      outline:none;
+    }
+    .visit-subheader-ds [role='tab'][aria-selected='true']{
+      color:#284CA5;
+      font-weight:700;
+    }
+    .visit-subheader-ds [role='tab'][aria-selected='true']::after{
+      content:'';
+      position:absolute;
+      left:.75rem;
+      right:.75rem;
+      bottom:0;
+      height:2.5px;
+      border-radius:999px 999px 0 0;
+      background:#284CA5;
+    }
+    .visit-subheader-ds [role='tab'][aria-selected='false']{
+      color:#64748B;
+      font-weight:600;
+    }
+    .visit-subheader-ds [role='tab'][aria-selected='false']:hover{ color:#0F172A; }
+    .visit-action-icon-btn{
+      width:36px !important;
+      height:36px !important;
+      min-width:36px !important;
+      min-height:36px !important;
+      border-radius:12px !important;
+      color:#64748B !important;
+      background:transparent !important;
+      display:inline-flex !important;
+      align-items:center !important;
+      justify-content:center !important;
+      flex-shrink:0 !important;
+      transition:background-color .15s ease,color .15s ease;
+    }
+    .visit-action-icon-btn:hover{ background:#EEF2FB !important; color:#284CA5 !important; }
+    .visit-new-booking-parent{
+      height:36px !important;
+      min-height:36px !important;
+      min-width:36px !important;
+      border-radius:12px !important;
+      background:#284CA5 !important;
+      color:#fff !important;
+      box-shadow:0 1px 2px rgba(40,76,165,.34),0 8px 18px -10px rgba(40,76,165,.55) !important;
+    }
+    .visit-new-booking-parent:hover{ background:#1F3C84 !important; }
+    main.visit-scroll-content{
+      /* Embedded: fixed standalone headers were removed, so no header-height offset is needed.
+         The sticky secondary toolbar is in-flow; keep the <main>'s own top padding only. */
+      padding-top:0 !important;
+    }
+    @media (min-width:1024px){
+      .ss-main-header .ss-top-nav-link{ padding-left:1rem; padding-right:1rem; }
+      .ss-main-header .ss-top-nav-link.is-active::after{ left:.75rem; right:.75rem; }
+      .visit-subheader-ds.standalone-visit-subheader{ padding-left:1.5rem !important; padding-right:1.5rem !important; }
+      .visit-subheader-ds [role='tab']{ padding-left:1rem; padding-right:1rem; }
+      .visit-subheader-ds [role='tab'][aria-selected='true']::after{ left:1rem; right:1rem; }
+    }
+    @media (max-width:767px){
+      .ss-main-header{ padding-left:.75rem !important; padding-right:.75rem !important; }
+      .ss-main-header .ss-top-nav-link{ padding-left:.65rem; padding-right:.65rem; font-size:.8125rem; }
+      .ss-nav-icon-btn{ width:34px; height:34px; }
+      .visit-subheader-ds.standalone-visit-subheader{
+        padding-left:.625rem !important;
+        padding-right:.625rem !important;
+        gap:.5rem !important;
+      }
+      .visit-subheader-ds [role='tab']{ padding-left:.6rem; padding-right:.6rem; font-size:.8125rem; }
+      .visit-subheader-ds [role='tab'][aria-selected='true']::after{ left:.6rem; right:.6rem; }
+      .visit-action-icon-btn,
+      .visit-new-booking-parent{
+        width:34px !important;
+        height:34px !important;
+        min-width:34px !important;
+        min-height:34px !important;
+        padding:0 !important;
+      }
+      .visit-new-booking-parent{ justify-content:center !important; gap:0 !important; }
+      .visit-new-booking-label{ display:none !important; }
+      main.visit-scroll-content{
+        padding-left:16px !important;
+        padding-right:16px !important;
+        padding-top:0 !important;
+      }
+      .seg{ padding:0 6px; font-size:12px; }
+    }
+    @media (max-width:420px){
+      .ss-main-header .ss-top-nav-link{ padding-left:.55rem; padding-right:.55rem; }
+      .ss-main-header .ss-top-nav-link:not(.is-active):not(.ss-compact-visible){ display:none; }
+      .visit-subheader-ds.standalone-visit-subheader{ padding-left:.5rem !important; padding-right:.5rem !important; }
+    }
+
+
+    /* Availability save controls moved into the fixed Visit sub-header */
+    .availability-subheader-toolbar{
+      min-width:0;
+      overflow:hidden;
+    }
+    .availability-capacity-pill{
+      height:36px;
+      min-width:0;
+      max-width:190px;
+      display:inline-flex;
+      align-items:center;
+      gap:.45rem;
+      border:1px solid #E2E8F0;
+      border-radius:12px;
+      background:#F8FAFC;
+      color:#0F172A;
+      padding:0 .75rem;
+      font-size:.75rem;
+      font-weight:800;
+      line-height:1;
+      white-space:nowrap;
+      box-shadow:0 1px 2px rgba(16,24,40,.04);
+    }
+    .availability-publish-btn{
+      height:36px !important;
+      min-height:36px !important;
+      border-radius:12px !important;
+      background:#284CA5 !important;
+      color:#fff !important;
+      padding:0 .9rem !important;
+      display:inline-flex !important;
+      align-items:center !important;
+      justify-content:center !important;
+      gap:.4rem !important;
+      font-size:.8125rem !important;
+      font-weight:800 !important;
+      line-height:1 !important;
+      white-space:nowrap !important;
+      box-shadow:0 1px 2px rgba(40,76,165,.34),0 8px 18px -10px rgba(40,76,165,.55) !important;
+      transition:background-color .15s ease, opacity .15s ease, transform .15s ease !important;
+    }
+    .availability-publish-btn:hover:not(:disabled){ background:#1F3C84 !important; }
+    .availability-publish-btn:disabled,
+    .availability-confirm-btn:disabled,
+    .visit-action-icon-btn:disabled{
+      opacity:.42 !important;
+      cursor:not-allowed !important;
+      box-shadow:none !important;
+      transform:none !important;
+    }
+    .availability-confirm-btn{
+      height:36px !important;
+      min-height:36px !important;
+      border-radius:12px !important;
+      background:#059669 !important;
+      color:#fff !important;
+      padding:0 .85rem !important;
+      display:inline-flex !important;
+      align-items:center !important;
+      justify-content:center !important;
+      gap:.35rem !important;
+      font-size:.8125rem !important;
+      font-weight:800 !important;
+      white-space:nowrap !important;
+    }
+    .availability-confirm-btn:hover{ background:#047857 !important; }
+    .availability-subheader-toolbar .status-pill{
+      height:30px;
+      max-width:135px;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+    @media (max-width:1023px){
+      .availability-capacity-pill{
+        max-width:120px;
+        padding-left:.55rem;
+        padding-right:.55rem;
+      }
+      .availability-capacity-pill .availability-capacity-label,
+      .availability-subheader-toolbar .status-pill{
+        display:none !important;
+      }
+      .availability-publish-btn{
+        width:36px !important;
+        min-width:36px !important;
+        padding:0 !important;
+      }
+      .availability-publish-label,
+      .availability-confirm-label{
+        display:none !important;
+      }
+    }
+    @media (max-width:767px){
+      .availability-subheader-toolbar{
+        gap:.35rem !important;
+      }
+      .availability-capacity-pill{
+        display:none !important;
+      }
+      .availability-publish-btn,
+      .availability-confirm-btn{
+        width:34px !important;
+        height:34px !important;
+        min-width:34px !important;
+        min-height:34px !important;
+        padding:0 !important;
+      }
+    }
+
+
+    /* Mobile publish dock: moves Availability publish controls out of the sub-header on phones */
+    .availability-mobile-publish-dock{ display:none; }
+    .availability-mobile-publish-panel{
+      border:1px solid rgba(226,232,240,.96);
+      border-radius:22px;
+      background:rgba(255,255,255,.98);
+      box-shadow:0 -10px 32px rgba(15,23,42,.14), 0 1px 2px rgba(16,24,40,.05);
+      backdrop-filter:blur(16px) saturate(150%);
+      -webkit-backdrop-filter:blur(16px) saturate(150%);
+      padding:12px;
+    }
+    .availability-mobile-status-title{
+      font-size:12px;
+      line-height:1.25;
+      font-weight:900;
+      color:#0F172A;
+      letter-spacing:-.02em;
+    }
+    .availability-mobile-status-meta{
+      margin-top:2px;
+      font-size:11px;
+      line-height:1.25;
+      font-weight:700;
+      color:#64748B;
+    }
+    .availability-mobile-primary-btn,
+    .availability-mobile-confirm-btn,
+    .availability-mobile-secondary-btn{
+      min-height:42px;
+      border-radius:14px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:.45rem;
+      font-size:13px;
+      font-weight:900;
+      line-height:1;
+      transition:background-color .15s ease, opacity .15s ease, transform .15s ease;
+    }
+    .availability-mobile-primary-btn{ background:#284CA5; color:#fff; box-shadow:0 10px 22px rgba(40,76,165,.22); }
+    .availability-mobile-primary-btn:hover:not(:disabled){ background:#1F3C84; }
+    .availability-mobile-confirm-btn{ background:#059669; color:#fff; box-shadow:0 10px 22px rgba(5,150,105,.18); }
+    .availability-mobile-confirm-btn:hover:not(:disabled){ background:#047857; }
+    .availability-mobile-secondary-btn{ background:#F8FAFC; color:#475569; border:1px solid #E2E8F0; }
+    .availability-mobile-primary-btn:disabled,
+    .availability-mobile-confirm-btn:disabled,
+    .availability-mobile-secondary-btn:disabled{
+      opacity:.45;
+      cursor:not-allowed;
+      box-shadow:none;
+      transform:none;
+    }
+    .booked-new-booking-subheader-btn .material-symbols-outlined{ display:none !important; }
+    @media (max-width:767px){
+      .availability-subheader-toolbar{ display:none !important; }
+      .availability-mobile-publish-dock{
+        display:block !important;
+        position:fixed;
+        left:12px;
+        right:12px;
+        bottom:calc(env(safe-area-inset-bottom, 0px) + 12px);
+        z-index:60;
+        pointer-events:none;
+      }
+      .availability-mobile-publish-panel{ pointer-events:auto; }
+      .availability-scroll-content{ padding-bottom:9.5rem !important; }
+      .availability-toast{ bottom:calc(env(safe-area-inset-bottom, 0px) + 104px) !important; }
+    }
+    @media (min-width:768px){
+      .availability-mobile-publish-dock{ display:none !important; }
+    }
+
+    /* ===== Host management embedded in Availability (date-wise) ===== */
+    .hf-av{ display:inline-flex; align-items:center; justify-content:center; font-weight:800; color:#fff; border-radius:50%; background:linear-gradient(135deg,#284CA5,#1F3C84); flex-shrink:0; box-shadow:0 2px 8px -2px rgba(40,76,165,.5); }
+    .hf-av.soft{ background:#EEF2FB!important; color:#284CA5!important; box-shadow:none!important; }
+    .hf-dot{ position:absolute; right:-1px; bottom:-1px; border-radius:50%; border:2.5px solid #fff; }
+    .hf-dot.on{ background:#16A34A; } .hf-dot.away{ background:#D97706; }
+    .hf-pill{ display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:800; border-radius:999px; padding:3px 8px; line-height:1; text-transform:uppercase; letter-spacing:.04em; }
+    .hf-pill-brand{ background:#EEF2FB; color:#284CA5; border:1px solid #DCE4F6; }
+    .hf-pill-amber{ background:#FEF3C7; color:#B45309; border:1px solid #FDE68A; }
+    .hf-menu{ position:absolute; z-index:55; background:#fff; border:1px solid #E2E8F0; border-radius:14px; box-shadow:0 20px 50px -18px rgba(16,24,40,.4); overflow:hidden; max-width:calc(100vw - 1.5rem); }
+    .hf-menu-item{ display:flex; align-items:center; gap:9px; width:100%; text-align:left; padding:8px 11px; font-size:13px; transition:.12s; }
+    .hf-menu-item:hover{ background:#F6F9FF; }
+    .switch.host-away.on{ background:#D97706; box-shadow:0 1px 4px rgba(217,119,6,.4); }
+
+</style>
+</head>
+<body class="app-bg text-slate-900 min-h-screen antialiased" x-data="{ module: 'slots', embedded: true, init(){} }" x-cloak>
+  <noscript>
+    <div style="font-family:var(--font-body);padding:2.5rem 1.5rem;text-align:center;max-width:440px;margin:4rem auto;background:#fff;border-radius:16px;border:1px solid #E8EDF5">
+      <p style="font-weight:800;font-size:1.1rem;margin:.25rem 0 .5rem">JavaScript is required</p>
+      <p style="color:#475569;font-size:.9rem;line-height:1.6">Enable JavaScript to use the SuperSchools visit module. To schedule a parent visit, please contact your school directly.</p>
+    </div>
+  </noscript>
+
+  <!-- Global header removed — the app shell provides the sidebar, top nav, and section label. -->
+
+  <!-- ===================== AVAILABILITY (SLOTS) VIEW ===================== -->
+  <div x-show="module==='slots'" x-cloak x-data="slotManager()" x-init="init()" data-visit-view="slots" class="visit-view-shell">
+
+  
+
+  <!-- STORAGE WARNING -->
+  <div x-show="!storageAvailable" class="bg-red-600 text-white text-center text-[13px] font-semibold py-2.5 px-4 flex items-center justify-center gap-2">
+    <span class="material-symbols-outlined text-[16px]">warning</span>
+    Changes can't be saved on this device — publish now to avoid losing your work.
+  </div>
+
+  <!-- RESET CONFIRM MODAL -->
+  <div x-show="showResetConfirm" x-cloak x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" @keydown.esc.window="if(showResetConfirm) cancelReset()" class="fixed inset-0 z-[70] flex items-center justify-center p-4" style="background:rgba(15,23,42,.55);backdrop-filter:blur(4px)" @click.self="cancelReset()" role="dialog" aria-modal="true" aria-labelledby="reset-dlg-title">
+    <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full" tabindex="-1" x-effect="showResetConfirm && $nextTick(()=>$el.focus())">
+      <div class="flex items-start gap-3 mb-3">
+        <span class="w-10 h-10 flex-shrink-0 flex items-center justify-center bg-red-50 text-red-600 rounded-xl"><span class="material-symbols-outlined text-[22px]">warning</span></span>
+        <div class="min-w-0">
+          <h3 id="reset-dlg-title" class="text-base font-extrabold leading-tight">Reset to last published?</h3>
+          <p class="text-[13px] text-slate-500 mt-1.5 leading-relaxed">All unsaved changes will be permanently discarded, including your local draft. This cannot be undone.</p>
+        </div>
+      </div>
+      <div class="flex justify-end gap-2.5 mt-5">
+        <button @click="cancelReset()" class="btn btn-secondary">Keep editing</button>
+        <button @click="confirmReset()" class="btn btn-danger">Discard changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLEAR ALL BLOCKED DATES MODAL -->
+  <div x-show="showClearBlockedConfirm" x-cloak x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" @keydown.esc.window="if(showClearBlockedConfirm) cancelClearBlocked()" class="fixed inset-0 z-[70] flex items-center justify-center p-4" style="background:rgba(15,23,42,.55);backdrop-filter:blur(4px)" @click.self="cancelClearBlocked()" role="dialog" aria-modal="true" aria-labelledby="clear-blk-title">
+    <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full" tabindex="-1" x-effect="showClearBlockedConfirm && $nextTick(()=>$el.focus())">
+      <div class="flex items-start gap-3 mb-3">
+        <span class="w-10 h-10 flex-shrink-0 flex items-center justify-center bg-amber-50 text-amber-600 rounded-xl"><span class="material-symbols-outlined text-[22px]">delete_sweep</span></span>
+        <div class="min-w-0">
+          <h3 id="clear-blk-title" class="text-base font-extrabold leading-tight">Clear all blocked dates?</h3>
+          <p class="text-[13px] text-slate-500 mt-1.5 leading-relaxed" x-text="'All '+blockedDates.length+' blocked date'+(blockedDates.length===1?'':'s')+' will be removed. You can press Undo immediately after to recover them.'"></p>
+        </div>
+      </div>
+      <div class="flex justify-end gap-2.5 mt-5">
+        <button @click="cancelClearBlocked()" class="btn btn-secondary">Cancel</button>
+        <button @click="confirmClearBlocked()" class="btn btn-danger">Clear all</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD HOST MODAL (search & select from existing staff) -->
+  <div x-show="showHostAdd" x-cloak class="fixed inset-0 z-[70] flex items-center justify-center p-4" style="background:rgba(15,23,42,.55);backdrop-filter:blur(4px)" @click.self="showHostAdd=false" @keydown.escape.window="showHostAdd=false" role="dialog" aria-modal="true" aria-labelledby="hostadd-title">
+    <div class="bg-white rounded-2xl shadow-2xl p-5 md:p-6 max-w-sm w-full">
+      <div class="flex items-start gap-3 mb-4">
+        <span class="w-10 h-10 flex items-center justify-center bg-brand-50 text-brand rounded-xl flex-shrink-0"><span class="material-symbols-outlined text-[22px]">person_add</span></span>
+        <div>
+          <h3 id="hostadd-title" class="text-base font-extrabold leading-tight">Add a host</h3>
+          <p class="text-[13px] text-slate-500 mt-1 leading-relaxed">Search your staff directory and pick someone to add as a host.</p>
+        </div>
+      </div>
+      <div class="relative mb-3">
+        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 material-symbols-outlined text-[18px] pointer-events-none">search</span>
+        <input x-model="hostSearch" type="text" class="field !pl-9" placeholder="Search staff by name or role…" x-ref="hostNameInput" @keydown.enter.prevent="staffSearchResults().length===1 && addHostFromStaff(staffSearchResults()[0])" />
+      </div>
+      <div class="rounded-xl border border-slate-200 max-h-64 overflow-y-auto divide-y divide-slate-100">
+        <template x-for="s in staffSearchResults()" :key="s.name">
+          <button class="flex items-center gap-2.5 w-full text-left px-3 py-2.5 hover:bg-brand-50/60 transition" @click="addHostFromStaff(s)">
+            <span class="hf-av soft w-8 h-8 text-[11px] flex-shrink-0" x-text="hostInitials(s.name)"></span>
+            <span class="min-w-0 flex-1">
+              <span class="block text-[13px] font-bold truncate" x-text="s.name"></span>
+              <span class="block text-[11px] text-slate-400 truncate" x-text="s.role"></span>
+            </span>
+            <span class="material-symbols-outlined text-[18px] text-brand flex-shrink-0">add_circle</span>
+          </button>
+        </template>
+        <div x-show="staffSearchResults().length===0" x-cloak class="px-4 py-7 text-center">
+          <template x-if="!hostSearch.trim() && staffDirectory.every(s=>hostRoster.some(h=>h.name===s.name))">
+            <p class="text-[12.5px] text-slate-400">All staff are already added as hosts.</p>
+          </template>
+          <template x-if="hostSearch.trim() && staffQueryInDirectory()">
+            <p class="text-[12.5px] text-slate-400">Matching staff are already added as hosts.</p>
+          </template>
+          <template x-if="hostSearch.trim() && !staffQueryInDirectory()">
+            <div class="flex flex-col items-center gap-2.5">
+              <span class="w-11 h-11 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center flex-shrink-0"><span class="material-symbols-outlined text-[24px]">person_search</span></span>
+              <p class="text-[13.5px] font-extrabold text-slate-700 leading-tight">No staff named “<span x-text="hostSearch.trim()"></span>”</p>
+              <p class="text-[12px] text-slate-500 leading-relaxed max-w-[17rem]">This person isn’t in your staff list yet. Add them in <span class="font-bold text-brand">My Staff</span> first, then they’ll show up here to assign as a host.</p>
+            </div>
+          </template>
+        </div>
+      </div>
+      <div class="flex justify-end mt-4">
+        <button class="btn btn-secondary" @click="showHostAdd=false">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECONDARY TOOLBAR removed — Undo/Reset/Publish now live in the shell's level-2 bar
+       (wired via the ss-action message listener near the page scripts). Capacity and
+       readiness remain visible in the summary cards and the hero readiness card. -->
+
+  <main class="visit-scroll-content availability-scroll-content max-w-7xl mx-auto px-10 py-7 md:py-9 pb-24">
+
+    <!-- HERO + SETUP HEALTH -->
+    <div class="visit-main-header visit-main-header--active flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 mb-6" data-visit-main-title="Set your visit availability" data-visit-main-meta="Admissions setup">
+      <div class="min-w-0">
+        <p class="text-[11px] font-bold text-brand uppercase tracking-[0.14em] mb-1.5">Admissions setup</p>
+        <h1 class="text-2xl md:text-3xl font-black tracking-tight">Set your visit availability</h1>
+        <p class="text-[14px] md:text-[15px] text-slate-500 mt-2 max-w-2xl leading-relaxed">Choose the days and hours parents can book a school visit, and how many families you can host each hour. Block holidays or closure dates below so they stay closed even on a normally open day.</p>
+      </div>
+      <div class="premium-card soft-shadow px-4 py-3 flex items-center gap-3.5 flex-shrink-0 self-start lg:self-end">
+        <span class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" :class="!dirty&&lastSaved?'bg-emerald-50 text-emerald-600':scheduleReady?'bg-emerald-50 text-emerald-600':'bg-amber-50 text-amber-600'"><span class="material-symbols-outlined text-[22px]" x-text="!dirty&&lastSaved?'verified_user':scheduleReady?'verified':'pending_actions'"></span></span>
+        <div class="min-w-0">
+          <p class="text-[13px] font-extrabold leading-tight" x-text="!dirty&&lastSaved?'Schedule is live':scheduleReady?'Ready to publish':'Review before publishing'"></p>
+          <p class="text-[11px] text-slate-500 leading-tight mt-1 num" x-show="dirty||!lastSaved"><span x-text="readyCount()"></span> ready<span x-show="warningCount()>0" class="text-amber-600 font-semibold" x-text="' · '+warningCount()+' need attention'"></span> · <span x-text="closedCount()"></span> closed</p>
+          <p class="text-[11px] text-emerald-600 font-semibold leading-tight mt-1" x-show="!dirty&&lastSaved" x-text="'Since '+lastSaved"></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- FIRST-RUN ONBOARDING TIP -->
+    <div x-show="!lastSaved" x-transition class="flex items-center gap-3 rounded-2xl border border-brand-100 bg-brand-50/60 px-4 py-3 mb-6">
+      <span class="material-symbols-outlined text-brand text-[20px] flex-shrink-0">tips_and_updates</span>
+      <p class="text-[13px] text-slate-700 leading-relaxed">Your availability is not yet visible to parents. Set up the schedule below and press <span class="font-bold">Publish</span> when ready to go live.</p>
+    </div>
+
+    <!-- SUMMARY METRIC CARDS -->
+    <section aria-label="Weekly summary" class="visit-section-heading--sticky grid grid-cols-2 lg:grid-cols-4 gap-3 mb-7" data-visit-sticky-title="Setup health" data-visit-sticky-meta="Availability summary and weekly capacity">
+      <div class="metric-card p-3.5 md:p-5 min-w-0">
+        <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-[0.08em] truncate">Open days</p>
+        <p class="text-[22px] md:text-[26px] font-black tracking-tight mt-1.5 num" x-text="openDays.length+' / 7'"></p>
+      </div>
+      <div class="metric-card p-3.5 md:p-5 min-w-0">
+        <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-[0.08em] truncate">Hours / week</p>
+        <p class="text-[22px] md:text-[26px] font-black tracking-tight mt-1.5 num" x-text="totalOpenSlots()"></p>
+      </div>
+      <div class="p-3.5 md:p-5 min-w-0 rounded-2xl border border-brand-100 bg-brand-50/70" style="box-shadow:0 1px 2px rgba(16,24,40,.04)">
+        <p class="text-[11px] font-semibold text-brand/70 uppercase tracking-[0.08em] truncate">Weekly capacity</p>
+        <p class="text-[22px] md:text-[26px] font-black tracking-tight mt-1.5 text-brand num" x-text="totalCapacity()+' visits'"></p>
+        <p x-show="blockedDates.length>0" class="text-[10px] text-brand/60 font-semibold mt-0.5">Excl. blocked dates</p>
+      </div>
+      <div class="metric-card p-3.5 md:p-5 min-w-0">
+        <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-[0.08em] truncate">Blocked dates</p>
+        <p class="text-[22px] md:text-[26px] font-black tracking-tight mt-1.5 num" x-text="blockedDates.length"></p>
+      </div>
+    </section>
+
+    <!-- WARNINGS -->
+    <div class="space-y-2.5 mb-6" role="status" aria-live="polite">
+      <template x-if="openDays.length===0">
+        <div class="flex items-start gap-3 rounded-2xl border border-red-200 bg-red-50/80 px-4 py-3.5"><span class="w-7 h-7 rounded-lg bg-red-100 text-red-600 flex items-center justify-center flex-shrink-0"><span class="material-symbols-outlined text-[18px]">error</span></span><p class="text-[13px] text-red-800 leading-relaxed wrap-any"><span class="font-bold">No days are open.</span> Parents cannot book any visits until you open at least one day.</p></div>
+      </template>
+      <template x-for="d in daysWithNoSlots" :key="'w'+d.key">
+        <div class="flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50/80 px-4 py-3.5"><span class="w-7 h-7 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center flex-shrink-0"><span class="material-symbols-outlined text-[18px]">warning</span></span><p class="text-[13px] text-amber-800 leading-relaxed wrap-any"><span class="font-bold" x-text="d.label+' is open but has no bookable hours.'"></span> Open at least one hour or close this day.</p></div>
+      </template>
+      <template x-if="openDays.length>0 && totalCapacity()>0 && totalCapacity()<lowCapacityThreshold">
+        <div class="flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50/80 px-4 py-3.5"><span class="w-7 h-7 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center flex-shrink-0"><span class="material-symbols-outlined text-[18px]">info</span></span><p class="text-[13px] text-amber-800 leading-relaxed wrap-any"><span class="font-bold">Low weekly capacity.</span> You can host <span x-text="totalCapacity()"></span> visits a week. Most schools open more during admission season.</p></div>
+      </template>
+      <template x-if="weekendOpen">
+        <div class="flex items-start gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3.5"><span class="w-7 h-7 rounded-lg bg-slate-100 text-slate-500 flex items-center justify-center flex-shrink-0"><span class="material-symbols-outlined text-[18px]">weekend</span></span><p class="text-[13px] text-slate-600 leading-relaxed wrap-any"><span class="font-bold text-slate-700">A weekend day is open.</span> Confirm your team is available before publishing.</p></div>
+      </template>
+    </div>
+
+    <!-- VISIT HOST (date-wise) -->
+    <section aria-label="Visit host" class="premium-card p-4 md:p-5 mb-7">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <span class="w-8 h-8 rounded-lg bg-brand-50 text-brand flex items-center justify-center flex-shrink-0"><span class="material-symbols-outlined text-[19px]">badge</span></span>
+          <div class="min-w-0">
+            <h2 class="text-lg font-extrabold tracking-tight leading-tight">Visit host</h2>
+            <p class="text-[12px] text-slate-500 leading-tight mt-0.5">Who greets parents. The selected host is active; everyone else is automatically marked away. Override any single date in the schedule below.</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 w-full sm:w-auto">
+          <button @click="openHostAdd({type:'roster'})" class="chip-btn flex-shrink-0"><span class="material-symbols-outlined text-[16px]">person_add</span> Add host</button>
+          <div class="flex sm:inline-flex items-center justify-between sm:justify-start gap-1 rounded-xl border border-slate-200 bg-white px-1.5 h-[40px] sm:h-[38px] flex-1 sm:flex-none">
+            <button @click="prevHostWeek()" :disabled="atCurrentWeek" :class="{'opacity-30 cursor-not-allowed':atCurrentWeek}" class="navbtn !w-7 !h-7 !rounded-lg flex-shrink-0" :aria-label="atCurrentWeek?'This is the current week':'Previous week'" :title="atCurrentWeek?'Scheduling starts from the current week':'Previous week'"><span class="material-symbols-outlined text-[18px]">chevron_left</span></button>
+            <button @click="thisHostWeek()" class="text-[12px] font-bold text-slate-600 px-2 whitespace-nowrap num" :title="'Jump to this week'" x-text="hostWeekLabel()"></button>
+            <button @click="nextHostWeek()" :disabled="atMaxWeek" :class="{'opacity-30 cursor-not-allowed':atMaxWeek}" class="navbtn !w-7 !h-7 !rounded-lg flex-shrink-0" :aria-label="atMaxWeek?'Up to one month ahead only':'Next week'" :title="atMaxWeek?'You can schedule up to a month ahead':'Next week'"><span class="material-symbols-outlined text-[18px]">chevron_right</span></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- host for the week (single panel) -->
+      <div class="rounded-2xl border border-slate-200 p-3.5 md:p-4">
+        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.08em] mb-2.5">Host for the week</p>
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div class="flex items-center gap-3 min-w-0">
+            <span class="relative inline-flex flex-shrink-0">
+              <span class="hf-av w-11 h-11 text-[14px]" x-text="hostInitials(weeklyHost)"></span>
+              <span class="hf-dot w-3 h-3 on"></span>
+            </span>
+            <div class="min-w-0">
+              <p class="text-[15px] font-extrabold leading-tight truncate" x-text="weeklyHost"></p>
+              <p class="text-[12px] font-semibold text-brand leading-tight mt-0.5 truncate" x-text="hostRole(weeklyHost)||'No role set'"></p>
+            </div>
+          </div>
+          <div class="relative flex-shrink-0">
+            <button class="chip-btn" @click="openHostMenu = openHostMenu==='weekly' ? null : 'weekly'"><span class="material-symbols-outlined text-[16px]">swap_horiz</span> Change</button>
+            <div x-show="openHostMenu==='weekly'" x-cloak @click.outside="openHostMenu=null; confirmDeleteName=null" class="hf-menu mt-2 right-0 w-72 max-h-72 overflow-y-auto">
+              <template x-for="h in hostRoster" :key="'w'+h.name">
+                <div class="hf-menu-item gap-2">
+                  <button class="flex items-center gap-2.5 min-w-0 flex-1 text-left" :disabled="confirmDeleteName===h.name" @click="setWeeklyHost(h.name)">
+                    <span class="relative inline-flex"><span class="hf-av soft w-7 h-7 text-[10px]" x-text="hostInitials(h.name)"></span><span class="hf-dot w-2 h-2" :class="h.name===weeklyHost?'on':'away'"></span></span>
+                    <span class="min-w-0 flex-1">
+                      <span class="block font-bold truncate text-[13px]" x-text="h.name"></span>
+                      <span class="block text-[10px] text-slate-400 truncate" x-text="h.role"></span>
+                    </span>
+                  </button>
+                  <span x-show="confirmDeleteName!==h.name && h.name===weeklyHost" class="material-symbols-outlined text-[18px] text-brand flex-shrink-0">check</span>
+                  <span x-show="confirmDeleteName!==h.name && h.name!==weeklyHost" class="hf-pill hf-pill-amber !text-[9px] flex-shrink-0">Away</span>
+                  <button x-show="confirmDeleteName!==h.name && h.name!==weeklyHost" @click.stop="confirmDeleteName=h.name" class="w-6 h-6 rounded-md flex items-center justify-center text-slate-300 hover:text-red-600 hover:bg-red-50 transition flex-shrink-0" :aria-label="'Remove '+h.name"><span class="material-symbols-outlined text-[16px]">delete</span></button>
+                  <span x-show="confirmDeleteName===h.name" x-cloak class="flex items-center gap-1 flex-shrink-0">
+                    <button @click.stop="confirmDeleteName=null" class="text-[11px] font-extrabold text-slate-500 px-1.5 py-0.5 rounded-md border border-slate-200">No</button>
+                    <button @click.stop="deleteHost(h.name)" class="text-[11px] font-extrabold text-white px-2 py-0.5 rounded-md bg-red-600">Remove</button>
+                  </span>
+                </div>
+              </template>
+              <button class="hf-menu-item border-t border-slate-100 text-brand font-bold" @click="openHostAdd({type:'weekly'})">
+                <span class="w-7 h-7 rounded-full border-2 border-dashed border-brand-200 flex items-center justify-center"><span class="material-symbols-outlined text-[16px]">add</span></span>
+                Add new host
+              </button>
+            </div>
+          </div>
+        </div>
+        <p class="text-[11px] text-slate-400 mt-3 flex items-start gap-1.5"><span class="material-symbols-outlined text-[14px] flex-shrink-0">info</span> Only the selected host is available. To make someone else available, set them as the host (here or on a specific date).</p>
+      </div>
+
+      <!-- override summary -->
+      <div x-show="customHostDays().length>0" x-cloak class="flex items-center gap-2 mt-4 rounded-xl border border-brand-100 bg-brand-50/60 px-3.5 py-2.5 flex-wrap">
+        <span class="material-symbols-outlined text-brand text-[17px]">manage_accounts</span>
+        <p class="text-[12px] text-slate-700 font-semibold flex-1 min-w-0">
+          <span x-text="customHostDays().length"></span> date<span x-show="customHostDays().length!==1">s</span> this week use a different host:
+          <span class="font-bold text-brand" x-text="customHostDays().map(k=>dayLabel(k).slice(0,3)+' '+hostDateLabel(k)+' → '+dayHostName(k)).join(', ')"></span>
+        </p>
+        <button class="text-[12px] font-extrabold text-brand underline whitespace-nowrap" @click="resetHostWeek()">Reset week</button>
+      </div>
+    </section>
+
+    <!-- QUICK SETUP COMMAND BAR -->
+    <div class="premium-card p-2.5 md:p-3 mb-7">
+      <div class="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-2">
+        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-[0.08em] pl-1">Quick setup</span>
+        <button @click="openWeekdays()" class="chip-btn w-full sm:w-auto justify-center sm:justify-start"><span class="material-symbols-outlined text-[15px]">event_available</span> Open weekdays</button>
+        <button @click="closeWeekends()" class="chip-btn w-full sm:w-auto justify-center sm:justify-start"><span class="material-symbols-outlined text-[15px]">weekend</span> Close weekends</button>
+        <button @click="copyMondayToWeekdays()" class="chip-btn w-full sm:w-auto justify-center sm:justify-start"><span class="material-symbols-outlined text-[15px]">content_copy</span> Copy Monday to weekdays</button>
+        <div class="flex items-center justify-between sm:justify-start gap-2 rounded-xl border border-slate-200 bg-white px-2.5 h-[42px] sm:h-[36px] w-full sm:w-auto">
+          <span class="text-[12px] font-bold text-slate-600 whitespace-nowrap">Max visits / hour</span>
+          <div class="flex items-center gap-2 flex-shrink-0">
+            <div class="step compact"><button @click="bulkCap=Math.max(2,bulkCap-1)" :disabled="bulkCap<=2" aria-label="Decrease max visits per hour"><span class="material-symbols-outlined text-[14px]">remove</span></button><span class="v" x-text="bulkCap"></span><button @click="bulkCap=Math.min(10,bulkCap+1)" :disabled="bulkCap>=10" aria-label="Increase max visits per hour"><span class="material-symbols-outlined text-[14px]">add</span></button></div>
+            <button @click="setAllCapacity(bulkCap)" class="text-[12px] font-bold text-brand hover:underline whitespace-nowrap">Apply to all</button>
+          </div>
+        </div>
+      </div>
+      <p class="text-[11px] text-slate-400 pl-1 pt-2 leading-relaxed">Set the maximum for all open hours, then press Apply to all. This applies the same limit across the entire week.</p>
+      <div x-show="capacityOutOfSync" class="flex items-center gap-2 mt-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 flex-wrap">
+        <span class="material-symbols-outlined text-amber-600 text-[16px] flex-shrink-0">sync_problem</span>
+        <p class="text-[12px] text-amber-800 font-semibold flex-1 min-w-0">Some open hours have a different capacity than your current Max visits / hour setting.</p>
+        <button @click="setAllCapacity(bulkCap)" class="text-[12px] font-bold text-brand underline whitespace-nowrap flex-shrink-0">Apply to all to sync</button>
+      </div>
+    </div>
+
+    <!-- WEEKLY SCHEDULE HEADING + MOBILE EXPAND ALL -->
+    <div class="visit-section-heading visit-section-heading--sticky flex items-center justify-between gap-2 mb-3.5 px-1" data-visit-sticky-title="Weekly visit schedule" data-visit-sticky-meta="Manage open days, hours, and hourly capacity">
+      <div class="flex items-center gap-2 min-w-0">
+        <h2 class="text-lg font-extrabold tracking-tight">Weekly visit schedule</h2>
+        
+      </div>
+      <button x-show="isMobile" @click="allMobileExpanded ? collapseAllMobileSlots() : expandAllMobileSlots()" class="inline-flex items-center gap-1 text-[12px] font-bold text-brand flex-shrink-0">
+        <span x-text="allMobileExpanded ? 'Collapse all' : 'Edit all days'"></span>
+        <span class="material-symbols-outlined text-[16px] transition-transform" :class="{'rotate-180':allMobileExpanded}">expand_more</span>
+      </button>
+    </div>
+
+    <!-- STATUS LEGEND -->
+    <div class="flex flex-wrap items-center gap-x-4 gap-y-1.5 mb-3.5 px-1 text-[11px] font-semibold text-slate-500">
+      <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Open to parents</span>
+      <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> Blocked</span>
+      <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-slate-300"></span> Closed</span>
+      <span class="inline-flex items-center gap-1.5"><span class="material-symbols-outlined text-[14px] text-slate-400">lock</span> Completed (locked)</span>
+      <span class="inline-flex items-center gap-1.5"><span class="material-symbols-outlined text-[14px] text-brand">manage_accounts</span> Host changed</span>
+      <span class="w-full sm:w-auto sm:ml-auto text-slate-400 num" x-text="'Week of '+hostWeekLabel()"></span>
+    </div>
+
+    <!-- DAY CARDS GRID -->
+    <section aria-label="Weekly day editor" class="visit-section grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3.5 items-start">
+      <template x-for="d in dayList" :key="d.key">
+        <div class="premium-card card-hover overflow-hidden flex flex-col" :class="cardBorder(d.key)">
+          <!-- header -->
+          <div class="px-4 py-3.5" :class="headerBg(d.key)">
+            <div class="flex items-center justify-between gap-2">
+              <div class="flex items-center gap-3 min-w-0">
+                <button x-show="dateState(d.key)!=='past' && dateState(d.key)!=='blocked'" @click="toggleDay(d.key)" class="switch" :class="{'on':days[d.key].enabled}" role="switch" :aria-checked="days[d.key].enabled" :aria-label="(days[d.key].enabled?'Close ':'Open ')+d.label+' for parent visits'"></button>
+                <span x-show="dateState(d.key)==='past'" x-cloak class="w-11 h-6 inline-flex items-center justify-center text-slate-300 flex-shrink-0"><span class="material-symbols-outlined text-[20px]">lock</span></span>
+                <span x-show="dateState(d.key)==='blocked'" x-cloak class="w-11 h-6 inline-flex items-center justify-center text-amber-500 flex-shrink-0"><span class="material-symbols-outlined text-[20px]">event_busy</span></span>
+                <div class="min-w-0">
+                  <p class="text-[15px] font-extrabold leading-tight" :class="(dateState(d.key)==='past'||dateState(d.key)==='closed')?'text-slate-400':'text-slate-900'">
+                    <span x-text="d.label"></span>
+                    <span class="text-[11px] font-bold num ml-1 text-slate-400" x-text="'· '+hostDateLabel(d.key)"></span>
+                    <span x-show="isTodayDate(d.key)" class="hf-pill hf-pill-brand !text-[9px] ml-1 align-middle">Today</span>
+                  </p>
+                  <p class="text-[11px] font-semibold mt-0.5" :class="dateState(d.key)==='available'?'text-emerald-600':((dateState(d.key)==='blocked'||dateState(d.key)==='warning')?'text-amber-700':'text-slate-400')" x-text="stateSub(d.key)"></p>
+                </div>
+              </div>
+              <span class="status-pill flex-shrink-0" :class="statePill(d.key)" x-text="stateLabel(d.key)"></span>
+            </div>
+            <div class="flex items-center justify-between gap-2 mt-2.5" x-show="dateState(d.key)==='available'||dateState(d.key)==='warning'">
+              <p class="text-[12px] font-bold text-slate-500 num" x-text="activeSlotCount(d.key)+' open hours · '+dayCapacity(d.key)+' visits / day'"></p>
+              <button @click="toggleMobileDayExpanded(d.key)" class="md:hidden inline-flex items-center gap-1 text-[11px] font-bold text-brand" :aria-expanded="isMobileDayExpanded(d.key)" :aria-label="(isMobileDayExpanded(d.key)?'Hide ':'Show ')+'hours for '+d.label">
+                <span x-text="isMobileDayExpanded(d.key)?'Hide hours':'Edit hours'"></span>
+                <span class="material-symbols-outlined text-[16px] transition-transform" :class="{'rotate-180':isMobileDayExpanded(d.key)}">expand_more</span>
+              </button>
+            </div>
+            <p x-show="dateState(d.key)==='warning'" class="text-[11px] font-semibold text-amber-700 mt-2 flex items-center gap-1.5 wrap-any"><span class="material-symbols-outlined text-[14px] flex-shrink-0">warning</span> Open but has no bookable hours</p>
+          </div>
+
+          <!-- PAST (locked / completed) -->
+          <div x-show="dateState(d.key)==='past'" x-cloak class="px-4 py-4 flex-1">
+            <p class="text-[12px] text-slate-400 flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">history</span> This date is over — schedule locked.</p>
+            <div x-show="hostRelevant(d.key)" class="mt-3 flex items-center gap-2.5 rounded-2xl border border-slate-200 bg-slate-50/60 p-3">
+              <span class="hf-av soft w-9 h-9 text-[12px]" x-text="hostInitials(dayHostName(d.key))"></span>
+              <div class="min-w-0 flex-1">
+                <p class="text-[13px] font-extrabold text-slate-500 leading-tight truncate" x-text="dayHostName(d.key)"></p>
+                <p class="text-[11px] font-semibold text-slate-400 leading-tight truncate" x-text="hostRole(dayHostName(d.key))||'Host'"></p>
+              </div>
+              <span class="hf-pill bg-slate-100 text-slate-400">Locked</span>
+            </div>
+          </div>
+
+          <!-- BLOCKED -->
+          <div x-show="dateState(d.key)==='blocked'" x-cloak class="p-3.5">
+            <div class="rounded-2xl border border-amber-200 bg-amber-50/60 blocked-stripe p-3">
+              <div class="flex items-center justify-between gap-2 flex-wrap">
+                <p class="text-[12.5px] font-bold text-amber-800 flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">event_busy</span> Blocked — not open to parents</p>
+                <button @click="unblockDateFromCard(d.key)" class="chip-btn !border-amber-300 !text-amber-700 !bg-white"><span class="material-symbols-outlined text-[15px]">lock_open</span> Unblock</button>
+              </div>
+              <p class="text-[11px] text-amber-700 mt-1.5" x-text="'Reason: '+blockedReasonFor(d.key)"></p>
+            </div>
+            <div class="mt-3 flex items-center gap-2.5 rounded-2xl border border-slate-200 bg-slate-50/60 p-3">
+              <span class="hf-av soft w-9 h-9 text-[12px]" x-text="hostInitials(dayHostName(d.key))"></span>
+              <div class="min-w-0 flex-1">
+                <p class="text-[13px] font-extrabold text-slate-500 leading-tight truncate" x-text="dayHostName(d.key)"></p>
+                <p class="text-[11px] font-semibold text-slate-400 leading-tight truncate" x-text="hostRole(dayHostName(d.key))||'Host'"></p>
+              </div>
+              <span class="hf-pill bg-slate-100 text-slate-400 inline-flex items-center gap-1"><span class="material-symbols-outlined text-[13px]">lock</span> Locked</span>
+            </div>
+            <p class="text-[11px] text-slate-400 mt-2 flex items-start gap-1.5"><span class="material-symbols-outlined text-[14px] flex-shrink-0">info</span> Host can't be changed while this date is blocked — unblock to assign a host.</p>
+          </div>
+
+          <!-- EDITABLE OPEN (available / warning): hours -->
+          <div x-show="(dateState(d.key)==='available'||dateState(d.key)==='warning') && (!isMobile || isMobileDayExpanded(d.key))" class="p-3.5">
+            <div class="flex flex-wrap items-center gap-2 pb-3.5">
+              <span class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.08em]">Hours</span>
+              <div role="radiogroup" :aria-label="'Hour pattern for '+d.label" class="flex w-full sm:inline-flex sm:w-auto rounded-xl border border-slate-200 overflow-hidden shadow-[0_1px_2px_rgba(16,24,40,.04)]"
+                @keydown.right.prevent="radioArrow($event,1)" @keydown.left.prevent="radioArrow($event,-1)"
+                @keydown.down.prevent="radioArrow($event,1)"  @keydown.up.prevent="radioArrow($event,-1)">
+                <button role="radio" :aria-checked="dayRange(d.key)==='full'" :tabindex="dayRange(d.key)==='full'||(dayRange(d.key)==='custom')?0:-1" @click="applyRange(d.key,'full')" class="seg flex-1 justify-center sm:flex-none sm:justify-start" :class="{'seg-on':dayRange(d.key)==='full'}">Full day</button>
+                <button role="radio" :aria-checked="dayRange(d.key)==='am'"   :tabindex="dayRange(d.key)==='am'  ?0:-1"                                @click="applyRange(d.key,'am')"   class="seg flex-1 justify-center sm:flex-none sm:justify-start border-l border-slate-200" :class="{'seg-on':dayRange(d.key)==='am'}">Mornings</button>
+                <button role="radio" :aria-checked="dayRange(d.key)==='pm'"   :tabindex="dayRange(d.key)==='pm'  ?0:-1"                                @click="applyRange(d.key,'pm')"   class="seg flex-1 justify-center sm:flex-none sm:justify-start border-l border-slate-200" :class="{'seg-on':dayRange(d.key)==='pm'}">Afternoons</button>
+                <button role="radio" :aria-checked="dayRange(d.key)==='none'" :tabindex="dayRange(d.key)==='none'?0:-1"                                @click="applyRange(d.key,'none')" class="seg flex-1 justify-center sm:flex-none sm:justify-start border-l border-slate-200" :class="{'seg-on':dayRange(d.key)==='none'}">None</button>
+              </div>
+              <button @click="copyDayToWeekdays(d.key)" class="chip-btn flex-1 justify-center sm:flex-none sm:justify-start"><span class="material-symbols-outlined text-[15px]">content_copy</span> To weekdays</button>
+              <button @click="copyDayToAll(d.key)"      class="chip-btn flex-1 justify-center sm:flex-none sm:justify-start"><span class="material-symbols-outlined text-[15px]">calendar_view_week</span> To all days</button>
+            </div>
+            <div class="grid grid-cols-1 min-[360px]:grid-cols-2 gap-2.5">
+              <template x-for="s in days[d.key].slots" :key="s.h">
+                <button @click="toggleSlot(d.key,s.h)" class="rounded-2xl border p-3 flex items-center gap-2.5 w-full text-left transition min-h-[52px]" :class="s.on?'border-brand-200 bg-brand-50/60':'border-slate-200 bg-white hover:border-slate-300'" role="checkbox" :aria-checked="s.on" :aria-label="(s.on?'Hide ':'Let parents book ')+slotLabel(s.h)+' on '+d.label">
+                  <span class="chk" :class="{'on':s.on}"><span x-show="s.on" class="material-symbols-outlined text-white text-[15px]">check</span></span>
+                  <span class="min-w-0 flex-1">
+                    <span class="block text-[13px] font-bold leading-tight whitespace-nowrap" :class="s.on?'text-slate-900':'text-slate-500'" x-text="slotLabel(s.h)"></span>
+                    <span class="block text-[10px] font-semibold leading-tight mt-0.5" :class="s.on?'text-brand':'text-slate-400'" x-text="s.on?'Visible to parents':'Hidden from parents'"></span>
+                  </span>
+                </button>
+              </template>
+            </div>
+            <button @click="blockDateFromCard(d.key)" class="mt-3 text-[11px] font-bold text-slate-400 hover:text-amber-700 inline-flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">event_busy</span> Block this date for parents</button>
+          </div>
+
+          <!-- EDITABLE CLOSED -->
+          <div x-show="dateState(d.key)==='closed'" x-cloak class="px-4 py-6 text-center flex-1 flex flex-col items-center justify-center">
+            <p class="text-[13px] text-slate-400">Closed for visits. Parents will not see this day.</p>
+            <div class="flex items-center gap-2 mt-3 flex-wrap justify-center">
+              <button @click="toggleDay(d.key)" class="btn btn-secondary !min-h-[38px]"><span class="material-symbols-outlined text-[16px]">add</span> Open for parent visits</button>
+              <button @click="blockDateFromCard(d.key)" class="btn btn-secondary !min-h-[38px]"><span class="material-symbols-outlined text-[16px]">event_busy</span> Block date</button>
+            </div>
+          </div>
+
+          <!-- SHARED HOST STRIP (editable): available / warning / blocked -->
+          <div x-show="dateState(d.key)==='available'||dateState(d.key)==='warning'" class="px-3.5 pb-3.5">
+            <div class="rounded-2xl border p-3" :class="dayHostOverridden(d.key) ? 'border-brand-200 bg-brand-50/30' : 'border-slate-200 bg-slate-50/50'">
+              <div class="flex items-center justify-between gap-2 mb-2">
+                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.08em]">Host · <span class="num" x-text="hostDateLabel(d.key)"></span></span>
+                <span x-show="dayHostOverridden(d.key)" class="hf-pill hf-pill-brand">Changed</span>
+              </div>
+              <div class="flex items-center gap-2.5">
+                <span class="relative inline-flex">
+                  <span class="hf-av w-9 h-9 text-[12px]" :class="{'soft':dayHostOverridden(d.key)}" x-text="hostInitials(dayHostName(d.key))"></span>
+                  <span class="hf-dot w-2.5 h-2.5 on"></span>
+                </span>
+                <div class="min-w-0 flex-1">
+                  <p class="text-[13px] font-extrabold leading-tight truncate" x-text="dayHostName(d.key)"></p>
+                  <p class="text-[11px] font-semibold text-brand leading-tight truncate" x-text="hostRole(dayHostName(d.key))||'Host'"></p>
+                </div>
+                <button class="chip-btn flex-shrink-0" @click="openHostMenu = openHostMenu===d.key ? null : d.key" :aria-expanded="openHostMenu===d.key">
+                  <span class="material-symbols-outlined text-[15px]" x-text="dayHostOverridden(d.key)?'manage_accounts':'swap_horiz'"></span>
+                  <span x-text="dayHostOverridden(d.key)?'Edit':'Change'"></span>
+                </button>
+              </div>
+              <div x-show="openHostMenu===d.key" x-cloak x-collapse class="mt-2.5 rounded-xl border border-slate-200 overflow-hidden bg-white">
+                <button class="hf-menu-item font-bold" :class="!dayHostOverridden(d.key)?'text-brand':'text-slate-600'" @click="resetDayHost(d.key)">
+                  <span class="material-symbols-outlined text-[18px]">event_repeat</span>
+                  <span class="flex-1">Use weekly host (<span x-text="weeklyHost"></span>)</span>
+                  <span x-show="!dayHostOverridden(d.key)" class="material-symbols-outlined text-[18px] text-brand">check</span>
+                </button>
+                <template x-for="h in hostRoster" :key="'m'+d.key+h.name">
+                  <button class="hf-menu-item border-t border-slate-100" @click="setDayHost(d.key,h.name)">
+                    <span class="relative inline-flex"><span class="hf-av soft w-7 h-7 text-[10px]" x-text="hostInitials(h.name)"></span><span class="hf-dot w-2 h-2" :class="dayHostName(d.key)===h.name?'on':'away'"></span></span>
+                    <span class="min-w-0 flex-1">
+                      <span class="block font-bold truncate text-[13px]" x-text="h.name"></span>
+                      <span class="block text-[10px] text-slate-400 truncate" x-text="h.role"></span>
+                    </span>
+                    <span x-show="dayHostName(d.key)===h.name && dayHostOverridden(d.key)" class="material-symbols-outlined text-[18px] text-brand">check</span>
+                    <span x-show="dayHostName(d.key)!==h.name" class="hf-pill hf-pill-amber !text-[9px]">Away</span>
+                  </button>
+                </template>
+                <button class="hf-menu-item border-t border-slate-100 text-brand font-bold" @click="openHostAdd({type:'day',key:d.key})">
+                  <span class="w-7 h-7 rounded-full border-2 border-dashed border-brand-200 flex items-center justify-center"><span class="material-symbols-outlined text-[16px]">add</span></span>
+                  Add new host
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </template>
+    </section>
+
+    <!-- BLOCK DATES / HOLIDAY CALENDAR -->
+    <section aria-labelledby="block-dates-title" class="visit-section mt-8 premium-card overflow-hidden">
+      <div class="visit-section-heading visit-section-heading--sticky px-4 md:px-6 py-4 md:py-5 border-b border-slate-100 flex items-start justify-between gap-3 flex-wrap" data-visit-sticky-title="Block dates" data-visit-sticky-meta="Holidays, closures, and exceptions">
+        <div class="min-w-0">
+          <h2 id="block-dates-title" class="text-lg font-extrabold tracking-tight">Block dates</h2>
+          <p class="text-[13px] text-slate-500 mt-1 max-w-xl leading-relaxed">Choose specific dates when visits should not be available — holidays, school events, staff training, or campus closure days.</p>
+        </div>
+        <div class="rounded-2xl bg-brand-50 border border-brand-100 px-4 py-2.5 text-right flex-shrink-0">
+          <p class="text-[10px] font-bold text-brand/70 uppercase tracking-[0.08em]">Blocked</p>
+          <p class="text-base font-black text-brand num" x-text="blockedDates.length+(blockedDates.length===1?' date':' dates')"></p>
+          <p x-show="nextBlockedDate()" class="text-[10px] font-semibold text-slate-500 mt-0.5">Next: <span x-text="nextBlockedDate()?blockedDateLabel(nextBlockedDate().date):''"></span></p>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 lg:grid-cols-[1.1fr_.9fr] gap-5 p-4 md:p-6">
+        <!-- CALENDAR LEFT -->
+        <div>
+          <div class="flex items-start justify-between mb-4 gap-2">
+            <div class="flex flex-col items-center gap-0.5">
+              <button @click="prevMonth()" class="navbtn" aria-label="Previous month"><span class="material-symbols-outlined text-[18px]">chevron_left</span></button>
+              <span x-show="prevMonthContext().count>0" class="text-[9px] font-black text-brand leading-none num" x-text="prevMonthContext().count+' blk'"></span>
+            </div>
+            <div class="text-center min-w-0 flex-1 px-2">
+              <p class="text-[15px] font-extrabold tracking-tight" x-text="monthLabel()"></p>
+              <p class="text-[11px] text-slate-400 mt-0.5">Tap a date to block or unblock visits</p>
+            </div>
+            <div class="flex flex-col items-center gap-0.5">
+              <button @click="nextMonth()" class="navbtn" aria-label="Next month"><span class="material-symbols-outlined text-[18px]">chevron_right</span></button>
+              <span x-show="nextMonthContext().count>0" class="text-[9px] font-black text-brand leading-none num" x-text="nextMonthContext().count+' blk'"></span>
+            </div>
+          </div>
+          <div role="grid" :aria-label="monthLabel()">
+            <div role="row" class="grid grid-cols-7 gap-1.5 mb-2">
+              <template x-for="w in ['Mon','Tue','Wed','Thu','Fri','Sat','Sun']" :key="w">
+                <div role="columnheader" class="text-center text-[10px] font-bold text-slate-400 uppercase tracking-wide" x-text="w"></div>
+              </template>
+            </div>
+            <template x-for="(week, wi) in calendarWeeks()" :key="wi">
+              <div role="row" class="grid grid-cols-7 gap-1.5 mb-1.5">
+                <template x-for="day in week" :key="day.iso">
+                  <button role="gridcell" @click="toggleBlockedDate(day.date)" type="button"
+                    class="aspect-square min-h-[38px] rounded-xl border text-center transition relative flex flex-col items-center justify-center"
+                    :class="calendarDateClass(day)"
+                    :aria-pressed="isBlockedDate(day.date)"
+                    :aria-label="(isBlockedDate(day.date)?'Unblock ':'Block ')+blockedDateLabel(day.iso)+', '+blockedDateDayLabel(day.iso)">
+                    <span class="block text-[12px] font-extrabold leading-none num" x-text="day.date.getDate()"></span>
+                    <span x-show="isToday(day.date) && !isBlockedDate(day.date)" class="block text-[7.5px] font-bold leading-none mt-0.5 text-brand uppercase tracking-wide">Today</span>
+                    <span x-show="isBlockedDate(day.date)" class="material-symbols-outlined absolute top-0.5 right-0.5 text-[11px]">block</span>
+                  </button>
+                </template>
+              </div>
+            </template>
+          </div>
+          <div class="flex flex-wrap items-center gap-x-4 gap-y-1.5 mt-4 text-[11px] text-slate-500">
+            <span class="inline-flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded-md bg-brand"></span> Blocked</span>
+            <span class="inline-flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded-md border-2 border-brand-200 bg-brand-50"></span> Today</span>
+            <span class="inline-flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded-md border border-slate-200 bg-slate-50"></span> Weekend</span>
+          </div>
+          <p class="text-[12px] text-slate-500 mt-4 flex items-start gap-2 leading-relaxed"><span class="material-symbols-outlined text-[16px] text-slate-400 flex-shrink-0">info</span><span>Blocked dates override the weekly schedule only for the selected dates. Example: if Mondays are usually open, blocking one Monday closes only that date — other Mondays stay open.</span></p>
+        </div>
+        <!-- BLOCKED DATES LIST RIGHT -->
+        <div class="rounded-2xl border border-slate-200 bg-slate-50/50 p-4">
+          <div class="flex items-center justify-between gap-2 mb-3.5">
+            <div class="min-w-0">
+              <p class="text-[14px] font-extrabold">Blocked dates list</p>
+              <p class="text-[11px] text-slate-500 mt-0.5">These dates override the weekly schedule.</p>
+            </div>
+            <div class="flex items-center gap-2 flex-shrink-0">
+              <span x-show="nextBlockedDate()" class="status-pill text-brand bg-brand-50 border border-brand-100">Next: <span x-text="nextBlockedDate()?blockedDateLabel(nextBlockedDate().date):''"></span></span>
+              <button x-show="blockedDates.length>0" @click="promptClearBlocked()" class="text-[11px] font-bold text-slate-400 hover:text-red-500 transition" aria-label="Clear all blocked dates">Clear all</button>
+            </div>
+          </div>
+          <template x-if="blockedDates.length===0">
+            <div class="rounded-2xl border border-dashed border-slate-300 bg-white p-7 text-center">
+              <span class="w-12 h-12 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto"><span class="material-symbols-outlined text-[26px]">event_busy</span></span>
+              <p class="text-[14px] font-bold text-slate-600 mt-3">No blocked dates yet</p>
+              <p class="text-[12px] text-slate-500 mt-1 leading-relaxed">Select holidays or closure dates from the calendar.</p>
+            </div>
+          </template>
+          <div class="rounded-2xl border border-slate-200 bg-white divide-y divide-slate-100 overflow-hidden max-h-[420px] overflow-y-auto scroll-clean" x-show="blockedDates.length>0">
+            <template x-for="b in sortedBlockedDates()" :key="b.date">
+              <div class="flex items-center gap-3 px-3 py-2.5">
+                <div class="flex flex-col items-center justify-center w-11 h-11 flex-shrink-0 rounded-xl bg-brand-50 border border-brand-100">
+                  <span class="text-[15px] font-black text-brand leading-none num" x-text="new Date(b.date+'T00:00:00').getDate()"></span>
+                  <span class="text-[8px] font-bold text-brand uppercase tracking-wide mt-0.5" x-text="new Date(b.date+'T00:00:00').toLocaleDateString('en-IN',{month:'short'})"></span>
+                </div>
+                <div class="min-w-0 flex-1">
+                  <p class="text-[13px] font-bold text-slate-800 leading-tight" x-text="blockedDateLabel(b.date)"></p>
+                  <p class="text-[11px] text-slate-400 mt-0.5" x-text="blockedDateDayLabel(b.date)"></p>
+                </div>
+                <button @click="removeBlockedDate(b.date)" class="w-9 h-9 flex items-center justify-center rounded-xl text-slate-400 hover:text-red-500 hover:bg-red-50 transition flex-shrink-0" :aria-label="'Remove '+blockedDateLabel(b.date)+' from blocked dates'"><span class="material-symbols-outlined text-[18px]">close</span></button>
+              </div>
+            </template>
+          </div>
+          <div x-show="blockedDates.length>=5" class="mt-3 rounded-xl border border-amber-200 bg-amber-50 px-3.5 py-2.5">
+            <p class="text-[12px] text-amber-800 leading-relaxed"><span class="font-bold">Several dates are blocked.</span> Check that enough visit capacity remains for parents.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BEFORE YOU PUBLISH -->
+    <section class="visit-section mt-8 premium-card p-5 md:p-6">
+      <h2 class="visit-section-heading visit-section-heading--sticky text-lg font-extrabold tracking-tight" data-visit-sticky-title="Before you publish" data-visit-sticky-meta="Final readiness checks before parent visibility">Before you publish</h2>
+      <p class="text-[13px] text-slate-500 mt-1 leading-relaxed">A quick check so parents only see slots you can actually host.</p>
+      <div x-show="scheduleReady" x-transition class="flex items-start gap-3 rounded-2xl bg-emerald-50 border border-emerald-100 px-4 py-3.5 mt-4">
+        <span class="material-symbols-outlined text-emerald-600 text-[22px] flex-shrink-0">check_circle</span>
+        <div class="min-w-0">
+          <p class="text-[14px] font-extrabold text-emerald-800">All set — your schedule is ready to publish</p>
+          <p class="text-[13px] text-emerald-700 mt-0.5 leading-relaxed wrap-any">Every open day has bookable hours<span x-show="blockedDates.length===0"> and no dates are blocked</span>. Parents will see your full weekly availability.</p>
+        </div>
+      </div>
+      <div x-show="!scheduleReady" x-transition class="mt-4 space-y-3">
+        <div class="flex items-start gap-3">
+          <span class="material-symbols-outlined text-[19px] mt-px flex-shrink-0" :class="(openDays.length>0&&warningCount()===0)?'text-emerald-500':'text-amber-500'" x-text="(openDays.length>0&&warningCount()===0)?'check_circle':'warning'"></span>
+          <p class="text-[13px] text-slate-700 leading-relaxed wrap-any" x-text="openDays.length===0?'No days are open yet — open at least one day.':(warningCount()===0?'Every open day has at least one bookable hour.':(warningCount()+' open day'+(warningCount()===1?'':'s')+' still need bookable hours.'))"></p>
+        </div>
+        <div class="flex items-start gap-3">
+          <span class="material-symbols-outlined text-[19px] mt-px flex-shrink-0" :class="totalCapacity()>=lowCapacityThreshold?'text-emerald-500':'text-amber-500'" x-text="totalCapacity()>=lowCapacityThreshold?'check_circle':'info'"></span>
+          <p class="text-[13px] text-slate-700 leading-relaxed wrap-any"><span x-text="'Weekly capacity is '+totalCapacity()+' visits.'+(blockedDates.length>0?' Blocked dates will reduce actual available visits.':'')" ></span> <span x-show="totalCapacity()<lowCapacityThreshold" class="text-amber-700 font-semibold">Consider opening more hours during admission season.</span></p>
+        </div>
+        <div class="flex items-start gap-3" x-show="weekendOpen">
+          <span class="material-symbols-outlined text-[19px] mt-px text-slate-400 flex-shrink-0">weekend</span>
+          <p class="text-[13px] text-slate-700 leading-relaxed wrap-any">A weekend day is open — confirm staff are available to host weekend visits.</p>
+        </div>
+        <div class="flex items-start gap-3">
+          <span class="material-symbols-outlined text-[19px] mt-px text-slate-400 flex-shrink-0">event_busy</span>
+          <p class="text-[13px] text-slate-700 leading-relaxed wrap-any" x-text="blockedDates.length===0?'No specific dates are blocked. Add holidays or closures in the calendar above if needed.':(blockedDates.length+' date'+(blockedDates.length===1?' is':' are')+' blocked'+(nextBlockedDate()?', next on '+blockedDateLabel(nextBlockedDate().date):'')+'. Verify parents still have enough options.')"></p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MOBILE FLOATING PUBLISH DOCK -->
+  <div x-show="!embedded" x-cloak class="availability-mobile-publish-dock no-print" aria-label="Mobile availability publish controls">
+    <div class="availability-mobile-publish-panel">
+      <div class="flex items-center justify-between gap-2 mb-2.5">
+        <div class="min-w-0">
+          <p class="availability-mobile-status-title">
+            <span x-show="dirty">Unsaved availability</span>
+            <span x-show="!dirty && lastSaved">Availability saved</span>
+            <span x-show="!dirty && !lastSaved">Availability draft</span>
+          </p>
+          <p class="availability-mobile-status-meta num" x-text="totalCapacity() + ' visits / week'"></p>
+        </div>
+        <div class="flex items-center gap-1.5 flex-shrink-0">
+          <button type="button" @click="undo()" :disabled="!canUndo" class="visit-action-icon-btn" aria-label="Undo last availability change"><span class="material-symbols-outlined text-[19px]">undo</span></button>
+          <button type="button" @click="promptReset()" :disabled="!dirty" class="visit-action-icon-btn" aria-label="Reset availability changes"><span class="material-symbols-outlined text-[19px]">restart_alt</span></button>
+        </div>
+      </div>
+      <button type="button" x-show="!publishPending" @click="initiatePublish()" :disabled="!dirty||openDays.length===0" class="availability-mobile-primary-btn w-full" aria-label="Publish availability">
+        <span class="material-symbols-outlined text-[18px]">publish</span>
+        <span>Publish</span>
+      </button>
+      <div x-show="publishPending" class="grid grid-cols-[44px_minmax(0,1fr)] gap-2">
+        <button type="button" @click="cancelPublish()" class="availability-mobile-secondary-btn" aria-label="Cancel publish"><span class="material-symbols-outlined text-[18px]">close</span></button>
+        <button type="button" @click="confirmPublish()" class="availability-mobile-confirm-btn" aria-label="Confirm publish"><span class="material-symbols-outlined text-[17px]">check</span><span>Go live</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div x-show="toast" x-transition.opacity x-cloak class="availability-toast fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white text-[13px] font-semibold rounded-xl px-4 py-2.5 shadow-lg flex items-center gap-3 max-w-[calc(100vw-2rem)]">
+    <span class="material-symbols-outlined text-[17px] text-emerald-400 flex-shrink-0">check_circle</span>
+    <span x-text="toast" class="min-w-0"></span>
+    <button x-show="toastHasUndo" @click="toastUndoAction()" class="ml-1 text-[12px] font-black text-brand-300 hover:text-white underline flex-shrink-0">Undo</button>
+  </div>
+
+  
+  </div>
+
+<script src="../../lib/crm-store.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script>
+function slotManager(){
+      const HOURS=[9,10,11,12,13,14,15,16];
+      const STORAGE_KEY='superschools.visitSlots.v5prod.v1';
+      const DRAFT_KEY  ='superschools.visitSlots.v5prod.v1.draft';
+      const mkSlots=(allOn)=>HOURS.map(h=>({h,on:allOn,max:4}));
+      const defaultDays=()=>({
+        mon:{enabled:true, slots:mkSlots(true)}, tue:{enabled:true, slots:mkSlots(true)},
+        wed:{enabled:true, slots:mkSlots(true)}, thu:{enabled:true, slots:mkSlots(true)},
+        fri:{enabled:true, slots:mkSlots(true)}, sat:{enabled:false,slots:mkSlots(false)},
+        sun:{enabled:false,slots:mkSlots(false)}
+      });
+      return {
+        bulkCap:4, lowCapacityThreshold:20,
+        lastSaved:null, savedSnapshot:'', toast:'', toastHasUndo:false, hours:HOURS, winW:1024,
+        mobileExpanded:{}, expandedDays:{}, undoStack:[], draftSaved:false,
+        showResetConfirm:false, showClearBlockedConfirm:false, storageAvailable:true, publishPending:false,
+        blockedDates:[], calendarMonth:new Date().getMonth(), calendarYear:new Date().getFullYear(),
+        blockReasonDefault:'School holiday',
+        dayList:[
+          {key:'mon',label:'Monday',short:'Mon'},{key:'tue',label:'Tuesday',short:'Tue'},
+          {key:'wed',label:'Wednesday',short:'Wed'},{key:'thu',label:'Thursday',short:'Thu'},
+          {key:'fri',label:'Friday',short:'Fri'},{key:'sat',label:'Saturday',short:'Sat'},
+          {key:'sun',label:'Sunday',short:'Sun'}
+        ],
+        days:defaultDays(),
+
+        init(){
+          this.checkStorage();
+          this.loadHosts();
+          this.loadStaffDirectory();
+          try{ if(window.CRM && typeof CRM.onChange==='function'){ CRM.onChange(()=>{ this.staffDirectory = CRM.staffDirectory(); }); } }catch(e){}
+          try{ const raw=localStorage.getItem(STORAGE_KEY); if(raw){ const p=JSON.parse(raw); if(p.days)this.days=p.days; if(Array.isArray(p.blockedDates))this.blockedDates=p.blockedDates; this.lastSaved=p.lastSaved||null; } }catch(e){}
+          this.savedSnapshot=this.snapshot();
+          try{ const draw=localStorage.getItem(DRAFT_KEY); if(draw){ const dd=JSON.parse(draw); if(dd.days)this.days=dd.days; if(Array.isArray(dd.blockedDates))this.blockedDates=dd.blockedDates; if(this.snapshot()!==this.savedSnapshot)this.draftSaved=true; } }catch(e){}
+          this.winW=window.innerWidth;
+          window.addEventListener('resize',()=>{ this.winW=window.innerWidth; });
+          setInterval(()=>{ if(this.dirty) this.persistDraft(); }, 3000);
+        },
+
+        checkStorage(){ try{ localStorage.setItem('_ss_chk','1'); localStorage.removeItem('_ss_chk'); }catch(e){ this.storageAvailable=false; } },
+
+        snapshot(){ return JSON.stringify({days:this.days,blockedDates:this.blockedDates}); },
+        get dirty(){ return this.snapshot()!==this.savedSnapshot; },
+        get isMobile(){ return this.winW<768; },
+        get openDays(){ return this.dayList.filter(d=>this.days[d.key].enabled); },
+        get weekendOpen(){ return this.days.sat.enabled||this.days.sun.enabled; },
+        get daysWithNoSlots(){ return this.openDays.filter(d=>this.activeSlotCount(d.key)===0); },
+        get scheduleReady(){ return this.openDays.length>0&&this.warningCount()===0; },
+        get capacityOutOfSync(){ return this.dayList.some(d=>this.days[d.key].enabled&&this.days[d.key].slots.some(s=>s.on&&s.max!==this.bulkCap)); },
+        get allMobileExpanded(){ return this.openDays.length>0&&this.openDays.every(d=>!!this.mobileExpanded[d.key]); },
+
+        dayLabel(k){ const d=this.dayList.find(x=>x.key===k); return d?d.label:''; },
+        slotLabel(hh){ const ap=x=>x<12?'AM':'PM'; const h12=x=>{ const v=x%12; return v===0?12:v; }; const e=hh+1; return h12(hh)+' '+ap(hh)+' \u2013 '+h12(e)+' '+ap(e); },
+        activeSlotCount(k){ return this.days[k].slots.filter(s=>s.on).length; },
+        dayCapacity(k){ return this.days[k].slots.reduce((t,s)=>t+(s.on?s.max:0),0); },
+        totalOpenSlots(){ return this.dayList.reduce((n,d)=>n+(this.days[d.key].enabled?this.activeSlotCount(d.key):0),0); },
+        totalCapacity(){ return this.dayList.reduce((n,d)=>n+(this.days[d.key].enabled?this.dayCapacity(d.key):0),0); },
+        dayHasWarning(k){ return this.days[k].enabled&&this.activeSlotCount(k)===0; },
+        dayHealth(k){ if(!this.days[k].enabled) return 'closed'; if(this.activeSlotCount(k)===0) return 'warning'; return 'ready'; },
+        dayStatusLabel(k){ return this.days[k].enabled?'Open for parent visits':'Closed for visits'; },
+        dayReadinessLabel(k){ const h=this.dayHealth(k); return h==='ready'?'Ready':h==='warning'?'Needs attention':'Closed'; },
+        healthPill(k){ const h=this.dayHealth(k); return h==='ready'?'bg-emerald-50 text-emerald-700':h==='warning'?'bg-amber-50 text-amber-700':'bg-slate-100 text-slate-400'; },
+        warningCount(){ return this.openDays.filter(d=>this.activeSlotCount(d.key)===0).length; },
+        readyCount(){   return this.openDays.filter(d=>this.activeSlotCount(d.key)>0).length; },
+        closedCount(){  return 7-this.openDays.length; },
+
+        toggleMobileDayExpanded(k){ this.mobileExpanded[k]=!this.mobileExpanded[k]; },
+        isMobileDayExpanded(k){ return !!this.mobileExpanded[k]; },
+        expandAllMobileSlots(){ this.openDays.forEach(d=>{ this.mobileExpanded[d.key]=true; }); },
+        collapseAllMobileSlots(){ this.mobileExpanded={}; },
+
+        pushUndo(){ try{ const s=this.snapshot(); if(this.undoStack[this.undoStack.length-1]!==s){ this.undoStack.push(s); if(this.undoStack.length>40) this.undoStack.shift(); } }catch(e){} },
+        get canUndo(){ return this.undoStack.length>0; },
+        undo(){ if(!this.undoStack.length) return; const s=JSON.parse(this.undoStack.pop()); this.days=s.days; this.blockedDates=s.blockedDates||[]; this.flash('Change undone'); },
+        persistDraft(){ try{ localStorage.setItem(DRAFT_KEY,JSON.stringify({days:this.days,blockedDates:this.blockedDates})); this.draftSaved=true; }catch(e){} },
+        clearDraft(){ try{ localStorage.removeItem(DRAFT_KEY); }catch(e){} this.draftSaved=false; },
+
+        dayRange(k){ const on=this.days[k].slots.filter(s=>s.on).map(s=>s.h).sort((a,b)=>a-b).join(','); if(on==='') return 'none'; if(on==='9,10,11,12,13,14,15,16') return 'full'; if(on==='9,10,11') return 'am'; if(on==='12,13,14,15,16') return 'pm'; return 'custom'; },
+        applyRange(k,type){ this.pushUndo(); const d=this.days[k]; d.enabled=true; d.slots.forEach(s=>{ if(type==='full'){ s.on=true; s.max=this.bulkCap; } else if(type==='none'){ s.on=false; } else if(type==='am'){ s.on=(s.h<12); if(s.on) s.max=this.bulkCap; } else if(type==='pm'){ s.on=(s.h>=12); if(s.on) s.max=this.bulkCap; } }); this.mobileExpanded[k]=true; this.flash(this.dayLabel(k)+': '+({full:'all hours open',am:'mornings open',pm:'afternoons open',none:'all hours closed'}[type]),true); },
+
+        toggleDay(k){ this.pushUndo(); const d=this.days[k]; d.enabled=!d.enabled; if(d.enabled&&this.activeSlotCount(k)===0) d.slots.forEach(s=>{ s.on=true; s.max=this.bulkCap; }); if(d.enabled) this.mobileExpanded[k]=true; },
+        toggleSlot(k,hh){ if(!this.days[k].enabled) return; this.pushUndo(); const s=this.days[k].slots.find(x=>x.h===hh); if(s){ s.on=!s.on; if(s.on) s.max=this.bulkCap; } },
+        adjustMax(k,hh,delta){ const s=this.days[k].slots.find(x=>x.h===hh); if(!s||!s.on) return; const n=s.max+delta; if(n<2||n>10) return; this.pushUndo(); s.max=n; },
+
+        openAllSlots(k){ this.pushUndo(); this.days[k].enabled=true; this.days[k].slots.forEach(s=>{ s.on=true; s.max=this.bulkCap; }); this.flash('Opened all hours on '+this.dayLabel(k)); },
+        closeAllSlots(k){ this.pushUndo(); this.days[k].slots.forEach(s=>s.on=false); this.flash('Closed all hours on '+this.dayLabel(k)); },
+        setDayCapacity(k,val){ this.pushUndo(); let n=0; this.days[k].slots.forEach(s=>{ if(s.on){ s.max=val; n++; } }); this.flash(n?'Set '+this.dayLabel(k)+' open hours to '+val+' visits':'No open hours to set'); },
+        copyDayToWeekdays(k){ this.pushUndo(); const src=this.days[k].slots; ['mon','tue','wed','thu','fri'].forEach(t=>{ this.days[t].enabled=this.days[k].enabled; this.days[t].slots=src.map(s=>({h:s.h,on:s.on,max:s.max})); }); this.flash('Copied '+this.dayLabel(k)+' to weekdays',true); },
+        copyDayToAll(k){ this.pushUndo(); const src=this.days[k].slots; this.dayList.forEach(t=>{ if(t.key===k) return; this.days[t.key].enabled=this.days[k].enabled; this.days[t.key].slots=src.map(s=>({h:s.h,on:s.on,max:s.max})); }); this.flash('Copied '+this.dayLabel(k)+' to all days',true); },
+
+        openWeekdays(){ this.pushUndo(); ['mon','tue','wed','thu','fri'].forEach(k=>{ this.days[k].enabled=true; this.days[k].slots.forEach(s=>{ s.on=true; s.max=this.bulkCap; }); }); this.flash('Weekdays opened',true); },
+        closeWeekends(){ this.pushUndo(); ['sat','sun'].forEach(k=>this.days[k].enabled=false); this.flash('Weekends closed',true); },
+        copyMondayToWeekdays(){ this.pushUndo(); const src=this.days.mon.slots; ['tue','wed','thu','fri'].forEach(k=>{ this.days[k].enabled=this.days.mon.enabled; this.days[k].slots=src.map(s=>({h:s.h,on:s.on,max:s.max})); }); this.flash('Copied Monday to Tue\u2013Fri',true); },
+        setAllCapacity(n){ this.pushUndo(); this.dayList.forEach(d=>{ if(this.days[d.key].enabled) this.days[d.key].slots.forEach(s=>{ if(s.on) s.max=n; }); }); this.flash('Max visits / hour set to '+n+' for all open hours',true); },
+
+        promptReset(){ if(this.dirty){ this._resetTrigger=document.activeElement; this.showResetConfirm=true; } },
+        confirmReset(){ this.showResetConfirm=false; this.resetChanges(); this.$nextTick&&this.$nextTick(()=>{ try{this._resetTrigger&&this._resetTrigger.focus();}catch(e){} }); },
+        cancelReset(){ this.showResetConfirm=false; this.$nextTick&&this.$nextTick(()=>{ try{this._resetTrigger&&this._resetTrigger.focus();}catch(e){} }); },
+        promptClearBlocked(){ if(this.blockedDates.length){ this._clearTrigger=document.activeElement; this.showClearBlockedConfirm=true; } },
+        confirmClearBlocked(){ this.showClearBlockedConfirm=false; this.pushUndo(); this.blockedDates=[]; this.flash('All blocked dates cleared',true); this.$nextTick&&this.$nextTick(()=>{ try{this._clearTrigger&&this._clearTrigger.focus();}catch(e){} }); },
+        cancelClearBlocked(){ this.showClearBlockedConfirm=false; this.$nextTick&&this.$nextTick(()=>{ try{this._clearTrigger&&this._clearTrigger.focus();}catch(e){} }); },
+        initiatePublish(){ if(!this.dirty||!this.openDays.length) return; this.publishPending=true; clearTimeout(this._pubT); this._pubT=setTimeout(()=>{ this.publishPending=false; },4000); },
+        confirmPublish(){ clearTimeout(this._pubT); this.publishPending=false; this.publish(); },
+        cancelPublish(){  clearTimeout(this._pubT); this.publishPending=false; },
+        radioArrow(event,step){ const g=event.target.closest('[role=radiogroup]'); if(!g) return; const b=[...g.querySelectorAll('[role=radio]')]; const i=b.indexOf(event.target); if(i>=0) b[(i+step+b.length)%b.length].focus(); },
+        toastUndoAction(){ clearTimeout(this._t); this.toastHasUndo=false; this.undo(); },
+
+        dateToISO(date){ const y=date.getFullYear(); const m=String(date.getMonth()+1).padStart(2,'0'); const d=String(date.getDate()).padStart(2,'0'); return y+'-'+m+'-'+d; },
+        monthLabel(){ return new Date(this.calendarYear,this.calendarMonth,1).toLocaleString('en-IN',{month:'long',year:'numeric'}); },
+        prevMonth(){ if(this.calendarMonth===0){ this.calendarMonth=11; this.calendarYear--; } else { this.calendarMonth--; } },
+        nextMonth(){ if(this.calendarMonth===11){ this.calendarMonth=0; this.calendarYear++; } else { this.calendarMonth++; } },
+        calendarDays(){ const first=new Date(this.calendarYear,this.calendarMonth,1); const start=new Date(first); const mondayIndex=(first.getDay()+6)%7; start.setDate(first.getDate()-mondayIndex); const days=[]; for(let i=0;i<42;i++){ const date=new Date(start); date.setDate(start.getDate()+i); days.push({date,iso:this.dateToISO(date),currentMonth:date.getMonth()===this.calendarMonth}); } return days; },
+        calendarWeeks(){ const d=this.calendarDays(); const w=[]; for(let i=0;i<6;i++) w.push(d.slice(i*7,(i+1)*7)); let last=0; w.forEach((row,i)=>{ if(row.some(x=>x.currentMonth)) last=i; }); return w.slice(0,last+1); },
+        isToday(date){ return this.dateToISO(date)===this.dateToISO(new Date()); },
+        isBlockedDate(date){ const iso=typeof date==='string'?date:this.dateToISO(date); return this.blockedDates.some(b=>b.date===iso); },
+        toggleBlockedDate(date){ const iso=this.dateToISO(date); if(this.isBlockedDate(iso)){ this.removeBlockedDate(iso); } else { this.addBlockedDate(iso,this.blockReasonDefault); } },
+        addBlockedDate(isoDate,reason){ if(this.isBlockedDate(isoDate)) return; this.pushUndo(); this.blockedDates.push({date:isoDate,reason:reason||this.blockReasonDefault}); const todayIso=this.dateToISO(new Date()); this.flash(isoDate<todayIso?'Past date blocked \u2014 for record-keeping only':'Date blocked for visits',true); },
+        removeBlockedDate(isoDate){ if(!this.isBlockedDate(isoDate)) return; this.pushUndo(); this.blockedDates=this.blockedDates.filter(b=>b.date!==isoDate); this.flash('Blocked date removed',true); },
+        updateBlockedReason(isoDate,reason){ const item=this.blockedDates.find(b=>b.date===isoDate); if(!item) return; this.pushUndo(); item.reason=reason; this.flash('Blocked date reason updated'); },
+        sortedBlockedDates(){ return [...this.blockedDates].sort((a,b)=>a.date.localeCompare(b.date)); },
+        nextBlockedDate(){ const todayIso=this.dateToISO(new Date()); return this.sortedBlockedDates().find(b=>b.date>=todayIso)||null; },
+        blockedDateLabel(isoDate){ return new Date(isoDate+'T00:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}); },
+        blockedDateDayLabel(isoDate){ return new Date(isoDate+'T00:00:00').toLocaleDateString('en-IN',{weekday:'long'}); },
+        blockedInMonth(y,m){ const prefix=String(y)+'-'+String(m+1).padStart(2,'0'); return this.blockedDates.filter(b=>b.date.startsWith(prefix)).length; },
+        prevMonthContext(){ let m=this.calendarMonth-1,y=this.calendarYear; if(m<0){m=11;y--;} return {label:new Date(y,m,1).toLocaleDateString('en-IN',{month:'short'}),count:this.blockedInMonth(y,m)}; },
+        nextMonthContext(){ let m=this.calendarMonth+1,y=this.calendarYear; if(m>11){m=0;y++;} return {label:new Date(y,m,1).toLocaleDateString('en-IN',{month:'short'}),count:this.blockedInMonth(y,m)}; },
+        calendarDateClass(day){ const blocked=this.isBlockedDate(day.date); const today=this.isToday(day.date); const current=day.currentMonth; const weekend=day.date.getDay()===0||day.date.getDay()===6; if(blocked) return 'border-transparent bg-brand text-white shadow-[0_2px_8px_-2px_rgba(40,76,165,.5)]'; if(today) return 'border-2 border-brand-200 bg-brand-50 text-brand'; if(!current) return 'border-transparent bg-transparent text-slate-300 hover:bg-slate-50'; if(weekend) return 'border-slate-100 bg-slate-50/70 text-slate-500 hover:border-brand-200 hover:text-brand'; return 'border-slate-200 bg-white text-slate-700 hover:border-brand-300 hover:bg-brand-50/60'; },
+
+        publish(){ this.savedSnapshot=this.snapshot(); this.lastSaved=new Date().toLocaleString('en-IN',{hour:'2-digit',minute:'2-digit',day:'numeric',month:'short'}); try{ localStorage.setItem(STORAGE_KEY,JSON.stringify({days:this.days,blockedDates:this.blockedDates,lastSaved:this.lastSaved})); }catch(e){} try{ window.dispatchEvent(new CustomEvent('slots-published',{detail:{days:JSON.parse(JSON.stringify(this.days)),blockedDates:JSON.parse(JSON.stringify(this.blockedDates))}})); }catch(e){} this.clearDraft(); this.undoStack=[]; this.flash('Visit slots published \u2014 parents can now book'); },
+        resetChanges(){ this.pushUndo(); const saved=JSON.parse(this.savedSnapshot); this.days=saved.days; this.blockedDates=saved.blockedDates||[]; this.clearDraft(); this.flash('Reset to last published'); },
+        flash(msg,hasUndo=false){ this.toast=msg; this.toastHasUndo=hasUndo&&this.canUndo; clearTimeout(this._t); this._t=setTimeout(()=>{ this.toast=''; this.toastHasUndo=false; },3500); },
+
+        /* ---- host management (date-wise), persisted separately from slots ---- */
+        weeklyHost:'Priya Iyer',
+        hostOverrides:{},
+        hostWeekStart:null,
+        awayByWeek:{},
+        confirmDeleteName:null,
+        openHostMenu:null,
+        showHostAdd:false, hostAddCtx:null, hostNewName:'', hostNewRole:'', hostSearch:'',
+        hostRoster:[
+          {name:'Priya Iyer', role:'Centre Head', away:false},
+          {name:'Ramya Krishnan', role:'Admissions Lead', away:false},
+          {name:'Aditya Nair', role:'Counsellor', away:false},
+          {name:'Meera Pillai', role:'Front Office', away:false},
+        ],
+        // Host search pool comes from My Team (CRM.staffDirectory() → active [{name,role}]).
+        // Re-read on init, on Add-Host modal open, and on any CRM change.
+        staffDirectory:[],
+        loadStaffDirectory(){ try{ if(window.CRM && typeof CRM.staffDirectory==='function'){ this.staffDirectory = CRM.staffDirectory(); } }catch(e){} },
+
+        _mondayOf(date){ const d=new Date(date); const wd=(d.getDay()+6)%7; d.setHours(0,0,0,0); d.setDate(d.getDate()-wd); return d; },
+        _hostBase(){ return this.hostWeekStart ? new Date(this.hostWeekStart+'T00:00:00') : this._mondayOf(new Date()); },
+        hostDayOffset(key){ return ['mon','tue','wed','thu','fri','sat','sun'].indexOf(key); },
+        hostDateObj(key){ const b=this._hostBase(); const d=new Date(b); d.setDate(b.getDate()+this.hostDayOffset(key)); return d; },
+        hostDateISOFor(key){ return this.dateToISO(this.hostDateObj(key)); },
+        hostDateLabel(key){ return this.hostDateObj(key).toLocaleDateString('en-IN',{day:'numeric',month:'short'}); },
+        hostWeekLabel(){ const mon=this._hostBase(); const sun=new Date(mon); sun.setDate(mon.getDate()+6); const f=x=>x.toLocaleDateString('en-IN',{day:'numeric',month:'short'}); return f(mon)+' \u2013 '+f(sun); },
+        prevHostWeek(){ if(this.atCurrentWeek) return; const b=this._hostBase(); b.setDate(b.getDate()-7); this.hostWeekStart=this.dateToISO(b); this.openHostMenu=null; },
+        nextHostWeek(){ if(this.atMaxWeek) return; const b=this._hostBase(); b.setDate(b.getDate()+7); this.hostWeekStart=this.dateToISO(b); this.openHostMenu=null; },
+        thisHostWeek(){ this.hostWeekStart=this.dateToISO(this._mondayOf(new Date())); this.openHostMenu=null; },
+        _weekKey(){ return this.dateToISO(this._hostBase()); },
+        get todayISO(){ return this.dateToISO(new Date()); },
+        get atCurrentWeek(){ return this._weekKey() === this.dateToISO(this._mondayOf(new Date())); },
+        _maxWeekStart(){ const d=new Date(); d.setMonth(d.getMonth()+1); return this.dateToISO(this._mondayOf(d)); },
+        get atMaxWeek(){ return this._weekKey() >= this._maxWeekStart(); },
+        isPastDate(key){ return this.hostDateISOFor(key) < this.todayISO; },
+        isTodayDate(key){ return this.hostDateISOFor(key) === this.todayISO; },
+        dateBlocked(key){ return this.isBlockedDate(this.hostDateISOFor(key)); },
+        blockedReasonFor(key){ const iso=this.hostDateISOFor(key); const b=this.blockedDates.find(x=>x.date===iso); return (b&&b.reason)?b.reason:'Blocked'; },
+        dateState(key){ if(this.isPastDate(key)) return 'past'; if(this.dateBlocked(key)) return 'blocked'; if(this.days[key].enabled){ return this.activeSlotCount(key)>0 ? 'available' : 'warning'; } return 'closed'; },
+        openToParents(key){ return this.dateState(key)==='available'; },
+        hostRelevant(key){ const s=this.dateState(key); if(s==='closed') return false; if(s==='past') return this.days[key].enabled; return true; },
+        hostEditable(key){ return this.dateState(key)!=='past'; },
+        stateLabel(key){ return {past:'Completed',blocked:'Blocked',available:'Open',warning:'Add hours',closed:'Closed'}[this.dateState(key)]; },
+        statePill(key){ return {past:'bg-slate-100 text-slate-500',blocked:'bg-amber-100 text-amber-700',available:'bg-emerald-50 text-emerald-700',warning:'bg-amber-50 text-amber-700',closed:'bg-slate-100 text-slate-400'}[this.dateState(key)]; },
+        stateSub(key){ return {past:'Date has passed',blocked:'Blocked \u2014 closed to parents',available:'Open for parent visits',warning:'Open \u2014 add bookable hours',closed:'Closed for visits'}[this.dateState(key)]; },
+        cardBorder(key){ return {past:'!border-slate-200 bg-slate-50/30',blocked:'!border-amber-200',available:'!border-brand-100',warning:'!border-amber-200',closed:''}[this.dateState(key)]; },
+        headerBg(key){ return {past:'border-b border-slate-100 bg-slate-50/60',blocked:'border-b border-amber-100 bg-amber-50/50',available:'bg-brand-50/40 border-b border-brand-100/60',warning:'bg-amber-50/40 border-b border-amber-100',closed:'border-b border-slate-100'}[this.dateState(key)]; },
+        blockDateFromCard(key){ this.addBlockedDate(this.hostDateISOFor(key), this.blockReasonDefault); },
+        unblockDateFromCard(key){ this.removeBlockedDate(this.hostDateISOFor(key)); },
+
+        hostFind(n){ return this.hostRoster.find(h=>h.name===n)||null; },
+        hostRole(n){ const h=this.hostFind(n); return h?h.role:''; },
+        hostIsAway(n){ return !!n && n!==this.weeklyHost; },
+        hostInitials(n){ if(!n) return ''; return n.trim().split(/\s+/).map(p=>p[0]).slice(0,2).join('').toUpperCase(); },
+        dayHostName(key){ const iso=this.hostDateISOFor(key); return this.hostOverrides[iso] || this.weeklyHost; },
+        dayHostOverridden(key){ const v=this.hostOverrides[this.hostDateISOFor(key)]; return !!(v && v!==this.weeklyHost); },
+        customHostDays(){ return this.openDays.map(d=>d.key).filter(k=>this.dayHostOverridden(k) && !this.isPastDate(k)); },
+
+        setWeeklyHost(n){ this.openHostMenu=null; if(!n||n===this.weeklyHost) return; this.weeklyHost=n; this.persistHosts(); this.flash('Weekly host set to '+n); },
+        setDayHost(key,n){ const iso=this.hostDateISOFor(key); this.openHostMenu=null; if(!n||n===this.weeklyHost){ delete this.hostOverrides[iso]; this.persistHosts(); this.flash(this.dayLabel(key)+' '+this.hostDateLabel(key)+' uses the weekly host'); } else { this.hostOverrides[iso]=n; this.persistHosts(); this.flash(this.dayLabel(key)+' '+this.hostDateLabel(key)+' host set to '+n); } },
+        resetDayHost(key){ this.setDayHost(key,null); },
+        resetHostWeek(){ this.openDays.forEach(d=>{ delete this.hostOverrides[this.hostDateISOFor(d.key)]; }); this.openHostMenu=null; this.persistHosts(); this.flash('Host overrides cleared for this week'); },
+        toggleHostAway(n){ if(!this.hostFind(n)) return; const k=this._weekKey(); const list=Array.isArray(this.awayByWeek[k])?[...this.awayByWeek[k]]:[]; const i=list.indexOf(n); let nowAway; if(i>=0){ list.splice(i,1); nowAway=false; } else { list.push(n); nowAway=true; } if(list.length){ this.awayByWeek[k]=list; } else { delete this.awayByWeek[k]; } this.persistHosts(); this.flash(n+(nowAway?' marked away for '+this.hostWeekLabel():' marked available')); },
+        deleteHost(n){ this.confirmDeleteName=null; if(this.hostRoster.length<=1){ this.flash('Keep at least one host on the roster'); return; } if(!this.hostFind(n)) return; this.hostRoster=this.hostRoster.filter(h=>h.name!==n); Object.keys(this.hostOverrides).forEach(iso=>{ if(this.hostOverrides[iso]===n) delete this.hostOverrides[iso]; }); Object.keys(this.awayByWeek).forEach(k=>{ this.awayByWeek[k]=this.awayByWeek[k].filter(x=>x!==n); if(!this.awayByWeek[k].length) delete this.awayByWeek[k]; }); if(this.weeklyHost===n){ this.weeklyHost=this.hostRoster[0].name; } this.openHostMenu=null; this.persistHosts(); this.flash(n+' removed from hosts'); },
+
+        get hostNewValid(){ const n=this.hostNewName.trim(); return !!n && !this.hostRoster.some(h=>h.name.toLowerCase()===n.toLowerCase()); },
+        staffSearchResults(){ const q=this.hostSearch.trim().toLowerCase(); return this.staffDirectory.filter(s=>!this.hostRoster.some(h=>h.name===s.name)).filter(s=> !q || s.name.toLowerCase().includes(q) || (s.role||'').toLowerCase().includes(q)); },
+        staffQueryInDirectory(){ const q=this.hostSearch.trim().toLowerCase(); if(!q) return true; return this.staffDirectory.some(s=> s.name.toLowerCase().includes(q) || (s.role||'').toLowerCase().includes(q)); },
+        addHostFromStaff(s){ if(!s || this.hostRoster.some(h=>h.name===s.name)) return; this.hostRoster.push({name:s.name, role:s.role||'', away:false}); const c=this.hostAddCtx; this.showHostAdd=false; this.hostSearch=''; this.persistHosts(); if(c&&c.type==='day'){ this.setDayHost(c.key,s.name); } else if(c&&c.type==='weekly'){ this.setWeeklyHost(s.name); } else { this.flash('Host added: '+s.name); } },
+        openHostAdd(ctx){ this.loadStaffDirectory(); this.hostAddCtx=ctx; this.hostSearch=''; this.hostNewName=''; this.hostNewRole=''; this.showHostAdd=true; this.openHostMenu=null; this.$nextTick(()=>{ try{ this.$refs.hostNameInput.focus(); }catch(e){} }); },
+        confirmHostAdd(){ if(!this.hostNewValid) return; const n=this.hostNewName.trim(), r=this.hostNewRole.trim(); this.hostRoster.push({name:n,role:r,away:false}); const c=this.hostAddCtx; this.showHostAdd=false; this.persistHosts(); if(c&&c.type==='day'){ this.setDayHost(c.key,n); } else if(c&&c.type==='weekly'){ this.setWeeklyHost(n); } else { this.flash('Host added \u2014 '+n+(r?' \u00b7 '+r:'')); } },
+
+        persistHosts(){ try{ localStorage.setItem('superschools.visitHosts.v1', JSON.stringify({weeklyHost:this.weeklyHost,hostRoster:this.hostRoster,hostOverrides:this.hostOverrides,awayByWeek:this.awayByWeek})); }catch(e){} },
+        loadHosts(){ try{ const raw=localStorage.getItem('superschools.visitHosts.v1'); if(raw){ const p=JSON.parse(raw); if(p.weeklyHost)this.weeklyHost=p.weeklyHost; if(Array.isArray(p.hostRoster)&&p.hostRoster.length)this.hostRoster=p.hostRoster; if(p.hostOverrides&&typeof p.hostOverrides==='object')this.hostOverrides=p.hostOverrides; if(p.awayByWeek&&typeof p.awayByWeek==='object'){ this.awayByWeek=p.awayByWeek; } else { const legacy=this.hostRoster.filter(h=>h.away).map(h=>h.name); if(legacy.length){ this.awayByWeek[this._weekKey()]=legacy; } } } }catch(e){} }
+      };
+    }
+
+  </script>
+
+<script>
+(function(){
+  'use strict';
+  var lastY = 0;
+  var ticking = false;
+  var threshold = 10;
+  var tracked = [];
+
+  function isScrollable(el){
+    if (!el || el === document.body || el === document.documentElement) return false;
+    var cs = window.getComputedStyle(el);
+    var oy = cs.overflowY;
+    return (oy === 'auto' || oy === 'scroll') && el.scrollHeight > el.clientHeight + 8;
+  }
+
+  function getScrollTop(){
+    var root = document.scrollingElement || document.documentElement || document.body;
+    var y = Math.max(0, window.pageYOffset || root.scrollTop || document.documentElement.scrollTop || document.body.scrollTop || 0);
+    for (var i = 0; i < tracked.length; i++) {
+      var el = tracked[i];
+      if (el && el.scrollTop > y) y = el.scrollTop;
+    }
+    return y;
+  }
+
+  function send(type, payload){
+    try {
+      if (window.parent && window.parent !== window) {
+        window.parent.postMessage(Object.assign({ type: type }, payload || {}), '*');
+      }
+    } catch (err) {}
+  }
+
+  function update(){
+    ticking = false;
+    var y = getScrollTop();
+    if (y <= 4) {
+      lastY = y;
+      send('ss-visit-scroll-top', { scrollTop: y });
+      return;
+    }
+    var delta = y - lastY;
+    if (Math.abs(delta) < threshold) return;
+    var direction = delta > 0 ? 'down' : 'up';
+    lastY = y;
+    send('ss-visit-scroll', { direction: direction, scrollTop: y });
+  }
+
+  function schedule(){
+    if (ticking) return;
+    ticking = true;
+    window.requestAnimationFrame(update);
+  }
+
+  function bindScrollableContainers(){
+    tracked.forEach(function(el){ try { el.removeEventListener('scroll', schedule); } catch(e) {} });
+    tracked = Array.prototype.slice.call(document.querySelectorAll('*')).filter(isScrollable);
+    tracked.forEach(function(el){ el.addEventListener('scroll', schedule, { passive: true }); });
+  }
+
+  window.addEventListener('scroll', schedule, { passive: true });
+  window.addEventListener('wheel', schedule, { passive: true });
+  window.addEventListener('touchmove', schedule, { passive: true });
+  window.addEventListener('keydown', function(event){
+    var k = event.key;
+    if (k === 'PageDown' || k === 'PageUp' || k === 'ArrowDown' || k === 'ArrowUp' || k === 'Home' || k === 'End' || k === ' ') schedule();
+  }, { passive: true });
+  window.addEventListener('resize', function(){ bindScrollableContainers(); schedule(); }, { passive: true });
+  window.addEventListener('orientationchange', function(){ setTimeout(function(){ bindScrollableContainers(); schedule(); }, 80); }, { passive: true });
+  window.addEventListener('load', function(){ bindScrollableContainers(); schedule(); });
+  document.addEventListener('DOMContentLoaded', function(){ bindScrollableContainers(); schedule(); });
+  document.addEventListener('alpine:initialized', function(){ bindScrollableContainers(); schedule(); });
+  document.addEventListener('click', function(){ setTimeout(function(){ bindScrollableContainers(); schedule(); }, 80); }, true);
+  // Shell level-2 action bar bridge: the shell posts { type:'ss-action', action } when a
+  // global Undo/Reset/Publish button is clicked. Route it to the slots component's methods.
+  window.addEventListener('message', function(e){
+    var d = e && e.data;
+    if (!d || d.type !== 'ss-action') return;
+    var el = document.querySelector('[data-visit-view="slots"]');
+    if (!el || !window.Alpine) return;
+    var c = window.Alpine.$data(el);
+    if (d.action === 'undo') c.undo();
+    else if (d.action === 'reset') c.promptReset();
+    else if (d.action === 'publish') c.initiatePublish();
+  });
+  window.addEventListener('message', function(event){
+    if (event && event.data && event.data.type === 'ss-visit-view') {
+      lastY = getScrollTop();
+      send(lastY <= 4 ? 'ss-visit-scroll-top' : 'ss-visit-scroll', { direction: 'up', scrollTop: lastY });
+      setTimeout(function(){ bindScrollableContainers(); schedule(); }, 80);
+      setTimeout(function(){ bindScrollableContainers(); schedule(); }, 240);
+    }
+  });
+  if ('MutationObserver' in window) {
+    new MutationObserver(function(){ bindScrollableContainers(); schedule(); }).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class', 'style', 'aria-expanded'] });
+  }
+  bindScrollableContainers();
+})();
+</script>
+  <script src="../../components/RouteLoader.js"></script>
+</body>
+</html>

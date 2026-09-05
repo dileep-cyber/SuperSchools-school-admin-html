@@ -1,0 +1,1694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Super Schools — Rooms</title>
+<!-- v2: Room Type selection + grouping, Room Type filter, Room Type column, staff-ready room structure -->
+
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+:root{
+  --primary:#284CA5; --primary-dark:#203F8D; --primary-soft:#EFF4FF;
+  --success:#1f9d55; --success-soft:#e6f6ec;
+  --danger:#d64545; --danger-soft:#fdecec;
+  --ink:#1d2433; --muted:#6b7488; --faint:#9aa1b1;
+  --border:#e8ecf4; --card:#ffffff; --page:#f3f5fb;
+  --shadow-sm:0 1px 3px rgba(20,28,52,.05);
+  --shadow:0 4px 14px rgba(20,28,52,.07),0 1px 3px rgba(20,28,52,.04);
+  --shadow-lg:0 18px 44px rgba(20,28,52,.18);
+  /* Consistent, reduced radius scale (premium, less rounded) */
+  --radius:10px;        /* cards · panels · filters */
+  --radius-lg:12px;     /* modals · dialogs */
+  --radius-md:8px;      /* buttons · inputs · dropdowns · tiles */
+  --radius-sm:6px;      /* icon buttons · small controls */
+  --radius-xs:4px;      /* focus outlines · tiny */
+  --radius-pill:999px;  /* chips · avatars · dots */
+  --font:"Inter",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%}
+body{font-family:var(--font);background:var(--page);color:var(--ink);font-size:14px;line-height:1.5;font-weight:400;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+button,input,select{font-family:inherit;font-size:14px;font-weight:400}
+button{border:0;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent}
+button:active:not(:disabled){transform:translateY(.5px)}
+input{border:1px solid var(--border);background:#fff;color:var(--ink)}
+input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-soft)}
+button:focus-visible,a:focus-visible{outline:2px solid #BFD3FF;outline-offset:2px;border-radius:var(--radius-sm)}
+::-webkit-scrollbar{height:9px;width:9px}::-webkit-scrollbar-thumb{background:#cdd2e0;border-radius:var(--radius-pill)}::-webkit-scrollbar-track{background:transparent}
+
+/* ---------- shell ---------- */
+.app{min-height:100vh;display:flex;flex-direction:column}
+/* ---------- two-level top navigation ---------- */
+.appnav{background:var(--card);position:sticky;top:0;z-index:30}
+.appnav-row{width:100%;max-width:none;margin:0 auto;padding:0 40px;display:flex;align-items:center;gap:12px}
+.appnav-l1{height:52px;background:var(--primary);border-bottom:none}
+.appnav-l2{height:54px;border-bottom:1px solid #e2e8f0;box-shadow:0 4px 12px -2px rgba(15,23,42,.08)}
+.nav-tabs{display:flex;align-items:stretch;height:100%;min-width:0;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none}
+.nav-tabs::-webkit-scrollbar{display:none}
+.nav-tab{position:relative;height:100%;display:inline-flex;align-items:center;padding:0 16px;font-size:14px;font-weight:500;color:rgba(255,255,255,.82);white-space:nowrap;background:none;border:0;cursor:pointer;transition:color .15s}
+.nav-tab:first-child{padding-left:0}
+.nav-tab:hover{color:#fff}
+.nav-tab.is-active{color:#fff;font-weight:600}
+.nav-tab.is-active::after{content:"";position:absolute;left:16px;right:16px;bottom:0;height:2.5px;border-radius:3px 3px 0 0;background:#fff}
+.nav-tab:first-child.is-active::after{left:0}
+.nav-icons{margin-left:auto;display:flex;align-items:center;gap:8px;flex:none}
+.nav-ico{position:relative;width:36px;height:36px;border-radius:999px;border:1px solid rgba(255,255,255,.4);background:transparent;color:#fff;display:grid;place-items:center;cursor:pointer;transition:background-color .15s,color .15s,border-color .15s}
+.nav-ico:hover{background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.7)}
+.nav-ico svg{width:19px;height:19px}
+.nav-dot{position:absolute;top:6px;right:6px;width:8px;height:8px;border-radius:999px;background:#ef4444;box-shadow:0 0 0 2px var(--primary)}
+.nav-subtabs{display:flex;align-items:stretch;height:100%;min-width:0;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none}
+.nav-subtabs::-webkit-scrollbar{display:none}
+.nav-subtab{position:relative;height:100%;display:inline-flex;align-items:center;padding:0 16px;font-size:14px;font-weight:500;color:#64748b;white-space:nowrap;background:none;border:0;cursor:pointer;transition:color .15s}
+.nav-subtab:first-child{padding-left:0}
+.nav-subtab:hover{color:#334155}
+.nav-subtab.is-active{color:var(--primary);font-weight:600}
+.nav-add-btn{margin-left:auto;flex:none;height:38px;padding:0 15px;border-radius:var(--radius-md);font-size:13.5px}
+.nav-add-btn svg{width:15px;height:15px;flex:none}
+/* Sticky Level 2 — once Level 1 has scrolled out of view, L2 pins at the top
+   and adopts the blue bar style (white sub-tabs + inverted white Add button).
+   The .l2-stuck class is toggled in JS exactly when L1 leaves the viewport, so
+   it stays aligned with the sticky pin (no gray flash, no jump, no overlap). */
+.appnav-l2{transition:background-color .25s ease,border-color .25s ease,box-shadow .25s ease}
+.appnav.l2-stuck .appnav-l2{background:var(--primary);border-bottom-color:var(--primary-dark);box-shadow:0 6px 16px -3px rgba(15,23,42,.22)}
+.appnav.l2-stuck .nav-subtab{color:rgba(255,255,255,.82)}
+.appnav.l2-stuck .nav-subtab:hover{color:#fff}
+.appnav.l2-stuck .nav-subtab.is-active{color:#fff}
+.appnav.l2-stuck .nav-add-btn{background:#fff;color:var(--primary);box-shadow:0 1px 3px rgba(20,28,52,.18)}
+.appnav.l2-stuck .nav-add-btn:hover{background:var(--primary-soft)}
+.content{width:100%;max-width:none;margin:0 auto;padding:22px 40px 24px}
+
+/* ---------- section heading ---------- */
+.section-head{display:flex;align-items:center;gap:10px;margin:2px 0 14px}
+.section-head h1{font-size:19px;font-weight:600;letter-spacing:-.2px}
+.section-head .sub{font-size:13px;color:var(--muted);font-weight:400;margin-top:2px}
+.section-head .right{margin-left:auto;display:flex;gap:8px;align-items:center}
+.count-chip{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 11px;border-radius:999px;background:var(--primary-soft);color:var(--primary);font-size:12.5px;font-weight:600;box-shadow:inset 0 0 0 1px #D7E4FF;white-space:nowrap}
+
+/* ---------- buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:9px 15px;border-radius:var(--radius-md);font-weight:500;font-size:13.5px;transition:.15s;white-space:nowrap}
+.btn-primary{background:var(--primary);color:#fff;box-shadow:0 1px 3px rgba(47,91,208,.18)}
+.btn-primary:hover{background:var(--primary-dark)}
+.btn-ghost{background:#fff;color:var(--primary);border:1px solid #D7E4FF}
+.btn-ghost:hover{background:var(--primary-soft)}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-danger:hover{background:#bf3a3a}
+.btn-sm{padding:6px 11px;font-size:12.5px;border-radius:var(--radius-sm)}
+.btn svg{width:15px;height:15px;flex:none}
+
+/* ---------- filters / search ---------- */
+.filters{background:var(--card);border:1px solid #e7ebf3;border-radius:var(--radius);padding:12px 14px;margin-bottom:16px;box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+/* Search grows to fill the row; the two filters are pushed to the right edge. */
+.filters-inputs{display:flex;align-items:center;gap:10px;flex:1 1 460px;min-width:0;flex-wrap:wrap}
+/* The two filters travel together as one wrapping unit, so a single filter can
+   never be stranded on its own row at any width (auto-responsive, not pixel-tied). */
+.filter-group{display:flex;align-items:center;gap:10px;flex:0 1 auto;min-width:0}
+.filters .btn{height:40px;flex:none}
+#resetFilters{background:var(--primary);color:#fff;border:1px solid var(--primary);min-width:72px}
+#resetFilters:hover:not(:disabled){background:var(--primary-dark);border-color:var(--primary-dark)}
+#resetFilters:disabled{background:#c5d5ef;border-color:#c5d5ef;color:#fff;opacity:1;cursor:not-allowed}
+.filters-inputs .ss-select{flex:0 0 210px;width:210px;min-width:180px}
+/* All Types field widened so the field width matches its (auto-sized) menu — the
+   longest option ("Pre-primary (Nursery, LKG, UKG)") then fits on a single line.
+   The Rooms filter is left at the default width (already correct). */
+#typeFilterSelect{flex:0 0 292px;width:292px;min-width:200px}
+.search{flex:1 1 280px;width:auto;min-width:220px;position:relative;display:flex;align-items:center;height:40px}
+.search .search-ico{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--primary);pointer-events:none}
+.search input{width:100%;height:40px;padding:9px 12px 9px 38px;border-radius:9px;background:#fff;border-color:#d7e4ff;box-shadow:0 1px 3px rgba(40,76,165,.06)}
+.search.has-value input{padding-right:42px}
+.search input::-webkit-search-decoration,.search input::-webkit-search-cancel-button{display:none}
+.search input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(47,91,208,.10)}
+.search-clear{position:absolute;right:7px;top:50%;transform:translateY(-50%);display:none;place-items:center;width:26px;height:26px;border-radius:var(--radius-sm);color:var(--muted);transition:.15s}
+.search.has-value .search-clear{display:grid}
+.search-clear:hover{background:#eef4ff;color:var(--primary)}
+
+/* ---------- table ---------- */
+.panel{background:var(--card);border:1px solid #e2e8f0;border-radius:var(--radius);box-shadow:0 1px 3px rgba(15,23,42,.06);overflow:hidden}
+.table-wrap{overflow:auto;scroll-behavior:smooth}
+table{width:100%;border-collapse:collapse;min-width:0;background:#fff;font-size:13px}
+thead th{text-align:left;font-size:12px;color:#475569;font-weight:600;padding:12px 18px;background:#eef2f9;border-bottom:1px solid #e2e8f0;white-space:nowrap}
+thead th.col-actions{text-align:right;width:120px;min-width:120px}
+.sort-head{display:inline-flex;align-items:center;gap:6px;color:#475569;font-size:12px;font-weight:500;line-height:1;background:transparent;border:0;padding:0;cursor:pointer}
+.sort-head:hover{color:var(--primary)}
+.sort-icon{font-size:12px;color:#94a3b8;font-weight:500;line-height:1}
+.sort-head.active,.sort-head.active .sort-icon{color:var(--primary)}
+tbody td{padding:12px 18px;border-bottom:1px solid #edf0f6;vertical-align:middle;font-weight:400;color:#334155}
+tbody tr{transition:background-color .14s,box-shadow .14s}
+tbody tr:hover{background:var(--primary-soft);box-shadow:inset 3px 0 0 var(--primary)}
+tbody tr:last-child td{border-bottom:none}
+.cell-name{min-width:260px}
+.name-cell{display:flex;align-items:center;gap:11px;min-width:0}
+.room-tile{width:34px;height:34px;min-width:34px;border-radius:var(--radius-md);background:var(--primary-soft);color:var(--primary);display:grid;place-items:center;flex:none}
+.room-tile svg{width:18px;height:18px}
+.room-name{font-weight:600;color:#0f172a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:inline-block;max-width:100%;cursor:pointer;transition:color .12s}
+.room-name:hover{color:var(--primary);text-decoration:underline}
+.room-row[data-view]:hover .room-name{color:var(--primary);text-decoration:underline}
+.room-name:focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:var(--radius-xs)}
+.cell-room{min-width:240px}
+.room-stack{display:flex;flex-direction:column;gap:2px;min-width:0}
+.room-type-sub{font-size:12px;color:var(--muted);font-weight:400;white-space:normal;line-height:1.35}
+.room-row-inner{display:flex;align-items:center;justify-content:space-between;gap:14px;min-width:0}
+.room-row[data-view]{cursor:pointer}
+.date-cell{color:#334155;font-weight:400}
+.date-cell .date-rel{display:block;font-size:11.5px;color:var(--faint);margin-top:1px;font-weight:400}
+.dash{color:var(--faint);font-weight:400}
+.row-actions{display:inline-flex;align-items:center;gap:6px;justify-content:center;width:100%}
+.icon-btn{width:32px;height:32px;border-radius:var(--radius-sm);display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--border);background:#fff;color:#64748b;transition:.15s}
+.icon-btn svg{width:16px;height:16px}
+.icon-btn.act-edit:hover{background:#EFF4FF;color:var(--primary);border-color:#D7E4FF}
+.icon-btn.act-del:hover{background:#FEF2F2;color:#DC2626;border-color:#FECACA}
+
+/* ---------- mobile / tablet cards ---------- */
+.mobile-list{display:none;gap:12px}
+.room-card{background:var(--card);border:1px solid #e7ebf3;border-radius:var(--radius-md);padding:14px;box-shadow:var(--shadow-sm)}
+/* Clickable room row */
+.room-card-link{display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;transition:border-color .12s,box-shadow .12s,background-color .12s}
+.room-card-link:hover{border-color:#d7e4ff;background:#fafcff;box-shadow:var(--shadow)}
+.room-card-link:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+.room-card-link .room-stack{flex:1 1 auto;min-width:0}
+.room-card-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14.5px;font-weight:600;color:#0f172a;line-height:1.3;display:block}
+.room-card-chevron{width:20px;height:20px;color:#94a3b8;flex:none}
+.room-card-link:hover .room-card-chevron{color:var(--primary)}
+
+/* ---------- pagination (matches the design used in other modules) ---------- */
+.table-pager{display:flex;height:48px;align-items:center;justify-content:flex-end;gap:20px;border:1px solid #e7ebf3;border-radius:var(--radius);box-shadow:var(--shadow-sm);background:#fff;padding:0 18px;font-size:13px;color:#64748b;margin-top:12px}
+.pager-controls{display:flex;align-items:center;gap:5px}
+.pager-btn{width:32px;height:32px;border-radius:9px;border:1px solid #d7e4ff;background:#fff;color:#64748b;display:grid;place-items:center;transition:.15s}
+.pager-btn:hover:not(:disabled){background:#eff4ff;color:var(--primary)}
+.pager-btn:disabled{opacity:.42;cursor:not-allowed}
+.pager-page{height:32px;min-width:32px;border-radius:9px;background:var(--primary);color:#fff;display:grid;place-items:center;font-size:12px;font-weight:500;padding:0 8px}
+.mobile-pager{display:none}
+
+/* ---------- skeleton loading ---------- */
+.skel{position:relative;overflow:hidden;background:#e8ecf3;border-radius:var(--radius-sm)}
+.skel::after{content:"";position:absolute;inset:0;transform:translateX(-100%);background:linear-gradient(90deg,transparent,rgba(255,255,255,.65),transparent);animation:skel-shimmer 1.25s ease-in-out infinite}
+@keyframes skel-shimmer{100%{transform:translateX(100%)}}
+.skel-line{display:block;height:13px}
+.skel-line.lg{width:120px}
+.skel-line.sm{width:200px;height:11px;margin-top:8px}
+.skel-row td{padding:13px 18px}
+.skel-chevron{width:18px;height:18px;border-radius:var(--radius-sm);flex:none}
+.skel-card{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.skel-card .room-stack{flex:1 1 auto;min-width:0}
+@media(prefers-reduced-motion:reduce){.skel::after{animation:none}}
+
+/* ---------- empty state ---------- */
+.empty-state{background:var(--card);border:1px solid #e7ebf3;border-radius:var(--radius);box-shadow:var(--shadow-sm);padding:48px 24px;text-align:center;display:flex;flex-direction:column;align-items:center}
+.empty-ico{width:64px;height:64px;border-radius:50%;background:var(--primary-soft);color:var(--primary);display:grid;place-items:center;margin-bottom:16px}
+.empty-ico svg{width:30px;height:30px}
+.empty-state h2{font-size:17px;font-weight:600;color:#0f172a}
+.empty-state p{font-size:13.5px;color:var(--muted);margin:6px 0 18px;max-width:360px;line-height:1.55}
+.empty-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.hidden{display:none!important}
+
+/* ---------- modal (add / edit) ---------- */
+.modal-wrap{position:fixed;inset:0;background:rgba(15,23,42,.40);display:none;align-items:center;justify-content:center;padding:16px;z-index:80;overflow:hidden}
+.modal-wrap.on{display:flex}
+.modal{width:100%;max-width:480px;max-height:calc(100vh - 32px);display:flex;flex-direction:column;overflow:hidden;border:1px solid #e7ebf3;border-radius:var(--radius-lg);background:#fff;box-shadow:var(--shadow-lg);animation:pop .18s cubic-bezier(.4,0,.2,1)}
+@keyframes pop{from{transform:translateY(10px) scale(.985);opacity:0}to{transform:none;opacity:1}}
+.modal-head{flex:none;padding:16px 22px;border-bottom:1px solid #eef2f7;background:#fff;display:flex;align-items:flex-start;gap:12px}
+.modal-head b{font-size:18px;font-weight:600;letter-spacing:-.02em;color:#0f172a}
+.modal-head span{font-size:13px;color:#64748b;display:block;font-weight:400;margin-top:2px}
+.x{margin-left:auto;width:36px;height:36px;border-radius:var(--radius-sm);display:grid;place-items:center;color:#64748b;background:#fff;transition:.15s;flex:none}
+.x:hover{background:#eef2f7;color:#0f172a}
+.modal-body{min-height:0;overflow-y:auto;background:#f6f8fc;padding:18px 22px}
+.modal-form-card{border:1px solid #e7ebf3;border-radius:var(--radius);background:#fff;padding:18px}
+.modal-foot{flex:none;padding:14px 22px;border-top:1px solid #eef2f7;background:#fff;display:flex;gap:14px;justify-content:flex-end}
+.field{margin-bottom:0}
+.field label{display:block;font-size:12px;font-weight:500;margin-bottom:6px;color:#334155}
+.field input{width:100%;height:40px;padding:9px 12px;border-radius:var(--radius-md);border:1px solid #e2e8f0;color:#334155}
+.field input:focus{outline:none;border-color:#284CA5;box-shadow:0 0 0 3px rgba(40,76,165,.10)}
+.field .req{color:var(--danger)}
+.field .hint{font-size:11.5px;color:var(--danger);display:none;margin-top:6px;font-weight:400}
+.field .field-note{font-size:11.5px;color:var(--muted);margin-top:6px;font-weight:400}
+.field.error input{border-color:var(--danger);box-shadow:0 0 0 3px rgba(214,69,69,.10)}
+.field.error .hint{display:block}
+.field.error .field-note{display:none}
+
+/* ---------- delete dialog ---------- */
+.del-dialog{width:100%;max-width:460px;border:1px solid #fecdd3;border-radius:var(--radius-lg);background:#fff;box-shadow:var(--shadow-lg);animation:pop .18s cubic-bezier(.4,0,.2,1);overflow:hidden;max-height:calc(100vh - 32px);display:flex;flex-direction:column}
+.del-head{display:flex;align-items:flex-start;gap:12px;padding:18px 20px 16px;border-bottom:1px solid #fef2f2;background:#fff9f9}
+.del-head-icon{width:40px;height:40px;border-radius:var(--radius-md);background:var(--danger-soft);color:var(--danger);display:grid;place-items:center;flex:none}
+.del-head-icon svg{width:20px;height:20px}
+.del-head-text{flex:1;min-width:0}
+.del-head-text h3{font-size:16px;font-weight:600;color:#0f172a;line-height:1.3}
+.del-head-text p{font-size:12.5px;color:var(--muted);margin-top:3px;overflow-wrap:anywhere}
+.del-head .x{margin-left:auto}
+.del-body{padding:18px 20px;display:flex;flex-direction:column;gap:14px;overflow-y:auto}
+.del-impact{border-radius:var(--radius-md);padding:11px 13px;font-size:13px;line-height:1.6;border:1px solid #fde68a;background:#fffbeb;color:#92400e;display:flex;align-items:flex-start;gap:9px}
+.del-impact svg{width:16px;height:16px;flex:none;margin-top:1px}
+.del-undone{display:flex;align-items:center;gap:7px;font-size:12px;color:#64748b;background:#f8fafc;border:1px solid #e2e8f0;border-radius:var(--radius-sm);padding:8px 11px}
+.del-undone svg{width:14px;height:14px;color:#94a3b8;flex:none}
+.del-foot{padding:14px 20px;border-top:1px solid #eef2f7;display:flex;gap:10px;justify-content:flex-end;align-items:center}
+
+/* ---------- toast (shared SuperSchools component) ---------- */
+#toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(12px);display:inline-flex;align-items:center;gap:11px;padding:9px 14px 9px 16px;background:#FFFFFF;border:1px solid #E2E8F0;border-radius:10px;box-shadow:0 12px 30px rgba(15,23,42,0.12),0 1px 3px rgba(15,23,42,0.07);opacity:0;pointer-events:none;transition:opacity .22s ease,transform .22s ease;z-index:99999;min-width:280px;max-width:calc(100vw - 32px);font-family:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto}
+.toast-icon{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:999px;flex:none}
+.toast-body{display:flex;flex-direction:column;gap:1px;min-width:0;flex:1 1 auto}
+.toast-title{color:#0F172A;font-size:13px;font-weight:600;line-height:16px}
+.toast-text{color:#64748B;font-size:12.5px;font-weight:500;line-height:15px}
+.toast-close{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:8px;color:#94A3B8;background:none;border:none;cursor:pointer;flex:none;transition:background .12s,color .12s}
+.toast-close:hover{background:#F1F5F9;color:#475569}
+
+/* ---------- custom select (Superschools style) ---------- */
+.ss-select{position:relative;min-width:0}
+.ss-select-trigger{width:100%;height:40px;display:flex;align-items:center;gap:8px;border:1px solid #E2E8F0;background:#fff;border-radius:9px;padding:0 10px 0 12px;color:#334155;font-size:13px;font-weight:500;line-height:1;text-align:left;transition:border-color .15s,box-shadow .15s,background-color .15s,color .15s}
+.ss-select-trigger:hover{border-color:#CBD5E1}
+.ss-select.open .ss-select-trigger,.ss-select-trigger:focus-visible{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(40,76,165,.10)}
+.ss-select-value{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ss-select.is-placeholder .ss-select-value{color:#94a3b8;font-weight:400}
+.ss-select-caret{width:14px;height:14px;flex:none;color:#64748b;transition:transform .15s,color .15s}
+.ss-select.open .ss-select-caret{transform:rotate(180deg);color:var(--primary)}
+.ss-filter-ico{width:15px;height:15px;flex:none;color:var(--primary)}
+/* page filter variant */
+.ss-select.is-filter .ss-select-trigger{border-color:#D7E4FF;box-shadow:0 1px 3px rgba(40,76,165,.06)}
+.ss-select.is-filter .ss-select-trigger:hover{background:#EFF4FF;border-color:#D7E4FF;color:var(--primary)}
+.ss-select.is-filter.open .ss-select-trigger,.ss-select.is-filter .ss-select-trigger:focus-visible{border-color:var(--primary);box-shadow:0 0 0 3px rgba(40,76,165,.10);background:#fff;color:#0F172A}
+/* menu — fixed position so it is never clipped by the modal.
+   Outer shell: border / shadow / radius only, NO overflow so border-radius never clips the scrollbar.
+   Inner scroll: holds the padding + max-height + actual overflow-y:auto with a proper visible scrollbar. */
+.ss-select-menu{display:none;position:fixed;z-index:200;border:1px solid #E2E8F0;background:#fff;border-radius:var(--radius);box-shadow:0 16px 40px rgba(15,23,42,.18);overflow:hidden}
+.ss-select.open .ss-select-menu{display:block}
+/* Inner scroll: overflow-y:auto so the scrollbar appears ONLY when the option list
+   is taller than the menu. max-height fits the normal 5-6 option lists with no scroll
+   (no empty strip); longer lists scroll with a visible classic webkit scrollbar.
+   Styling ::-webkit-scrollbar opts out of overlay scrollbars so the bar reserves space.
+   Matches the canonical Superschools dropdown. */
+.ss-select-scroll{max-height:340px;overflow-y:auto;padding:8px}
+.ss-select-scroll::-webkit-scrollbar{width:10px}
+.ss-select-scroll::-webkit-scrollbar-track{background:transparent}
+.ss-select-scroll::-webkit-scrollbar-thumb{background:#CBD5E1;border-radius:999px;border:3px solid #fff;background-clip:content-box;min-height:32px}
+.ss-select-scroll::-webkit-scrollbar-thumb:hover{background:#94A3B8;background-clip:content-box;border:3px solid #fff}
+.ss-select-group{font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#94a3b8;padding:9px 9px 4px}
+.ss-select-group:first-child{padding-top:4px}
+.ss-select-option{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;min-height:36px;border-radius:7px;padding:8px 9px;margin-bottom:4px;font-size:13px;font-weight:400;color:#0F172A;line-height:1.25;cursor:pointer;white-space:nowrap;transition:background-color .12s,color .12s}
+.ss-select-option:last-child{margin-bottom:0}
+.ss-select-scroll:focus{outline:none}
+.ss-select-option:focus{outline:none}
+.ss-select-option:hover,.ss-select-option:focus-visible{background:#DCE8FF;color:#0F172A;outline:none}
+.ss-select-option[aria-selected="true"]{background:#EFF4FF;color:var(--primary);font-weight:600}
+.ss-opt-check{width:16px;height:16px;flex:none;opacity:0;color:var(--primary)}
+.ss-select-option[aria-selected="true"] .ss-opt-check{opacity:1}
+
+/* ---------- room type badge + type column ---------- */
+.cell-type{min-width:200px;max-width:300px}
+/* Room type as plain text (not a pill) — matches normal cell/subtitle text */
+.room-type-badge{display:inline;font-size:13px;font-weight:400;color:#334155;line-height:1.5;word-break:break-word;background:none;border:none;padding:0;border-radius:0}
+.room-card-badges{margin-top:0}
+.room-card-badges .room-type-badge{font-size:12.5px;color:var(--muted)}
+
+/* ---------- analytics summary cards (matches My Staff) ---------- */
+.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:13px;margin-bottom:16px}
+.scard{background:var(--card);border:1px solid #e7ebf3;border-radius:var(--radius);padding:15px;position:relative;overflow:hidden;box-shadow:var(--shadow-sm);transition:.15s}
+.scard:hover{border-color:#d7e4ff;box-shadow:var(--shadow);transform:translateY(-1px)}
+.scard .label{font-size:12px;color:var(--muted);font-weight:500}
+.scard .num{font-size:24px;font-weight:600;margin:5px 0 2px;letter-spacing:-.3px;color:var(--ink)}
+.scard .help{font-size:11.5px;color:var(--faint);font-weight:400}
+/* Clickable stat cards that filter the list (Assigned / Unassigned) */
+.scard-filter{cursor:pointer;text-align:left;width:100%;display:block;font:inherit}
+.scard-filter:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+.scard-filter.active{border-color:var(--primary);background:var(--primary-soft);box-shadow:inset 0 0 0 1px var(--primary),var(--shadow-sm)}
+.scard-filter.active .label,.scard-filter.active .num{color:var(--primary)}
+.scard-filter.active .help{color:var(--primary);opacity:.8}
+
+/* ---------- edit-room context card (Room ID + assignments + activity) ---------- */
+.edit-context{border:1px solid #e7ebf3;border-radius:var(--radius);background:#fff;padding:18px;margin-top:14px;display:grid;gap:16px}
+.edit-context[hidden]{display:none}
+.ec-block{display:grid;gap:8px}
+.ec-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.ec-label{font-size:12px;font-weight:600;color:#334155}
+.room-id-badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--primary);background:var(--primary-soft);border:1px solid #D7E4FF;border-radius:var(--radius-sm);padding:4px 10px;letter-spacing:.02em;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.assigned-chips{display:flex;flex-wrap:wrap;gap:7px}
+.assign-chip{display:inline-flex;align-items:center;gap:7px;background:#f4f7fd;border:1px solid #e2e8f0;border-radius:999px;padding:4px 11px 4px 4px;font-size:12.5px;color:#334155;font-weight:500}
+.assign-chip .av{width:22px;height:22px;border-radius:50%;background:#eff4ff;color:var(--primary);font-size:9.5px;font-weight:600;display:flex;align-items:center;justify-content:center;flex:none}
+.assign-empty{font-size:12.5px;color:var(--faint);font-weight:400;font-style:italic}
+.activity-list{display:grid;gap:9px}
+.activity-item{display:flex;gap:9px;align-items:flex-start}
+.act-dot{width:7px;height:7px;border-radius:50%;background:#cbd5e1;margin-top:5px;flex:none}
+.act-text{font-size:12.5px;color:#334155;line-height:1.4}
+.act-time{font-size:11px;color:var(--faint);margin-top:1px}
+
+/* ---------- room-type change warning dialog ---------- */
+.warn-dialog{width:100%;max-width:480px;border:1px solid #fde68a;border-radius:var(--radius-lg);background:#fff;box-shadow:var(--shadow-lg);animation:pop .18s cubic-bezier(.4,0,.2,1);overflow:hidden;max-height:calc(100vh - 32px);display:flex;flex-direction:column}
+.warn-head{padding:18px 20px;display:flex;gap:12px;align-items:flex-start;border-bottom:1px solid #eef2f7}
+.warn-head-icon{width:40px;height:40px;border-radius:var(--radius-md);background:#fffbeb;color:#b45309;display:grid;place-items:center;flex:none;border:1px solid #fde68a}
+.warn-head-icon svg{width:20px;height:20px}
+.warn-head-text h3{font-size:16px;font-weight:600;color:#0f172a}
+.warn-head-text p{font-size:13px;color:#64748b;margin-top:3px;line-height:1.5}
+.warn-body{padding:16px 20px;background:#f6f8fc}
+.warn-detail{border:1px solid #fde68a;background:#fffbeb;border-radius:var(--radius-md);padding:11px 13px;font-size:12.5px;color:#92400e;line-height:1.65}
+.warn-foot{padding:14px 20px;border-top:1px solid #eef2f7;display:flex;gap:12px;justify-content:flex-end}
+.btn-warn{background:#d97706;color:#fff}
+.btn-warn:hover{background:#b45309}
+
+/* ---------- room detail view ---------- */
+#detailView[hidden]{display:none}
+.rd-back{display:inline-flex;align-items:center;gap:7px;font-size:13.5px;font-weight:500;color:var(--primary);background:#fff;border:1px solid #D7E4FF;border-radius:var(--radius-md);padding:9px 15px;margin-bottom:14px;cursor:pointer;transition:background-color .15s,border-color .15s,color .15s}
+.rd-back svg{width:16px;height:16px}
+.rd-back:hover{background:var(--primary-soft);border-color:#c5d8ff}
+.rd-back:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+.rd-header{background:var(--card);border:1px solid #e7ebf3;border-radius:var(--radius);box-shadow:var(--shadow-sm);padding:18px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:16px}
+.rd-head-main{display:flex;align-items:center;gap:14px;min-width:0}
+.rd-tile{width:52px;height:52px;min-width:52px;border-radius:var(--radius);background:var(--primary-soft);color:var(--primary);display:grid;place-items:center;flex:none}
+.rd-tile svg{width:26px;height:26px}
+.rd-head-text{min-width:0}
+.rd-head-text h1{font-size:21px;font-weight:600;color:#0f172a;letter-spacing:-.02em;line-height:1.25;overflow:hidden;text-overflow:ellipsis}
+.rd-sub{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:5px}
+.rd-sub #rdSub{font-size:13px;color:var(--muted);font-weight:400}
+.rd-id-badge{display:inline-flex;align-items:center;font-size:11.5px;font-weight:600;color:var(--primary);background:var(--primary-soft);border:1px solid #D7E4FF;border-radius:var(--radius-sm);padding:3px 9px;letter-spacing:.02em;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.rd-actions{display:flex;align-items:center;gap:10px;flex:none}
+.rd-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.rd-card{background:var(--card);border:1px solid #e7ebf3;border-radius:var(--radius);box-shadow:var(--shadow-sm);padding:18px 20px}
+.rd-card h3{font-size:14px;font-weight:600;color:#0f172a}
+.rd-card-note{font-size:12.5px;color:var(--muted);margin-top:3px;line-height:1.5}
+.rd-dl{margin-top:14px;display:grid;gap:1px;background:#eef2f7;border:1px solid #eef2f7;border-radius:var(--radius-md);overflow:hidden}
+.rd-dl-row{display:flex;align-items:center;justify-content:space-between;gap:14px;background:#fff;padding:11px 13px}
+.rd-dl-row dt{font-size:12.5px;color:var(--muted);font-weight:500;flex:none}
+.rd-dl-row dd{font-size:13px;color:#1d2433;font-weight:500;text-align:right;min-width:0;word-break:break-word}
+.rd-dl-row dd.rd-placeholder{color:var(--faint);font-weight:400;font-style:italic}
+.rd-modules{margin-top:14px;display:grid;gap:8px;list-style:none}
+.rd-modules li{display:flex;align-items:center;gap:11px;border:1px solid #eef2f7;border-radius:var(--radius-md);padding:10px 12px;background:#fafbff}
+.rd-mod-ico{width:32px;height:32px;min-width:32px;border-radius:var(--radius-sm);background:#fff;border:1px solid #e7e9f0;color:#94a3b8;display:grid;place-items:center;flex:none}
+.rd-mod-ico svg{width:17px;height:17px}
+.rd-mod-name{font-size:13px;font-weight:500;color:#475569;flex:1 1 auto;min-width:0}
+.coming-pill{display:inline-flex;align-items:center;font-size:10.5px;font-weight:600;letter-spacing:.02em;color:#7c5e10;background:#fff7e6;border:1px solid #fde9b8;border-radius:999px;padding:3px 9px;flex:none;text-transform:uppercase}
+.rd-students{margin-bottom:16px}
+.rd-section-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.rd-add-wrap{display:flex;flex-direction:column;align-items:flex-end;gap:5px;min-width:0}
+.btn[disabled],.btn:disabled{opacity:.55;cursor:not-allowed;box-shadow:none}
+.btn[disabled]:hover{background:var(--primary)}
+.rd-helper{font-size:11.5px;color:var(--faint);font-weight:400;text-align:right;max-width:240px;line-height:1.4}
+.rd-soon-banner{display:flex;align-items:flex-start;gap:10px;background:#fafcff;border:1px dashed #c7d7ff;border-radius:var(--radius-md);padding:12px 14px;margin:14px 0;font-size:12.5px;color:#334155;line-height:1.55}
+.rd-soon-banner svg{width:18px;height:18px;color:var(--primary);flex:none;margin-top:1px}
+.rd-student-table-wrap{border:1px solid #e2e8f0;border-radius:var(--radius);overflow:hidden}
+.rd-student-table{width:100%;border-collapse:collapse;min-width:0;font-size:13px}
+.rd-student-table thead th{text-align:left;font-size:11.5px;font-weight:600;color:#64748b;background:#f6f8fc;padding:10px 14px;border-bottom:1px solid #e2e8f0;white-space:nowrap;text-transform:uppercase;letter-spacing:.02em}
+.rd-student-table tbody td{padding:12px 14px;border-bottom:1px solid #eef2f7}
+.rd-student-table tbody tr:last-child td{border-bottom:none}
+.rd-student-table tbody tr.rd-student-empty,.rd-student-table tbody tr.rd-student-empty:hover{background:transparent;box-shadow:none;cursor:default}
+.rd-cell-ph{display:inline-block;color:var(--faint);font-style:italic;font-weight:400}
+.rd-status-ph{display:inline-flex;align-items:center;font-size:11px;font-weight:600;color:#94a3b8;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:999px;padding:3px 10px}
+
+/* ---------- responsive ---------- */
+@media(max-width:1199px){.appnav-row{padding-left:28px;padding-right:28px}.content{padding-left:28px;padding-right:28px}}
+@media(max-width:1023px){
+  .table-panel{display:none}
+  .mobile-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+  .mobile-pager{display:flex}
+  .desktop-pager{display:none}
+  .rd-grid{grid-template-columns:1fr}
+  /* Filters: search fills row 1; All Types + All Rooms + Total Rooms count share row 2
+     and grow to fill it (no empty space). They wrap naturally only if too narrow. */
+  .filters-inputs .search{flex:1 1 100%;width:100%;min-width:0}
+  .filter-group{flex:1 1 100%;width:100%;flex-wrap:wrap}
+  .filters-inputs .ss-select,#typeFilterSelect{flex:1 1 150px;width:auto;min-width:130px}
+}
+@media(max-width:640px){
+  .appnav-row{padding:0 16px;gap:8px}
+  .nav-ico-search,.nav-ico-settings{display:none}
+  .nav-tab{padding:0 12px;font-size:13.5px}
+  .nav-subtab{padding:0 12px;font-size:13.5px}
+  .nav-add-btn{min-width:40px;height:40px;padding:0;font-size:13px;justify-content:center;gap:0}
+  .nav-add-btn span{display:none}
+  .content{padding:16px 16px 20px}
+  .mobile-list{grid-template-columns:1fr}
+  .rd-header{align-items:flex-start}
+  .rd-actions{width:100%}
+  .rd-actions .btn{flex:1 1 0}
+  .rd-section-head{flex-direction:column;margin-bottom:14px}
+  .rd-add-wrap{align-items:flex-start;width:100%}
+  .rd-helper{text-align:left;max-width:none}
+  .summary{gap:10px}
+  .scard{padding:14px}
+  .scard .num{font-size:22px}
+  .warn-foot{flex-direction:column-reverse}
+  .warn-foot .btn{width:100%}
+  .edit-context{padding:14px}
+  .table-pager{justify-content:space-between;padding:0 14px;gap:10px}
+  .filters-inputs #typeFilterSelect{flex:1 1 100%;width:100%;min-width:0}
+  .modal-wrap{padding:12px}
+  .modal-head{padding:14px 16px}
+  .modal-body{padding:14px}
+  .modal-form-card{padding:16px}
+  .modal-foot{padding:12px 16px;gap:10px}
+  #deleteRoomBtn{min-width:40px;padding:0;justify-content:center;gap:0}
+  #deleteRoomBtn .del-label{display:none}
+  #deleteRoomBtn .del-ico{display:block}
+  .del-foot{flex-direction:column-reverse}
+  .del-foot .btn{width:100%}
+  .empty-state{padding:36px 18px}
+}
+@media (prefers-reduced-motion: reduce){
+  *{transition-duration:.01ms!important;animation-duration:.01ms!important}
+  button:active:not(:disabled){transform:none}
+}
+/* Rooms page info banner (replaces the 3 summary cards) */
+.rooms-info{display:flex;align-items:flex-start;gap:16px;background:#ecfdf7;border:1px solid #c5ece0;border-left:3px solid #15a37f;border-radius:var(--radius);padding:18px 20px;margin-bottom:16px;position:relative}
+.rooms-info-ico{flex:none;width:40px;height:40px;border-radius:var(--radius-md);background:#fff;display:grid;place-items:center;color:#15a37f;box-shadow:var(--shadow-sm)}
+.rooms-info-ico svg{width:20px;height:20px}
+.rooms-info-text{flex:1 1 auto;min-width:0;padding-right:26px}
+.rooms-info-text h2{font-size:18px;font-weight:600;color:#0f172a;letter-spacing:-.01em;line-height:1.3}
+.rooms-info-text p{font-size:13px;color:#475569;line-height:1.55;margin-top:4px}
+.rooms-info-x{position:absolute;top:14px;right:14px;width:28px;height:28px;border:0;background:none;border-radius:var(--radius-sm);color:#94a3b8;display:grid;place-items:center;cursor:pointer;transition:background-color .15s,color .15s}
+.rooms-info-x:hover{background:rgba(15,23,42,.06);color:#475569}
+
+/* Room settings text-button (detail top) */
+.rd-settings-btn{background:none;border:1px solid transparent;color:var(--primary);font-weight:500;font-size:13.5px;padding:8px 12px;border-radius:var(--radius-md);display:inline-flex;align-items:center;gap:7px;cursor:pointer;transition:background-color .15s}
+.rd-settings-btn:hover{background:var(--primary-soft)}
+.rd-settings-btn svg{width:16px;height:16px;flex:none}
+
+/* Outline danger (Delete room in dialog) + footer layout */
+.btn-danger-outline{background:#fff;border:1px solid var(--danger);color:var(--danger)}
+.btn-danger-outline:hover{background:var(--danger-soft)}
+.del-ico{display:none}
+.modal-foot .foot-left{margin-right:auto}
+
+/* Students future/empty state */
+.rd-students-empty{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;padding:34px 20px}
+.rd-students-empty-ico{width:48px;height:48px;border-radius:var(--radius-pill);background:var(--primary-soft);display:grid;place-items:center;color:var(--primary)}
+.rd-students-empty-ico svg{width:24px;height:24px}
+.rd-students-empty-title{font-size:14px;font-weight:600;color:#0f172a}
+.rd-students-empty-text{font-size:12.5px;color:var(--muted);line-height:1.5;max-width:420px}
+@media(max-width:640px){.rooms-info{padding:14px;gap:12px}.rooms-info-text{padding-right:22px}.rooms-info-text h2{font-size:16px}}
+/* Below ~450px: All Rooms and Total Rooms count can't fit cleanly together, so the
+   count wraps to its own row (All Rooms full-width above it, count stays a compact pill). */
+@media(max-width:449px){.filters-inputs #assignFilterSelect{flex:1 1 100%;width:100%;min-width:0}}
+/* Total rooms count (in the heading row) */
+.rooms-count{display:inline-flex;align-items:center;flex:none;white-space:nowrap;height:32px;padding:0 12px;border-radius:999px;background:var(--primary-soft);border:1px solid #D7E4FF;font-size:12.5px;font-weight:600;color:var(--ink)}
+.rooms-count b{color:var(--primary);font-weight:700;margin-left:3px}
+
+/* Delete confirmation: type the room name */
+.del-confirm{display:flex;flex-direction:column;gap:7px}
+.del-confirm label{font-size:12.5px;color:#334155;font-weight:500;line-height:1.45}
+.del-confirm label b{color:#0f172a;font-weight:700}
+.del-confirm input{width:100%;height:40px;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius-md);font:inherit;color:var(--ink)}
+.del-confirm input::placeholder{color:var(--faint)}
+.del-confirm input:focus{outline:none;border-color:var(--danger);box-shadow:0 0 0 3px var(--danger-soft)}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <main class="content">
+  <div id="listingView">
+    <div class="section-head">
+      <h1>Room List</h1>
+      <div class="right">
+        <button class="btn btn-primary nav-add-btn" id="addBtn" type="button" aria-label="New Room" title="New Room">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+          <span>New Room</span>
+        </button>
+      </div>
+    </div>
+
+    <section class="rooms-info" id="roomsInfo" aria-label="About the Rooms page">
+      <span class="rooms-info-ico" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/><path d="M9 12h12"/></svg>
+      </span>
+      <div class="rooms-info-text">
+        <h2>Manage your rooms</h2>
+        <p>Create and manage rooms for your school, assign teachers or staff to each room, and keep room-level details organized in one place. Student management inside rooms will be available in a future update.</p>
+      </div>
+      <button type="button" class="rooms-info-x" id="roomsInfoClose" aria-label="Dismiss">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </section>
+
+    <section class="filters" aria-label="Room filters">
+      <div class="filters-inputs">
+        <div class="search" id="searchWrap">
+          <svg class="search-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+          <input id="searchBox" type="text" placeholder="Search room name" autocomplete="off" aria-label="Search rooms by name">
+          <button class="search-clear" id="clearSearch" type="button" aria-label="Clear search"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+        </div>
+        <div class="filter-group">
+        <div class="ss-select is-filter" id="typeFilterSelect">
+          <button type="button" class="ss-select-trigger" aria-haspopup="listbox" aria-expanded="false" aria-label="Filter by room type">
+            <span class="ss-select-value" data-value-label>All Types</span>
+            <svg class="ss-select-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div class="ss-select-menu" role="listbox" aria-label="Room type"><div class="ss-select-scroll"></div></div>
+        </div>
+        <div class="ss-select is-filter" id="assignFilterSelect">
+          <button type="button" class="ss-select-trigger" aria-haspopup="listbox" aria-expanded="false" aria-label="Filter by staff assignment">
+            <span class="ss-select-value" data-value-label>All Rooms</span>
+            <svg class="ss-select-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div class="ss-select-menu" role="listbox" aria-label="Staff assignment"><div class="ss-select-scroll"></div></div>
+        </div>
+        <button class="btn btn-sm" id="resetFilters" type="button" title="Clear all filters" disabled>Reset</button>
+        <span class="rooms-count" id="totalRoomsCount">Total Rooms: <b>0</b></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Desktop table -->
+    <section class="panel table-panel" id="tablePanel">
+      <div class="table-wrap">
+        <table class="rooms-table">
+          <thead>
+            <tr>
+              <th class="cell-room"><button class="sort-head" type="button" data-sort-key="name" aria-label="Sort by room name">Room <span class="sort-icon" data-sort-icon="name">↕</span></button></th>
+            </tr>
+          </thead>
+          <tbody id="roomBody"></tbody>
+        </table>
+      </div>
+    </section>
+    <div id="tablePager" class="table-pager desktop-pager" aria-label="Room pagination"></div>
+
+    <!-- Tablet / mobile cards -->
+    <section class="mobile-list" id="mobileList" aria-label="Rooms"></section>
+    <div id="mobilePager" class="table-pager mobile-pager" aria-label="Room pagination"></div>
+
+    <!-- Empty state -->
+    <section class="empty-state hidden" id="emptyState" aria-live="polite"></section>
+  </div><!-- /#listingView -->
+
+  <!-- ════════════ ROOM DETAIL VIEW ════════════ -->
+  <div id="detailView" hidden>
+    <button class="rd-back" type="button" id="rdBack">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+      <span>Back to Rooms</span>
+    </button>
+
+    <!-- Header card -->
+    <section class="rd-header">
+      <div class="rd-head-main">
+        <div class="rd-head-text">
+          <h1 id="rdName">Room</h1>
+          <div class="rd-sub"><span id="rdSub">—</span></div>
+        </div>
+      </div>
+      <div class="rd-actions">
+        <button class="rd-settings-btn" type="button" id="rdSettingsBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          Room settings
+        </button>
+      </div>
+    </section>
+
+    <!-- Students section -->
+    <section class="rd-card rd-students">
+      <div class="rd-section-head">
+        <div>
+          <h3>Students</h3>
+          <p class="rd-card-note">Student management coming soon</p>
+        </div>
+        <div class="rd-add-wrap">
+          <button class="btn btn-primary" type="button" id="rdAddStudent" disabled aria-disabled="true" title="Student management will be available in a future update.">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+            Add Student
+          </button>
+        </div>
+      </div>
+
+      <div class="table-wrap rd-student-table-wrap">
+        <table class="rd-student-table">
+          <thead>
+            <tr><th>Student Name</th><th>Attendance</th></tr>
+          </thead>
+          <tbody id="rdStudentBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </div><!-- /#detailView -->
+  </main>
+</div>
+
+<!-- Add / Edit Room modal -->
+<div class="modal-wrap" id="roomModal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="roomModalTitle">
+    <div class="modal-head">
+      <div><b id="roomModalTitle">Add new room</b><span id="roomModalSub">Create a new room for your school.</span></div>
+      <button class="x" id="closeRoomBtn" type="button" aria-label="Close dialog"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div id="roomForm">
+      <div class="modal-body">
+        <section class="modal-form-card" aria-label="Room details">
+          <div class="field" id="typeField">
+            <label id="typeLabel">Room Type <span class="req">*</span></label>
+            <div class="ss-select" id="roomTypeSelect" aria-labelledby="typeLabel">
+              <button type="button" class="ss-select-trigger" aria-haspopup="listbox" aria-expanded="false" aria-label="Room Type">
+                <span class="ss-select-value" data-value-label>Select room type</span>
+                <svg class="ss-select-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </button>
+              <div class="ss-select-menu" role="listbox" aria-label="Room type"><div class="ss-select-scroll"></div></div>
+            </div>
+            <div class="hint" id="typeHint">Room type is required.</div>
+            <div class="field-note">Select the school level this room belongs to.</div>
+          </div>
+          <div class="field" id="nameField">
+            <label for="f-name">Room Name <span class="req">*</span></label>
+            <input id="f-name" autocomplete="off" placeholder="e.g. Nursery A, LKG B, Grade 5 C" maxlength="60">
+            <div class="hint" id="nameHint">Room name is required.</div>
+            <div class="field-note">Enter the room name for this section (e.g. Nursery A, LKG B).</div>
+          </div>
+        </section>
+      </div>
+      <div class="modal-foot">
+        <button type="button" class="btn btn-ghost foot-left" id="cancelRoomBtn">Cancel</button>
+        <button type="button" class="btn btn-danger-outline" id="deleteRoomBtn" style="display:none" title="Delete room" aria-label="Delete room"><svg class="del-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M10 11v6M14 11v6"/></svg><span class="del-label">Delete room</span></button>
+        <button type="button" class="btn btn-primary" id="saveRoomBtn">Add</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete confirmation -->
+<div class="modal-wrap" id="deleteModal">
+  <div class="del-dialog" role="dialog" aria-modal="true" aria-labelledby="deleteTitle">
+    <div class="del-head">
+      <div class="del-head-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M10 11v6M14 11v6"/></svg>
+      </div>
+      <div class="del-head-text">
+        <h3 id="deleteTitle">Delete this room?</h3>
+        <p id="deleteSub">This room will be removed from your school.</p>
+      </div>
+      <button class="x" id="cancelDeleteX" type="button" aria-label="Close dialog"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="del-body">
+      <div class="del-impact">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+        <span>Deleting this room may affect future room assignments.</span>
+      </div>
+      <div class="del-confirm">
+        <label for="delConfirmInput" id="delConfirmLabel">Type the room name <b id="delConfirmName"></b> to confirm deletion.</label>
+        <input id="delConfirmInput" type="text" autocomplete="off" placeholder="Enter room name" aria-describedby="delConfirmLabel">
+      </div>
+      <div class="del-undone" aria-label="Warning">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+        This action cannot be undone.
+      </div>
+    </div>
+    <div class="del-foot">
+      <button type="button" class="btn btn-ghost" id="cancelDeleteBtn">Cancel</button>
+      <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete Room</button>
+    </div>
+  </div>
+</div>
+
+<!-- Room-type change warning -->
+<div class="modal-wrap" id="typeWarnModal">
+  <div class="warn-dialog" role="dialog" aria-modal="true" aria-labelledby="warnTitle">
+    <div class="warn-head">
+      <div class="warn-head-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+      </div>
+      <div class="warn-head-text">
+        <h3 id="warnTitle">Change room type?</h3>
+        <p id="warnSub">This room is currently assigned to staff members. Changing the room type may affect room assignments.</p>
+      </div>
+      <button class="x" id="warnCloseX" type="button" aria-label="Close dialog"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="warn-body">
+      <div class="warn-detail" id="warnDetail"></div>
+    </div>
+    <div class="warn-foot">
+      <button type="button" class="btn btn-ghost" id="warnCancelBtn">Cancel</button>
+      <button type="button" class="btn btn-warn" id="warnContinueBtn">Continue Update</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" role="status" aria-live="polite">
+  <span id="toastIcon" class="toast-icon"></span>
+  <div class="toast-body">
+    <p class="toast-title" id="toastTitle">Success</p>
+    <p class="toast-text" id="toastMsg">Status updated successfully</p>
+  </div>
+  <button type="button" id="toastClose" class="toast-close" onclick="hideToast()" aria-label="Dismiss notification"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+</div>
+
+<script>
+"use strict";
+
+/* ---------- helpers ---------- */
+function esc(v){ return String(v ?? "").replace(/[&<>'"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;","\"":"&quot;"}[c])); }
+const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+function parseLocal(iso){
+  // Parse a YYYY-MM-DD string as a LOCAL date to avoid UTC timezone shifts.
+  if(!iso) return null;
+  const parts = String(iso).split("-").map(Number);
+  if(parts.length < 3 || parts.some(isNaN)) { const d = new Date(iso); return isNaN(d) ? null : d; }
+  return new Date(parts[0], parts[1]-1, parts[2]);
+}
+function fmtDate(iso){
+  const d = parseLocal(iso);
+  if(!d) return "—";
+  return String(d.getDate()).padStart(2,"0") + " " + MONTHS[d.getMonth()] + " " + d.getFullYear();
+}
+function relativeDate(iso){
+  const d = parseLocal(iso);
+  if(!d) return "";
+  const today = new Date(); today.setHours(0,0,0,0);
+  d.setHours(0,0,0,0);
+  const days = Math.round((today - d) / 86400000);
+  if(days <= 0) return "Today";
+  if(days === 1) return "Yesterday";
+  if(days < 7) return days + " days ago";
+  if(days < 14) return "1 week ago";
+  if(days < 30) return Math.floor(days/7) + " weeks ago";
+  if(days < 365){ const m = Math.floor(days/30); return m + (m===1 ? " month ago" : " months ago"); }
+  const y = Math.floor(days/365); return y + (y===1 ? " year ago" : " years ago");
+}
+function todayISO(){
+  const d = new Date();
+  return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+}
+
+/* ---------- room type catalog ----------
+   Room Type = the school level the room belongs to.
+   Rooms are named freely by the admin (e.g. "Nursery A", "LKG B", "Grade 5 C").
+   The type tells which school section that room is part of. */
+const ROOM_TYPE_ORDER = [
+  "Pre-primary (Nursery, LKG, UKG)",
+  "Primary (Grades 1\u20135)",
+  "Upper primary (6\u20138)",
+  "Secondary (9\u201310)",
+  "Senior secondary (11\u201312)"
+];
+// Kept for backward compat / API consumers
+const ROOM_TYPES = ROOM_TYPE_ORDER.map(t => ({ group: t, types: [t] }));
+function typeOrderIndex(t){ const i = ROOM_TYPE_ORDER.indexOf(t); return i === -1 ? 999 : i; }
+function groupOf(type){ return type; } // type IS the group now
+// Flat option list (no sub-groups) consumed by buildSelect
+const ROOM_TYPE_GROUPS = [
+  { label: null, options: ROOM_TYPE_ORDER.map(t => ({ value: t, label: t })) }
+];
+
+/* ---------- Room ID (stable relationship key) ----------
+   Every room has a permanent Room ID (e.g. RM-001). All relationships
+   (staff assignments, and future student / attendance / timetable modules)
+   map by Room ID — never by Room Name. This lets the name or type change
+   safely without breaking any reference. */
+let nextRoomSeq = 1;
+function makeRoomId(){ return "RM-" + String(nextRoomSeq++).padStart(3, "0"); }
+
+/* ---------- seed data ---------- */
+let nextId = 1;
+let rooms = [
+  { roomType:"Pre-primary (Nursery, LKG, UKG)", name:"Playgroup",  createdOn:"2025-04-12", updatedOn:"2025-11-03" },
+  { roomType:"Pre-primary (Nursery, LKG, UKG)", name:"Nursery A",  createdOn:"2025-04-12", updatedOn:"2026-01-08" },
+  { roomType:"Pre-primary (Nursery, LKG, UKG)", name:"Nursery B",  createdOn:"2025-06-01", updatedOn:"2025-12-15" },
+  { roomType:"Pre-primary (Nursery, LKG, UKG)", name:"LKG A",      createdOn:"2025-04-15", updatedOn:"2026-02-02" },
+  { roomType:"Pre-primary (Nursery, LKG, UKG)", name:"LKG B",      createdOn:"2025-07-20", updatedOn:"2026-01-22" },
+  { roomType:"Pre-primary (Nursery, LKG, UKG)", name:"UKG A",      createdOn:"2025-04-15", updatedOn:"2025-10-30" },
+  { roomType:"Pre-primary (Nursery, LKG, UKG)", name:"UKG B",      createdOn:"2025-08-05", updatedOn:"2026-02-14" },
+  { roomType:"Primary (Grades 1\u20135)",       name:"Grade 1 A",  createdOn:"2025-04-18", updatedOn:"2026-02-10" },
+  { roomType:"Primary (Grades 1\u20135)",       name:"Grade 1 B",  createdOn:"2025-09-02", updatedOn:"2026-01-28" },
+  { roomType:"Primary (Grades 1\u20135)",       name:"Grade 2 A",  createdOn:"2025-04-18", updatedOn:"2026-03-05" },
+  { roomType:"Upper primary (6\u20138)",        name:"Grade 6 A",  createdOn:"2025-04-20", updatedOn:"2025-11-18" },
+  { roomType:"Upper primary (6\u20138)",        name:"Grade 7 A",  createdOn:"2025-04-20", updatedOn:"2025-12-22" },
+  { roomType:"Secondary (9\u201310)",           name:"Grade 9 A",  createdOn:"2025-05-01", updatedOn:"2026-01-14" },
+  { roomType:"Senior secondary (11\u201312)",   name:"Grade 11 A", createdOn:"2025-05-01", updatedOn:"2026-02-28" }
+].map(r => ({ id: nextId++, roomId: makeRoomId(), ...r }));
+
+/* ---------- staff roster (dummy — sourced from the Staff module in production) ---------- */
+const STAFF = [
+  { id:"ST-01", name:"Priya Sharma" },
+  { id:"ST-02", name:"Anitha Joseph" },
+  { id:"ST-03", name:"Rahul Kumar" },
+  { id:"ST-04", name:"Meena Rao" },
+  { id:"ST-05", name:"Kavya Menon" },
+  { id:"ST-06", name:"Deepa Krishnan" }
+];
+
+/* ---------- staff → room assignments, keyed by Room ID (never by name) ---------- */
+let assignments = {
+  "RM-001": ["ST-01","ST-02"],
+  "RM-002": ["ST-03"],
+  "RM-003": ["ST-04"],
+  "RM-004": ["ST-01","ST-05"],
+  "RM-005": ["ST-02"],
+  "RM-006": ["ST-03"],
+  "RM-008": ["ST-06"],
+  "RM-010": ["ST-04","ST-03"],
+  "RM-011": ["ST-05"],
+  "RM-013": ["ST-01"]
+};
+function staffName(stId){ const s = STAFF.find(x => x.id === stId); return s ? s.name : stId; }
+function assignedStaff(roomId){ return (assignments[roomId] || []).map(staffName); }
+function isAssigned(roomId){ return (assignments[roomId] || []).length > 0; }
+function assignedRoomCount(){ return rooms.filter(r => isAssigned(r.roomId)).length; }
+function initials(name){ return name.trim().split(/\s+/).map(w => w[0]).slice(0,2).join("").toUpperCase(); }
+
+/* ---------- activity log, keyed by Room ID ---------- */
+let activity = {};
+function logActivity(roomId, text){ (activity[roomId] = activity[roomId] || []).unshift({ ts: Date.now(), text }); }
+rooms.forEach(r => {
+  const t = parseLocal(r.createdOn) ? parseLocal(r.createdOn).getTime() : Date.now();
+  activity[r.roomId] = [{ ts:t, text:`Room created as "${r.name}"` }];
+});
+function fmtTs(ts){ const d = new Date(ts); return d.toLocaleDateString("en-GB",{ day:"2-digit", month:"short", year:"numeric" }); }
+
+/* ---------- state ---------- */
+let searchTerm = "";
+let typeFilter = "";          /* "" = All Types */
+let assignmentFilter = "all"; /* "all" = Total selected | "" = none selected | "assigned" | "unassigned"  ("all" & "" both show all rooms) */
+let sortState = { key:"", dir:"asc" };
+const PAGE_SIZE = 10;         /* rooms shown per page */
+let tablePage = 1;            /* current pagination page */
+let skeletonTimer = null;     /* active skeleton-loading timeout */
+let editingId = null;
+let pendingEdit = null;        /* deferred edit awaiting type-change confirmation */
+let pendingDeleteId = null;
+let pendingDeleteName = "";
+let lastFocused = null;
+let typeFilterCtl = null;      /* page filter select controller */
+let assignFilterCtl = null;    /* assigned/unassigned filter select controller */
+let roomTypeCtl = null;        /* modal room-type select controller */
+
+const ROOM_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/><path d="M9 12h12"/></svg>';
+
+/* ---------- custom select component ---------- */
+/* config: { allOption?, groups:[{label,options:[{value,label}]}], value, placeholder, onChange } */
+function buildSelect(wrap, config){
+  const trigger = wrap.querySelector(".ss-select-trigger");
+  const menu = wrap.querySelector(".ss-select-menu");
+  /* Inner scroll container — holds padding, max-height, overflow-y and the scrollbar.
+     Separating it from the outer shell (which has border-radius) prevents Chromium from
+     clipping the webkit scrollbar thumb against the rounded corners. */
+  const scroll = menu.querySelector(".ss-select-scroll");
+  scroll.tabIndex = -1; // focus target on open when nothing is selected (keeps keyboard nav working without highlighting an option)
+  const labelEl = wrap.querySelector("[data-value-label]");
+  let value = config.value || "";
+  const placeholder = config.placeholder || "Select";
+  const flat = [];
+  if(config.allOption) flat.push(config.allOption);
+  (config.groups || []).forEach(g => g.options.forEach(o => flat.push(o)));
+  const labelFor = v => { const o = flat.find(x => x.value === v); return o ? o.label : ""; };
+
+  function renderLabel(){
+    if(value === "" && config.allOption){ labelEl.textContent = config.allOption.label; wrap.classList.remove("is-placeholder"); }
+    else if(value === ""){ labelEl.textContent = placeholder; wrap.classList.add("is-placeholder"); }
+    else { labelEl.textContent = labelFor(value) || placeholder; wrap.classList.remove("is-placeholder"); }
+  }
+  function optionHTML(o){
+    return `<div class="ss-select-option" role="option" data-value="${esc(o.value)}" tabindex="-1" aria-selected="${o.value === value}">`
+      + `<span>${esc(o.label)}</span></div>`;
+  }
+  function buildMenu(){
+    let html = "";
+    if(config.allOption) html += optionHTML(config.allOption);
+    (config.groups || []).forEach(g => {
+      // Only render the group header when a label is supplied (null = flat/ungrouped)
+      if(g.label != null) html += `<div class="ss-select-group" role="presentation">${esc(g.label)}</div>`;
+      g.options.forEach(o => html += optionHTML(o));
+    });
+    scroll.innerHTML = html;   // write into the inner scroll div, not the outer shell
+    scroll.scrollTop = 0;      // always reset scroll position on each open
+  }
+  function position(){
+    const r = trigger.getBoundingClientRect();
+    // Let the menu grow to fit its widest (non-wrapping) option, but never narrower
+    // than the trigger and never wider than the viewport.
+    menu.style.width = "auto";
+    menu.style.minWidth = r.width + "px";
+    menu.style.maxWidth = Math.min(window.innerWidth - 16, 460) + "px";
+    // Calculate available vertical space and pick a max-height for the inner scroll div
+    const spaceBelow = window.innerHeight - r.bottom - 10;
+    const spaceAbove = r.top - 10;
+    const naturalH = scroll.scrollHeight + 12; // +12 accounts for 6px top+bottom padding
+    let openUp = false, avail = spaceBelow;
+    if(spaceBelow < Math.min(naturalH, 200) && spaceAbove > spaceBelow){ openUp = true; avail = spaceAbove; }
+    const maxH = Math.max(120, Math.min(340, avail));
+    scroll.style.maxHeight = maxH + "px";
+    // Position the outer shell; use its total height for placement
+    menu.style.top = ""; // reset so offsetHeight reflects content
+    const shellH = menu.offsetHeight || Math.min(naturalH, maxH + 2);
+    menu.style.top = (openUp ? (r.top - shellH - 6) : (r.bottom + 6)) + "px";
+    // Horizontal: align with the trigger, but shift left if the (possibly wider) menu
+    // would overflow the right edge of the viewport.
+    const menuW = menu.offsetWidth;
+    let left = r.left;
+    const maxLeft = window.innerWidth - menuW - 8;
+    if(left > maxLeft) left = Math.max(8, maxLeft);
+    menu.style.left = left + "px";
+  }
+  function onDocDown(e){ if(!wrap.contains(e.target) && !menu.contains(e.target)) close(); }
+  function open(){
+    if(wrap.classList.contains("open")) return;
+    buildMenu();
+    wrap.classList.add("open");
+    trigger.setAttribute("aria-expanded", "true");
+    position();
+    // Focus the currently-selected option for keyboard nav; if nothing is selected
+    // (e.g. the Add Room "Select room type" placeholder) focus the scroll container
+    // instead, so no option is highlighted by default. preventScroll avoids page jump.
+    const sel = scroll.querySelector('.ss-select-option[aria-selected="true"]');
+    if(sel) sel.focus({ preventScroll:true }); else scroll.focus({ preventScroll:true });
+    document.addEventListener("mousedown", onDocDown, true);
+    window.addEventListener("scroll", position, true);
+    window.addEventListener("resize", position);
+  }
+  function close(){
+    if(!wrap.classList.contains("open")) return;
+    wrap.classList.remove("open");
+    trigger.setAttribute("aria-expanded", "false");
+    document.removeEventListener("mousedown", onDocDown, true);
+    window.removeEventListener("scroll", position, true);
+    window.removeEventListener("resize", position);
+  }
+  function setValue(v, fire){
+    value = v;
+    renderLabel();
+    scroll.querySelectorAll(".ss-select-option").forEach(opt => opt.setAttribute("aria-selected", opt.dataset.value === v ? "true" : "false"));
+    if(fire && config.onChange) config.onChange(v);
+  }
+
+  trigger.addEventListener("click", e => { e.preventDefault(); wrap.classList.contains("open") ? close() : open(); });
+  trigger.addEventListener("keydown", e => {
+    if(e.key === "ArrowDown" || e.key === "Enter" || e.key === " "){ e.preventDefault(); open(); }
+  });
+  menu.addEventListener("click", e => {
+    const opt = e.target.closest(".ss-select-option");
+    if(!opt) return;
+    setValue(opt.dataset.value, true); close(); trigger.focus();
+  });
+  menu.addEventListener("keydown", e => {
+    const opts = Array.from(scroll.querySelectorAll(".ss-select-option"));
+    const idx = opts.indexOf(document.activeElement);
+    if(e.key === "ArrowDown"){ e.preventDefault(); (opts[idx + 1] || opts[0]).focus(); }
+    else if(e.key === "ArrowUp"){ e.preventDefault(); (opts[idx - 1] || opts[opts.length - 1]).focus(); }
+    else if(e.key === "Enter" || e.key === " "){ e.preventDefault(); const a = document.activeElement; if(a && a.classList.contains("ss-select-option")){ setValue(a.dataset.value, true); close(); trigger.focus(); } }
+    else if(e.key === "Escape"){ e.preventDefault(); e.stopPropagation(); close(); trigger.focus(); }
+    else if(e.key === "Tab"){ close(); }
+  });
+
+  buildMenu(); renderLabel();
+  return {
+    get value(){ return value; },
+    set(v){ setValue(v, false); },
+    reset(){ setValue(config.allOption ? config.allOption.value : "", false); },
+    close
+  };
+}
+
+/* ---------- derived list ---------- */
+function getVisibleRooms(){
+  const q = searchTerm.trim().toLowerCase();
+  let list = rooms.filter(r =>
+    (!typeFilter || r.roomType === typeFilter) &&
+    (assignmentFilter === "assigned" ? isAssigned(r.roomId) : assignmentFilter === "unassigned" ? !isAssigned(r.roomId) : true) &&
+    (!q || r.name.toLowerCase().includes(q))
+  );
+  if(sortState.key){
+    const dir = sortState.dir === "desc" ? -1 : 1;
+    list = list.slice().sort((a,b) => {
+      let av, bv, cmp = 0;
+      if(sortState.key === "type"){
+        av = typeOrderIndex(a.roomType); bv = typeOrderIndex(b.roomType);
+        cmp = av - bv;
+        if(cmp === 0) cmp = a.name.toLowerCase().localeCompare(b.name.toLowerCase()); // tiebreak by name
+        return cmp * dir;
+      }
+      if(sortState.key === "name"){ av = a.name.toLowerCase(); bv = b.name.toLowerCase(); }
+      else if(sortState.key === "created"){ av = parseLocal(a.createdOn) ? parseLocal(a.createdOn).getTime() : 0; bv = parseLocal(b.createdOn) ? parseLocal(b.createdOn).getTime() : 0; }
+      else { av = parseLocal(a.updatedOn) ? parseLocal(a.updatedOn).getTime() : 0; bv = parseLocal(b.updatedOn) ? parseLocal(b.updatedOn).getTime() : 0; }
+      if(av < bv) return -1*dir;
+      if(av > bv) return 1*dir;
+      return 0;
+    });
+  }
+  return list;
+}
+
+/* ---------- analytics summary ---------- */
+function renderSummary(){
+  const elc = document.getElementById("summaryCards");
+  if(!elc) return; // summary cards removed (replaced by the Rooms info banner)
+  const total = rooms.length;
+  const assigned = assignedRoomCount();
+  const unassigned = total - assigned;
+  const tActive = assignmentFilter === "all";       // Total = All Rooms
+  const aActive = assignmentFilter === "assigned";
+  const uActive = assignmentFilter === "unassigned";
+  elc.innerHTML = `
+    <button type="button" class="scard scard-filter${tActive ? " active" : ""}" data-assign="all" aria-pressed="${tActive}" title="Show all rooms"><div class="label">Total Rooms</div><div class="num">${total}</div><div class="help">All configured rooms</div></button>
+    <button type="button" class="scard scard-filter${aActive ? " active" : ""}" data-assign="assigned" aria-pressed="${aActive}" title="Show assigned rooms"><div class="label">Assigned Rooms</div><div class="num">${assigned}</div><div class="help">Mapped to staff</div></button>
+    <button type="button" class="scard scard-filter${uActive ? " active" : ""}" data-assign="unassigned" aria-pressed="${uActive}" title="Show unassigned rooms"><div class="label">Unassigned Rooms</div><div class="num">${unassigned}</div><div class="help">No staff assigned</div></button>`;
+}
+
+/* ---------- render ---------- */
+function render(){
+  renderSummary();
+  const list = getVisibleRooms();
+  const total = rooms.length;
+  const countEl = document.getElementById("totalRoomsCount");
+  if(countEl) countEl.innerHTML = `Total Rooms: <b>${list.length}</b>`; // reflects current visible/filtered rooms
+  updateResetButton();
+  const q = searchTerm.trim();
+  // "all"/"" both mean show-everything; only assigned/unassigned count as an active filter.
+  const assignActive = assignmentFilter === "assigned" || assignmentFilter === "unassigned";
+
+  const tablePanel = document.getElementById("tablePanel");
+  const mobileList = document.getElementById("mobileList");
+  const emptyState = document.getElementById("emptyState");
+
+  // Empty: no rooms at all, or no rooms match the active filters/search.
+  if(list.length === 0){
+    tablePanel.classList.add("hidden");
+    mobileList.classList.add("hidden");
+    document.getElementById("tablePager").classList.add("hidden");
+    document.getElementById("mobilePager").classList.add("hidden");
+    document.getElementById("roomBody").innerHTML = "";
+    mobileList.innerHTML = "";
+    emptyState.classList.remove("hidden");
+    // Initial no-data (no rooms exist at all) vs the common no-results state
+    // (rooms exist but the current search/filters match none).
+    renderEmpty(total === 0 ? "no-data" : "no-results");
+    syncSortHeads();
+    return;
+  }
+
+  tablePanel.classList.remove("hidden");
+  mobileList.classList.remove("hidden");
+  setPagerVisible(list.length); // pagination only when results span more than one page
+  emptyState.classList.add("hidden");
+
+  // Pagination: clamp the page and slice the current page's rooms.
+  const totalPages = Math.max(1, Math.ceil(list.length / PAGE_SIZE));
+  tablePage = Math.max(1, Math.min(tablePage, totalPages));
+  const start = (tablePage - 1) * PAGE_SIZE;
+  const pageData = list.slice(start, start + PAGE_SIZE);
+
+  // Desktop rows — the whole row opens the room (data-view on the <tr>); the name remains individually clickable too
+  document.getElementById("roomBody").innerHTML = pageData.map(r => `
+    <tr class="room-row" data-view="${r.id}">
+      <td class="cell-room">
+        <div class="room-row-inner">
+          <span class="room-stack">
+            <span class="room-name" data-view="${r.id}" role="button" tabindex="0" title="Open ${esc(r.name)}">${esc(r.name)}</span>
+            <span class="room-type-sub">${esc(r.roomType)}</span>
+          </span>
+        </div>
+      </td>
+    </tr>
+  `).join("");
+
+  // Mobile / tablet cards — whole card opens the room (no icon, no Type prefix)
+  mobileList.innerHTML = pageData.map(r => `
+    <article class="room-card room-card-link" data-view="${r.id}" role="button" tabindex="0" aria-label="Open ${esc(r.name)}">
+      <span class="room-stack">
+        <b class="room-card-name">${esc(r.name)}</b>
+        <span class="room-type-sub">${esc(r.roomType)}</span>
+      </span>
+      <svg class="room-card-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+    </article>
+  `).join("");
+
+  renderPager(list.length);
+  syncSortHeads();
+}
+
+/* ---------- pagination ---------- */
+// Single source of truth for pager visibility: show pagination ONLY when the
+// visible records span more than one page (total > PAGE_SIZE). Any single page
+// of results — fewer than 10, or even exactly 10 after a filter/search — shows
+// no pager. Toggles the desktop table pager and the mobile pager together.
+function setPagerVisible(total){
+  const show = total > PAGE_SIZE;
+  document.getElementById("tablePager").classList.toggle("hidden", !show);
+  document.getElementById("mobilePager").classList.toggle("hidden", !show);
+  return show;
+}
+function renderPager(total){
+  // Single page of results (incl. after search/filter) → no pagination at all.
+  if(!setPagerVisible(total)){
+    document.getElementById("tablePager").innerHTML = "";
+    document.getElementById("mobilePager").innerHTML = "";
+    return;
+  }
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  tablePage = Math.max(1, Math.min(tablePage, totalPages));
+  const startItem = total ? ((tablePage - 1) * PAGE_SIZE) + 1 : 0;
+  const endItem = Math.min(tablePage * PAGE_SIZE, total);
+  const countText = total ? `${startItem}\u2013${endItem} of ${total}` : "0 rooms";
+  const prevDis = tablePage <= 1 ? "disabled" : "";
+  const nextDis = tablePage >= totalPages ? "disabled" : "";
+  const html = `<span>Showing ${countText}</span><div class="pager-controls"><button class="pager-btn" type="button" onclick="goPage(${tablePage - 1})" ${prevDis} aria-label="Previous page">\u2039</button><span class="pager-page">${tablePage}</span><button class="pager-btn" type="button" onclick="goPage(${tablePage + 1})" ${nextDis} aria-label="Next page">\u203a</button></div>`;
+  document.getElementById("tablePager").innerHTML = html;
+  document.getElementById("mobilePager").innerHTML = html;
+}
+function goPage(page){
+  const total = getVisibleRooms().length;
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const np = Math.max(1, Math.min(page, totalPages));
+  if(np === tablePage) return;
+  tablePage = np;
+  refreshList(false); // page change → skeleton, keep the chosen page
+}
+
+/* ---------- skeleton loading ---------- */
+function renderSkeleton(){
+  // Reveal the list area (in case we were on the empty state) and fill it with placeholders.
+  document.getElementById("tablePanel").classList.remove("hidden");
+  document.getElementById("mobileList").classList.remove("hidden");
+  setPagerVisible(getVisibleRooms().length); // keep the one-page rule during the loading skeleton too
+  document.getElementById("emptyState").classList.add("hidden");
+  const rowSkel = `<tr class="room-row skel-row" aria-hidden="true"><td class="cell-room"><div class="room-row-inner"><span class="room-stack"><span class="skel skel-line lg"></span><span class="skel skel-line sm"></span></span></div></td></tr>`;
+  const cardSkel = `<article class="room-card skel-card" aria-hidden="true"><span class="room-stack"><span class="skel skel-line lg"></span><span class="skel skel-line sm"></span></span><span class="skel skel-chevron"></span></article>`;
+  document.getElementById("roomBody").innerHTML = rowSkel.repeat(PAGE_SIZE);
+  document.getElementById("mobileList").innerHTML = cardSkel.repeat(4);
+}
+// Show the skeleton, then render the real data after ~1.1s. Used for pagination and filtering.
+function refreshList(resetPage){
+  if(resetPage) tablePage = 1;
+  renderSummary();                 // cards + active-state feedback update immediately
+  updateResetButton();             // reflect active filters on the Reset button immediately
+  // Keep one continuous skeleton if calls arrive in quick succession (e.g. typing).
+  if(skeletonTimer) clearTimeout(skeletonTimer); else renderSkeleton();
+  skeletonTimer = setTimeout(() => { skeletonTimer = null; render(); }, 1100);
+}
+
+function renderEmpty(kind){
+  const el = document.getElementById("emptyState");
+  const SEARCH_ICO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>';
+  if(kind === "no-data"){
+    // Initial empty state — no rooms exist yet, before any search/filter.
+    el.innerHTML = `
+      <div class="empty-ico" aria-hidden="true">${ROOM_ICON}</div>
+      <h2>No rooms added yet</h2>
+      <p>Create your first room to start organizing classrooms and assigning staff.</p>
+      <button class="btn btn-primary" type="button" id="emptyAddBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+        New Room
+      </button>`;
+    const b = document.getElementById("emptyAddBtn");
+    if(b) b.addEventListener("click", () => openRoomModal(null));
+  } else {
+    // Common no-results state — rooms exist but the current search/filters match none.
+    el.innerHTML = `
+      <div class="empty-ico" aria-hidden="true">${SEARCH_ICO}</div>
+      <h2>No rooms found</h2>
+      <p>No rooms match your current search or filters. Try adjusting or clearing them.</p>
+      <button class="btn btn-ghost" type="button" id="emptyClearFiltersBtn">Clear filters</button>`;
+    const b = document.getElementById("emptyClearFiltersBtn");
+    if(b) b.addEventListener("click", clearFilters);
+  }
+}
+
+/* ---------- room detail view ---------- */
+let currentDetailId = null;
+
+// Placeholder rows — student management is not implemented yet.
+function renderStudentPlaceholder(){
+  document.getElementById("rdStudentBody").innerHTML = `
+    <tr class="rd-student-empty">
+      <td colspan="2">
+        <div class="rd-students-empty">
+          <span class="rd-students-empty-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg></span>
+          <p class="rd-students-empty-title">Student management is coming soon</p>
+          <p class="rd-students-empty-text">Student management will be available in a future update. You'll be able to add students and track attendance for this room here.</p>
+        </div>
+      </td>
+    </tr>`;
+}
+function renderDetail(room){
+  document.getElementById("rdName").textContent = room.name;
+  document.getElementById("rdSub").textContent = room.roomType;
+  renderStudentPlaceholder();
+}
+function showDetail(room){
+  currentDetailId = room.id;
+  renderDetail(room);
+  document.getElementById("listingView").hidden = true;
+  document.getElementById("detailView").hidden = false;
+  document.getElementById("addBtn").style.display = "none"; // Add Room only belongs on the Rooms List
+  window.scrollTo(0, 0);
+  setTimeout(() => { const bk = document.getElementById("rdBack"); if(bk) bk.focus(); }, 30);
+}
+function showListing(){
+  currentDetailId = null;
+  document.getElementById("detailView").hidden = true;
+  document.getElementById("listingView").hidden = false;
+  document.getElementById("addBtn").style.display = ""; // restore Add Room on the Rooms List
+  window.scrollTo(0, 0);
+}
+// Open via user click. Show the detail first, THEN try to sync the URL for
+// browser-Back support. pushState throws in sandboxed (null-origin) iframes,
+// so it is wrapped — navigation must work regardless.
+function openRoomDetail(id){
+  const room = rooms.find(r => r.id === id);
+  if(!room) return;
+  showDetail(room);
+  try { history.pushState({ roomId: room.roomId }, "", "#room/" + room.roomId); } catch(e){ /* sandboxed iframe */ }
+}
+function goBackToList(){
+  showListing();
+  try { if(location.hash) history.replaceState({}, "", location.pathname + location.search); } catch(e){ /* sandboxed iframe */ }
+}
+// Route from the current URL hash (used on load and on popstate).
+function onRoute(){
+  let m = null;
+  try { m = location.hash.match(/^#room\/(RM-\d+)/); } catch(e){ m = null; }
+  if(m){
+    const room = rooms.find(r => r.roomId === m[1]);
+    if(room){ showDetail(room); return; }
+  }
+  showListing();
+}
+
+/* ---------- sorting ---------- */
+function applySort(key){
+  if(sortState.key === key){ sortState.dir = sortState.dir === "asc" ? "desc" : "asc"; }
+  else { sortState = { key, dir:"asc" }; }
+  refreshList(true);
+}
+function syncSortHeads(){
+  document.querySelectorAll(".sort-head").forEach(btn => {
+    const active = sortState.key === btn.dataset.sortKey;
+    btn.classList.toggle("active", active);
+    btn.setAttribute("aria-sort", active ? (sortState.dir === "asc" ? "ascending" : "descending") : "none");
+  });
+  document.querySelectorAll("[data-sort-icon]").forEach(icon => {
+    const active = sortState.key === icon.dataset.sortIcon;
+    icon.textContent = active ? (sortState.dir === "asc" ? "↑" : "↓") : "↕";
+  });
+}
+
+/* ---------- search / filters ---------- */
+function clearSearch(){
+  searchTerm = "";
+  const box = document.getElementById("searchBox");
+  box.value = "";
+  document.getElementById("searchWrap").classList.remove("has-value");
+  refreshList(true);
+}
+function clearFilters(){
+  // Reset the room-type filter, the assignment filter, and the search box.
+  if(typeFilterCtl) typeFilterCtl.reset();
+  typeFilter = "";
+  if(assignFilterCtl) assignFilterCtl.reset();
+  assignmentFilter = "all";
+  clearSearch();
+}
+// Reset button is disabled while at the default state (no search / no filters applied),
+// and enabled the moment any search or filter is active.
+function updateResetButton(){
+  const btn = document.getElementById("resetFilters");
+  if(!btn) return;
+  const active = searchTerm.trim() !== "" || typeFilter !== "" || assignmentFilter === "assigned" || assignmentFilter === "unassigned";
+  btn.disabled = !active;
+}
+// Single source of truth for the assigned/unassigned filter — keeps the dropdown
+// and the clickable cards in sync, then re-renders the list + cards.
+function setAssignmentFilter(value){
+  assignmentFilter = value;
+  // The dropdown only knows "", "assigned", "unassigned"; the "all" sentinel maps to "All Rooms".
+  if(assignFilterCtl) assignFilterCtl.set(value === "all" ? "" : value); // sync dropdown (does not fire onChange)
+  refreshList(true);                              // skeleton + reset to first page; cards update immediately
+}
+
+/* ---------- toast (shared SuperSchools component) ---------- */
+const TOAST_ICONS = {
+  success:{ title:'Success', bg:'#DCFCE7', color:'#16A34A', svg:'<path d="M20 6 9 17l-5-5"/>' },
+  warning:{ title:'Warning', bg:'#FEF3C7', color:'#D97706', svg:'<path d="M10.3 3.3 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.3a2 2 0 0 0-3.4 0Z"/><path d="M12 10v4"/><path d="M12 18h.01"/>' },
+  error:{ title:'Error', bg:'#FEE2E2', color:'#DC2626', svg:'<circle cx="12" cy="12" r="9"/><path d="m15 9-6 6M9 9l6 6"/>' },
+  info:{ title:'Info', bg:'#DBEAFE', color:'#2563EB', svg:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/>' }
+};
+let toastTimer;
+function showToast(msg, type){
+  const t = document.getElementById('toast'); if(!t) return;
+  const key = type===true ? 'warning' : ((typeof type==='string' && TOAST_ICONS[type]) ? type : 'success');
+  const conf = TOAST_ICONS[key];
+  const ic = document.getElementById('toastIcon');
+  t.style.boxShadow = 'inset 3px 0 0 0 '+conf.color+', 0 12px 30px rgba(15,23,42,0.12), 0 1px 3px rgba(15,23,42,0.07)';
+  if(ic){ ic.style.background=conf.bg; ic.style.color=conf.color; ic.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">'+conf.svg+'</svg>'; }
+  const tt = document.getElementById('toastTitle'); if(tt) tt.textContent = conf.title;
+  const tm = document.getElementById('toastMsg'); if(tm) tm.textContent = String(msg).replace(/^\u2713\s*/,'');
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 2800);
+}
+function hideToast(){
+  const t = document.getElementById('toast');
+  if(t) t.classList.remove('show');
+  clearTimeout(toastTimer);
+}
+
+/* ---------- modal helpers ---------- */
+function lockScroll(on){ document.body.style.overflow = on ? "hidden" : ""; }
+function getFocusable(modal){
+  return Array.from(modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'))
+    .filter(el => !el.disabled && el.offsetParent !== null);
+}
+function trapTab(e, modal){
+  if(e.key !== "Tab") return;
+  const f = getFocusable(modal);
+  if(!f.length) return;
+  const first = f[0], last = f[f.length - 1];
+  if(e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
+  else if(!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+}
+
+/* ---------- add / edit ---------- */
+function openRoomModal(id, presetType){
+  editingId = id;
+  lastFocused = document.activeElement;
+  const isEdit = id != null;
+  const room = isEdit ? rooms.find(r => r.id === id) : null;
+  document.getElementById("roomModalTitle").textContent = isEdit ? "Room settings" : "Add new room";
+  document.getElementById("roomModalSub").textContent = isEdit ? "Update this room's details." : "Select the school type, then name the room.";
+  document.getElementById("saveRoomBtn").textContent = isEdit ? "Save" : "Add";
+  const delRoomBtn = document.getElementById("deleteRoomBtn");
+  if(delRoomBtn) delRoomBtn.style.display = isEdit ? "" : "none";
+  if(roomTypeCtl) roomTypeCtl.set(room ? room.roomType : (presetType || ""));
+  const input = document.getElementById("f-name");
+  input.value = room ? room.name : "";
+  clearTypeError(); clearNameError();
+
+  document.getElementById("roomModal").classList.add("on");
+  lockScroll(true);
+  // New rooms: focus the Room Type step first. Editing or a preset type: focus the
+  // name field and place the cursor at the end WITHOUT selecting/highlighting the text.
+  setTimeout(() => {
+    if(isEdit || presetType){
+      input.focus();
+      const n = input.value.length;
+      try { input.setSelectionRange(n, n); } catch(e){}
+    } else {
+      const t = document.querySelector("#roomTypeSelect .ss-select-trigger");
+      if(t) t.focus();
+    }
+  }, 30);
+}
+function closeRoomModal(){
+  if(roomTypeCtl) roomTypeCtl.close();
+  document.getElementById("roomModal").classList.remove("on");
+  lockScroll(false);
+  editingId = null;
+  pendingEdit = null;
+  if(lastFocused && lastFocused.focus) lastFocused.focus();
+}
+function clearTypeError(){ document.getElementById("typeField").classList.remove("error"); }
+function clearNameError(){ document.getElementById("nameField").classList.remove("error"); }
+function showTypeError(msg){
+  document.getElementById("typeHint").textContent = msg;
+  document.getElementById("typeField").classList.add("error");
+  const t = document.querySelector("#roomTypeSelect .ss-select-trigger");
+  if(t) t.focus();
+}
+function showNameError(msg){
+  document.getElementById("nameHint").textContent = msg;
+  document.getElementById("nameField").classList.add("error");
+  document.getElementById("f-name").focus();
+}
+function saveRoom(e){
+  e.preventDefault();
+  const roomType = roomTypeCtl ? roomTypeCtl.value : "";
+  const name = document.getElementById("f-name").value.trim().replace(/\s+/g, " ");
+  if(!roomType){ showTypeError("Room type is required."); return; }
+  if(!name){ showNameError("Room name is required."); return; }
+  // Prevent duplicate room names within the same room type.
+  const dupe = rooms.some(r => r.id !== editingId && r.roomType === roomType && r.name.toLowerCase() === name.toLowerCase());
+  if(dupe){ showNameError(`"${name}" already exists under ${roomType}.`); return; }
+
+  if(editingId != null){
+    const r = rooms.find(x => x.id === editingId);
+    if(!r){ closeRoomModal(); return; }
+    const typeChanged = r.roomType !== roomType;
+    // Changing the room type while staff are assigned: confirm first.
+    if(typeChanged && isAssigned(r.roomId)){
+      pendingEdit = { id: editingId, roomType, name };
+      openTypeWarn(r, roomType);
+      return;
+    }
+    applyRoomEdit(editingId, roomType, name);
+  } else {
+    const roomId = makeRoomId();
+    rooms.unshift({ id: nextId++, roomId, roomType, name, createdOn: todayISO(), updatedOn: todayISO() });
+    logActivity(roomId, `Room created as "${name}"`);
+    closeRoomModal();
+    // Surface the new room: clear any active filter/search so it shows at the top of page 1.
+    if(typeFilter || assignmentFilter === "assigned" || assignmentFilter === "unassigned" || searchTerm.trim()) clearFilters(); else { tablePage = 1; render(); }
+    showToast("Room added");
+  }
+}
+/* Apply an edit. Staff assignments + activity are keyed by Room ID, so renaming
+   or changing the type never disturbs them — the references stay linked. */
+function applyRoomEdit(id, roomType, name){
+  const r = rooms.find(x => x.id === id);
+  if(!r) return;
+  const prevName = r.name, prevType = r.roomType;
+  if(prevName !== name) logActivity(r.roomId, `Renamed from "${prevName}" to "${name}"`);
+  if(prevType !== roomType) logActivity(r.roomId, `Room type changed: ${prevType} → ${roomType}`);
+  r.name = name; r.roomType = roomType; r.updatedOn = todayISO();
+  closeRoomModal();
+  render();
+  // If this room is open in the detail view, refresh it in place.
+  if(currentDetailId === id && !document.getElementById("detailView").hidden) renderDetail(r);
+  showToast("Room updated");
+}
+
+/* ---------- room-type change warning ---------- */
+function openTypeWarn(room, newType){
+  const count = assignedStaff(room.roomId).length;
+  document.getElementById("warnDetail").innerHTML =
+    `<b>${esc(room.name)}</b> &middot; <span class="room-id-badge" style="vertical-align:middle">${esc(room.roomId)}</span><br>`
+    + `${esc(room.roomType)} <span style="color:#b45309;font-weight:700">&rarr;</span> ${esc(newType)}<br>`
+    + `<span style="display:inline-block;margin-top:4px">${count} staff member${count === 1 ? "" : "s"} currently assigned. Assignments stay linked to this room.</span>`;
+  document.getElementById("typeWarnModal").classList.add("on");
+  setTimeout(() => document.getElementById("warnCancelBtn").focus(), 30);
+}
+function closeTypeWarn(){
+  document.getElementById("typeWarnModal").classList.remove("on");
+  pendingEdit = null;
+  // Edit modal stays open underneath; return focus to the Save button.
+  const sb = document.getElementById("saveRoomBtn"); if(sb) sb.focus();
+}
+function confirmTypeWarn(){
+  if(!pendingEdit) return;
+  const { id, roomType, name } = pendingEdit;
+  pendingEdit = null;
+  document.getElementById("typeWarnModal").classList.remove("on");
+  applyRoomEdit(id, roomType, name);
+}
+
+/* ---------- delete ---------- */
+function openDeleteModal(id){
+  const room = rooms.find(r => r.id === id);
+  if(!room) return;
+  pendingDeleteId = id;
+  pendingDeleteName = room.name;
+  lastFocused = document.activeElement;
+  document.getElementById("deleteSub").textContent = `"${room.name}" will be removed from your school.`;
+  document.getElementById("delConfirmName").textContent = `"${room.name}"`;
+  const ci = document.getElementById("delConfirmInput"); ci.value = "";
+  const cb = document.getElementById("confirmDeleteBtn"); cb.disabled = true; cb.setAttribute("aria-disabled", "true");
+  document.getElementById("deleteModal").classList.add("on");
+  lockScroll(true);
+  setTimeout(() => ci.focus(), 30);
+}
+function closeDeleteModal(){
+  document.getElementById("deleteModal").classList.remove("on");
+  lockScroll(false);
+  pendingDeleteId = null;
+  pendingDeleteName = "";
+  const ci = document.getElementById("delConfirmInput"); if(ci) ci.value = "";
+  const cb = document.getElementById("confirmDeleteBtn"); if(cb){ cb.disabled = true; cb.setAttribute("aria-disabled", "true"); }
+  if(lastFocused && lastFocused.focus) lastFocused.focus();
+}
+function cancelDelete(){
+  const wasOpen = document.getElementById("deleteModal").classList.contains("on");
+  closeDeleteModal();
+  if(wasOpen) showToast("Room deletion cancelled.", "error");
+}
+function confirmDelete(){
+  if(pendingDeleteId == null) return;
+  const delId = pendingDeleteId;
+  const room = rooms.find(r => r.id === delId);
+  if(!room) return;
+  const typed = (document.getElementById("delConfirmInput").value || "").trim();
+  if(typed !== room.name.trim()) return; // must type the exact room name to confirm
+  rooms = rooms.filter(r => r.id !== delId);
+  closeDeleteModal();
+  // If the deleted room is the one open in detail, return to the listing.
+  if(currentDetailId === delId){
+    try { history.replaceState({}, "", location.pathname + location.search); } catch(e){ /* sandboxed iframe */ }
+    showListing();
+  }
+  render();
+  showToast("Room deleted successfully.");
+}
+
+/* ---------- bind ---------- */
+function bind(){
+  document.getElementById("addBtn").addEventListener("click", () => openRoomModal(null));
+
+  // Room type filter (page) + room type select (modal)
+  typeFilterCtl = buildSelect(document.getElementById("typeFilterSelect"), {
+    allOption: { value:"", label:"All Types" },
+    groups: ROOM_TYPE_GROUPS,
+    value: "",
+    onChange: v => { typeFilter = v; refreshList(true); }
+  });
+  roomTypeCtl = buildSelect(document.getElementById("roomTypeSelect"), {
+    groups: ROOM_TYPE_GROUPS,
+    value: "",
+    placeholder: "Select room type",
+    onChange: () => clearTypeError()
+  });
+
+  // Assigned / Unassigned filter (dropdown). Stays in sync with the cards.
+  assignFilterCtl = buildSelect(document.getElementById("assignFilterSelect"), {
+    allOption: { value:"", label:"All Rooms" },
+    groups: [{ label:null, options:[
+      { value:"assigned", label:"Assigned Rooms" },
+      { value:"unassigned", label:"Unassigned Rooms" }
+    ] }],
+    value: "",
+    onChange: v => { assignmentFilter = (v === "" ? "all" : v); refreshList(true); }
+  });
+
+  // Clicking the Assigned / Unassigned cards filters the list (toggles off if active).
+  // Summary cards were replaced by the info banner; keep this guarded for safety.
+  const summaryCardsEl = document.getElementById("summaryCards");
+  if(summaryCardsEl) summaryCardsEl.addEventListener("click", e => {
+    const card = e.target.closest("[data-assign]");
+    if(!card) return;
+    const v = card.dataset.assign;
+    setAssignmentFilter(assignmentFilter === v ? "" : v);
+  });
+  // Dismiss the Rooms info banner.
+  const roomsInfoClose = document.getElementById("roomsInfoClose");
+  if(roomsInfoClose) roomsInfoClose.addEventListener("click", () => {
+    const b = document.getElementById("roomsInfo"); if(b) b.remove();
+  });
+
+  // Search
+  const box = document.getElementById("searchBox");
+  box.addEventListener("input", e => {
+    searchTerm = e.target.value;
+    document.getElementById("searchWrap").classList.toggle("has-value", searchTerm.length > 0);
+    refreshList(true);
+  });
+  document.getElementById("clearSearch").addEventListener("click", () => { clearSearch(); box.focus(); });
+  document.getElementById("resetFilters").addEventListener("click", clearFilters);
+
+  // Sorting
+  document.querySelectorAll("[data-sort-key]").forEach(btn =>
+    btn.addEventListener("click", () => applySort(btn.dataset.sortKey)));
+
+  // Delegated room-open (table rows + cards). Click or keyboard on the name/card/View button.
+  const listing = document.getElementById("listingView");
+  listing.addEventListener("click", e => {
+    const v = e.target.closest("[data-view]");
+    if(v){ openRoomDetail(Number(v.dataset.view)); }
+  });
+  listing.addEventListener("keydown", e => {
+    if(e.key !== "Enter" && e.key !== " ") return;
+    // Only the name span and the mobile card are activated here; the arrow is a
+    // native <button> that handles Enter/Space itself (prevents a double trigger).
+    const el = e.target.closest(".room-name[data-view], .room-card-link[data-view]");
+    if(el){ e.preventDefault(); openRoomDetail(Number(el.dataset.view)); }
+  });
+
+  // Room detail page actions
+  document.getElementById("rdBack").addEventListener("click", goBackToList);
+  const rdSettings = document.getElementById("rdSettingsBtn");
+  if(rdSettings) rdSettings.addEventListener("click", () => { if(currentDetailId != null) openRoomModal(currentDetailId); });
+  const deleteRoomBtn = document.getElementById("deleteRoomBtn");
+  if(deleteRoomBtn) deleteRoomBtn.addEventListener("click", () => {
+    const id = editingId;            // capture before closing (closeRoomModal nulls it)
+    if(id == null) return;
+    closeRoomModal();
+    openDeleteModal(id);             // reuse the existing delete confirmation flow
+  });
+  window.addEventListener("popstate", onRoute);
+
+  // Add/Edit modal — save via button click + Enter key (no <form> submit; that is
+  // blocked in sandboxed iframes, which was breaking Save Changes).
+  document.getElementById("saveRoomBtn").addEventListener("click", saveRoom);
+  document.getElementById("f-name").addEventListener("keydown", e => {
+    if(e.key === "Enter"){ e.preventDefault(); saveRoom(e); }
+  });
+  document.getElementById("closeRoomBtn").addEventListener("click", closeRoomModal);
+  document.getElementById("cancelRoomBtn").addEventListener("click", closeRoomModal);
+  document.getElementById("f-name").addEventListener("input", clearNameError);
+  document.getElementById("roomModal").addEventListener("mousedown", e => { if(e.target.id === "roomModal") closeRoomModal(); });
+  document.getElementById("roomModal").addEventListener("keydown", e => trapTab(e, document.querySelector("#roomModal .modal")));
+
+  // Delete modal
+  document.getElementById("confirmDeleteBtn").addEventListener("click", confirmDelete);
+  const delConfirmInput = document.getElementById("delConfirmInput");
+  if(delConfirmInput){
+    const syncDel = () => {
+      const cb = document.getElementById("confirmDeleteBtn");
+      const ok = !!pendingDeleteName && delConfirmInput.value.trim() === pendingDeleteName.trim();
+      cb.disabled = !ok; cb.setAttribute("aria-disabled", ok ? "false" : "true");
+    };
+    delConfirmInput.addEventListener("input", syncDel);
+    delConfirmInput.addEventListener("keydown", e => {
+      if(e.key === "Enter" && !document.getElementById("confirmDeleteBtn").disabled){ e.preventDefault(); confirmDelete(); }
+    });
+  }
+  document.getElementById("cancelDeleteBtn").addEventListener("click", cancelDelete);
+  document.getElementById("cancelDeleteX").addEventListener("click", cancelDelete);
+  document.getElementById("deleteModal").addEventListener("mousedown", e => { if(e.target.id === "deleteModal") cancelDelete(); });
+  document.getElementById("deleteModal").addEventListener("keydown", e => trapTab(e, document.querySelector("#deleteModal .del-dialog")));
+
+  // Room-type change warning
+  document.getElementById("warnContinueBtn").addEventListener("click", confirmTypeWarn);
+  document.getElementById("warnCancelBtn").addEventListener("click", closeTypeWarn);
+  document.getElementById("warnCloseX").addEventListener("click", closeTypeWarn);
+  document.getElementById("typeWarnModal").addEventListener("mousedown", e => { if(e.target.id === "typeWarnModal") closeTypeWarn(); });
+  document.getElementById("typeWarnModal").addEventListener("keydown", e => trapTab(e, document.querySelector("#typeWarnModal .warn-dialog")));
+
+  // Global Esc
+  document.addEventListener("keydown", e => {
+    if(e.key !== "Escape") return;
+    if(document.getElementById("typeWarnModal").classList.contains("on")) closeTypeWarn();
+    else if(document.getElementById("roomModal").classList.contains("on")) closeRoomModal();
+    else if(document.getElementById("deleteModal").classList.contains("on")) cancelDelete();
+  });
+}
+
+/* ----------------------------------------------------------------------
+   Staff-ready, Room-ID-based room structure.
+
+   Every room carries a permanent Room ID (RM-001). All relationships —
+   staff assignments today, and future student / attendance / timetable /
+   classroom modules — map by Room ID, never by Room Name. So a room can be
+   renamed or have its type changed without breaking any reference.
+
+     SuperschoolsRooms.catalog               -> master type list (array of strings)
+     SuperschoolsRooms.all()                 -> [{ id, roomId, roomType, name }]
+     SuperschoolsRooms.byId("RM-001")        -> one room by Room ID
+     SuperschoolsRooms.byType(type)          -> rooms of one school type
+     SuperschoolsRooms.groupedByType()       -> [{ roomType, rooms:[...] }] canonical order
+     SuperschoolsRooms.typesInUse()          -> school types with >=1 room
+     SuperschoolsRooms.staff()               -> [{ id, name }] roster
+     SuperschoolsRooms.assignmentsByRoom()   -> { roomId: [staffId, ...] }
+     SuperschoolsRooms.staffForRoom("RM-001")-> [staff name, ...]
+     SuperschoolsRooms.activityForRoom("RM-001") -> [{ ts, text }, ...]
+   ---------------------------------------------------------------------- */
+window.SuperschoolsRooms = {
+  catalog: ROOM_TYPE_ORDER,
+  all(){ return rooms.map(r => ({ id:r.id, roomId:r.roomId, roomType:r.roomType, name:r.name })); },
+  byId(roomId){ const r = rooms.find(x => x.roomId === roomId); return r ? { id:r.id, roomId:r.roomId, roomType:r.roomType, name:r.name } : null; },
+  byType(type){ return this.all().filter(r => r.roomType === type); },
+  groupedByType(){
+    const byType = {};
+    rooms.forEach(r => { (byType[r.roomType] = byType[r.roomType] || []).push({ id:r.id, roomId:r.roomId, roomType:r.roomType, name:r.name }); });
+    return ROOM_TYPE_ORDER
+      .filter(t => byType[t])
+      .map(t => ({ roomType:t, rooms: byType[t].slice().sort((a,b) => a.name.localeCompare(b.name)) }));
+  },
+  typesInUse(){ return this.groupedByType().map(g => g.roomType); },
+  staff(){ return STAFF.map(s => ({ id:s.id, name:s.name })); },
+  assignmentsByRoom(){ const out = {}; Object.keys(assignments).forEach(k => out[k] = assignments[k].slice()); return out; },
+  staffForRoom(roomId){ return assignedStaff(roomId); },
+  activityForRoom(roomId){ return (activity[roomId] || []).map(a => ({ ts:a.ts, text:a.text })); }
+};
+
+bind();
+render();
+onRoute();
+</script>
+<script src="../../components/RouteLoader.js"></script>
+</body>
+</html>

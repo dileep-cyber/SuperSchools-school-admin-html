@@ -1,0 +1,654 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Teacher Applications &mdash; SuperSchools</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="../../styles/tailwind-config.js"></script>
+  <link rel="stylesheet" href="../../styles/shell.css" />
+  <link rel="stylesheet" href="../../styles/enquiries.css" />
+</head>
+<body class="bg-slate-200 text-slate-900 min-h-screen font-['Inter'] antialiased" x-data="schoolConsole({ module: 'jobs', sub: 'applications' })">
+  <div id="routeLoader" class="route-loader" role="status" aria-live="polite" aria-label="Loading">
+    <div class="route-loader__box"><div class="route-loader__spinner"></div><div class="route-loader__text">Loading&hellip;</div></div>
+  </div>
+  <div class="ss-app min-h-screen h-screen w-full flex bg-mobile-background md:bg-background relative">
+    <div data-shell="sidebar"></div>
+    <main class="flex-1 flex flex-col overflow-hidden bg-[#F6F8FC]">
+      <div data-shell="header"></div>
+  <div class="flex min-h-0 flex-1 flex-col overflow-hidden">
+    <div id="bulkBar" class="hidden">
+      <div class="flex min-h-[88px] flex-col items-stretch gap-3 rounded-2xl border border-[#D7E4FF] bg-white px-4 py-3 shadow-[0_14px_36px_rgba(15,23,42,0.14)] min-[400px]:flex-row min-[400px]:items-center min-[400px]:justify-between min-[400px]:gap-4 md:px-6 md:py-4">
+        <div class="flex items-center gap-3">
+          <span id="bulkCount" class="grid h-8 min-w-8 place-items-center rounded-full bg-[#EFF4FF] ring-1 ring-inset ring-[#BFD3FF] px-2 text-sm font-semibold text-[#284CA5]">0</span>
+          <button id="selectAllGlobalBtn" type="button" class="text-[13px] font-semibold text-[#284CA5] transition hover:text-[#203F8D]" aria-label="Select all records across pages">Select All</button>
+          <button id="clearSelectionText" type="button" class="text-[13px] font-semibold text-[#64748B] transition hover:text-[#334155]">Clear</button>
+        </div>
+        <div class="flex items-center gap-2 min-[400px]:justify-end">
+          <button id="updateStatusBtn" type="button" class="inline-flex h-8 flex-1 items-center justify-center gap-1.5 rounded-lg border border-[#D7E4FF] bg-[#EFF4FF] px-4 text-[12px] font-semibold text-[#284CA5] transition hover:bg-[#DCE8FF] min-[400px]:flex-none" aria-label="Update Status"><svg class="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h13a2 2 0 0 0 2-2v-6"/><path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg><span class="hidden md:inline">Update Status</span></button>
+          <button type="button" class="inline-flex h-8 flex-1 items-center justify-center gap-1.5 rounded-lg border border-[#FECACA] bg-[#FEF2F2] px-4 text-[12px] font-semibold text-[#DC2626] transition hover:bg-[#FFF1F1] min-[400px]:flex-none" aria-label="Delete"><svg class="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg><span class="hidden md:inline">Delete</span></button>
+          <button type="button" class="inline-flex h-8 flex-1 items-center justify-center gap-1.5 rounded-lg bg-[#284CA5] px-4 text-[12px] font-semibold text-white transition hover:bg-[#203F8D] min-[400px]:flex-none" aria-label="WhatsApp"><svg class="h-[15px] w-[15px] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.52 3.48A11.81 11.81 0 0 0 12.06 0C5.5 0 .15 5.34.15 11.91c0 2.1.55 4.15 1.6 5.96L0 24l6.3-1.66a11.86 11.86 0 0 0 5.76 1.47h.01c6.56 0 11.91-5.34 11.91-11.91 0-3.18-1.24-6.17-3.46-8.42z"/><path d="M9.05 7.5c-.22-.5-.45-.51-.66-.52h-.56c-.2 0-.51.07-.78.36-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.22 3.07c.15.2 2.07 3.32 5.11 4.53 2.52 1 3.03.8 3.58.75.55-.05 1.78-.73 2.03-1.43.25-.7.25-1.31.18-1.43-.07-.12-.27-.2-.56-.34-.3-.15-1.78-.88-2.05-.98-.27-.1-.47-.15-.67.15s-.78.97-.95 1.17c-.18.2-.35.22-.65.07-.3-.15-1.27-.47-2.42-1.5-.9-.8-1.5-1.78-1.68-2.08-.18-.3-.02-.46.13-.61.14-.13.3-.35.45-.52.15-.18.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.66-1.63-.9-2.23z"/></svg><span class="hidden md:inline">WhatsApp</span></button>
+        </div>
+      </div>
+    </div>
+
+    <nav class="shrink-0 px-3 pt-4 sm:px-6 lg:px-6 xl:px-[50px]" aria-label="Breadcrumb">
+      <ol class="flex items-center gap-2 text-[13px] font-medium text-[#64748B]">
+        <li><a href="../super-school/school.html" class="transition hover:text-[#284CA5]">Home</a></li>
+        <li class="text-[#94A3B8]">&gt;</li>
+        <li><a href="hr.html" class="transition hover:text-[#284CA5]">Jobs</a></li>
+        <li class="text-[#94A3B8]">&gt;</li>
+        <li class="text-[#284CA5]" aria-current="page">Applications</li>
+      </ol>
+    </nav>
+
+    <div class="flex min-h-0 flex-1">
+      <div class="flex min-h-0 w-full flex-col gap-4 px-3 py-4 sm:px-6 xl:flex-row lg:px-6 xl:px-[50px]">
+        <aside id="sidebar" class="z-30 hidden max-h-[46vh] w-full shrink-0 flex-col rounded-2xl border border-[#E2E8F0] bg-white shadow-[0_1px_3px_rgba(15,23,42,0.06)] transition-all duration-200 xl:flex xl:h-full xl:max-h-none xl:w-[236px]">
+          <div id="sidebarHeader" class="flex items-center justify-between border-b border-[#EEF2F7] p-[10px]">
+            <div class="sidebar-copy flex items-center gap-2">
+              <svg class="h-4 w-4 text-[#284CA5]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg>
+              <h2 class="text-sm font-semibold text-[#0F172A]">Filters</h2>
+            </div>
+            <div class="flex items-center gap-1">
+              <button id="toggleSavedFilters" type="button" class="group relative grid h-8 w-8 place-items-center rounded-lg text-[#64748B] transition hover:bg-[#EFF4FF] hover:text-[#284CA5] sidebar-copy" aria-label="Saved filters"><span class="pointer-events-none absolute left-full top-1/2 z-50 ml-2 hidden -translate-y-1/2 whitespace-nowrap rounded-lg border border-[#E2E8F0] bg-white px-2 py-1 text-[11px] font-semibold text-[#334155] shadow-[0_8px_20px_rgba(15,23,42,0.12)] group-hover:block">Saved Filters</span><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+              <button id="collapseBtn" type="button" class="group relative grid h-8 w-8 place-items-center rounded-lg text-[#64748B] transition hover:bg-[#EEF2F7] hover:text-[#0F172A]" aria-label="Collapse sidebar"><span class="pointer-events-none absolute left-full top-1/2 z-50 ml-2 hidden -translate-y-1/2 whitespace-nowrap rounded-lg border border-[#E2E8F0] bg-white px-2 py-1 text-[11px] font-semibold text-[#334155] shadow-[0_8px_20px_rgba(15,23,42,0.12)] group-hover:block">Collapse Filters</span><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h18"/><path d="M3 12h18"/><path d="M3 19h18"/></svg></button>
+            </div>
+          </div>
+          <!-- Compact icon buttons shown ONLY when sidebar is collapsed (not .sidebar-copy) -->
+          <div id="sidebarCollapsedBtns" class="hidden flex-col items-center gap-0.5 py-2">
+            <button id="collapsedSearchBtn" type="button" class="group relative grid h-10 w-10 place-items-center rounded-xl text-[#64748B] transition hover:bg-[#EFF4FF] hover:text-[#284CA5]" aria-label="Search">
+              <span class="pointer-events-none absolute left-full top-1/2 z-50 ml-2 hidden -translate-y-1/2 whitespace-nowrap rounded-lg border border-[#E2E8F0] bg-white px-2 py-1 text-[11px] font-semibold text-[#334155] shadow-[0_8px_20px_rgba(15,23,42,0.12)] group-hover:block">Search</span>
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+            </button>
+            <button id="collapsedExpandFiltersBtn" type="button" class="group relative grid h-10 w-10 place-items-center rounded-xl text-[#64748B] transition hover:bg-[#EFF4FF] hover:text-[#284CA5]" aria-label="Expand Filters">
+              <span class="pointer-events-none absolute left-full top-1/2 z-50 ml-2 hidden -translate-y-1/2 whitespace-nowrap rounded-lg border border-[#E2E8F0] bg-white px-2 py-1 text-[11px] font-semibold text-[#334155] shadow-[0_8px_20px_rgba(15,23,42,0.12)] group-hover:block">Filters</span>
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg>
+            </button>
+            <button id="collapsedSavedFiltersExpandBtn" type="button" class="group relative grid h-10 w-10 place-items-center rounded-xl text-[#64748B] transition hover:bg-[#EFF4FF] hover:text-[#284CA5]" aria-label="Saved Filters">
+              <span class="pointer-events-none absolute left-full top-1/2 z-50 ml-2 hidden -translate-y-1/2 whitespace-nowrap rounded-lg border border-[#E2E8F0] bg-white px-2 py-1 text-[11px] font-semibold text-[#334155] shadow-[0_8px_20px_rgba(15,23,42,0.12)] group-hover:block">Saved Filters</span>
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            </button>
+          </div>
+          <div id="savedFiltersPanel" class="sidebar-copy hidden shrink-0 border-b border-[#EEF2F7] bg-[#F8FAFD] px-[10px] py-2">
+            <div class="mb-2 flex items-center justify-between"><h3 class="text-[11px] font-semibold uppercase tracking-[0.6px] text-[#475569]">Saved filters</h3></div>
+            <div id="savedFiltersList" class="max-h-[160px] space-y-1 overflow-y-auto overscroll-contain"></div>
+          </div>
+          <div class="sidebar-copy min-h-0 flex-1 space-y-4 overflow-y-auto p-[10px] scroll-smooth">
+            <section class="grid grid-cols-[repeat(auto-fit,minmax(190px,1fr))] gap-3 xl:block xl:space-y-3">
+              <div class="relative flex h-10 min-w-[190px] items-center rounded-xl border border-[#D7E4FF] bg-white pl-3 pr-8 shadow-[0_1px_3px_rgba(40,76,165,0.08)] transition focus-within:border-[#284CA5]"><svg class="mr-2 h-[15px] w-[15px] shrink-0 text-[#284CA5]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg><input id="sideSearch" type="text" placeholder="Search name or mobile" class="min-w-0 flex-1 bg-transparent text-[13px] text-[#334155] placeholder:text-[#64748B] outline-none" /><button id="clearSideSearch" type="button" class="absolute right-2 grid h-5 w-5 cursor-pointer place-items-center rounded-full text-[#64748B] transition hover:bg-[#DCE8FF] hover:text-[#284CA5]" aria-label="Clear search"><svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+              <div id="filterGroups" class="contents xl:block xl:space-y-3"></div>
+            </section>
+          </div>
+          <div class="sidebar-copy border-t border-[#EEF2F7] p-[10px]">
+            <div class="flex w-fit gap-2 xl:w-full xl:gap-1.5"><button id="resetBtn" type="button" class="h-9 min-w-[76px] rounded-xl border border-[#D7E4FF] bg-white px-4 text-[13px] font-semibold text-[#284CA5] transition hover:bg-[#EFF4FF] xl:min-w-0 xl:flex-1 xl:px-0">Reset</button><button id="saveFilterBtn" type="button" class="hidden h-9 min-w-[76px] rounded-xl border border-[#D7E4FF] bg-[#EFF4FF] px-4 text-[13px] font-semibold text-[#284CA5] transition hover:bg-[#DCE8FF] xl:min-w-0 xl:flex-1 xl:px-0">Save</button><button id="applyBtn" type="button" class="h-9 min-w-[76px] rounded-xl bg-[#284CA5] px-4 text-[13px] font-semibold text-white transition hover:bg-[#203F8D] xl:min-w-0 xl:flex-1 xl:px-0">Apply</button></div>
+          </div>
+        </aside>
+
+        <section id="contentPanel" class="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-2xl border border-[#E2E8F0] bg-white shadow-[0_1px_3px_rgba(15,23,42,0.06)]">
+          <div id="contentHeader" class="flex h-[76px] items-center justify-between gap-3 border-b border-[#EEF2F7] bg-white px-4 py-4">
+            <div id="normalHeaderCopy" class="min-w-0 flex-1"><h1 id="viewTitle" class="truncate text-[18px] font-semibold tracking-[-0.02em] text-[#0F172A]">Teacher Applications</h1><p id="viewSub" class="mt-1 hidden text-[13px] text-[#64748B] lg:block">Review, filter, and manage teacher & staff job applications.</p></div>
+            <div id="inlineBulkHeader" class="hidden h-full min-w-0 flex-1 items-center gap-3">
+              <span id="inlineBulkCount" class="grid h-8 min-w-8 place-items-center rounded-full bg-[#EFF4FF] ring-1 ring-inset ring-[#BFD3FF] px-2 text-sm font-semibold text-[#284CA5]">0</span>
+              <button id="inlineSelectAllGlobalBtn" type="button" class="text-[13px] font-semibold text-[#284CA5] transition hover:text-[#203F8D]" aria-label="Select all records across pages">Select All</button>
+              <button id="inlineClearSelectionText" type="button" class="text-[13px] font-semibold text-[#64748B] transition hover:text-[#334155]">Clear</button>
+            </div>
+            <div id="toolbarActions" class="flex shrink-0 items-center gap-2"><div id="inlineBulkActions" class="hidden h-full items-center gap-2"><button id="inlineUpdateStatusBtn" type="button" class="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-[#D7E4FF] bg-[#EFF4FF] px-4 text-[13px] font-semibold text-[#284CA5] transition hover:bg-[#DCE8FF]" aria-label="Update Status"><svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h13a2 2 0 0 0 2-2v-6"/><path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg><span class="hidden md:inline">Update Status</span></button><button type="button" class="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-[#FECACA] bg-[#FEF2F2] px-4 text-[13px] font-semibold text-[#DC2626] transition hover:bg-[#FFF1F1]" aria-label="Delete"><svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg><span class="hidden md:inline">Delete</span></button><button type="button" class="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-[#284CA5] px-4 text-[13px] font-semibold text-white transition hover:bg-[#203F8D]" aria-label="WhatsApp"><svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.52 3.48A11.81 11.81 0 0 0 12.06 0C5.5 0 .15 5.34.15 11.91c0 2.1.55 4.15 1.6 5.96L0 24l6.3-1.66a11.86 11.86 0 0 0 5.76 1.47h.01c6.56 0 11.91-5.34 11.91-11.91 0-3.18-1.24-6.17-3.46-8.42z"/><path d="M9.05 7.5c-.22-.5-.45-.51-.66-.52h-.56c-.2 0-.51.07-.78.36-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.22 3.07c.15.2 2.07 3.32 5.11 4.53 2.52 1 3.03.8 3.58.75.55-.05 1.78-.73 2.03-1.43.25-.7.25-1.31.18-1.43-.07-.12-.27-.2-.56-.34-.3-.15-1.78-.88-2.05-.98-.27-.1-.47-.15-.67.15s-.78.97-.95 1.17c-.18.2-.35.22-.65.07-.3-.15-1.27-.47-2.42-1.5-.9-.8-1.5-1.78-1.68-2.08-.18-.3-.02-.46.13-.61.14-.13.3-.35.45-.52.15-.18.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.66-1.63-.9-2.23z"/></svg><span class="hidden md:inline">WhatsApp</span></button></div><div id="normalToolbarActions" class="flex items-center gap-2">
+              <button id="openFiltersDrawer" type="button" class="relative inline-flex h-9 items-center justify-center gap-2 rounded-xl border border-[#D7E4FF] bg-white px-3 text-[13px] font-semibold text-[#284CA5] transition hover:bg-[#EFF4FF] xl:hidden max-[767px]:w-9 max-[767px]:px-0" aria-label="Open filters"><svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg><span class="hidden md:inline">Filters</span></button>
+              <div class="hidden h-10 items-center gap-1 rounded-xl border border-[#E2E8F0] bg-white p-1 shadow-[0_2px_8px_rgba(15,23,42,0.08)] lg:inline-flex">
+                <button type="button" data-view-btn="table" class="view-btn group relative grid h-8 w-8 place-items-center rounded-lg bg-[#284CA5] text-white transition" aria-label="Table View"><span class="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 hidden -translate-x-1/2 whitespace-nowrap rounded-lg border border-[#E2E8F0] bg-white px-2 py-1 text-[11px] font-semibold text-[#334155] shadow-[0_8px_20px_rgba(15,23,42,0.12)] group-hover:block">Table View</span><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 4v16"/></svg></button>
+                <button type="button" data-view-btn="kanban" class="view-btn group relative grid h-8 w-8 place-items-center rounded-lg text-[#64748B] transition hover:bg-[#EFF4FF] hover:text-[#284CA5]" aria-label="Kanban View"><span class="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 hidden -translate-x-1/2 whitespace-nowrap rounded-lg border border-[#E2E8F0] bg-white px-2 py-1 text-[11px] font-semibold text-[#334155] shadow-[0_8px_20px_rgba(15,23,42,0.12)] group-hover:block">Kanban View</span><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="6" height="16" rx="1.5"/><rect x="10.5" y="4" width="6" height="10" rx="1.5"/><rect x="18" y="4" width="3" height="13" rx="1.5"/></svg></button>
+                <button type="button" data-view-btn="map" class="view-btn group relative grid h-8 w-8 place-items-center rounded-lg text-[#64748B] transition hover:bg-[#EFF4FF] hover:text-[#284CA5]" aria-label="Map View"><span class="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 hidden -translate-x-1/2 whitespace-nowrap rounded-lg border border-[#E2E8F0] bg-white px-2 py-1 text-[11px] font-semibold text-[#334155] shadow-[0_8px_20px_rgba(15,23,42,0.12)] group-hover:block">Map View</span><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4l-6 2v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14M15 6v14"/></svg></button>
+              </div>
+              <div class="relative hidden lg:block">
+                <button id="columnsBtn" type="button" class="inline-flex h-10 items-center gap-2 rounded-xl border border-[#D7E4FF] bg-white px-4 text-[13px] font-semibold text-[#284CA5] transition hover:bg-[#EFF4FF]"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16M15 4v16"/></svg><span id="columnsBtnText">Choose Columns</span></button>
+                <div id="columnsMenu" class="absolute right-0 top-11 z-30 hidden w-72 rounded-2xl border border-[#E2E8F0] bg-white p-3 shadow-[0_12px_32px_rgba(15,23,42,0.12)]">
+                  <div class="flex items-start justify-between border-b border-[#EEF2F7] pb-3"><div><h3 id="columnsTitle" class="text-sm font-semibold text-[#0F172A]">Visible columns</h3><p class="mt-0.5 text-xs text-[#64748B]">Minimum 2 selections required</p></div><button id="closeColumns" type="button" class="grid h-8 w-8 place-items-center rounded-lg text-[#64748B] transition hover:bg-[#EEF2F7] hover:text-[#0F172A]" aria-label="Close"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+                  <div class="mt-3 flex items-center justify-between text-xs"><button id="selectAllColumns" type="button" class="font-semibold text-[#284CA5] transition hover:text-[#203F8D]">Select All</button></div>
+                  <p id="minMsg" class="mt-3 hidden rounded-lg bg-[#FEF2F2] px-2 py-1.5 text-xs font-medium text-[#DC2626]">At least 2 items must remain selected.</p>
+                  <div id="columnsOptions" class="mt-3 space-y-1"></div>
+                  <button id="applyColumns" type="button" class="mt-3 h-9 w-full rounded-xl bg-[#284CA5] text-[13px] font-semibold text-white transition hover:bg-[#203F8D]">Apply</button>
+                </div>
+              </div>
+              <button id="addLeadBtn" type="button" class="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-[#284CA5] px-4 text-[13px] font-semibold text-white transition hover:bg-[#203F8D] max-[767px]:w-10 max-[767px]:px-0" aria-label="New Application"><svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg><span class="hidden md:inline">New Application</span></button>
+              </div>
+            </div>
+          </div>
+
+          <section id="tableView" class="view-section flex min-h-0 flex-1 flex-col overflow-hidden">
+            <div id="tableScroll" class="min-h-0 flex-1 overflow-auto scroll-smooth">
+              <table class="hidden w-full min-w-[980px] border-collapse bg-white text-[13px] whitespace-nowrap lg:table">
+                <thead class="sticky top-0 z-10 bg-[#EEF2F9] text-left text-xs font-semibold text-[#475569] whitespace-nowrap">
+                  <tr>
+                    <th class="w-10 border-b border-[#E2E8F0] px-3 py-3"><input id="selectAllTable" type="checkbox" class="h-4 w-4 cursor-pointer rounded border-[#BFD3FF] accent-[#284CA5] focus:ring-[#284CA5]" aria-label="Select all table rows" /></th>
+                    <th data-col-head="candidate" data-sort-key="candidate" class="cursor-pointer select-none border-b border-[#E2E8F0] px-3 py-3 font-semibold transition hover:text-[#284CA5]">Candidate Name <span data-sort-icon="candidate" class="text-[#94A3B8]">↕</span></th>
+                    <th data-col-head="phone" data-sort-key="phone" class="w-[170px] cursor-pointer select-none border-b border-[#E2E8F0] px-3 py-3 font-semibold transition hover:text-[#284CA5]">Mobile Number <span data-sort-icon="phone" class="text-[#94A3B8]">↕</span></th>
+                    <th data-col-head="specialization" data-sort-key="specialization" class="cursor-pointer select-none border-b border-[#E2E8F0] px-3 py-3 font-semibold transition hover:text-[#284CA5]">Subject <span data-sort-icon="specialization" class="text-[#94A3B8]">↕</span></th>
+                    <th data-col-head="gradeApplied" data-sort-key="gradeApplied" class="cursor-pointer select-none border-b border-[#E2E8F0] px-3 py-3 font-semibold transition hover:text-[#284CA5]">Position <span data-sort-icon="gradeApplied" class="text-[#94A3B8]">↕</span></th>
+                    <th data-col-head="date" data-sort-key="date" class="cursor-pointer select-none border-b border-[#E2E8F0] px-3 py-3 font-semibold transition hover:text-[#284CA5]">Application Date <span data-sort-icon="date" class="text-[#94A3B8]">↕</span></th>
+                    <th data-col-head="exp" data-sort-key="exp" class="cursor-pointer select-none border-b border-[#E2E8F0] px-3 py-3 font-semibold transition hover:text-[#284CA5]">Experience <span data-sort-icon="exp" class="text-[#94A3B8]">↕</span></th>
+                    <th data-col-head="distance" data-sort-key="distance" class="cursor-pointer select-none border-b border-[#E2E8F0] px-3 py-3 font-semibold transition hover:text-[#284CA5]" id="distanceSortHead">Distance <span data-sort-icon="distance" id="distanceSortIcon" class="text-[#94A3B8]">↕</span></th>
+                    <th data-col-head="travelPref" data-sort-key="travelPref" class="cursor-pointer select-none border-b border-[#E2E8F0] px-3 py-3 font-semibold transition hover:text-[#284CA5]">Travel Pref. <span data-sort-icon="travelPref" class="text-[#94A3B8]">↕</span></th>
+                    <th data-col-head="source" data-sort-key="source" class="cursor-pointer select-none border-b border-[#E2E8F0] px-3 py-3 font-semibold transition hover:text-[#284CA5]">Source <span data-sort-icon="source" class="text-[#94A3B8]">↕</span></th>
+                  </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+              </table>
+              <div id="tableCardsMobile" class="grid grid-cols-1 gap-px bg-[#EEF2F7] md:grid-cols-2 lg:hidden"></div>
+            </div>
+            <div id="tablePager" class="flex h-12 shrink-0 items-center justify-end gap-5 border-t border-[#EEF2F7] bg-white px-5 text-[13px] text-[#64748B]"></div>
+          </section>
+
+          <section id="kanbanView" class="view-section hidden min-h-0 flex-1 flex-col overflow-hidden">
+            <div id="kanbanScroll" class="min-h-0 flex-1 overflow-y-auto overflow-x-auto bg-[#F6F8FC] p-3 scroll-smooth"><div id="kanbanBoard" class="flex min-w-full flex-nowrap gap-3"></div><div id="kanbanLoader" class="mt-3 hidden items-center justify-center gap-2 py-4 text-[13px] font-semibold text-[#284CA5]"><span class="h-4 w-4 animate-spin rounded-full border-2 border-[#DCE8FF] border-t-[#284CA5]"></span>Loading...</div></div>
+            <div id="kanbanPager" class="hidden"></div>
+          </section>
+
+          <section id="mapView" class="view-section hidden min-h-0 flex-1 flex-col overflow-hidden">
+            <div class="grid min-h-0 flex-1 grid-cols-1 overflow-hidden bg-white md:grid-cols-[38%_minmax(0,1fr)] lg:grid-cols-[340px_minmax(0,1fr)]">
+              <div class="flex min-h-0 flex-col border-r border-[#E2E8F0] bg-white">
+                <div class="flex h-12 shrink-0 items-center justify-between bg-[#EEF2F9] px-4"><label class="flex items-center gap-2 text-xs font-semibold text-[#475569]"><input id="selectAllMap" type="checkbox" class="h-4 w-4 cursor-pointer rounded border-[#BFD3FF] accent-[#284CA5] focus:ring-[#284CA5]" /> Applicant List</label><span id="mapCount" class="text-[11px] text-[#475569]">0 Applicants</span></div>
+                <div id="mapList" class="min-h-0 flex-1 overflow-y-auto scroll-smooth"></div>
+              </div>
+              <div class="relative hidden min-h-[360px] overflow-hidden bg-[#F4F6FB] md:block lg:min-h-0">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI5MDAiIGhlaWdodD0iNjIwIiB2aWV3Qm94PSIwIDAgOTAwIDYyMCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImJnIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2VlZjRlZSIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNlZGYzZjgiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8ZmlsdGVyIGlkPSJzb2Z0IiB4PSItMTAlIiB5PSItMTAlIiB3aWR0aD0iMTIwJSIgaGVpZ2h0PSIxMjAlIj4KICAgICAgPGZlRHJvcFNoYWRvdyBkeD0iMCIgZHk9IjIiIHN0ZERldmlhdGlvbj0iMiIgZmxvb2QtY29sb3I9IiM2NDc0OGIiIGZsb29kLW9wYWNpdHk9Ii4xOCIvPgogICAgPC9maWx0ZXI+CiAgPC9kZWZzPgogIDxyZWN0IHdpZHRoPSI5MDAiIGhlaWdodD0iNjIwIiBmaWxsPSJ1cmwoI2JnKSIvPgogIDxwYXRoIGQ9Ik0wIDExNSBDMTIwIDgyIDIyMCAxMTUgMzI2IDg4IEM0NDIgNTkgNTQwIDY2IDY1NiA0MiBDNzQ4IDIzIDgxNiAyOSA5MDAgMTAgTDkwMCAwIEwwIDBaIiBmaWxsPSIjZGNlZmRjIi8+CiAgPHBhdGggZD0iTTAgNTA1IEMxMTYgNDc1IDI0OCA0OTIgMzU2IDQ2NiBDNDk2IDQzMiA2MDUgNDQ1IDc0MSA0MTAgQzgxMiAzOTIgODU0IDM4MSA5MDAgMzc0IEw5MDAgNjIwIEwwIDYyMFoiIGZpbGw9IiNlMGVmZGYiLz4KICA8cGF0aCBkPSJNMTEwIDAgQzExOSA4OCAxMTYgMTYxIDE0NSAyMjkgQzE4NiAzMjcgMTgzIDQxOCAyMjAgNjIwIiBmaWxsPSJub25lIiBzdHJva2U9IiNiNmQ3ZjAiIHN0cm9rZS13aWR0aD0iMjgiIG9wYWNpdHk9Ii45Ii8+CiAgPHBhdGggZD0iTTAgMzQwIEMxMjAgMzE1IDIyMCAzMDIgMzI2IDI3OCBDNDQyIDI1MiA1NDAgMjQ2IDY1NiAyMjEgQzc0OCAyMDEgODE2IDE4NyA5MDAgMTc3IiBmaWxsPSJub25lIiBzdHJva2U9IiNjNWUwZjYiIHN0cm9rZS13aWR0aD0iMjQiIG9wYWNpdHk9Ii45NSIvPgogIDxnIG9wYWNpdHk9Ii45OCIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj4KICAgIDxwYXRoIGQ9Ik0tNTAgNTU1IEMxMjAgNTAwIDI0MCA0ODggNDAyIDQxMCBDNTIwIDM1MyA2ODQgMzI2IDk2MCAyODYiIHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLXdpZHRoPSIzMCIvPgogICAgPHBhdGggZD0iTS01MCA1NTUgQzEyMCA1MDAgMjQwIDQ4OCA0MDIgNDEwIEM1MjAgMzUzIDY4NCAzMjYgOTYwIDI4NiIgc3Ryb2tlPSIjZDlhNDQxIiBzdHJva2Utd2lkdGg9IjE4Ii8+CiAgICA8cGF0aCBkPSJNLTQwIDIxMCBDODggMjE1IDIyMSAyMjYgMzU0IDE5NSBDNTE4IDE1NiA2NzQgMTE2IDk0MCAxMzAiIHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLXdpZHRoPSIyNiIvPgogICAgPHBhdGggZD0iTS00MCAyMTAgQzg4IDIxNSAyMjEgMjI2IDM1NCAxOTUgQzUxOCAxNTYgNjc0IDExNiA5NDAgMTMwIiBzdHJva2U9IiNmMGMzNmEiIHN0cm9rZS13aWR0aD0iMTQiLz4KICAgIDxwYXRoIGQ9Ik00MjAgLTIwIEM0MTggODAgNDQ4IDE0NCA0ODAgMjE1IEM1MjcgMzIyIDU0NSA0MzIgNTM4IDY1MCIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjI1Ii8+CiAgICA8cGF0aCBkPSJNNDIwIC0yMCBDNDE4IDgwIDQ0OCAxNDQgNDgwIDIxNSBDNTI3IDMyMiA1NDUgNDMyIDUzOCA2NTAiIHN0cm9rZT0iI2VhYjg1ZiIgc3Ryb2tlLXdpZHRoPSIxMyIvPgogICAgPHBhdGggZD0iTTczNSAtMTAgQzcwMCA5NSA2OTIgMTkyIDcxMyAyODYgQzczOCAzOTkgNzMzIDQ5NiA3MDAgNjUwIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMjIiLz4KICAgIDxwYXRoIGQ9Ik03MzUgLTEwIEM3MDAgOTUgNjkyIDE5MiA3MTMgMjg2IEM3MzggMzk5IDczMyA0OTYgNzAwIDY1MCIgc3Ryb2tlPSIjZThiNjVhIiBzdHJva2Utd2lkdGg9IjEyIi8+CiAgPC9nPgogIDxnIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLXdpZHRoPSIxMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBvcGFjaXR5PSIuOTUiPgogICAgPHBhdGggZD0iTTM1IDYwIEwzMjYgMTEyIEw2MTAgNzUgTDg3NSA5NiIvPgogICAgPHBhdGggZD0iTTU0IDM5NSBDMTkwIDM2OCAyODkgMzQ2IDQxMCAzMDAgQzUzNCAyNTMgNzA1IDI0NiA4NjAgMjM2Ii8+CiAgICA8cGF0aCBkPSJNNzkgNjEwIEMxMjAgNDgwIDE2NiAzOTYgMjU4IDMyNCBDMzQ0IDI1NyAzODAgMTcwIDM3NSAzNCIvPgogICAgPHBhdGggZD0iTTIzNiAwIEMyNTggMTA4IDI4MiAxOTAgMzI0IDI4NiBDMzcyIDM5NCAzOTAgNDcwIDM4MiA2MjAiLz4KICAgIDxwYXRoIGQ9Ik02MTUgMCBDNTk4IDEwNCA1ODggMTkwIDYwMyAyOTYgQzYxOSA0MTIgNjIyIDUxMCA1OTUgNjIwIi8+CiAgICA8cGF0aCBkPSJNODQwIDAgQzgxMiAxMjMgODAyIDIyNiA4MjkgMzU2IEM4NDkgNDUzIDg0NiA1MzIgODI0IDYyMCIvPgogICAgPHBhdGggZD0iTTAgNDc1IEM5MiA0MzAgMTcyIDQyMCAyNDUgMzg0IEMzNTAgMzMyIDQyNCAzNDYgNTE1IDMxNSBDNjM1IDI3MyA3NTggMjc5IDkwMCAyNTIiLz4KICAgIDxwYXRoIGQ9Ik0wIDE0NSBDOTUgMTU3IDE4OCAxNTYgMjg4IDEzNyBDMzkwIDExOCA1MDUgOTIgNjEyIDEwNSBDNzEyIDExNyA3OTAgMTQ1IDkwMCAxNTEiLz4KICAgIDxwYXRoIGQ9Ik0wIDI4MiBDMTI5IDI3MiAyNTAgMjYyIDM2MCAyMzcgQzQ4OCAyMDcgNTk0IDIwMyA3MDQgMTkwIEM3ODEgMTgxIDgzNCAxODUgOTAwIDE5NyIvPgogICAgPHBhdGggZD0iTTExOCAwIEMxMzYgOTcgMTU5IDE3OCAyMDQgMjQ0IEMyNzggMzU0IDMxMSA0NTkgMzM1IDYyMCIvPgogICAgPHBhdGggZD0iTTQ4OCAwIEM1MDMgOTcgNTI4IDE3MyA1NTkgMjQ3IEM2MDIgMzUwIDY0MCA0NTIgNjUwIDYyMCIvPgogIDwvZz4KICA8ZyBmaWxsPSJub25lIiBzdHJva2U9IiNjYmQ1ZTEiIHN0cm9rZS13aWR0aD0iMyIgb3BhY2l0eT0iLjc1Ij4KICAgIDxwYXRoIGQ9Ik0zNSA2MCBMMzI2IDExMiBMNjEwIDc1IEw4NzUgOTYiLz4KICAgIDxwYXRoIGQ9Ik01NCAzOTUgQzE5MCAzNjggMjg5IDM0NiA0MTAgMzAwIEM1MzQgMjUzIDcwNSAyNDYgODYwIDIzNiIvPgogICAgPHBhdGggZD0iTTc5IDYxMCBDMTIwIDQ4MCAxNjYgMzk2IDI1OCAzMjQgQzM0NCAyNTcgMzgwIDE3MCAzNzUgMzQiLz4KICAgIDxwYXRoIGQ9Ik0yMzYgMCBDMjU4IDEwOCAyODIgMTkwIDMyNCAyODYgQzM3MiAzOTQgMzkwIDQ3MCAzODIgNjIwIi8+CiAgICA8cGF0aCBkPSJNNjE1IDAgQzU5OCAxMDQgNTg4IDE5MCA2MDMgMjk2IEM2MTkgNDEyIDYyMiA1MTAgNTk1IDYyMCIvPgogICAgPHBhdGggZD0iTTg0MCAwIEM4MTIgMTIzIDgwMiAyMjYgODI5IDM1NiBDODQ5IDQ1MyA4NDYgNTMyIDgyNCA2MjAiLz4KICAgIDxwYXRoIGQ9Ik0wIDQ3NSBDOTIgNDMwIDE3MiA0MjAgMjQ1IDM4NCBDMzUwIDMzMiA0MjQgMzQ2IDUxNSAzMTUgQzYzNSAyNzMgNzU4IDI3OSA5MDAgMjUyIi8+CiAgICA8cGF0aCBkPSJNMCAxNDUgQzk1IDE1NyAxODggMTU2IDI4OCAxMzcgQzM5MCAxMTggNTA1IDkyIDYxMiAxMDUgQzcxMiAxMTcgNzkwIDE0NSA5MDAgMTUxIi8+CiAgICA8cGF0aCBkPSJNMCAyODIgQzEyOSAyNzIgMjUwIDI2MiAzNjAgMjM3IEM0ODggMjA3IDU5NCAyMDMgNzA0IDE5MCBDNzgxIDE4MSA4MzQgMTg1IDkwMCAxOTciLz4KICAgIDxwYXRoIGQ9Ik0xMTggMCBDMTM2IDk3IDE1OSAxNzggMjA0IDI0NCBDMjc4IDM1NCAzMTEgNDU5IDMzNSA2MjAiLz4KICAgIDxwYXRoIGQ9Ik00ODggMCBDNTAzIDk3IDUyOCAxNzMgNTU5IDI0NyBDNjAyIDM1MCA2NDAgNDUyIDY1MCA2MjAiLz4KICA8L2c+CiAgPGcgZmlsbD0iI2ZmZmZmZiIgc3Ryb2tlPSIjZDllMmVjIiBzdHJva2Utd2lkdGg9IjEiPgogICAgPHJlY3QgeD0iNTYiIHk9IjcyIiB3aWR0aD0iNzgiIGhlaWdodD0iNDIiIHJ4PSI2Ii8+CiAgICA8cmVjdCB4PSIxNzIiIHk9IjkwIiB3aWR0aD0iNjQiIGhlaWdodD0iMzYiIHJ4PSI1Ii8+CiAgICA8cmVjdCB4PSI2NTgiIHk9IjgwIiB3aWR0aD0iOTIiIGhlaWdodD0iNDUiIHJ4PSI3Ii8+CiAgICA8cmVjdCB4PSI3NTUiIHk9IjE1NCIgd2lkdGg9IjgwIiBoZWlnaHQ9IjM4IiByeD0iNiIvPgogICAgPHJlY3QgeD0iMTE4IiB5PSIzMDUiIHdpZHRoPSI5NCIgaGVpZ2h0PSI1MCIgcng9IjgiLz4KICAgIDxyZWN0IHg9IjI1MiIgeT0iMjE0IiB3aWR0aD0iMTEwIiBoZWlnaHQ9IjU4IiByeD0iOSIvPgogICAgPHJlY3QgeD0iNDQ4IiB5PSIyNDgiIHdpZHRoPSI4NiIgaGVpZ2h0PSI0NCIgcng9IjciLz4KICAgIDxyZWN0IHg9IjU3MSIgeT0iMzQ0IiB3aWR0aD0iOTgiIGhlaWdodD0iNDkiIHJ4PSI3Ii8+CiAgICA8cmVjdCB4PSI3MzciIHk9IjQwNSIgd2lkdGg9Ijk1IiBoZWlnaHQ9IjQ4IiByeD0iNyIvPgogICAgPHJlY3QgeD0iNDA1IiB5PSI0ODAiIHdpZHRoPSI5OCIgaGVpZ2h0PSI1MiIgcng9IjgiLz4KICAgIDxyZWN0IHg9Ijk2IiB5PSI0ODYiIHdpZHRoPSIxMjIiIGhlaWdodD0iNjIiIHJ4PSI5Ii8+CiAgICA8cmVjdCB4PSI3MDAiIHk9IjUyMCIgd2lkdGg9Ijg2IiBoZWlnaHQ9IjQyIiByeD0iNyIvPgogIDwvZz4KICA8ZyBmb250LWZhbWlseT0iSW50ZXIsIEFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjEzIiBmaWxsPSIjNDc1NTY5IiBmb250LXdlaWdodD0iNjAwIj4KICAgIDx0ZXh0IHg9IjY2IiB5PSI5OCI+U2Nob29sIFJvYWQ8L3RleHQ+CiAgICA8dGV4dCB4PSI2NjYiIHk9IjEwNyI+Q2VudHJhbCBQYXJrPC90ZXh0PgogICAgPHRleHQgeD0iMjYzIiB5PSIyNDciPlJlc2lkZW5jeSBMYXlvdXQ8L3RleHQ+CiAgICA8dGV4dCB4PSIxMjciIHk9IjMzNyI+TWFya2V0IEFyZWE8L3RleHQ+CiAgICA8dGV4dCB4PSI1ODAiIHk9IjM3NCI+R2FyZGVuIFN0cmVldDwvdGV4dD4KICAgIDx0ZXh0IHg9IjQxNCIgeT0iNTEyIj5MYWtlIFZpZXc8L3RleHQ+CiAgICA8dGV4dCB4PSI3MDYiIHk9IjU1MiI+Q2l0eSBCbG9jazwvdGV4dD4KICA8L2c+CiAgPGcgZm9udC1mYW1pbHk9IkludGVyLCBBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMSIgZmlsbD0iIzY0NzQ4YiI+CiAgICA8dGV4dCB4PSI2NCIgeT0iMTkwIiB0cmFuc2Zvcm09InJvdGF0ZSg0IDY0IDE5MCkiPk91dGVyIFJpbmcgUm9hZDwvdGV4dD4KICAgIDx0ZXh0IHg9IjUyMiIgeT0iNDU3IiB0cmFuc2Zvcm09InJvdGF0ZSg4NiA1MjIgNDU3KSI+TWFpbiBBdmVudWU8L3RleHQ+CiAgICA8dGV4dCB4PSI1ODUiIHk9IjIyNSIgdHJhbnNmb3JtPSJyb3RhdGUoLTEwIDU4NSAyMjUpIj5NZXRybyBDb3JyaWRvcjwvdGV4dD4KICAgIDx0ZXh0IHg9IjI1MCIgeT0iNDMxIiB0cmFuc2Zvcm09InJvdGF0ZSgtMjQgMjUwIDQzMSkiPkNhbXB1cyBSb2FkPC90ZXh0PgogICAgPHRleHQgeD0iNzE5IiB5PSIzMjIiIHRyYW5zZm9ybT0icm90YXRlKDgwIDcxOSAzMjIpIj5TdGF0aW9uIFJvYWQ8L3RleHQ+CiAgPC9nPgogIDxnIGZpbHRlcj0idXJsKCNzb2Z0KSI+CiAgICA8cmVjdCB4PSIyNCIgeT0iMjQiIHdpZHRoPSIxNTYiIGhlaWdodD0iNDIiIHJ4PSIxMiIgZmlsbD0iI2ZmZmZmZiIgc3Ryb2tlPSIjZDdlNGZmIi8+CiAgICA8Y2lyY2xlIGN4PSI0OCIgY3k9IjQ1IiByPSI4IiBmaWxsPSIjMjg0Y2E1Ii8+CiAgICA8dGV4dCB4PSI2NCIgeT0iNDkiIGZvbnQtZmFtaWx5PSJJbnRlciwgQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTMiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMyODRjYTUiPkJlbmdhbHVydSBNYXA8L3RleHQ+CiAgPC9nPgo8L3N2Zz4=" alt="Map view" class="absolute inset-0 h-full w-full object-cover" />
+                <div id="mapPins" class="absolute inset-0"></div>
+                <div class="absolute bottom-4 right-4 flex flex-col gap-2"><button class="grid h-9 w-9 place-items-center rounded-xl border border-[#E2E8F0] bg-white text-[#284CA5] shadow-[0_1px_3px_rgba(15,23,42,0.08)]">+</button><button class="grid h-9 w-9 place-items-center rounded-xl border border-[#E2E8F0] bg-white text-[#284CA5] shadow-[0_1px_3px_rgba(15,23,42,0.08)]">−</button></div>
+              </div>
+            </div>
+            <div id="mapPager" class="flex h-12 shrink-0 items-center justify-end gap-5 border-t border-[#EEF2F7] bg-white px-5 text-[13px] text-[#64748B]"></div>
+          </section>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <div id="filtersOverlay" class="fixed inset-0 z-[60] hidden xl:!hidden" aria-modal="true" role="dialog" aria-label="Filters">
+    <div id="filtersBackdrop" class="absolute inset-0 bg-[#0F172A]/40 opacity-0 transition-opacity duration-200"></div>
+    <div id="filtersDrawer" class="absolute inset-y-0 right-0 flex w-[260px] translate-x-full flex-col bg-white shadow-[-12px_0_36px_rgba(15,23,42,0.18)] transition-transform duration-200 sm:w-[280px]">
+      <header class="flex shrink-0 items-center justify-between border-b border-[#EEF2F7] p-[10px]">
+        <div class="flex items-center gap-2">
+          <svg class="h-4 w-4 text-[#284CA5]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg>
+          <h2 class="text-sm font-semibold text-[#0F172A]">Filters</h2>
+        </div>
+        <div class="flex items-center gap-1">
+          <button id="toggleSavedFiltersMobile" type="button" class="group relative grid h-8 w-8 place-items-center rounded-lg text-[#64748B] transition hover:bg-[#EFF4FF] hover:text-[#284CA5]" aria-label="Saved filters"><span class="pointer-events-none absolute right-full top-1/2 z-50 mr-2 hidden -translate-y-1/2 whitespace-nowrap rounded-lg border border-[#E2E8F0] bg-white px-2 py-1 text-[11px] font-semibold text-[#334155] shadow-[0_8px_20px_rgba(15,23,42,0.12)] group-hover:block">Saved Filters</span><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+          <button id="closeFiltersDrawer" type="button" class="grid h-8 w-8 place-items-center rounded-lg text-[#64748B] transition hover:bg-[#EEF2F7] hover:text-[#0F172A]" aria-label="Close filters"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+        </div>
+      </header>
+      <div id="savedFiltersMobilePanel" class="hidden shrink-0 border-b border-[#EEF2F7] bg-[#F8FAFD] px-[10px] py-2">
+        <div class="mb-2 flex items-center justify-between"><h3 class="text-[11px] font-semibold uppercase tracking-[0.6px] text-[#475569]">Saved filters</h3></div>
+        <div id="savedFiltersMobileList" class="max-h-[160px] space-y-1 overflow-y-auto overscroll-contain"></div>
+      </div>
+      <div class="min-h-0 flex-1 space-y-4 overflow-y-auto p-[10px] scroll-smooth">
+        <div class="relative flex h-10 items-center rounded-xl border border-[#D7E4FF] bg-white pl-3 pr-8 shadow-[0_1px_3px_rgba(40,76,165,0.08)] transition focus-within:border-[#284CA5]">
+          <svg class="mr-2 h-[15px] w-[15px] shrink-0 text-[#284CA5]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+          <input id="drawerSearch" type="text" placeholder="Search name or mobile" class="min-w-0 flex-1 bg-transparent text-[13px] text-[#334155] placeholder:text-[#64748B] outline-none" />
+          <button id="clearDrawerSearch" type="button" class="absolute right-2 grid h-5 w-5 cursor-pointer place-items-center rounded-full text-[#64748B] transition hover:bg-[#DCE8FF] hover:text-[#284CA5]" aria-label="Clear search"><svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+        </div>
+        <div id="drawerFilterGroups" class="space-y-3"></div>
+      </div>
+      <div class="shrink-0 border-t border-[#EEF2F7] p-[10px]">
+        <div class="flex w-full gap-2"><button id="drawerResetBtn" type="button" class="h-9 flex-1 rounded-xl border border-[#D7E4FF] bg-white text-[13px] font-semibold text-[#284CA5] transition hover:bg-[#EFF4FF]">Reset</button><button id="drawerSaveFilterBtn" type="button" class="hidden h-9 flex-1 rounded-xl border border-[#D7E4FF] bg-[#EFF4FF] text-[13px] font-semibold text-[#284CA5] transition hover:bg-[#DCE8FF]">Save</button><button id="drawerApplyBtn" type="button" class="h-9 flex-1 rounded-xl bg-[#284CA5] text-[13px] font-semibold text-white transition hover:bg-[#203F8D]">Apply</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Status Update Modal -->
+  <div id="statusUpdateModal" class="fixed inset-0 z-[70] hidden items-center justify-center bg-[#0F172A]/30 px-4">
+    <div class="w-full max-w-sm rounded-2xl border border-[#E2E8F0] bg-white p-4 shadow-[0_18px_48px_rgba(15,23,42,0.18)]">
+      <div class="mb-3 flex items-start justify-between gap-2">
+        <div>
+          <h3 class="text-sm font-semibold text-[#0F172A]">Update Status</h3>
+          <p id="statusUpdateSubtitle" class="mt-1 text-[12px] text-[#64748B]">Select a new status for the selected applications.</p>
+        </div>
+        <button type="button" onclick="closeStatusUpdateModal()" class="grid h-7 w-7 shrink-0 place-items-center rounded-lg text-[#64748B] transition hover:bg-[#EEF2F7] hover:text-[#0F172A]" aria-label="Close"><svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      </div>
+      <div id="statusOptionsList" class="space-y-1 rounded-xl border border-[#E2E8F0] p-1"></div>
+      <div class="mt-4 flex justify-end gap-2">
+        <button id="cancelStatusUpdate" type="button" class="h-9 rounded-xl border border-[#D7E4FF] bg-white px-4 text-[13px] font-semibold text-[#284CA5] transition hover:bg-[#EFF4FF]">Cancel</button>
+        <button id="applyStatusUpdate" type="button" disabled class="inline-flex h-9 min-w-[92px] items-center justify-center gap-2 rounded-xl bg-[#284CA5] px-4 text-[13px] font-semibold text-white transition-all duration-200 hover:bg-[#203F8D] disabled:cursor-not-allowed disabled:opacity-40">Update</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast notification -->
+  <div id="toastNotification" class="pointer-events-none fixed bottom-6 left-1/2 z-[80] -translate-x-1/2 translate-y-3 opacity-0 transition-all duration-300 max-w-[90vw]">
+    <div id="toastInner" class="flex w-fit items-center gap-2 rounded-[8px] border px-3 py-2 pointer-events-auto shadow-[0_10px_28px_rgba(15,23,42,0.12)]">
+      <span id="toastIconWrap" class="grid h-4 w-4 shrink-0 place-items-center">
+        <!-- icon injected by JS -->
+      </span>
+      <span id="toastMessage" class="text-[13px] font-medium leading-[20px] whitespace-normal">Status updated successfully</span>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Dialog -->
+  <div id="deleteConfirmModal" class="fixed inset-0 z-[70] hidden items-center justify-center bg-[#0F172A]/40 px-4">
+    <div class="w-full max-w-[300px] rounded-[10px] border border-[#D54545] bg-white p-4 shadow-[0px_4px_12px_rgba(0,0,0,0.05)] text-center">
+      <div class="flex justify-center">
+        <svg class="h-5 w-5 text-[#D54545]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </div>
+      <h3 id="deleteConfirmHeading" class="mt-2.5 text-[16px] font-semibold leading-[22px] text-[#D54545]">Delete Applications?</h3>
+      <p id="deleteConfirmBody" class="mt-1.5 text-[13px] font-medium leading-[18px] text-[#475569]">You're about to permanently delete the selected applications. This action cannot be undone.</p>
+      <div class="mt-4 flex items-center justify-center gap-3">
+        <button id="cancelDeleteConfirm" type="button" class="inline-flex h-8 items-center justify-center rounded-[6px] border border-[#D54545] bg-white px-4 text-[12px] font-medium text-[#D54545] transition hover:bg-[#FFF3F3]">Cancel</button>
+        <button id="confirmDeleteBtn" type="button" class="inline-flex h-8 min-w-[78px] items-center justify-center gap-2 rounded-[6px] bg-[#D54545] px-4 text-[12px] font-medium text-white transition-all duration-200 hover:bg-[#C84040]">Delete</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════════════════════════════════════
+       ADD LEAD — Auto-Fill PDF Modal
+  ════════════════════════════════════════════════════════════════ -->
+  <div id="autoFillPdfModal" class="fixed inset-0 z-[70] hidden items-center justify-center bg-[#0F172A]/40 px-4">
+    <div class="w-full max-w-[380px] rounded-2xl border border-[#E2E8F0] bg-white p-5 shadow-[0_18px_48px_rgba(15,23,42,0.18)]">
+      <div class="mb-4 flex items-start justify-between gap-2">
+        <div>
+          <h3 class="text-sm font-semibold text-[#0F172A]">Upload Application Form PDF</h3>
+          <p class="mt-0.5 text-[12px] text-[#64748B]">We'll auto-fill the form with extracted application details.</p>
+        </div>
+        <button type="button" id="closeAutoFillPdf" class="grid h-7 w-7 shrink-0 place-items-center rounded-lg text-[#64748B] transition hover:bg-[#EEF2F7] hover:text-[#0F172A]" aria-label="Close"><svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      </div>
+      <div id="autoFillPdfDropzone" class="relative flex min-h-[220px] cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-[#BFD3FF] bg-white px-4 py-8 text-center transition hover:border-[#284CA5] hover:bg-[#EFF4FF]">
+        <input type="file" id="autoFillPdfInput" accept=".pdf" class="absolute inset-0 cursor-pointer opacity-0" aria-label="Upload PDF" />
+        <span class="grid h-12 w-12 place-items-center rounded-xl bg-[#EFF4FF]">
+          <svg class="h-5 w-5 text-[#284CA5]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        </span>
+        <div>
+          <div class="text-[13px] font-semibold text-[#0F172A]">Click to upload or drag &amp; drop</div>
+          <div class="mt-1 text-[11px] text-[#64748B]">PDF only · Max 5 MB</div>
+        </div>
+      </div>
+      <div id="autoFillPdfLoader" class="mt-3 hidden flex-col gap-2 rounded-xl border border-[#E2E8F0] bg-white p-4">
+        <div class="flex items-center gap-2">
+          <svg class="h-4 w-4 animate-spin text-[#284CA5]" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 0 1 8-8V0C5.4 0 0 5.4 0 12h4z"/></svg>
+          <span class="text-[12px] font-medium text-[#284CA5]">Extracting information from PDF…</span>
+        </div>
+        <div class="space-y-2">
+          <div class="h-2 w-full rounded-full bg-[#EFF4FF]"><div id="autoFillPdfProgressBar" class="h-2 rounded-full bg-[#284CA5] transition-all duration-500" style="width:0%"></div></div>
+          <div class="space-y-1.5">
+            <div class="h-3 w-3/4 animate-pulse rounded bg-[#E2E8F0]"></div>
+            <div class="h-3 w-1/2 animate-pulse rounded bg-[#E2E8F0]"></div>
+            <div class="h-3 w-2/3 animate-pulse rounded bg-[#E2E8F0]"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════════
+       ADD LEAD — Reusable Step Dialog (Candidate Details → Position Details → Save)
+  ════════════════════════════════════════════════════════════════ -->
+  <div id="addLeadPage" class="fixed inset-0 z-[60] hidden items-center justify-center bg-[#0F172A]/40 px-3 py-3 sm:px-4 sm:py-6">
+    <div class="al-dialog w-full max-w-2xl max-h-[calc(100vh-32px)] flex flex-col overflow-hidden rounded-2xl border border-[#E2E8F0] bg-white shadow-[0_24px_60px_rgba(15,23,42,0.18)]">
+
+      <!-- Dialog Header: title + step indicator + close -->
+      <div class="flex shrink-0 flex-col gap-2.5 border-b border-[#EEF2F7] bg-white px-5 py-3 sm:gap-3 sm:px-6 sm:py-4">
+        <div class="flex items-start justify-between gap-3">
+          <div class="min-w-0">
+            <h2 id="addLeadDialogTitle" class="text-[18px] font-semibold tracking-[-0.02em] text-[#0F172A]">New Application</h2>
+            <p id="addLeadDialogSub" class="mt-0.5 text-[12px] text-[#64748B] sm:text-[13px]">Step 1 of 3 — Candidate details</p>
+          </div>
+          <button id="addLeadCloseBtn" type="button" class="grid h-9 w-9 shrink-0 place-items-center rounded-lg text-[#64748B] transition hover:bg-[#EEF2F7] hover:text-[#0F172A]" aria-label="Close dialog">
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <!-- Step Indicator — 3 steps -->
+        <div id="addLeadStepNav" class="flex items-center gap-2 sm:gap-3" role="progressbar" aria-valuemin="1" aria-valuemax="3" aria-valuenow="1">
+          <div data-step="1" class="al-step flex shrink-0 items-center gap-2">
+            <span class="al-step-bubble grid h-7 w-7 shrink-0 place-items-center rounded-full border text-[12px] font-semibold transition"></span>
+            <span class="al-step-label hidden truncate text-[12px] font-semibold transition sm:inline">Candidate Details</span>
+          </div>
+          <div class="al-step-divider h-px flex-1 bg-[#E2E8F0] transition"></div>
+          <div data-step="2" class="al-step flex shrink-0 items-center gap-2">
+            <span class="al-step-bubble grid h-7 w-7 shrink-0 place-items-center rounded-full border text-[12px] font-semibold transition"></span>
+            <span class="al-step-label hidden truncate text-[12px] font-semibold transition sm:inline">Position Details</span>
+          </div>
+          <div class="al-step-divider h-px flex-1 bg-[#E2E8F0] transition"></div>
+          <div data-step="3" class="al-step flex shrink-0 items-center gap-2">
+            <span class="al-step-bubble grid h-7 w-7 shrink-0 place-items-center rounded-full border text-[12px] font-semibold transition"></span>
+            <span class="al-step-label hidden truncate text-[12px] font-semibold transition sm:inline">Skills & Notes</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Body: flex-1 fills between header and footer; overflow-y-auto only on very small viewports -->
+      <!-- Body: auto-sizes to content; overflow-y-auto only triggers if total dialog exceeds viewport -->
+      <div class="overflow-y-auto bg-[#F6F8FC] px-4 py-3 sm:px-6 sm:py-4">
+        <div class="mx-auto flex min-h-full max-w-2xl flex-col justify-center space-y-4">
+          <div id="alStep1" class="al-step-pane" data-step-pane="1">
+            <!-- Section 1: Candidate Details -->
+            <section class="rounded-2xl border border-[#E2E8F0] bg-white p-4 sm:p-5">
+              <div class="mb-4">
+                <h3 class="text-[14px] font-semibold text-[#0F172A]">Candidate Details</h3>
+                <p class="mt-0.5 text-[12px] text-[#64748B]">Who is applying, and how we can reach the candidate.</p>
+              </div>
+              <div id="parentDetailsGrid" class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+
+                <!-- Emergency Contact Relation -->
+                <div id="alRelationWrap" class="sm:col-span-2">
+                  <label class="mb-1.5 flex items-center gap-1 text-[12px] font-semibold text-[#334155]">Emergency Contact Relation<span class="text-[#DC2626]">*</span></label>
+                  <div class="relative">
+                    <select id="alRelation" class="h-10 w-full appearance-none rounded-xl border border-[#E2E8F0] bg-white pl-3 pr-8 text-[13px] text-[#334155] outline-none transition focus:border-[#284CA5]">
+                      <option value="">Select relation</option>
+                      <option>Spouse</option>
+                      <option>Sibling</option>
+                      <option>Guardian</option>
+                      <option>Friend</option>
+                      <option>Colleague</option>
+                      <option>Other</option>
+                    </select>
+                    <svg class="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#64748B]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                  </div>
+                  <p id="alRelationErr" class="mt-1 hidden text-[11px] text-[#DC2626]">Relation is required.</p>
+                </div>
+
+                <!-- Conditional: Selected Relation Name (Uncle / Aunt / Siblings / Grandparent) -->
+                <div id="alRelationNameWrap" class="hidden">
+                  <label class="mb-1.5 flex items-center gap-1 text-[12px] font-semibold text-[#334155]"><span id="alRelationNameLabel">Contact Name</span><span class="text-[#DC2626]">*</span></label>
+                  <div class="al-field flex h-10 items-center rounded-xl border border-[#E2E8F0] bg-white px-3 transition focus-within:border-[#284CA5]">
+                    <input id="alRelationName" type="text" placeholder="Enter contact's full name" class="min-w-0 flex-1 bg-transparent text-[13px] text-[#334155] placeholder:text-[#94A3B8] outline-none border-0 ring-0 focus:border-0 focus:outline-none focus:ring-0 focus-visible:outline-none" />
+                  </div>
+                  <p id="alRelationNameErr" class="mt-1 hidden text-[11px] text-[#DC2626]">Name is required.</p>
+                </div>
+
+                <!-- Conditional: Father Name -->
+                <div id="alFatherNameWrap" class="hidden">
+                  <label class="mb-1.5 flex items-center gap-1 text-[12px] font-semibold text-[#334155]">Contact Name<span id="alFatherNameReqMark" class="hidden text-[#DC2626]">*</span></label>
+                  <div class="al-field flex h-10 items-center rounded-xl border border-[#E2E8F0] bg-white px-3 transition focus-within:border-[#284CA5]">
+                    <input id="alFatherName" type="text" placeholder="Enter contact's full name" class="min-w-0 flex-1 bg-transparent text-[13px] text-[#334155] placeholder:text-[#94A3B8] outline-none border-0 ring-0 focus:border-0 focus:outline-none focus:ring-0 focus-visible:outline-none" />
+                  </div>
+                  <p id="alFatherNameErr" class="mt-1 hidden text-[11px] text-[#DC2626]">Contact name is required.</p>
+                </div>
+
+                <!-- Conditional: Mother Name -->
+                <div id="alMotherNameWrap" class="hidden">
+                  <label class="mb-1.5 flex items-center gap-1 text-[12px] font-semibold text-[#334155]">Contact Name<span id="alMotherNameReqMark" class="hidden text-[#DC2626]">*</span></label>
+                  <div class="al-field flex h-10 items-center rounded-xl border border-[#E2E8F0] bg-white px-3 transition focus-within:border-[#284CA5]">
+                    <input id="alMotherName" type="text" placeholder="Enter contact's full name" class="min-w-0 flex-1 bg-transparent text-[13px] text-[#334155] placeholder:text-[#94A3B8] outline-none border-0 ring-0 focus:border-0 focus:outline-none focus:ring-0 focus-visible:outline-none" />
+                  </div>
+                  <p id="alMotherNameErr" class="mt-1 hidden text-[11px] text-[#DC2626]">Contact name is required.</p>
+                </div>
+
+                <!-- Conditional: Father Mobile Number -->
+                <div id="alFatherMobileWrap" class="hidden">
+                  <label class="mb-1.5 block text-[12px] font-semibold text-[#334155]">Contact Mobile Number</label>
+                  <div class="al-field flex h-10 items-center rounded-xl border border-[#E2E8F0] bg-white px-3 transition focus-within:border-[#284CA5]">
+                    <input id="alFatherMobile" type="tel" placeholder="Enter contact's mobile number" maxlength="15" class="min-w-0 flex-1 bg-transparent text-[13px] text-[#334155] placeholder:text-[#94A3B8] outline-none border-0 ring-0 focus:border-0 focus:outline-none focus:ring-0 focus-visible:outline-none" />
+                  </div>
+                  <p id="alFatherMobileErr" class="mt-1 hidden text-[11px] text-[#DC2626]">Enter a valid 10-digit mobile number.</p>
+                </div>
+
+                <!-- Conditional: Mother Mobile Number -->
+                <div id="alMotherMobileWrap" class="hidden">
+                  <label class="mb-1.5 block text-[12px] font-semibold text-[#334155]">Contact Mobile Number</label>
+                  <div class="al-field flex h-10 items-center rounded-xl border border-[#E2E8F0] bg-white px-3 transition focus-within:border-[#284CA5]">
+                    <input id="alMotherMobile" type="tel" placeholder="Enter contact's mobile number" maxlength="15" class="min-w-0 flex-1 bg-transparent text-[13px] text-[#334155] placeholder:text-[#94A3B8] outline-none border-0 ring-0 focus:border-0 focus:outline-none focus:ring-0 focus-visible:outline-none" />
+                  </div>
+                  <p id="alMotherMobileErr" class="mt-1 hidden text-[11px] text-[#DC2626]">Enter a valid 10-digit mobile number.</p>
+                </div>
+
+                <!-- Home City (always visible, single column on sm+) -->
+                <div>
+                  <label class="mb-1.5 flex items-center gap-1 text-[12px] font-semibold text-[#334155]">Home City<span class="text-[#DC2626]">*</span></label>
+                  <div class="relative">
+                    <select id="alHomeCity" class="h-10 w-full appearance-none rounded-xl border border-[#E2E8F0] bg-white pl-3 pr-8 text-[13px] text-[#334155] outline-none transition focus:border-[#284CA5]">
+                      <option value="">Select city</option>
+                    </select>
+                    <svg class="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#64748B]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                  </div>
+                  <p id="alHomeCityErr" class="mt-1 hidden text-[11px] text-[#DC2626]">Home city is required.</p>
+                </div>
+
+                <!-- Home Address (always visible, required, single column on sm+) -->
+                <div>
+                  <label class="mb-1.5 block text-[12px] font-semibold text-[#334155]">Home Address</label>
+                  <div class="al-field flex h-10 items-center rounded-xl border border-[#E2E8F0] bg-white px-3 transition focus-within:border-[#284CA5]">
+                    <input id="alHomeAddress" type="text" placeholder="Enter full home address" class="min-w-0 flex-1 bg-transparent text-[13px] text-[#334155] placeholder:text-[#94A3B8] outline-none border-0 ring-0 focus:border-0 focus:outline-none focus:ring-0 focus-visible:outline-none" />
+                  </div>
+                  <p id="alHomeAddressErr" class="mt-1 hidden text-[11px] text-[#DC2626]">Home address is required.</p>
+                </div>
+
+              </div>
+            </section>
+          </div>
+          <div id="alStep2" class="al-step-pane hidden" data-step-pane="2">
+            <!-- Section 2: Position Details -->
+            <section class="rounded-2xl border border-[#E2E8F0] bg-white p-4 sm:p-5">
+              <div class="mb-4">
+                <h3 class="text-[14px] font-semibold text-[#0F172A]">Position Details</h3>
+                <p class="mt-0.5 text-[12px] text-[#64748B]">About the role the candidate is applying for.</p>
+              </div>
+              <div id="childDetailsGrid" class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+
+                <!-- Subject / Specialization -->
+                <div>
+                  <label class="mb-1.5 flex items-center gap-1 text-[12px] font-semibold text-[#334155]">Subject<span class="text-[#DC2626]">*</span></label>
+                  <div class="al-field flex h-10 items-center rounded-xl border border-[#E2E8F0] bg-white px-3 transition focus-within:border-[#284CA5]">
+                    <input id="alStudentName" type="text" placeholder="Enter subject / specialization" class="min-w-0 flex-1 bg-transparent text-[13px] text-[#334155] placeholder:text-[#94A3B8] outline-none border-0 ring-0 focus:border-0 focus:outline-none focus:ring-0 focus-visible:outline-none" />
+                  </div>
+                  <p id="alStudentNameErr" class="mt-1 hidden text-[11px] text-[#DC2626]">Subject is required.</p>
+                </div>
+
+                <!-- Child DOB -->
+                <div>
+                  <label class="mb-1.5 block text-[12px] font-semibold text-[#334155]">Date of Birth</label>
+                  <div class="al-field relative flex h-10 items-center rounded-xl border border-[#E2E8F0] bg-white px-3 transition focus-within:border-[#284CA5]">
+                    <input id="alDob" type="text" inputmode="numeric" maxlength="10" placeholder="dd-mm-yyyy" class="min-w-0 flex-1 border-0 bg-transparent p-0 text-[13px] text-[#334155] placeholder:text-[#94A3B8] outline-none ring-0 focus:border-0 focus:outline-none focus:ring-0 focus-visible:outline-none" />
+                    <button type="button" data-calendar-open="alDob" data-calendar-scope="addlead" class="ml-2 grid h-6 w-6 shrink-0 cursor-pointer place-items-center rounded-md text-[#64748B] transition hover:bg-[#EFF4FF] hover:text-[#284CA5]" aria-label="Open date of birth calendar"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></button>
+                  </div>
+                  <p id="alDobErr" class="mt-1 hidden text-[11px] text-[#DC2626]">Date of birth is required.</p>
+                  <p id="alDobAgeErr" class="mt-1 hidden text-[11px] text-[#DC2626]"></p>
+                </div>
+
+                <!-- Gender -->
+                <div>
+                  <label class="mb-1.5 block text-[12px] font-semibold text-[#334155]">Gender</label>
+                  <div class="relative">
+                    <select id="alGender" class="h-10 w-full appearance-none rounded-xl border border-[#E2E8F0] bg-white pl-3 pr-8 text-[13px] text-[#334155] outline-none transition focus:border-[#284CA5]">
+                      <option value="">Select gender</option>
+                      <option>Male</option>
+                      <option>Female</option>
+                      <option>Prefer not to say</option>
+                    </select>
+                    <svg class="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#64748B]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                  </div>
+                </div>
+
+                <!-- Joining Year -->
+                <div>
+                  <label class="mb-1.5 block text-[12px] font-semibold text-[#334155]">Joining Year</label>
+                  <div class="relative">
+                    <select id="alAcadYear" class="h-10 w-full appearance-none rounded-xl border border-[#E2E8F0] bg-white pl-3 pr-8 text-[13px] text-[#334155] outline-none transition focus:border-[#284CA5]">
+                      <option value="">Select joining year</option>
+                      <option>2026-27</option>
+                      <option>2027-28</option>
+                      <option>2028-29</option>
+                    </select>
+                    <svg class="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#64748B]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                  </div>
+                  <p id="alAcadYearErr" class="mt-1 hidden text-[11px] text-[#DC2626]">Joining year is required.</p>
+                </div>
+
+                <!-- Position Type (controls all subsequent conditional fields) -->
+                <div>
+                  <label class="mb-1.5 flex items-center gap-1 text-[12px] font-semibold text-[#334155]">Position Type<span class="text-[#DC2626]">*</span></label>
+                  <div class="relative">
+                    <select id="alAdmissionType" class="h-10 w-full appearance-none rounded-xl border border-[#E2E8F0] bg-white pl-3 pr-8 text-[13px] text-[#334155] outline-none transition focus:border-[#284CA5]">
+                      <option value="">Select position type</option>
+                      <option value="Teaching">Teaching</option>
+                      <option value="Non-Teaching">Non-Teaching</option>
+                      <option value="Administration">Administration</option>
+                    </select>
+                    <svg class="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#64748B]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                  </div>
+                  <p id="alAdmissionTypeErr" class="mt-1 hidden text-[11px] text-[#DC2626]">Please select a position type.</p>
+                </div>
+
+                <!-- Position (dynamic — controlled by position type) -->
+                <div id="alGradeAppliedWrap" class="hidden">
+                  <label class="mb-1.5 flex items-center gap-1 text-[12px] font-semibold text-[#334155]">Position<span class="text-[#DC2626]">*</span></label>
+                  <div class="relative">
+                    <select id="alGradeApplied" class="h-10 w-full appearance-none rounded-xl border border-[#E2E8F0] bg-white pl-3 pr-8 text-[13px] text-[#334155] outline-none transition focus:border-[#284CA5]">
+                      <option value="">Select position type first</option>
+                    </select>
+                    <svg class="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#64748B]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                  </div>
+                  <p id="alGradeAppliedErr" class="mt-1 hidden text-[11px] text-[#DC2626]">Please select the position applied for.</p>
+                </div>
+
+                <!-- Current School Name -->
+                <div>
+                  <label class="mb-1.5 block text-[12px] font-semibold text-[#334155]">Current School Name</label>
+                  <div class="al-field flex h-10 items-center rounded-xl border border-[#E2E8F0] bg-white px-3 transition focus-within:border-[#284CA5]">
+                    <input id="alCurrentSchool" type="text" placeholder="Enter current school name" class="min-w-0 flex-1 bg-transparent text-[13px] text-[#334155] placeholder:text-[#94A3B8] outline-none border-0 ring-0 focus:border-0 focus:outline-none focus:ring-0 focus-visible:outline-none" />
+                  </div>
+                </div>
+
+              </div>
+            </section>
+          </div>
+
+          <!-- Step 3: Preferences & Notes -->
+          <div id="alStep3" class="al-step-pane hidden" data-step-pane="3">
+            <section class="rounded-2xl border border-[#E2E8F0] bg-white p-4 sm:p-5">
+              <div class="mb-4">
+                <h3 class="text-[14px] font-semibold text-[#0F172A]">Skills & Notes</h3>
+                <p class="mt-0.5 text-[12px] text-[#64748B]">Add relevant skills and any notes from the candidate's application.</p>
+              </div>
+              <div id="prefsNotesGrid" class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+
+                <!-- Demo Class Required (shown if Teaching) -->
+                <div id="alDaycareWrap" class="hidden">
+                  <label class="mb-1.5 block text-[12px] font-semibold text-[#334155]">Demo Class Required</label>
+                  <div class="al-radio-row flex h-10 items-center gap-5 rounded-xl border border-[#E2E8F0] bg-white px-3">
+                    <label class="inline-flex cursor-pointer items-center gap-2"><input type="radio" name="alDaycare" value="Yes" class="h-4 w-4 cursor-pointer accent-[#284CA5]" /><span class="text-[13px] text-[#334155]">Yes</span></label>
+                    <label class="inline-flex cursor-pointer items-center gap-2"><input type="radio" name="alDaycare" value="No" class="h-4 w-4 cursor-pointer accent-[#284CA5]" /><span class="text-[13px] text-[#334155]">No</span></label>
+                  </div>
+                </div>
+
+                <!-- Accommodation Required (shown if Administration) -->
+                <div id="alHostelWrap" class="hidden">
+                  <label class="mb-1.5 block text-[12px] font-semibold text-[#334155]">Accommodation Required</label>
+                  <div class="al-radio-row flex h-10 items-center gap-5 rounded-xl border border-[#E2E8F0] bg-white px-3">
+                    <label class="inline-flex cursor-pointer items-center gap-2"><input type="radio" name="alHostel" value="Yes" class="h-4 w-4 cursor-pointer accent-[#284CA5]" /><span class="text-[13px] text-[#334155]">Yes</span></label>
+                    <label class="inline-flex cursor-pointer items-center gap-2"><input type="radio" name="alHostel" value="No" class="h-4 w-4 cursor-pointer accent-[#284CA5]" /><span class="text-[13px] text-[#334155]">No</span></label>
+                  </div>
+                </div>
+
+                <!-- Transport Required (shown if Teaching or Non-Teaching) -->
+                <div id="alTransportWrap" class="hidden">
+                  <label class="mb-1.5 block text-[12px] font-semibold text-[#334155]">Transport Required</label>
+                  <div class="al-radio-row flex h-10 items-center gap-5 rounded-xl border border-[#E2E8F0] bg-white px-3">
+                    <label class="inline-flex cursor-pointer items-center gap-2"><input type="radio" name="alTransport" value="Yes" class="h-4 w-4 cursor-pointer accent-[#284CA5]" /><span class="text-[13px] text-[#334155]">Yes</span></label>
+                    <label class="inline-flex cursor-pointer items-center gap-2"><input type="radio" name="alTransport" value="No" class="h-4 w-4 cursor-pointer accent-[#284CA5]" /><span class="text-[13px] text-[#334155]">No</span></label>
+                  </div>
+                </div>
+
+                <!-- Distance Willing to Travel (shown if Teaching or Non-Teaching; not for Administration) -->
+                <div id="alDistanceWrap" class="hidden">
+                  <label class="mb-1.5 block text-[12px] font-semibold text-[#334155]">Distance Willing to Travel</label>
+                  <div class="relative">
+                    <select id="alDistance" class="h-10 w-full appearance-none rounded-xl border border-[#E2E8F0] bg-white pl-3 pr-8 text-[13px] text-[#334155] outline-none transition focus:border-[#284CA5]">
+                      <option value="">Select distance</option>
+                      <option>Within 2 km</option>
+                      <option>Within 5 km</option>
+                      <option>Within 10 km</option>
+                      <option>Within 15 km</option>
+                      <option>More than 15 km</option>
+                      <option>No Preference</option>
+                    </select>
+                    <svg class="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#64748B]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                  </div>
+                  <p id="alDistanceErr" class="mt-1 hidden text-[11px] text-[#DC2626]">Distance willing to travel is required.</p>
+                </div>
+
+                <!-- Application Notes (always full width on sm+) -->
+                <div class="sm:col-span-2">
+                  <label class="mb-1.5 block text-[12px] font-semibold text-[#334155]">Application Notes <span class="ml-1 text-[11px] font-normal text-[#94A3B8]">(optional)</span></label>
+                  <div class="al-field rounded-xl border border-[#E2E8F0] bg-white px-3 py-2.5 transition focus-within:border-[#284CA5]">
+                    <textarea id="alEnquiryMessage" rows="4" placeholder="e.g. 6 years PGT Mathematics experience, strong in lesson planning, available to join from June, prefers schools near Koramangala." class="w-full resize-none bg-transparent text-[13px] leading-relaxed text-[#334155] placeholder:text-[#94A3B8] outline-none border-0 ring-0 focus:border-0 focus:outline-none focus:ring-0 focus-visible:outline-none"></textarea>
+                  </div>
+                </div>
+
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dialog Footer: both buttons right-aligned with ~20px gap -->
+      <div class="flex shrink-0 items-center justify-end gap-5 border-t border-[#EEF2F7] bg-white px-5 py-2.5 sm:px-6 sm:py-3">
+        <button id="addLeadBackBtn" type="button" class="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-[#D7E4FF] bg-white px-4 text-[13px] font-semibold text-[#284CA5] transition hover:bg-[#EFF4FF] invisible">
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+          Back
+        </button>
+        <button id="addLeadNextBtn" type="button" class="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-[#284CA5] px-5 text-[13px] font-semibold text-white transition hover:bg-[#203F8D]">
+          Next
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+        <button id="addLeadSave" type="button" class="hidden h-10 items-center justify-center rounded-xl bg-[#284CA5] px-5 text-[13px] font-semibold text-white transition hover:bg-[#203F8D]">
+          Save
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="saveFilterModal" class="fixed inset-0 z-[70] hidden items-center justify-center bg-[#0F172A]/30 px-4">
+    <div class="w-full max-w-sm rounded-2xl border border-[#E2E8F0] bg-white p-4 shadow-[0_18px_48px_rgba(15,23,42,0.18)]">
+      <div class="mb-3">
+        <h3 class="text-sm font-semibold text-[#0F172A]">Save Filter</h3>
+        <p class="mt-1 text-[12px] text-[#64748B]">Enter a name for the current filter combination.</p>
+      </div>
+      <div class="relative flex h-10 w-full items-center rounded-xl border border-[#D7E4FF] bg-white px-3 shadow-[0_1px_3px_rgba(40,76,165,0.08)] transition focus-within:border-[#284CA5]"><input id="saveFilterName" type="text" placeholder="Example: High Priority Leads" class="min-w-0 flex-1 bg-transparent text-[13px] text-[#334155] placeholder:text-[#64748B] outline-none" /></div>
+      <div class="mt-4 flex justify-end gap-2">
+        <button id="cancelSaveFilter" type="button" class="h-9 rounded-xl border border-[#D7E4FF] bg-white px-4 text-[13px] font-semibold text-[#284CA5] transition hover:bg-[#EFF4FF]">Cancel</button>
+        <button id="confirmSaveFilter" type="button" class="h-9 rounded-xl bg-[#284CA5] px-4 text-[13px] font-semibold text-white transition hover:bg-[#203F8D]">Save</button>
+      </div>
+    </div>
+  </div>
+
+
+  <div id="dateRangeCalendar" class="fixed z-[90] hidden w-[326px] max-w-[calc(100vw-16px)] rounded-2xl border border-[#E2E8F0] bg-white p-3 shadow-[0_16px_40px_rgba(15,23,42,0.16)]" role="dialog" aria-label="Date picker">
+    <div class="mb-3 flex items-center justify-between gap-1">
+      <button id="calendarPrevMonth" type="button" class="grid h-7 w-7 place-items-center rounded-lg text-[#64748B] transition hover:bg-[#EFF4FF] hover:text-[#284CA5]" aria-label="Previous month"><svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+      <div class="min-w-0 flex-1 text-center"><div class="grid grid-cols-[128px_74px] justify-center gap-1"><div class="relative min-w-0"><select id="calendarMonthSelect" class="h-8 w-full appearance-none rounded-lg border border-[#D7E4FF] bg-white py-0 pl-2 pr-7 text-[12px] font-semibold text-[#0F172A] outline-none transition focus:border-[#284CA5]" aria-label="Select month"></select><svg class="pointer-events-none absolute right-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#64748B]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></div><div class="relative min-w-0"><select id="calendarYearSelect" class="h-8 w-full appearance-none rounded-lg border border-[#D7E4FF] bg-white py-0 pl-2 pr-7 text-[12px] font-semibold text-[#0F172A] outline-none transition focus:border-[#284CA5]" aria-label="Select year"></select><svg class="pointer-events-none absolute right-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#64748B]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></div></div><h3 id="calendarMonthLabel" class="sr-only">Month YYYY</h3><p id="calendarFieldLabel" class="mt-1 text-[11px] font-medium text-[#64748B]">Select date</p></div>
+      <button id="calendarNextMonth" type="button" class="grid h-7 w-7 place-items-center rounded-lg text-[#64748B] transition hover:bg-[#EFF4FF] hover:text-[#284CA5]" aria-label="Next month"><svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+      <button id="closeDateRangeCalendar" type="button" class="grid h-7 w-7 place-items-center rounded-lg text-[#64748B] transition hover:bg-[#EEF2F7] hover:text-[#0F172A]" aria-label="Close date picker"><svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="grid grid-cols-7 gap-1 text-center text-[11px] font-semibold text-[#64748B]">
+      <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+    </div>
+    <div id="calendarDays" class="mt-2 grid grid-cols-7 gap-1"></div>
+    <div class="mt-3 flex justify-between gap-2">
+      <button id="clearDateRangeCalendar" type="button" class="h-8 rounded-lg border border-[#D7E4FF] bg-white px-3 text-[12px] font-semibold text-[#284CA5] transition hover:bg-[#EFF4FF]">Clear</button>
+      <button id="todayDateRangeCalendar" type="button" class="h-8 rounded-lg bg-[#284CA5] px-3 text-[12px] font-semibold text-white transition hover:bg-[#203F8D]">Today</button>
+    </div>
+  </div>
+    </main>
+    <div data-shell="chrome-inner"></div>
+  </div>
+  <div data-shell="chrome-outer"></div>
+
+  <script src="../../lib/navigation.js"></script>
+  <script src="../../lib/store.js"></script>
+  <script src="../../lib/charts.js"></script>
+  <script src="../../components/Sidebar.js"></script>
+  <script src="../../components/TopNav.js"></script>
+  <script src="../../components/MobileNav.js"></script>
+  <script src="../../components/HamburgerMenu.js"></script>
+  <script src="../../components/Toast.js"></script>
+  <script src="../../components/RouteLoader.js"></script>
+  <script src="../../components/AppShell.js"></script>
+  <script src="applications.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</body>
+</html>

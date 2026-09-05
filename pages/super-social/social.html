@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Super Social &middot; SuperSchools Console</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="../../styles/tailwind-config.js"></script>
+  <link rel="stylesheet" href="../../styles/dashboard.css" />
+</head>
+<body class="bg-slate-200 text-slate-900 min-h-screen" x-data="schoolConsole({ module: 'social', sub: 'social' })">
+  <div id="routeLoader" class="route-loader" role="status" aria-live="polite" aria-label="Loading">
+    <div class="route-loader__box"><div class="route-loader__spinner"></div><div class="route-loader__text">Loading&hellip;</div></div>
+  </div>
+  <div class="ss-app min-h-screen h-screen w-full flex bg-mobile-background md:bg-background relative">
+    <div data-shell="sidebar"></div>
+    <main class="flex-1 flex flex-col overflow-hidden bg-mobile-background md:bg-background">
+      <div data-shell="header"></div>
+      <section class="flex-1 custom-scrollbar overflow-y-auto" :class="isFullScreenPage ? 'pb-0' : 'pb-20 md:pb-0'">
+        <div class="w-full" :class="isFullScreenPage ? 'min-h-full px-5 py-4 md:px-10 md:py-5 lg:px-[56px]' : 'px-5 py-5 md:px-10 md:py-6 lg:px-[56px] lg:py-8'">
+          <div x-show="!isFullScreenPage" class="lg:hidden mb-4 relative">
+            <input class="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-2xl text-sm focus:ring-primary focus:border-primary text-slate-700 shadow-sm" placeholder="Search" type="text" x-model="search" />
+            <span class="material-icons-outlined absolute left-3 text-slate-400 text-lg top-1/2 -translate-y-1/2">search</span>
+          </div>
+          <template x-if="activePage === 'social'">
+            <div class="space-y-6">
+              <!-- Header -->
+              <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+                <div class="min-w-0">
+                  <div class="flex items-center gap-2 text-xs sm:text-sm font-medium text-slate-500 mb-2">
+                    <button type="button" @click="setPage('school')" class="hover:text-primary transition-colors cursor-pointer">Home</button>
+                    <span class="material-symbols-outlined text-[16px] text-slate-400">chevron_right</span>
+                    <span class="text-slate-700">Social</span>
+                  </div>
+                  <h2 class="text-2xl md:text-[26px] leading-tight font-semibold tracking-[-0.02em] text-slate-900">Social Dashboard</h2>
+                  <p class="mt-1 text-sm text-slate-500">Manage your school's presence across every channel from one place.</p>
+                </div>
+                <button type="button" @click="pushToast('info', 'Create Post', 'Composer coming soon.')" class="rounded-full bg-primary hover:bg-primary-hover text-white px-5 py-2.5 text-sm font-medium shadow-[0_10px_22px_rgba(40,76,165,.18)] inline-flex items-center gap-2 transition-all hover:-translate-y-0.5 self-start sm:self-auto">
+                  <span class="material-symbols-outlined text-[18px]">edit</span> Create Post
+                </button>
+              </div>
+
+              <!-- KPI cards -->
+              <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <template x-for="kpi in socialKpis" :key="kpi.label">
+                  <article class="bg-white rounded-2xl shadow-card border border-slate-100 p-5 dash-card-hover cursor-default">
+                    <div class="flex items-center justify-between">
+                      <div class="w-11 h-11 rounded-[14px] flex items-center justify-center flex-shrink-0" :class="kpi.bg + ' ' + kpi.color">
+                        <span class="material-symbols-outlined text-[22px]" x-text="kpi.icon"></span>
+                      </div>
+                      <span class="inline-flex items-center gap-0.5 text-xs font-semibold" :class="kpi.up ? 'text-emerald-600' : 'text-rose-600'">
+                        <span class="material-symbols-outlined text-[15px]" x-text="kpi.up ? 'trending_up' : 'trending_down'"></span>
+                        <span x-text="kpi.delta"></span>
+                      </span>
+                    </div>
+                    <p class="mt-4 text-[28px] leading-none font-semibold text-slate-900" x-text="kpi.value"></p>
+                    <p class="mt-1.5 text-xs text-slate-500" x-text="kpi.label"></p>
+                  </article>
+                </template>
+              </div>
+
+              <!-- Social channel overview -->
+              <div>
+                <div class="flex items-center justify-between mb-3">
+                  <h3 class="font-semibold text-slate-900">Channel overview</h3>
+                  <button type="button" @click="pushToast('info', 'Manage Channels', 'Channel settings coming soon.')" class="text-sm font-medium text-primary hover:text-primary-hover inline-flex items-center gap-1">
+                    Manage <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+                  </button>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+                  <template x-for="ch in socialChannels" :key="ch.name">
+                    <article class="bg-white rounded-2xl shadow-card border border-slate-100 p-5 dash-card-hover cursor-default">
+                      <div class="flex items-center gap-3">
+                        <span class="w-10 h-10 rounded-xl flex items-center justify-center text-white flex-shrink-0" :style="`background:${ch.color}`">
+                          <span class="material-symbols-outlined text-[20px]" x-text="ch.icon"></span>
+                        </span>
+                        <div class="min-w-0">
+                          <p class="text-sm font-semibold text-slate-900 truncate" x-text="ch.name"></p>
+                          <p class="text-xs text-slate-500 truncate" x-text="ch.handle"></p>
+                        </div>
+                      </div>
+                      <div class="mt-4 flex items-end justify-between">
+                        <div>
+                          <p class="text-xl font-semibold text-slate-900" x-text="ch.followers"></p>
+                          <p class="text-xs text-slate-500 mt-0.5">Followers</p>
+                        </div>
+                        <div class="text-right">
+                          <p class="text-sm font-semibold text-slate-700" x-text="ch.posts"></p>
+                          <p class="text-xs text-slate-500 mt-0.5">Posts</p>
+                        </div>
+                      </div>
+                      <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
+                        <span class="text-xs text-slate-500">Growth</span>
+                        <span class="inline-flex items-center gap-0.5 text-xs font-semibold" :class="ch.up ? 'text-emerald-600' : 'text-rose-600'">
+                          <span class="material-symbols-outlined text-[15px]" x-text="ch.up ? 'trending_up' : 'trending_down'"></span>
+                          <span x-text="ch.growth"></span>
+                        </span>
+                      </div>
+                    </article>
+                  </template>
+                </div>
+              </div>
+
+              <!-- Recent posts + Activity timeline -->
+              <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
+                <!-- Recent posts table -->
+                <div class="lg:col-span-2 min-w-0 bg-white rounded-2xl shadow-card border border-slate-100 p-5 md:p-6">
+                  <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-semibold text-slate-900">Recent posts</h3>
+                    <button type="button" @click="pushToast('info', 'All posts', 'Full posts view coming soon.')" class="text-sm font-medium text-primary hover:text-primary-hover inline-flex items-center gap-1">View all <span class="material-symbols-outlined text-[16px]">chevron_right</span></button>
+                  </div>
+                  <div class="overflow-x-auto custom-scrollbar -mx-1 px-1">
+                    <table class="w-full min-w-[640px] text-left">
+                      <thead>
+                        <tr class="text-xs font-medium text-slate-500 border-b border-slate-100">
+                          <th class="pb-3 pr-4 font-medium">Post</th>
+                          <th class="pb-3 px-4 font-medium">Platform</th>
+                          <th class="pb-3 px-4 font-medium">Publish Date</th>
+                          <th class="pb-3 px-4 font-medium">Reach</th>
+                          <th class="pb-3 px-4 font-medium">Engagement</th>
+                          <th class="pb-3 pl-4 font-medium">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody class="divide-y divide-slate-100">
+                        <template x-for="post in socialPosts" :key="post.title">
+                          <tr class="hover:bg-slate-50/70 transition-colors">
+                            <td class="py-3 pr-4 max-w-[260px]">
+                              <p class="text-sm font-medium text-slate-800 truncate" x-text="post.title"></p>
+                            </td>
+                            <td class="py-3 px-4">
+                              <span class="inline-flex items-center gap-2">
+                                <span class="w-6 h-6 rounded-lg flex items-center justify-center text-white flex-shrink-0" :style="`background:${post.color}`"><span class="material-symbols-outlined text-[14px]" x-text="post.icon"></span></span>
+                                <span class="text-sm text-slate-600 whitespace-nowrap" x-text="post.platform"></span>
+                              </span>
+                            </td>
+                            <td class="py-3 px-4 text-sm text-slate-600 whitespace-nowrap" x-text="post.date"></td>
+                            <td class="py-3 px-4 text-sm font-medium text-slate-700 tabular-nums" x-text="post.reach"></td>
+                            <td class="py-3 px-4 text-sm font-medium text-slate-700 tabular-nums" x-text="post.engagement"></td>
+                            <td class="py-3 pl-4">
+                              <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-medium whitespace-nowrap" :class="socialStatusClass(post.status)" x-text="post.status"></span>
+                            </td>
+                          </tr>
+                        </template>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <!-- Activity timeline -->
+                <div class="bg-white rounded-2xl shadow-card border border-slate-100 p-5 md:p-6">
+                  <h3 class="font-semibold text-slate-900 mb-4">Activity timeline</h3>
+                  <ol class="relative space-y-5">
+                    <template x-for="(act, i) in socialActivity" :key="act.title">
+                      <li class="flex gap-3">
+                        <div class="flex flex-col items-center flex-shrink-0">
+                          <span class="w-9 h-9 rounded-full flex items-center justify-center" :class="act.bg + ' ' + act.color"><span class="material-symbols-outlined text-[19px]" x-text="act.icon"></span></span>
+                          <span class="w-px flex-1 bg-slate-100 mt-1" x-show="i < socialActivity.length - 1"></span>
+                        </div>
+                        <div class="pb-1 min-w-0">
+                          <p class="text-sm font-medium text-slate-800 leading-snug" x-text="act.title"></p>
+                          <p class="text-xs text-slate-500 mt-0.5" x-text="act.time"></p>
+                        </div>
+                      </li>
+                    </template>
+                  </ol>
+                </div>
+              </div>
+
+              <!-- Content performance + Quick actions -->
+              <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
+                <!-- Content performance -->
+                <div class="lg:col-span-2 min-w-0 bg-white rounded-2xl shadow-card border border-slate-100 p-5 md:p-6">
+                  <h3 class="font-semibold text-slate-900 mb-4">Content performance</h3>
+                  <div class="flex flex-col sm:flex-row gap-5">
+                    <div class="sm:w-48 flex-shrink-0">
+                      <div class="rounded-2xl bg-primary-soft border border-slate-100 h-36 sm:h-full min-h-[140px] flex flex-col items-center justify-center text-center px-4 text-primary">
+                        <span class="material-symbols-outlined text-[34px]">workspace_premium</span>
+                        <p class="mt-2 text-xs font-semibold uppercase tracking-wide">Best performing post</p>
+                      </div>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center gap-2 mb-2">
+                        <span class="w-6 h-6 rounded-lg flex items-center justify-center text-white flex-shrink-0" :style="`background:${socialBestPost.color}`"><span class="material-symbols-outlined text-[14px]" x-text="socialBestPost.icon"></span></span>
+                        <span class="text-xs text-slate-500" x-text="socialBestPost.platform + ' • ' + socialBestPost.date"></span>
+                      </div>
+                      <p class="text-base font-semibold text-slate-900 leading-snug" x-text="socialBestPost.title"></p>
+                      <p class="mt-1 text-sm text-slate-500" x-text="socialBestPost.excerpt"></p>
+                      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-5">
+                        <div class="rounded-xl bg-slate-50 border border-slate-100 p-3 text-center">
+                          <p class="text-lg font-semibold text-slate-900 tabular-nums" x-text="socialBestPost.reach"></p>
+                          <p class="text-[11px] text-slate-500 mt-0.5">Reach</p>
+                        </div>
+                        <div class="rounded-xl bg-slate-50 border border-slate-100 p-3 text-center">
+                          <p class="text-lg font-semibold text-slate-900 tabular-nums" x-text="socialBestPost.likes"></p>
+                          <p class="text-[11px] text-slate-500 mt-0.5">Likes</p>
+                        </div>
+                        <div class="rounded-xl bg-slate-50 border border-slate-100 p-3 text-center">
+                          <p class="text-lg font-semibold text-slate-900 tabular-nums" x-text="socialBestPost.comments"></p>
+                          <p class="text-[11px] text-slate-500 mt-0.5">Comments</p>
+                        </div>
+                        <div class="rounded-xl bg-slate-50 border border-slate-100 p-3 text-center">
+                          <p class="text-lg font-semibold text-slate-900 tabular-nums" x-text="socialBestPost.shares"></p>
+                          <p class="text-[11px] text-slate-500 mt-0.5">Shares</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Quick actions -->
+                <div class="bg-white rounded-2xl shadow-card border border-slate-100 p-5 md:p-6">
+                  <h3 class="font-semibold text-slate-900 mb-4">Quick actions</h3>
+                  <div class="grid grid-cols-2 lg:grid-cols-1 gap-3">
+                    <template x-for="action in socialQuickActions" :key="action.label">
+                      <button type="button" @click="pushToast('info', action.label, 'Coming soon.')"
+                        class="inline-flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all hover:-translate-y-0.5"
+                        :class="action.primary ? 'bg-primary text-white hover:bg-primary-hover shadow-[0_10px_22px_rgba(40,76,165,.18)]' : 'border border-slate-200 text-slate-700 hover:border-primary hover:text-primary bg-white'">
+                        <span class="material-symbols-outlined text-[20px]" x-text="action.icon"></span>
+                        <span x-text="action.label"></span>
+                      </button>
+                    </template>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </template>
+        </div>
+      </section>
+    </main>
+    <div data-shell="chrome-inner"></div>
+  </div>
+  <div data-shell="chrome-outer"></div>
+
+  <script src="../../lib/navigation.js"></script>
+  <script src="../../lib/store.js"></script>
+  <script src="../../lib/charts.js"></script>
+  <script src="../../components/Sidebar.js"></script>
+  <script src="../../components/TopNav.js"></script>
+  <script src="../../components/MobileNav.js"></script>
+  <script src="../../components/HamburgerMenu.js"></script>
+  <script src="../../components/Toast.js"></script>
+  <script src="../../components/RouteLoader.js"></script>
+  <script src="../../components/AppShell.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</body>
+</html>

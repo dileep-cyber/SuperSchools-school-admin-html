@@ -1,0 +1,1134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>My Work — SuperSchools</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root{
+    --brand:#284CA5; --brand-700:#1E3C86; --brand-600:#2A53B5; --brand-50:#EEF3FF; --brand-100:#DCE7FF; --brand-200:#C3D6FF;
+    --ink:#0B1220; --ink-2:#334155; --mut:#64748B; --mut-2:#94A3B8;
+    --line:#ECEFF4; --line-2:#E3E8F0; --surface:#FFFFFF; --surface-2:#FBFCFE;
+    --r-card:18px; --r-ctl:12px;
+    --sh-sm:0 1px 2px rgba(16,24,40,.04), 0 1px 3px rgba(16,24,40,.05);
+    --sh-md:0 6px 16px -6px rgba(16,24,40,.12), 0 2px 6px -2px rgba(16,24,40,.06);
+    --sh-lg:0 24px 50px -16px rgba(16,24,40,.22);
+    --sh-brand:0 14px 34px -12px rgba(40,76,165,.42);
+  }
+  *{scrollbar-width:thin;scrollbar-color:#C7D2E8 transparent;}
+  *::-webkit-scrollbar{width:8px;height:8px;}
+  *::-webkit-scrollbar-thumb{background:#CFD8EA;border-radius:999px;border:2px solid transparent;background-clip:content-box;}
+  *::-webkit-scrollbar-thumb:hover{background:#B9C5DE;}
+  html{scroll-behavior:smooth;}
+  .ssx-section, #card-queue, #card-followups, #card-overdue{ scroll-margin-top:18px; }
+  .ss-app{ color:var(--ink);
+    background:
+      radial-gradient(1100px 480px at 100% -8%, rgba(40,76,165,.07), transparent 60%),
+      radial-gradient(820px 460px at -6% 2%, rgba(40,76,165,.05), transparent 55%),
+      linear-gradient(180deg,#F7F9FD 0%, #F3F6FC 60%, #F2F5FB 100%);
+  }
+  button,a,input,select,textarea{-webkit-tap-highlight-color:transparent;}
+  :focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:10px;}
+  button:active:not(:disabled){transform:translateY(1px);}
+  /* cards & sections */
+  .ssx-section{ background:var(--surface); border:1px solid var(--line); border-radius:var(--r-card); box-shadow:var(--sh-sm); overflow:hidden; }
+  .ssx-card{ background:var(--surface); border:1px solid var(--line); border-radius:12px; box-shadow:var(--sh-sm); }
+  .row-card{ transition:box-shadow .18s ease, border-color .18s ease, transform .18s ease; }
+  .row-card:hover{ box-shadow:var(--sh-md); border-color:var(--brand-200); transform:translateY(-2px); }
+  /* progress bar */
+  .bar-track{ box-shadow:inset 0 1px 2px rgba(16,24,40,.07); }
+  .bar-fill{ transition:width .6s cubic-bezier(.4,0,.2,1); box-shadow:0 1px 0 rgba(255,255,255,.45) inset; }
+  /* buttons */
+  .btn-primary{ background:linear-gradient(180deg,#2C53B5,#284CA5); color:#fff; border:1px solid #213F8F; box-shadow:0 1px 2px rgba(16,24,40,.18); }
+  .btn-primary:hover{ box-shadow:var(--sh-brand); }
+  .btn-ghost{ background:#fff;color:var(--brand);border:1px solid var(--brand-100); }
+  .btn-ghost:hover{ background:var(--brand-50);border-color:var(--brand-200); }
+  .btn-danger{ background:#fff;color:#B42318;border:1px solid #FECDC9; }
+  .btn-danger:hover{ background:#FEF3F2; }
+  .icon-btn{ transition:transform .15s ease, box-shadow .15s ease, background .15s ease; }
+  .icon-btn:hover{ transform:translateY(-1px); }
+  /* overlays + sheets */
+  .ssx-overlay{ background:rgba(10,16,30,.5); backdrop-filter:blur(3px); -webkit-backdrop-filter:blur(3px); }
+  .sheet{ animation:rise .24s cubic-bezier(.22,1,.36,1); box-shadow:var(--sh-lg); }
+  @keyframes rise{ from{transform:translateY(16px);opacity:0;} to{transform:translateY(0);opacity:1;} }
+  @media (max-width:639px){
+    .sheet{ border-bottom-left-radius:0;border-bottom-right-radius:0; }
+    .sheet-grab::before{ content:'';display:block;width:38px;height:4px;border-radius:999px;background:#D5DCEA;margin:9px auto 2px; }
+  }
+  /* timeline */
+  .tl-dot::before{ content:'';position:absolute;left:-21px;top:3px;width:9px;height:9px;border-radius:999px;background:var(--brand);box-shadow:0 0 0 3px var(--brand-50); }
+  .tl-line{ position:absolute;left:-17px;top:10px;bottom:-6px;width:2px;background:var(--line-2); }
+  details>summary{ list-style:none; } details>summary::-webkit-details-marker{ display:none; }
+  @media (prefers-reduced-motion: reduce){ *{transition-duration:.01ms!important;animation-duration:.01ms!important;} .row-card:hover{transform:none;} button:active:not(:disabled){transform:none;} .icon-btn:hover{transform:none;} }
+  /* ── Schedule-visit time slot chips (ported reference design) ── */
+  .slot-chip{ display:inline-flex; align-items:center; justify-content:center; height:32px; padding:0 14px; font-size:12.5px; font-weight:500; color:#475569; border:1px solid #E2E8F0; background:#fff; border-radius:999px; cursor:pointer; transition:background .12s,border-color .12s,color .12s; }
+  .slot-chip:hover:not([disabled]):not(.selected){ background:#EFF6FF; border-color:#BFDBFE; color:#1D4ED8; }
+  .slot-chip.selected{ background:#1D4ED8; border-color:#1D4ED8; color:#fff; }
+  .slot-chip[disabled]{ opacity:.55; cursor:not-allowed; background:#F8FAFC; color:#94A3B8; }
+  /* ── Mini calendar (ported reference design) ── */
+  .cal-widget{ background:#fff; border:1px solid #E2E8F0; border-radius:14px; padding:14px; }
+  .cal-header{ display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+  .cal-nav{ display:grid; place-items:center; height:32px; width:32px; border-radius:8px; border:1px solid #E2E8F0; background:#fff; color:#64748B; cursor:pointer; transition:background .12s,color .12s,border-color .12s; }
+  .cal-nav:hover:not(:disabled){ background:#EFF4FF; border-color:#D7E4FF; color:#284CA5; }
+  .cal-nav:disabled{ opacity:.35; cursor:not-allowed; }
+  .cal-title{ display:flex; align-items:center; gap:2px; }
+  .cal-title-btn{ display:inline-flex; align-items:center; gap:4px; height:32px; padding:0 10px; font-size:13.5px; font-weight:600; color:#0F172A; background:none; border:none; border-radius:7px; cursor:pointer; transition:background .12s,color .12s; position:relative; }
+  .cal-title-btn:hover{ background:#EFF4FF; color:#284CA5; }
+  .cal-title-btn svg{ color:#94A3B8; flex-shrink:0; }
+  .cal-weekdays{ display:grid; grid-template-columns:repeat(7,1fr); text-align:center; margin-bottom:4px; }
+  .cal-weekdays span{ font-size:11px; font-weight:600; color:#94A3B8; text-transform:uppercase; letter-spacing:.4px; padding:8px 0; }
+  .cal-days{ display:grid; grid-template-columns:repeat(7,1fr); gap:2px; }
+  .cal-day{ display:grid; place-items:center; aspect-ratio:1/1; font-size:13px; font-weight:500; color:#334155; background:none; border:none; border-radius:50%; cursor:pointer; transition:background .12s,color .12s; }
+  .cal-day:hover:not(:disabled):not(.selected){ background:#EFF4FF; color:#284CA5; }
+  .cal-day.outside{ color:#CBD5E1; cursor:default; }
+  .cal-day.today:not(.selected){ font-weight:700; color:#284CA5; }
+  .cal-day.selected{ background:#284CA5; color:#fff; font-weight:600; }
+  .cal-day.selected:hover{ background:#203F8D; }
+  .cal-day:disabled:not(.outside){ color:#CBD5E1; cursor:not-allowed; }
+  .cal-picker-panel{ position:absolute; top:calc(100% + 4px); left:0; background:#fff; border:1px solid #E2E8F0; border-radius:10px; box-shadow:0 12px 32px rgba(15,23,42,.14); z-index:100; padding:6px; min-width:130px; max-height:200px; overflow-y:auto; }
+  .cal-picker-panel button{ display:block; width:100%; padding:6px 10px; font-size:12.5px; font-weight:500; color:#0F172A; background:none; border:none; border-radius:6px; cursor:pointer; text-align:left; transition:background .12s,color .12s; }
+  .cal-picker-panel button:hover{ background:#EFF4FF; color:#284CA5; }
+  .cal-picker-panel button.active{ background:#284CA5; color:#fff; }
+  .cal-modal-overlay{ position:fixed; inset:0; background:transparent; z-index:11000; opacity:0; pointer-events:none; transition:opacity .12s ease; }
+  .cal-modal-overlay.open{ opacity:1; pointer-events:auto; }
+  .cal-modal-overlay #calContainer{ position:absolute; width:320px; max-width:calc(100vw - 16px); }
+  .cal-modal-overlay .cal-widget{ width:100%; box-shadow:0 8px 32px rgba(15,23,42,.20),0 2px 8px rgba(15,23,42,.10); transform:translateY(-6px); opacity:0; transition:transform .15s ease,opacity .15s ease; }
+  .cal-modal-overlay.open .cal-widget{ transform:translateY(0); opacity:1; }
+  .dd-native{ -webkit-appearance:none; -moz-appearance:none; appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 0.6rem center; background-size:16px; cursor:pointer; }
+  .ss-tip{ position:fixed; z-index:9999; background:#0F172A; color:#fff; font-weight:600; font-size:11px; line-height:1.3; letter-spacing:.1px; padding:5px 8px; border-radius:6px; box-shadow:0 6px 20px rgba(15,23,42,.22); pointer-events:none; opacity:0; transform:translateY(2px); transition:opacity .12s ease, transform .12s ease; white-space:nowrap; max-width:260px; }
+  .ss-tip.show{ opacity:1; transform:translateY(0); }
+</style>
+</head>
+<body class="ss-app min-h-screen font-['Inter'] antialiased">
+<div class="mx-auto w-full max-w-[1320px] px-3 py-4 sm:px-6 sm:py-6">
+
+  <!-- ══════ HEADER ══════ -->
+  <header class="mb-4 flex flex-col gap-3 rounded-2xl border border-[#E7ECF5] bg-white p-4 shadow-[0_1px_2px_rgba(16,24,40,0.05)] sm:p-5 lg:flex-row lg:items-center lg:justify-between">
+    <div class="flex min-w-0 items-center gap-3">
+      <span id="meAvatar" class="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-gradient-to-br from-[#EEF3FF] to-[#DCE7FF] text-[14px] font-bold text-[#284CA5] ring-1 ring-inset ring-[#CFDCFB]">AS</span>
+      <div class="min-w-0">
+        <h1 class="truncate text-[20px] font-bold leading-tight sm:text-[23px]">My Work</h1>
+        <p class="text-[12.5px] font-medium text-[#64748B]"><span id="meName">Ananya Sharma</span> · <span id="todayDateText">—</span></p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <!-- staff / all-staff view selector -->
+      <div class="relative">
+        <button id="viewBtn" type="button" class="inline-flex h-10 items-center gap-2 rounded-xl border border-[#D7E4FF] bg-white px-3 text-[13px] font-semibold text-[#284CA5] transition hover:bg-[#EFF4FF]" aria-haspopup="listbox" aria-expanded="false" data-tip="Switch staff view">
+          <svg class="h-4 w-4 shrink-0 text-[#64748B]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <span id="viewLabel" class="max-w-[150px] truncate">All Staff</span>
+          <svg class="h-4 w-4 shrink-0 text-[#64748B]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div id="viewMenu" class="absolute right-0 top-11 z-40 hidden w-[240px] rounded-2xl border border-[#E2E8F0] bg-white p-3 shadow-[0_12px_32px_rgba(15,23,42,0.12)]" role="listbox" aria-label="View workflow">
+          <div class="border-b border-[#EEF2F7] pb-2"><h3 class="text-sm font-semibold">View workflow</h3><p class="mt-0.5 text-xs text-[#64748B]">All staff, or one counsellor</p></div>
+          <div id="viewOptions" class="mt-2 max-h-[260px] space-y-1 overflow-y-auto"></div>
+        </div>
+      </div>
+      <!-- notification bell -->
+      <div class="relative">
+        <button id="bellBtn" type="button" class="relative grid h-10 w-10 place-items-center rounded-xl border border-[#D7E4FF] bg-white text-[#284CA5] transition hover:bg-[#EFF4FF]" aria-label="Notifications">
+          <svg class="h-[18px] w-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span id="bellBadge" class="absolute -right-1 -top-1 hidden min-w-[18px] rounded-full bg-[#EF4444] px-1 text-center text-[10px] font-bold leading-[18px] text-white"></span>
+        </button>
+        <div id="bellMenu" class="absolute right-0 top-11 z-40 hidden w-[300px] rounded-2xl border border-[#E2E8F0] bg-white p-3 shadow-[0_12px_32px_rgba(15,23,42,0.12)]">
+          <div class="flex items-center justify-between border-b border-[#EEF2F7] pb-2"><h3 class="text-sm font-semibold">New enquiries</h3><button id="markSeenBtn" type="button" class="text-[11.5px] font-semibold text-[#284CA5] hover:underline">Mark all seen</button></div>
+          <div id="bellList" class="mt-2 max-h-[260px] space-y-1 overflow-y-auto"></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ══════ START OF DAY ══════ -->
+  <section id="card-summary" class="mb-4"></section>
+
+  <!-- ══════ NEXT BEST ACTION ══════ -->
+  <section id="card-nba" class="mb-4"></section>
+
+  <!-- ══════ STACKED SECTIONS ══════ -->
+  <div class="flex flex-col gap-4">
+    <section id="card-progress"></section>
+    <section id="card-queue"></section>
+    <section id="card-followups"></section>
+    <section id="card-overdue"></section>
+    <section id="card-attention"></section>
+    <div id="card-stages" class="flex flex-col gap-4"></div>
+    <section id="card-done"></section>
+  </div>
+
+  <div class="mt-7 flex items-center justify-center gap-3 text-[11.5px] text-[#94A3B8]">
+    <span>SuperSchools · Admissions CRM — My Work</span>
+    <span>·</span>
+    <button id="resetBtn" type="button" class="font-semibold text-[#64748B] hover:text-[#284CA5] hover:underline">Reset demo data</button>
+  </div>
+</div>
+
+<!-- ══════ DETAIL MODAL ══════ -->
+<div id="detailModal" class="fixed inset-0 z-[90] hidden" role="dialog" aria-modal="true" aria-label="Enquiry details">
+  <div data-close="detail" class="ssx-overlay absolute inset-0"></div>
+  <div class="absolute inset-0 flex items-end justify-center p-0 sm:items-center sm:p-4">
+    <div class="sheet sheet-grab flex max-h-[94vh] w-full max-w-[500px] flex-col overflow-hidden rounded-t-2xl border border-[#E2E8F0] bg-white shadow-[0_24px_60px_rgba(15,23,42,0.24)] sm:rounded-2xl">
+      <div class="flex items-center justify-between border-b border-[#EEF2F7] px-4 py-3">
+        <h3 class="text-[15px] font-bold">Enquiry details</h3>
+        <button data-close="detail" type="button" class="grid h-9 w-9 place-items-center rounded-full text-[#64748B] transition hover:bg-[#F1F5F9]" aria-label="Close"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      </div>
+      <div id="detailBody" class="min-h-0 flex-1 overflow-y-auto px-4 py-4"></div>
+      <div class="flex shrink-0 gap-2 border-t border-[#EEF2F7] bg-white px-4 py-3">
+        <button id="detailWa" type="button" class="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-[#ECFDF5] text-[13px] font-semibold text-[#059669] transition hover:bg-[#D1FAE5]"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.885-9.885 9.885M20.52 3.449C18.24 1.245 15.24 0 12.045 0 5.463 0 .104 5.334.101 11.892c0 2.096.549 4.142 1.595 5.945L0 24l6.305-1.654a11.962 11.962 0 0 0 5.728 1.45h.005c6.581 0 11.94-5.334 11.943-11.893a11.821 11.821 0 0 0-3.46-8.408z"/></svg>WhatsApp</button>
+        <button id="detailCall" type="button" class="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-[#EFF4FF] text-[13px] font-semibold text-[#284CA5] transition hover:bg-[#DCE8FF]"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.33 1.77.62 2.61a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.47-1.19a2 2 0 0 1 2.11-.45c.84.29 1.71.5 2.61.62A2 2 0 0 1 22 16.92z"/></svg>Call</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ NOTE MODAL ══════ -->
+<div id="noteModal" class="fixed inset-0 z-[95] hidden" role="dialog" aria-modal="true" aria-label="Add note">
+  <div data-close="note" class="ssx-overlay absolute inset-0"></div>
+  <div class="absolute inset-0 flex items-end justify-center p-0 sm:items-center sm:p-4">
+    <div class="sheet sheet-grab w-full max-w-[440px] overflow-hidden rounded-t-2xl border border-[#E2E8F0] bg-white shadow-[0_24px_60px_rgba(15,23,42,0.24)] sm:rounded-2xl">
+      <div class="flex items-center justify-between border-b border-[#EEF2F7] px-4 py-3"><h3 id="noteTitle" class="text-[15px] font-bold">Note</h3><button data-close="note" type="button" class="grid h-9 w-9 place-items-center rounded-full text-[#64748B] hover:bg-[#F1F5F9]" aria-label="Close"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+      <div class="px-4 py-4">
+        <div id="noteFor" class="mb-3"></div>
+        <textarea id="noteText" rows="4" placeholder="What was discussed? What is the next step?" class="w-full resize-none rounded-xl border border-[#D7E4FF] bg-white px-3 py-2.5 text-[13px] placeholder:text-[#94A3B8] focus:border-[#284CA5] focus:outline-none"></textarea>
+        <div class="mt-3 flex justify-end gap-2"><button data-close="note" type="button" class="inline-flex h-10 items-center rounded-xl border border-[#E2E8F0] px-4 text-[12.5px] font-semibold text-[#64748B] hover:bg-[#F1F5F9]">Cancel</button><button id="noteSaveBtn" type="button" class="inline-flex h-10 items-center rounded-xl bg-[#284CA5] px-4 text-[12.5px] font-semibold text-white hover:bg-[#203F8D]">Save note</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ SCHEDULE / FOLLOW-UP MODAL ══════ -->
+<div id="schedModal" class="fixed inset-0 z-[95] hidden" role="dialog" aria-modal="true" aria-label="Schedule">
+  <div data-close="sched" class="ssx-overlay absolute inset-0"></div>
+  <div class="absolute inset-0 flex items-end justify-center p-0 sm:items-center sm:p-4">
+    <div class="sheet sheet-grab w-full max-w-[440px] overflow-hidden rounded-t-2xl border border-[#E2E8F0] bg-white shadow-[0_24px_60px_rgba(15,23,42,0.24)] sm:rounded-2xl">
+      <div class="flex items-center justify-between border-b border-[#EEF2F7] px-4 py-3"><h3 id="schedTitle" class="text-[15px] font-bold">Schedule</h3><button data-close="sched" type="button" class="grid h-9 w-9 place-items-center rounded-full text-[#64748B] hover:bg-[#F1F5F9]" aria-label="Close"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+      <div id="schedBody" class="px-4 py-4"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ STATUS CHANGE CONFIRMATION (optional context capture) ══════ -->
+<div id="statusConfirmModal" class="fixed inset-0 z-[101] hidden" role="dialog" aria-modal="true" aria-label="Confirm status change">
+  <div data-close="statusConfirm" class="ssx-overlay absolute inset-0"></div>
+  <div class="absolute inset-0 flex items-end justify-center p-0 sm:items-center sm:p-4">
+    <div class="sheet sheet-grab flex max-h-[94vh] w-full max-w-[440px] flex-col overflow-visible rounded-t-2xl border border-[#E2E8F0] bg-white shadow-[0_24px_60px_rgba(15,23,42,0.28)] sm:rounded-2xl">
+      <div class="flex items-center justify-between border-b border-[#EEF2F7] px-4 py-3"><h3 id="scTitle" class="text-[15px] font-bold">Update status</h3><button data-close="statusConfirm" type="button" class="grid h-9 w-9 place-items-center rounded-full text-[#64748B] hover:bg-[#F1F5F9]" aria-label="Close"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+      <div class="min-h-0 flex-1 overflow-visible px-4 py-4">
+        <div id="scFlow" class="mb-3 flex flex-wrap items-center gap-2 rounded-xl border border-[#E2E8F0] bg-[#FAFBFE] px-3 py-2.5"></div>
+        <p class="mb-3 text-[12px] leading-relaxed text-[#64748B]">Add a note for reference before moving this enquiry to the next stage.</p>
+        <div class="mb-3"><label class="mb-1 block text-[11px] font-semibold uppercase tracking-[0.4px] text-[#64748B]">Note</label>
+          <textarea id="scNote" rows="3" placeholder="Add key discussion points, parent interest, admission concerns, or next follow-up details for future reference." class="w-full resize-none rounded-xl border border-[#D7E4FF] bg-white px-3 py-2.5 text-[13px] placeholder:text-[#94A3B8] focus:border-[#284CA5] focus:outline-none"></textarea></div>
+        <div id="scInterestWrap"><label class="mb-1 block text-[11px] font-semibold uppercase tracking-[0.4px] text-[#64748B]">Parent interest</label>
+          <div class="relative">
+            <button type="button" id="scInterestBtn" class="inline-flex h-10 w-full items-center justify-between gap-2 rounded-xl border border-[#D7E4FF] bg-white px-3 text-[13px] font-semibold text-[#284CA5] transition hover:bg-[#EFF4FF]" aria-haspopup="listbox" aria-expanded="false"><span id="scInterestLabel" class="min-w-0 truncate">Undecided</span><svg class="h-4 w-4 shrink-0 text-[#64748B]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
+            <div id="scInterestMenu" class="absolute left-0 right-0 bottom-[calc(100%+6px)] z-[70] hidden max-h-[244px] overflow-y-auto rounded-2xl border border-[#E2E8F0] bg-white p-2 shadow-[0_12px_32px_rgba(15,23,42,0.16)]" role="listbox" aria-label="Parent interest" onclick="event.stopPropagation()"></div>
+          </div>
+        </div>
+      </div>
+      <div class="flex shrink-0 gap-2 border-t border-[#EEF2F7] px-4 py-3"><button data-close="statusConfirm" type="button" class="inline-flex h-11 items-center rounded-xl border border-[#E2E8F0] px-4 text-[12.5px] font-semibold text-[#64748B] hover:bg-[#F1F5F9]">Cancel</button><button id="scConfirm" type="button" class="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-[#284CA5] px-4 text-[13px] font-semibold text-white hover:bg-[#203F8D]"><span id="scConfirmLabel">Confirm</span></button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ WHATSAPP TEMPLATE PICKER ══════ -->
+<div id="waModal" class="fixed inset-0 z-[100] hidden" role="dialog" aria-modal="true" aria-label="WhatsApp template">
+  <div data-close="wa" class="ssx-overlay absolute inset-0"></div>
+  <div class="absolute inset-0 flex items-end justify-center p-0 sm:items-center sm:p-4">
+    <div class="sheet sheet-grab flex max-h-[90vh] w-full max-w-[460px] flex-col overflow-hidden rounded-t-2xl border border-[#E2E8F0] bg-white shadow-[0_24px_60px_rgba(15,23,42,0.24)] sm:rounded-2xl">
+      <div class="flex items-center justify-between border-b border-[#EEF2F7] px-4 py-3"><h3 class="text-[15px] font-bold">Send WhatsApp</h3><button data-close="wa" type="button" class="grid h-9 w-9 place-items-center rounded-full text-[#64748B] hover:bg-[#F1F5F9]" aria-label="Close"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+      <div class="min-h-0 flex-1 overflow-y-auto px-4 py-4">
+        <p id="waFor" class="mb-2 text-[12.5px] font-medium text-[#64748B]">—</p>
+        <div id="waChips" class="mb-3 flex flex-wrap gap-2"></div>
+        <textarea id="waText" rows="5" class="w-full resize-none rounded-xl border border-[#D7E4FF] bg-white px-3 py-2.5 text-[13px] focus:border-[#284CA5] focus:outline-none"></textarea>
+      </div>
+      <div class="flex shrink-0 gap-2 border-t border-[#EEF2F7] px-4 py-3"><button data-close="wa" type="button" class="inline-flex h-11 items-center rounded-xl border border-[#E2E8F0] px-4 text-[12.5px] font-semibold text-[#64748B] hover:bg-[#F1F5F9]">Cancel</button><button id="waSend" type="button" class="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-[#059669] px-4 text-[13px] font-semibold text-white hover:bg-[#047857]"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.885-9.885 9.885M20.52 3.449C18.24 1.245 15.24 0 12.045 0 5.463 0 .104 5.334.101 11.892c0 2.096.549 4.142 1.595 5.945L0 24l6.305-1.654a11.962 11.962 0 0 0 5.728 1.45h.005c6.581 0 11.94-5.334 11.943-11.893a11.821 11.821 0 0 0-3.46-8.408z"/></svg>Open WhatsApp &amp; log</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ CLOSE / LOST REASON ══════ -->
+<div id="closeModal" class="fixed inset-0 z-[100] hidden" role="dialog" aria-modal="true" aria-label="Close enquiry">
+  <div data-close="close" class="ssx-overlay absolute inset-0"></div>
+  <div class="absolute inset-0 flex items-end justify-center p-0 sm:items-center sm:p-4">
+    <div class="sheet sheet-grab w-full max-w-[440px] overflow-visible rounded-t-2xl border border-[#E2E8F0] bg-white shadow-[0_24px_60px_rgba(15,23,42,0.24)] sm:rounded-2xl">
+      <div class="flex items-center justify-between border-b border-[#EEF2F7] px-4 py-3"><h3 class="text-[15px] font-bold">Close Enquiry</h3><button data-close="close" type="button" class="grid h-9 w-9 place-items-center rounded-full text-[#64748B] hover:bg-[#F1F5F9]" aria-label="Close"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+      <div class="px-4 py-4">
+        <div class="mb-4 flex items-start gap-2.5 rounded-xl border border-[#FECACA] bg-[#FEF2F2] px-3 py-2.5">
+          <svg class="mt-0.5 h-4 w-4 shrink-0 text-[#DC2626]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+          <p class="text-[12px] leading-relaxed text-[#B91C1C]">Closing stops the workflow and cancels any scheduled visit or pending follow-up. You can reopen this enquiry later to resume.</p>
+        </div>
+        <label class="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.5px] text-[#64748B]">Reason for closing</label>
+        <div class="relative">
+          <button type="button" id="closeReasonBtn" class="inline-flex h-10 w-full items-center justify-between gap-2 rounded-xl border border-[#D7E4FF] bg-white px-3 text-[13px] font-semibold text-[#284CA5] transition hover:bg-[#EFF4FF]" aria-haspopup="listbox" aria-expanded="false"><span id="closeReasonLabel" class="min-w-0 truncate font-normal text-[#94A3B8]">Select a reason…</span><svg class="h-4 w-4 shrink-0 text-[#64748B]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
+          <div id="closeReasonMenu" class="absolute left-0 right-0 top-11 z-[70] hidden max-h-[244px] overflow-y-auto rounded-2xl border border-[#E2E8F0] bg-white p-2 shadow-[0_12px_32px_rgba(15,23,42,0.16)]" role="listbox" aria-label="Reason for closing" onclick="event.stopPropagation()"></div>
+        </div>
+        <label class="mb-1.5 mt-4 block text-[11px] font-semibold uppercase tracking-[0.5px] text-[#64748B]">Closure Reason <span class="text-[#DC2626]">*</span></label>
+        <textarea id="closeNote" rows="2" placeholder="Add the reason for closing this enquiry." class="w-full resize-none rounded-xl border border-[#D7E4FF] bg-white px-3 py-2.5 text-[13px] placeholder:text-[#94A3B8] focus:border-[#284CA5] focus:outline-none"></textarea>
+        <div class="mt-4 flex justify-end gap-2"><button data-close="close" type="button" class="inline-flex h-10 items-center rounded-xl border border-[#E2E8F0] px-4 text-[12.5px] font-semibold text-[#64748B] hover:bg-[#F1F5F9]">Cancel</button><button id="closeConfirm" type="button" class="inline-flex h-10 items-center gap-1.5 rounded-xl bg-[#B91C1C] px-4 text-[12.5px] font-semibold text-white hover:bg-[#991B1B]"><svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/></svg>Close enquiry</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ REOPEN ENQUIRY ══════ -->
+<div id="reopenModal" class="fixed inset-0 z-[101] hidden" role="dialog" aria-modal="true" aria-label="Reopen enquiry">
+  <div data-close="reopen" class="ssx-overlay absolute inset-0"></div>
+  <div class="absolute inset-0 flex items-end justify-center p-0 sm:items-center sm:p-4">
+    <div class="sheet sheet-grab w-full max-w-[440px] overflow-hidden rounded-t-2xl border border-[#E2E8F0] bg-white shadow-[0_24px_60px_rgba(15,23,42,0.24)] sm:rounded-2xl">
+      <div class="flex items-center justify-between border-b border-[#EEF2F7] px-4 py-3"><h3 class="text-[15px] font-bold">Reopen Enquiry</h3><button data-close="reopen" type="button" class="grid h-9 w-9 place-items-center rounded-full text-[#64748B] hover:bg-[#F1F5F9]" aria-label="Close"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+      <div class="px-4 py-4">
+        <div class="mb-3 flex items-start gap-2.5 rounded-xl border border-[#BFDBFE] bg-[#EFF6FF] px-3 py-2.5">
+          <svg class="mt-0.5 h-4 w-4 shrink-0 text-[#2563EB]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
+          <p class="text-[12px] leading-relaxed text-[#1D4ED8]">This enquiry will return to its previous workflow stage. Add a reason for the record if you like.</p>
+        </div>
+        <p id="reopenFor" class="mb-3 text-[12.5px] font-medium text-[#64748B]">—</p>
+        <label class="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.5px] text-[#64748B]">Reason for Reopening</label>
+        <textarea id="reopenNote" rows="3" placeholder="e.g. Parent called back and is reconsidering after the fee discussion" class="w-full resize-none rounded-xl border border-[#D7E4FF] bg-white px-3 py-2.5 text-[13px] placeholder:text-[#94A3B8] focus:border-[#284CA5] focus:outline-none"></textarea>
+        <div class="mt-4 flex justify-end gap-2"><button data-close="reopen" type="button" class="inline-flex h-10 items-center rounded-xl border border-[#E2E8F0] px-4 text-[12.5px] font-semibold text-[#64748B] hover:bg-[#F1F5F9]">Cancel</button><button id="reopenConfirm" type="button" class="inline-flex h-10 items-center gap-1.5 rounded-xl bg-[#284CA5] px-4 text-[12.5px] font-semibold text-white hover:bg-[#203F8D]"><svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>Reopen enquiry</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ FOCUS MODE ══════ -->
+<div id="focusModal" class="fixed inset-0 z-[88] hidden" role="dialog" aria-modal="true" aria-label="Focus run">
+  <div data-close="focus" class="ssx-overlay absolute inset-0"></div>
+  <div class="absolute inset-0 flex items-end justify-center p-0 sm:items-center sm:p-4">
+    <div class="sheet sheet-grab flex max-h-[94vh] w-full max-w-[480px] flex-col overflow-hidden rounded-t-2xl border border-[#E2E8F0] bg-white shadow-[0_24px_60px_rgba(15,23,42,0.3)] sm:rounded-2xl">
+      <div class="flex items-center justify-between border-b border-[#EEF2F7] px-4 py-3"><h3 class="text-[15px] font-bold">Focus run</h3><button data-close="focus" type="button" class="grid h-9 w-9 place-items-center rounded-full text-[#64748B] hover:bg-[#F1F5F9]" aria-label="Close"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+      <div id="focusBody" class="min-h-0 flex-1 overflow-y-auto px-4 py-4"></div>
+      <div id="focusFooter" class="flex shrink-0 items-center justify-between gap-2 border-t border-[#EEF2F7] bg-white px-4 py-3"><button data-act="exitFocus" type="button" class="inline-flex h-10 items-center rounded-xl px-3 text-[12.5px] font-semibold text-[#64748B] hover:bg-[#F1F5F9]">Exit focus run</button><button id="focusNextBtn" data-act="focusNext" type="button" class="inline-flex h-10 items-center gap-1 rounded-xl border border-[#D7E4FF] bg-white px-4 text-[12.5px] font-semibold text-[#284CA5] hover:bg-[#EFF4FF]">Skip for now &#8594;</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ FOLLOW-UP MANAGEMENT (existing follow-up) ══════ -->
+<div id="followManageModal" class="fixed inset-0 z-[101] hidden" role="dialog" aria-modal="true" aria-label="Manage follow-up">
+  <div data-close="followManage" class="ssx-overlay absolute inset-0"></div>
+  <div class="absolute inset-0 flex items-end justify-center p-0 sm:items-center sm:p-4">
+    <div class="sheet sheet-grab flex max-h-[94vh] w-full max-w-[440px] flex-col overflow-hidden rounded-t-2xl border border-[#E2E8F0] bg-white shadow-[0_24px_60px_rgba(15,23,42,0.28)] sm:rounded-2xl">
+      <div class="flex items-center justify-between border-b border-[#EEF2F7] px-4 py-3"><div class="flex items-center gap-2.5"><span class="grid h-9 w-9 place-items-center rounded-xl bg-[#F5F3FF] text-[#6D28D9] ring-1 ring-inset ring-[#DDD6FE]"><svg class="h-[18px] w-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span><h3 class="text-[15px] font-bold">Follow-up scheduled</h3></div><button data-close="followManage" type="button" class="grid h-9 w-9 place-items-center rounded-full text-[#64748B] hover:bg-[#F1F5F9]" aria-label="Close"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+      <div id="fmBody" class="min-h-0 flex-1 overflow-y-auto px-4 py-4"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ MINI CALENDAR POPOVER (shared by Schedule Visit + Follow-up) ══════ -->
+<div id="calendarModal" class="cal-modal-overlay" onclick="handleCalModalOverlayClick(event)"><div id="calContainer" onclick="event.stopPropagation()"></div></div>
+
+<!-- toast -->
+<div id="toast" class="pointer-events-none fixed bottom-5 left-1/2 z-[120] hidden -translate-x-1/2"></div>
+
+<script>
+/* ════════════════════════════════════════════════════════════
+   SuperSchools — My Work (counsellor daily workspace)
+   Single-file, localStorage-persisted, real state.
+   ════════════════════════════════════════════════════════════ */
+const $ = id => document.getElementById(id);
+const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const digits = p => String(p||'').replace(/\D/g,'');
+const HOUR=3600000, DAY=86400000, MIN=60000;
+const COUNSELLOR='Ananya Sharma';
+const statusList=['New Enquiry','Contacted','Visit / Revisit Scheduled','Visit Completed','Application in Progress','Admission Confirmed','Closed'];
+const STAFF=['Ananya Sharma','Rohit Kumar','Priya Nair','Kavya Reddy','Arjun Mehta'];
+const TERMINAL=['Admission Confirmed','Closed'];
+const TARGET={enq:15, vis:6, adm:2};
+const STORE_KEY='ss_mywork_v4';
+
+/* ── time helpers ── */
+function dayStr(ts){const d=new Date(ts);const p=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());}
+const TODAY_KEY=dayStr(Date.now());
+function isToday(ts){return ts!=null && dayStr(ts)===TODAY_KEY;}
+function rel(ts){ if(ts==null) return '—'; const d=Date.now()-ts; if(d<MIN) return 'just now'; const m=Math.round(d/MIN); if(m<60) return m+'m ago'; const h=Math.round(m/60); if(h<24) return h+'h ago'; return Math.round(h/24)+'d ago'; }
+function dueLabel(ts){ const d=ts-Date.now(); if(d<0){ const days=Math.floor((Date.now()-ts)/DAY); if(days>=1) return 'Overdue '+days+'d'; const h=Math.floor((Date.now()-ts)/HOUR); return h>=1?('Overdue '+h+'h'):'Due now'; } const m=Math.round(d/MIN); if(m<60) return 'Due in '+m+'m'; const h=Math.round(m/60); if(h<24) return 'Due in '+h+'h'; return 'Due in '+Math.round(h/24)+'d'; }
+function clockOf(ts){ return new Date(ts).toLocaleTimeString('en-IN',{hour:'numeric',minute:'2-digit'}); }
+function ageFromDob(dob){ if(!dob) return ''; const p=String(dob).split('-'); if(p.length!==3) return ''; const dd=+p[0],mm=+p[1],yy=+p[2]; const b=new Date(yy,mm-1,dd); if(isNaN(b)) return ''; const n=new Date(); let a=n.getFullYear()-b.getFullYear(); const m=n.getMonth()-b.getMonth(); if(m<0||(m===0&&n.getDate()<b.getDate())) a--; if(a<0) a=0; return a+(a===1?' year':' years'); }
+function toLocalInput(ts){ const d=new Date(ts-d_off(ts)); return d.toISOString().slice(0,16); }
+function d_off(ts){ return new Date(ts).getTimezoneOffset()*MIN; }
+
+/* ════════ SEED ════════ */
+const CANDIDATES = [{"id":"1","parentName":"Rakesh Sharma","childName":"Aarav Sharma","ageBand":"4-5 years","dob":"15-06-2021","mobile":"99808 33777","gradeApplied":"LKG","academicYear":"2026-27","curriculum":"CBSE","area":"Indiranagar","source":"Superschools","status":"New Enquiry","parentInterest":"Very Interested","assignee":"Ananya Sharma","message":"Hi, I'm enquiring about admission for my child Aarav Sharma into LKG for the 2026-27 session. We're looking for a CBSE school within 5 km near Indiranagar. Could you share the fee structure, transport options, daycare facility and an opportunity to visit the campus? Please reach out at your convenience.","fupNote":null,"closeReason":null,"notes":["New Superschools enquiry for LKG. Parent in Indiranagar \u2014 very close by. Priority call today."]},{"id":"2","parentName":"Priya Sharma","childName":"Ananya Sharma","ageBand":"6-8 years","dob":"15-09-2018","mobile":"98765 43210","gradeApplied":"Grade 1-5","academicYear":"2026-27","curriculum":"ICSE","area":"Koramangala","source":"Instagram","status":"Contacted","parentInterest":"Interested","assignee":"Rohit Kumar","message":"Hi, I'm enquiring about admission for my child Ananya Sharma into Grade 3 for the 2026-27 session. We're looking for a ICSE school within 5 km near Koramangala. Could you share the fee structure, transport options and an opportunity to visit the campus? Please reach out at your convenience.","fupNote":"Call to discuss ICSE fee structure and confirm a campus visit slot.","closeReason":null,"notes":["Spoke with Priya Sharma \u2014 interested but comparing two ICSE schools. Wants a visit before deciding.","Asked about sibling discount and bus route to Koramangala."]},{"id":"3","parentName":"Sneha Rao","childName":"Vihaan Rao","ageBand":"3-4 years","dob":"15-05-2022","mobile":"91234 56789","gradeApplied":"Nursery","academicYear":"2027-28","curriculum":"CBSE","area":"HSR Layout","source":"School Website","status":"Visit / Revisit Scheduled","parentInterest":"Undecided","assignee":"Priya Nair","message":"Hi, I'm enquiring about admission for my child Vihaan Rao into Nursery for the 2027-28 session. We're looking for a CBSE school within 5 km near HSR Layout. Could you share the fee structure, daycare facility and an opportunity to visit the campus? Please reach out at your convenience.","fupNote":null,"closeReason":null,"notes":["Campus visit scheduled. Parent requested to meet the principal and see the play area."]},{"id":"4","parentName":"Vikram Singh","childName":"Aanya Singh","ageBand":"10-12 years","dob":"15-04-2014","mobile":"99887 76655","gradeApplied":"Grade 6-8","academicYear":"2026-27","curriculum":"IB","area":"Whitefield","source":"Referral","status":"Visit Completed","parentInterest":"Very Interested","assignee":"Kavya Reddy","message":"Hi, I'm enquiring about admission for my child Aanya Singh into Grade 6 for the 2026-27 session. We're looking for a IB school within 10 km near Whitefield. Could you share the fee structure, transport options and an opportunity to visit the campus? Please reach out at your convenience.","fupNote":null,"closeReason":null,"notes":["Visit completed \u2014 family liked the STEM lab and sports facilities. Sending the application form.","Strong fit for IB Grade 6. Parent keen on April intake.","Referred by an existing parent (Mr. Rao). Warm lead."]},{"id":"5","parentName":"Meera Gupta","childName":"Ishaan Gupta","ageBand":"12-14 years","dob":"15-06-2012","mobile":"97788 99001","gradeApplied":"Grade 9-10","academicYear":"2026-27","curriculum":"CBSE","area":"Jayanagar","source":"Google Search","status":"Admission Confirmed","parentInterest":"Interested","assignee":"Arjun Mehta","message":"Hi, I'm enquiring about admission for my child Ishaan Gupta into Grade 9 for the 2026-27 session. We're looking for a CBSE school within 5 km near Jayanagar. Could you share the fee structure and an opportunity to visit the campus? Please reach out at your convenience.","fupNote":null,"closeReason":null,"notes":["Admission confirmed \u2014 fee paid and documents verified. Welcome kit to be issued."]},{"id":"6","parentName":"Karan Iyer","childName":"Diya Iyer","ageBand":"2-3 years","dob":"15-04-2023","mobile":"95554 33221","gradeApplied":"Nursery","academicYear":"2027-28","curriculum":"Montessori","area":"Indiranagar","source":"Walk-in","status":"Contacted","parentInterest":"Undecided","assignee":"Ananya Sharma","message":"Hi, I'm enquiring about admission for my child Diya Iyer into Nursery for the 2027-28 session. We're looking for a Montessori school within 2 km near Indiranagar. Could you share the fee structure, daycare facility and an opportunity to visit the campus? Please reach out at your convenience.","fupNote":"Share Montessori daycare timings; parent comparing two preschools.","closeReason":null,"notes":[]},{"id":"7","parentName":"Rohan Kapoor","childName":"Aryan Kapoor","ageBand":"8-10 years","dob":"15-02-2016","mobile":"94433 22110","gradeApplied":"Grade 6-8","academicYear":"2027-28","curriculum":"CBSE","area":"Electronic City","source":"Superschools","status":"New Enquiry","parentInterest":"Very Interested","assignee":"Rohit Kumar","message":"Hi, I'm enquiring about admission for my child Aryan Kapoor into Grade 7 for the 2027-28 session. We're looking for a CBSE school within 15 km near Electronic City. Could you share the fee structure, transport options and an opportunity to visit the campus? Please reach out at your convenience.","fupNote":null,"closeReason":null,"notes":[]},{"id":"8","parentName":"Sana Nair","childName":"Reyansh Nair","ageBand":"4-5 years","dob":"15-06-2021","mobile":"91122 33445","gradeApplied":"UKG","academicYear":"2026-27","curriculum":"ICSE","area":"Devanahalli","source":"WhatsApp","status":"Contacted","parentInterest":"Interested","assignee":"Priya Nair","message":"Hi, I'm enquiring about admission for my child Reyansh Nair into UKG for the 2026-27 session. We're looking for a ICSE school near Devanahalli. Could you share the fee structure, transport options, daycare facility and an opportunity to visit the campus? Please reach out at your convenience.","fupNote":"Follow up on transport feasibility from Devanahalli (long distance).","closeReason":null,"notes":[]},{"id":"9","parentName":"Arjun Mehta","childName":"Kiara Mehta","ageBand":"6-8 years","dob":"15-09-2018","mobile":"93344 55667","gradeApplied":"Grade 1-5","academicYear":"2026-27","curriculum":"CBSE","area":"Bellandur","source":"School Website","status":"Application in Progress","parentInterest":"Undecided","assignee":"Kavya Reddy","message":"Hi, I'm enquiring about admission for my child Kiara Mehta into Grade 2 for the 2026-27 session. We're looking for a CBSE school within 10 km near Bellandur. Could you share the fee structure, transport options and an opportunity to visit the campus? Please reach out at your convenience.","fupNote":null,"closeReason":null,"notes":["Application in progress \u2014 documents pending (transfer certificate). Following up with parent."]},{"id":"10","parentName":"Kavita Khan","childName":"Aarush Khan","ageBand":"Below 2 years","dob":"15-02-2025","mobile":"98777 55555","gradeApplied":"Playgroup","academicYear":"2027-28","curriculum":"Montessori","area":"BTM Layout","source":"Superschools","status":"Admission Confirmed","parentInterest":"Very Interested","assignee":"Arjun Mehta","message":"Hi, I'm enquiring about admission for my child Aarush Khan into Playgroup for the 2027-28 session. We're looking for a Montessori school within 5 km near BTM Layout. Could you share the fee structure, daycare facility and an opportunity to visit the campus? Please reach out at your convenience.","fupNote":null,"closeReason":null,"notes":["Admission confirmed \u2014 fee paid and documents verified. Welcome kit to be issued."]},{"id":"11","parentName":"Ramesh Verma","childName":"Saanvi Verma","ageBand":"10-12 years","dob":"15-04-2014","mobile":"93333 11111","gradeApplied":"Grade 6-8","academicYear":"2028-29","curriculum":"State Board","area":"Yelahanka","source":"Referral","status":"Closed","parentInterest":"Not Interested","assignee":"Ananya Sharma","message":"Hi, I'm enquiring about admission for my child Saanvi Verma into Grade 8 for the 2028-29 session. We're looking for a State Board school within 15 km near Yelahanka. Could you share the fee structure, transport options and an opportunity to visit the campus? Please reach out at your convenience.","fupNote":null,"closeReason":"Chose another school","notes":["Enquiry closed. Parent chose a school closer to home."]},{"id":"12","parentName":"Zara Malik","childName":"Inaya Malik","ageBand":"14-16 years","dob":"15-08-2010","mobile":"97777 44444","gradeApplied":"Grade 11-12","academicYear":"2026-27","curriculum":"IGCSE","area":"Sarjapur","source":"Google Search","status":"Closed","parentInterest":"Not Interested","assignee":"Rohit Kumar","message":"Hi, I'm enquiring about admission for my child Inaya Malik into Grade 11 for the 2026-27 session. We're looking for a IGCSE school near Sarjapur. Could you share the fee structure, transport options and an opportunity to visit the campus? Please reach out at your convenience.","fupNote":null,"closeReason":"Location too far","notes":["Enquiry closed. Distance was the main concern."]},{"id":"13","parentName":"Naveen Joshi","childName":"Aadhya Joshi","ageBand":"8-10 years","dob":"15-02-2016","mobile":"96666 12345","gradeApplied":"Grade 6-8","academicYear":"2027-28","curriculum":"CBSE","area":"Marathahalli","source":"Phone Call","status":"Contacted","parentInterest":"Very Interested","assignee":"Priya Nair","message":"Hi, I'm enquiring about admission for my child Aadhya Joshi into Grade 7 for the 2027-28 session. We're looking for a CBSE school within 10 km near Marathahalli. Could you share the fee structure, transport options and an opportunity to visit the campus? Please reach out at your convenience.","fupNote":"Hot lead \u2014 call to schedule a campus visit this week.","closeReason":null,"notes":["Very interested parent \u2014 wants the earliest possible visit. Following up to lock a slot."]},{"id":"14","parentName":"Imran Das","childName":"Veer Das","ageBand":"12-14 years","dob":"15-06-2012","mobile":"95555 67890","gradeApplied":"Grade 9-10","academicYear":"2026-27","curriculum":"ICSE","area":"Hebbal","source":"Offline Campaign","status":"Visit / Revisit Scheduled","parentInterest":"Interested","assignee":"Kavya Reddy","message":"Hi, I'm enquiring about admission for my child Veer Das into Grade 10 for the 2026-27 session. We're looking for a ICSE school within 15 km near Hebbal. Could you share the fee structure, transport options and an opportunity to visit the campus? Please reach out at your convenience.","fupNote":null,"closeReason":null,"notes":["Campus visit scheduled. Parent requested to meet the principal and see the play area."]},{"id":"15","parentName":"Sunita Reddy","childName":"Anika Reddy","ageBand":"4-5 years","dob":"15-06-2021","mobile":"94432 11875","gradeApplied":"LKG","academicYear":"2027-28","curriculum":"CBSE","area":"Sarjapur Road","source":"Superschools","status":"New Enquiry","parentInterest":"Undecided","assignee":"Arjun Mehta","message":"Hi, I'm enquiring about admission for my child Anika Reddy into LKG for the 2027-28 session. We're looking for a CBSE school within 5 km near Sarjapur Road. Could you share the fee structure, daycare facility and an opportunity to visit the campus? Please reach out at your convenience.","fupNote":null,"closeReason":null,"notes":[]},{"id":"16","parentName":"Prakash Nair","childName":"Dhruv Nair","ageBand":"8-10 years","dob":"15-02-2016","mobile":"96611 88234","gradeApplied":"Grade 6-8","academicYear":"2027-28","curriculum":"CBSE","area":"JP Nagar","source":"Referral","status":"New Enquiry","parentInterest":"Very Interested","assignee":"Ananya Sharma","message":"Hi, I'm enquiring about admission for my child Dhruv Nair into Grade 8 for the 2027-28 session. We're looking for a CBSE school within 10 km near JP Nagar. Could you share the fee structure, transport options and an opportunity to visit the campus? Please reach out at your convenience.","fupNote":null,"closeReason":null,"notes":[]},{"id":"17","parentName":"Divya Menon","childName":"Tara Menon","ageBand":"6-8 years","dob":"15-09-2018","mobile":"93301 56478","gradeApplied":"Grade 1-5","academicYear":"2026-27","curriculum":"ICSE","area":"Sadashivanagar","source":"Instagram","status":"New Enquiry","parentInterest":"Interested","assignee":"Rohit Kumar","message":"Hi, I'm enquiring about admission for my child Tara Menon into Grade 4 for the 2026-27 session. We're looking for a ICSE school within 10 km near Sadashivanagar. Could you share the fee structure, transport options and an opportunity to visit the campus? Please reach out at your convenience.","fupNote":null,"closeReason":null,"notes":[]},{"id":"k15","parentName":"Nisha Patel","childName":"Avni Patel","ageBand":"2-3 years","dob":"15-04-2023","mobile":"98880 11223","gradeApplied":"Nursery","academicYear":"2027-28","curriculum":"Montessori","area":"Banashankari","source":"Facebook","status":"New Enquiry","parentInterest":"Undecided","assignee":"Priya Nair","message":"Hi, I'm enquiring about admission for my child Avni Patel into Nursery for the 2027-28 session. We're looking for a Montessori school within 10 km near Banashankari. Could you share the fee structure, daycare facility and an opportunity to visit the campus? Please reach out at your convenience.","fupNote":null,"closeReason":null,"notes":[]},{"id":"k16","parentName":"Manish Rao","childName":"Arjun Rao","ageBand":"14-16 years","dob":"15-08-2010","mobile":"97770 44556","gradeApplied":"Grade 11-12","academicYear":"2026-27","curriculum":"CBSE","area":"Rajajinagar","source":"Superschools","status":"New Enquiry","parentInterest":"Very Interested","assignee":"Kavya Reddy","message":"Hi, I'm enquiring about admission for my child Arjun Rao into Grade 12 for the 2026-27 session. We're looking for a CBSE school within 15 km near Rajajinagar. Could you share the fee structure, transport options and an opportunity to visit the campus? Please reach out at your convenience.","fupNote":null,"closeReason":null,"notes":[]},{"id":"k17","parentName":"Pooja Choudhary","childName":"Riya Choudhary","ageBand":"5-6 years","dob":"15-07-2020","mobile":"92233 41566","gradeApplied":"Grade 1-5","academicYear":"2027-28","curriculum":"CBSE","area":"Vijayanagar","source":"Phone Call","status":"New Enquiry","parentInterest":"Interested","assignee":"Arjun Mehta","message":"Hi, I'm enquiring about admission for my child Riya Choudhary into Grade 1 for the 2027-28 session. We're looking for a CBSE school within 5 km near Vijayanagar. Could you share the fee structure, transport options and an opportunity to visit the campus? Please reach out at your convenience.","fupNote":null,"closeReason":null,"notes":[]},{"id":"k18","parentName":"Suresh Pillai","childName":"Arnav Pillai","ageBand":"10-12 years","dob":"15-04-2014","mobile":"91100 67234","gradeApplied":"Grade 6-8","academicYear":"2027-28","curriculum":"CBSE","area":"Kengeri","source":"Superschools","status":"Contacted","parentInterest":"Undecided","assignee":"Ananya Sharma","message":"Hi, I'm enquiring about admission for my child Arnav Pillai into Grade 7 for the 2027-28 session. We're looking for a CBSE school within 10 km near Kengeri. Could you share the fee structure, transport options and an opportunity to visit the campus? Please reach out at your convenience.","fupNote":null,"closeReason":null,"notes":[]}];
+function seed(){
+  const now=Date.now();
+  const NEW_OFF=[5*MIN,18*MIN,40*MIN,75*MIN,2.5*HOUR,4*HOUR,6*HOUR,8*HOUR,10*HOUR,12*HOUR];
+  const FUP={'2':5*HOUR,'13':-2*HOUR,'8':-2*DAY,'6':2*DAY,'9':1*DAY};
+  const VIS={'3':3*HOUR,'14':6*HOUR,'4':-3*HOUR};
+  const VIS_SLOT={'3':'10:00 AM','14':'11:00 AM','4':'9:00 AM'};
+  let ni=0;
+  return CANDIDATES.map(c=>{
+    const r={ id:c.id, parentName:c.parentName, childName:c.childName, ageBand:c.ageBand, dob:c.dob, mobile:c.mobile,
+      gradeApplied:c.gradeApplied, academicYear:c.academicYear, curriculum:c.curriculum, area:c.area, source:c.source,
+      status:c.status, parentInterest:c.parentInterest, assignee:c.assignee, message:c.message||'',
+      createdAt:now, lastContactedAt:null, firstResponseAt:null, visit:null, followUp:null, lostReason:null, activity:[] };
+    if(c.status==='New Enquiry'){ r.createdAt=now-(NEW_OFF[ni++]||(12+ni)*HOUR); }
+    else { const v=(parseInt(c.id,10)||3)%4; r.createdAt=now-(2*DAY+v*0.4*DAY); r.firstResponseAt=r.createdAt+1*HOUR; r.lastContactedAt=now-1*DAY; }
+    if(VIS[c.id]!=null){ const vd=new Date(now+VIS[c.id]); const sl=VIS_SLOT[c.id]||'10:00 AM'; const sm=sl.match(/(\d+):(\d+)\s*(AM|PM)/i); let sh=(+sm[1])%12; if(/pm/i.test(sm[3])) sh+=12; vd.setHours(sh,+sm[2],0,0); r.visit={time:vd.getTime(), slot:sl}; }
+    if(FUP[c.id]!=null) r.followUp={dueAt:now+FUP[c.id], note:c.fupNote||'Follow up with parent'};
+    if(c.status==='Closed') r.lostReason=c.closeReason||null;
+    if(c.status==='Closed') r.closedFrom = ({'11':'Visit / Revisit Scheduled','12':'Contacted'})[c.id] || 'Contacted';
+    if(r.firstResponseAt) r.activity.push({ts:r.firstResponseAt,type:'whatsapp',text:'First reply sent to parent.'});
+    (c.notes||[]).forEach((t,i)=>{ let ts=now-(i+1)*3*HOUR; if(ts<=r.createdAt) ts=r.createdAt+(i+1)*MIN; r.activity.push({ts:ts,type:'note',text:t}); });
+    if(c.status==='Admission Confirmed') r.activity.push({ts:now-1*DAY,type:'status',text:'Status set to Admission Confirmed',done:'admission'});
+    if(c.status==='Closed') r.activity.push({ts:now-1*DAY,type:'status',text:'Closed \u2014 '+(c.closeReason||'reason logged')});
+    return r;
+  });
+}
+
+/* ════════ STATE ════════ */
+let STATE = load();
+function load(){
+  try{ const raw=localStorage.getItem(STORE_KEY); if(raw){ const s=JSON.parse(raw);
+    if(s.dayKey!==TODAY_KEY){ s.dayKey=TODAY_KEY; } // metrics derive from activity ts, so just refresh key
+    s.unseen=s.unseen||[];
+    if(s.view!=='all' && !STAFF.includes(s.view)) s.view='all';
+    return s; } }catch(e){}
+  return { dayKey:TODAY_KEY, view:'all', unseen:[], enquiries:seed() };
+}
+function save(){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(STATE)); }catch(e){} }
+function rec(id){ return STATE.enquiries.find(r=>r.id===id); }
+function inView(r){ return STATE.view==='all' || r.assignee===STATE.view; }
+function visible(){ return STATE.enquiries.filter(inView); }
+
+/* ════════ ACTIVITY + UNDO ════════ */
+function logAct(r,type,text,meta){ r.activity.push(Object.assign({ts:Date.now(),type,text},meta||{})); }
+let undoSnap=null;
+let nbaSkip=new Set();
+let focusSkip=new Set(), focusTotal=0, focusQueue=[];
+function snapshot(){ undoSnap=JSON.stringify(STATE); }
+function doUndo(){ if(!undoSnap) return; STATE=JSON.parse(undoSnap); undoSnap=null; save(); render(); if(detailId && !$('detailModal').classList.contains('hidden') && rec(detailId)) openDetail(rec(detailId)); toast('Reverted'); }
+
+/* ════════ LEAD SCORE (transparent, rules-based) ════════ */
+function leadScore(r){
+  if(r.status==='Admission Confirmed') return {score:100};
+  if(r.status==='Closed') return {score:0};
+  const stageW={'New Enquiry':10,'Contacted':18,'Visit / Revisit Scheduled':28,'Visit Completed':30,'Application in Progress':34,'Admission Confirmed':40,'Closed':0};
+  const piW={'Very Interested':25,'Interested':15,'Undecided':6,'Not Interested':-15};
+  const srcW={'Superschools':18,'Referral':16,'Walk-in':14,'School Website':10,'Phone Call':10,'WhatsApp':9,'Google Search':8,'Offline Campaign':8,'Instagram':7,'Facebook':6};
+  let s=(stageW[r.status]||0)+(piW[r.parentInterest]||0)+(srcW[r.source]||6);
+  const age=Date.now()-r.createdAt; s+= age<HOUR?12: age<6*HOUR?9: age<DAY?7: age<3*DAY?4:1;
+  if(r.followUp){ const d=r.followUp.dueAt-Date.now(); s+= d<0?15: dayStr(r.followUp.dueAt)===TODAY_KEY?10:4; }
+  return {score:Math.max(0,Math.min(100,s))};
+}
+
+/* ════════ SLA (internal timing, no labels shown) ════════ */
+function avgResponse(){ const done=visible().filter(r=>r.firstResponseAt && isToday(r.firstResponseAt)); if(!done.length) return null;
+  const avg=done.reduce((a,r)=>a+(r.firstResponseAt-r.createdAt),0)/done.length; return avg<HOUR?Math.round(avg/MIN)+'m':(avg/HOUR).toFixed(1)+'h'; }
+
+/* ════════ BUCKETS ════════ */
+function fuState(r){ if(!r.followUp || TERMINAL.includes(r.status)) return null; const d=dayStr(r.followUp.dueAt); if(d<TODAY_KEY) return 'overdue'; if(d===TODAY_KEY) return 'today'; return 'upcoming'; }
+function buckets(){
+  const v=visible();
+  return {
+    newToday: v.filter(r=>isToday(r.createdAt) && r.status==='New Enquiry'),
+    visits: v.filter(r=>r.visit && isToday(r.visit.time)).sort((a,b)=>a.visit.time-b.visit.time),
+    overdue: v.filter(r=>fuState(r)==='overdue'),
+    today: v.filter(r=>fuState(r)==='today'),
+    upcoming: v.filter(r=>fuState(r)==='upcoming'),
+    idle: v.filter(r=> !TERMINAL.includes(r.status) && !r.followUp && !(r.visit && dayStr(r.visit.time)>=TODAY_KEY) && !(isToday(r.createdAt) && r.status==='New Enquiry' && !r.firstResponseAt) )
+  };
+}
+function queueItems(){
+  const b=buckets(), seen=new Set(), out=[];
+  const add=(r,reason,tone)=>{ if(seen.has(r.id)) return; seen.add(r.id); out.push({r,reason,tone,score:leadScore(r).score}); };
+  b.overdue.forEach(r=>{ const days=Math.floor((Date.now()-r.followUp.dueAt)/DAY); add(r,'Follow-up overdue · '+(days>=1?days+'d':'today'),'red'); });
+  b.visits.filter(r=>r.status!=='Visit Completed').forEach(r=>add(r,'Visit today · '+clockOf(r.visit.time),'violet'));
+  b.newToday.filter(r=>!r.firstResponseAt).forEach(r=>add(r,'New enquiry · not contacted','blue'));
+  b.today.forEach(r=>add(r,'Follow-up due today','amber'));
+  out.sort((a,b)=>b.score-a.score);
+  return out;
+}
+
+/* ════════ PROGRESS (live, derived from today's activity) ════════ */
+function progress(){
+  const v=visible();
+  const handled=new Set();
+  let visitsDone=0, adm=0;
+  v.forEach(r=>{ r.activity.forEach(a=>{ if(isToday(a.ts)){ handled.add(r.id);
+    if(a.done==='visit') visitsDone++;
+    if(a.done==='admission') adm++;
+  }}); });
+  return {enq:handled.size, vis:visitsDone, adm};
+}
+
+/* ════════ SHELL HELPERS ════════ */
+const SEC={
+  summary:{tint:'bg-[#EFF4FF]',text:'text-[#284CA5]',icon:'<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>'},
+  attention:{tint:'bg-[#FEF2F2]',text:'text-[#B91C1C]',icon:'<path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/>'},
+  progress:{tint:'bg-[#EFF4FF]',text:'text-[#284CA5]',icon:'<path d="M3 3v18h18"/><path d="M7 14l3-3 3 3 5-6"/>'},
+  queue:{tint:'bg-[#FEF2F2]',text:'text-[#B91C1C]',icon:'<path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/>'},
+  followups:{tint:'bg-[#FFFBEB]',text:'text-[#B45309]',icon:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="M12 14v3M10.5 15.5h3"/>'},
+  overdue:{tint:'bg-[#FEF2F2]',text:'text-[#B91C1C]',icon:'<circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/><path d="M5 3 2 6M22 6l-3-3"/>'},
+  newenq:{tint:'bg-[#FFFBEB]',text:'text-[#B45309]',icon:'<path d="M12 5v14M5 12h14"/>'},
+  visit:{tint:'bg-[#EFF6FF]',text:'text-[#1D4ED8]',icon:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>'},
+  pipeline:{tint:'bg-[#FFF7ED]',text:'text-[#C2410C]',icon:'<path d="M3 12a9 9 0 1 0 9-9"/><path d="M3 4v5h5"/><path d="M12 7v5l3 2"/>'},
+  done:{tint:'bg-[#ECFDF5]',text:'text-[#047857]',icon:'<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m22 4-10 10.01-3-3"/>'}
+};
+function sectionCard(key,title,subtitle,bodyHtml,rightSlot){ const s=SEC[key];
+  return '<div class="ssx-section">'
+   +'<div class="flex items-center justify-between gap-3 border-b border-[#F1F4F9] px-4 py-3.5 sm:px-5 sm:py-4">'
+   +'<div class="flex min-w-0 items-center gap-3"><span class="grid h-10 w-10 shrink-0 place-items-center rounded-2xl '+s.tint+' '+s.text+' ring-1 ring-inset ring-black/5"><svg class="h-[19px] w-[19px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+s.icon+'</svg></span>'
+   +'<div class="min-w-0"><h2 class="truncate text-[15.5px] font-extrabold leading-tight tracking-[-0.01em]">'+esc(title)+'</h2><p class="truncate text-[12px] text-[#94A3B8]">'+esc(subtitle)+'</p></div></div>'
+   +(rightSlot?'<div class="shrink-0">'+rightSlot+'</div>':'')+'</div>'
+   +'<div class="p-3.5 sm:p-5">'+bodyHtml+'</div></div>';
+}
+function pill(n,tint,text){ return '<span class="inline-flex h-7 min-w-[28px] items-center justify-center rounded-full '+tint+' '+text+' px-2 text-[12px] font-extrabold ring-1 ring-inset ring-black/5">'+n+'</span>'; }
+function emptyMini(msg){ return '<div class="flex flex-col items-center justify-center rounded-xl border border-dashed border-[#D7E4FF] bg-[#FAFBFF] px-4 py-7 text-center"><span class="mb-1.5 grid h-9 w-9 place-items-center rounded-full bg-[#EFF4FF] text-[#94A3B8]"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m22 4-10 10.01-3-3"/></svg></span><p class="text-[12.5px] font-semibold text-[#475569]">'+esc(msg)+'</p></div>'; }
+function cardGrid(h){ return '<div class="grid grid-cols-1 items-stretch gap-4 md:grid-cols-2 xl:grid-cols-3 xl:gap-5">'+h+'</div>'; }
+function statusBar(st){ const m={'New Enquiry':'bg-[#3B82F6]','Contacted':'bg-[#06B6D4]','Visit / Revisit Scheduled':'bg-[#8B5CF6]','Visit Completed':'bg-[#14B8A6]','Application in Progress':'bg-[#F59E0B]','Admission Confirmed':'bg-[#10B981]','Closed':'bg-[#EF4444]'}; return m[st]||'bg-[#94A3B8]'; }
+function statusChip(st){ const m={'New Enquiry':'bg-[#EFF6FF] border-[#BFDBFE] text-[#1D4ED8]','Contacted':'bg-[#ECFEFF] border-[#A5F3FC] text-[#0E7490]','Visit / Revisit Scheduled':'bg-[#F5F3FF] border-[#DDD6FE] text-[#6D28D9]','Visit Completed':'bg-[#F0FDFA] border-[#99F6E4] text-[#0F766E]','Application in Progress':'bg-[#FFFBEB] border-[#FDE68A] text-[#B45309]','Admission Confirmed':'bg-[#ECFDF5] border-[#A7F3D0] text-[#047857]','Closed':'bg-[#FEF2F2] border-[#FECACA] text-[#B91C1C]'};
+  return '<span class="inline-flex items-center rounded-full border px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.5px] '+(m[st]||'bg-[#F8FAFC] border-[#CBD5E1] text-[#334155]')+'">'+esc(st)+'</span>'; }
+function parentInterestChip(pi){ const m={'Highly Interested':'bg-[#ECFDF5] border-[#A7F3D0] text-[#047857]','Very Interested':'bg-[#ECFDF5] border-[#A7F3D0] text-[#047857]','Interested':'bg-[#EFF6FF] border-[#BFDBFE] text-[#1D4ED8]','Considering':'bg-[#F5F3FF] border-[#DDD6FE] text-[#6D28D9]','Undecided':'bg-[#FFFBEB] border-[#FDE68A] text-[#B45309]','Low Interest':'bg-[#FFF7ED] border-[#FED7AA] text-[#C2410C]','Not Interested':'bg-[#F1F5F9] border-[#CBD5E1] text-[#475569]'};
+  if(!pi) return ''; return '<span class="inline-flex items-center rounded-full border px-2 py-0.5 text-[10.5px] font-semibold '+(m[pi]||'bg-[#F8FAFC] border-[#CBD5E1] text-[#334155]')+'">'+esc(pi)+'</span>'; }
+function reason(text,tone){ const m={red:'border-[#FECACA] bg-[#FEF2F2] text-[#B91C1C]',violet:'border-[#DDD6FE] bg-[#F5F3FF] text-[#6D28D9]',blue:'border-[#BFDBFE] bg-[#EFF6FF] text-[#1D4ED8]',amber:'border-[#FDE68A] bg-[#FFFBEB] text-[#B45309]'};
+  return '<span class="inline-flex items-center rounded-full border px-2 py-0.5 text-[10.5px] font-semibold '+(m[tone]||m.blue)+'">'+esc(text)+'</span>'; }
+function avatar(r){ const a=(r.parentName||'').split(' ').map(x=>x[0]).slice(0,2).join('').toUpperCase(); return '<span class="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-gradient-to-br from-[#EEF3FF] to-[#DCE7FF] text-[11px] font-bold text-[#284CA5] ring-1 ring-inset ring-[#CFDCFB]">'+esc(a)+'</span>'; }
+function meta(label,val){ if(!val) return ''; return '<div class="min-w-0"><div class="text-[10px] font-semibold uppercase tracking-[0.4px] text-[#94A3B8]">'+esc(label)+'</div><div class="truncate text-[12.5px] font-semibold text-[#334155]" data-tip="'+esc(val)+'">'+esc(val)+'</div></div>'; }
+function tBtn(act,id,label,variant){ const v={primary:'btn-primary',ghost:'btn-ghost',danger:'btn-danger'};
+  return '<button type="button" data-act="'+act+'" data-id="'+esc(id)+'" class="inline-flex h-9 flex-1 items-center justify-center whitespace-nowrap rounded-[10px] px-3 text-[12px] font-semibold transition '+(v[variant]||v.ghost)+'">'+esc(label)+'</button>'; }
+function icoSvg(name,cls){ cls=cls||'h-[15px] w-[15px]';
+  const o='<svg class="'+cls+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">';
+  switch(name){
+    case 'wa': return '<svg class="'+cls+'" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.885-9.885 9.885M20.52 3.449C18.24 1.245 15.24 0 12.045 0 5.463 0 .104 5.334.101 11.892c0 2.096.549 4.142 1.595 5.945L0 24l6.305-1.654a11.962 11.962 0 0 0 5.728 1.45h.005c6.581 0 11.94-5.334 11.943-11.893a11.821 11.821 0 0 0-3.46-8.408z"/></svg>';
+    case 'call': return o+'<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.18 4.18 2 2 0 0 1 4.18 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>';
+    case 'note': return o+'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6"/><path d="M9 17h4"/></svg>';
+    case 'fup': return o+'<path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>';
+    case 'fupset': return o+'<path d="M21 8.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h6.5"/><path d="M16 2v4M8 2v4M3 10h18"/><circle cx="18" cy="17" r="4"/><path d="M18 15.5V17l1 .8"/></svg>';
+    case 'plus': return o+'<path d="M12 5v14M5 12h14"/></svg>';
+    case 'close': return o+'<circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/></svg>';
+    case 'reopen': return o+'<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>';
+    case 'check': return o+'<path d="M20 6 9 17l-5-5"/></svg>';
+    case 'edit': return o+'<path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>';
+    case 'x': return o+'<path d="M18 6 6 18M6 6l12 12"/></svg>';
+    case 'calendar': return o+'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>';
+  }
+  return '';
+}
+function waCallBtns(r){ return ''
+  +'<button type="button" data-act="call" data-id="'+esc(r.id)+'" class="icon-btn inline-grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#EEF3FF] text-[#284CA5] ring-1 ring-inset ring-[#DCE7FF] hover:bg-[#DEE8FF]" aria-label="Call '+esc(r.parentName)+'" data-tip="Call">'+icoSvg('call','h-[16px] w-[16px]')+'</button>'
+  +'<button type="button" data-act="wa" data-id="'+esc(r.id)+'" class="icon-btn inline-grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#E7F9F0] text-[#0E9F6E] ring-1 ring-inset ring-[#BBEFD6] hover:bg-[#D7F4E6]" aria-label="WhatsApp '+esc(r.parentName)+'" data-tip="WhatsApp">'+icoSvg('wa','h-[16px] w-[16px]')+'</button>'; }
+function noteFollowBtns(r){
+  const notesBtn='<button type="button" data-act="note" data-id="'+esc(r.id)+'" class="icon-btn inline-grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#F1F5F9] text-[#475569] ring-1 ring-inset ring-[#E2E8F0] hover:bg-[#E2E8F0]" aria-label="Note for '+esc(r.parentName)+'" data-tip="Note">'+icoSvg('note','h-[16px] w-[16px]')+'</button>';
+  const fuBtn = r.followUp
+    ? '<button type="button" data-act="manageFollow" data-id="'+esc(r.id)+'" class="icon-btn relative inline-grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#FFF7ED] text-[#C2410C] ring-1 ring-inset ring-[#FED7AA] hover:bg-[#FFEDD5]" aria-label="Manage follow-up for '+esc(r.parentName)+'" data-tip="Follow-up"><span class="absolute right-0 top-0 h-2 w-2 rounded-full bg-[#F97316] ring-2 ring-white"></span>'+icoSvg('fupset','h-[16px] w-[16px]')+'</button>'
+    : '<button type="button" data-act="setStep" data-id="'+esc(r.id)+'" class="icon-btn inline-grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#F5F3FF] text-[#6D28D9] ring-1 ring-inset ring-[#DDD6FE] hover:bg-[#EDE9FE]" aria-label="Schedule follow-up for '+esc(r.parentName)+'" data-tip="Follow-up">'+icoSvg('fup','h-[16px] w-[16px]')+'</button>';
+  const closeBtn='<button type="button" data-act="closeEnq" data-id="'+esc(r.id)+'" class="icon-btn inline-grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#FEF2F2] text-[#B91C1C] ring-1 ring-inset ring-[#FECACA] hover:bg-[#FEE2E2]" aria-label="Close enquiry for '+esc(r.parentName)+'" data-tip="Close">'+icoSvg('close','h-[16px] w-[16px]')+'</button>';
+  return notesBtn + fuBtn + closeBtn;
+}
+function footerWrap(r,btns){ return '<div class="flex items-center gap-1.5">'+noteFollowBtns(r)+'</div>'+(btns?'<div class="flex flex-1 flex-wrap items-center justify-end gap-2">'+btns+'</div>':''); }
+
+/* ════════ UNIFIED CARD ════════ */
+function card(r,cfg){ cfg=cfg||{};
+  const chips=parentInterestChip(r.parentInterest)+(cfg.badge||'');
+  const m=meta('Age',ageFromDob(r.dob))+meta('Grade',r.gradeApplied)+meta('Area',r.area)+meta('Source',r.source);
+  const quickRow = cfg.plain ? '' : '<div class="flex flex-wrap items-center gap-1.5">'+chips+'<div class="ml-auto flex shrink-0 items-center gap-1.5" data-stop>'+waCallBtns(r)+'</div></div>';
+  const footer = (cfg.footer===false) ? '' : '<div class="flex flex-wrap items-center gap-2 border-t border-[#F1F4F9] bg-[#FCFDFF] px-3.5 py-2.5 pl-[18px]">'+(cfg.footer||footerWrap(r,statusActionBtn(r)))+'</div>';
+  return '<article data-act="view" data-id="'+esc(r.id)+'" role="button" tabindex="0" class="ssx-card row-card group relative flex h-full cursor-pointer flex-col overflow-hidden text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-[#284CA5]">'
+   +'<span class="absolute inset-y-2 left-0 w-[3px] rounded-r-full '+statusBar(r.status)+'"></span>'
+   +'<div class="flex flex-1 flex-col gap-3 p-4 pl-[18px]">'
+   +'<div class="flex items-start justify-between gap-2"><div class="flex min-w-0 items-center gap-2.5">'+avatar(r)
+   +'<div class="min-w-0"><div class="truncate text-[14px] font-bold leading-tight tracking-[-0.01em]">'+esc(r.parentName)+'</div><div class="mt-0.5 truncate text-[11.5px] text-[#64748B]">Child: '+esc(r.childName)+'</div></div></div>'+statusChip(r.status)+'</div>'
+   +quickRow
+   +'<div class="mt-0.5 grid grid-cols-2 gap-x-4 gap-y-3 rounded-xl bg-[#FAFBFE] p-3 ring-1 ring-inset ring-[#EEF2F8]">'+m+'</div>'
+   +'</div>'
+   +footer+'</article>';
+}
+function closedFooter(r){ return '<div class="flex w-full flex-wrap items-center justify-between gap-2"><span class="inline-flex min-w-0 items-center gap-1.5 text-[11.5px] font-medium text-[#B91C1C]">'+icoSvg('close','h-3.5 w-3.5 shrink-0')+'<span class="truncate" data-tip="'+esc(r.lostReason||'Closed')+'">'+esc(r.lostReason||'Closed')+'</span></span><button type="button" data-act="reopen" data-id="'+esc(r.id)+'" data-stop class="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-lg border border-[#D7E4FF] bg-white px-3 text-[12px] font-semibold text-[#284CA5] hover:bg-[#EFF4FF]">'+icoSvg('reopen','h-3.5 w-3.5')+'Reopen enquiry</button></div>'; }
+
+/* ════════ FOCUS RUN (guided one-at-a-time clearing) ════════ */
+function refreshAux(){ if(detailId&&rec(detailId)&&!$('detailModal').classList.contains('hidden')) openDetail(rec(detailId)); if(!$('focusModal').classList.contains('hidden')) renderFocus(); }
+function openFocus(){ focusSkip=new Set(); focusQueue=queueItems().map(it=>it.r.id); focusTotal=focusQueue.length; if(!focusTotal){ toast('Nothing to focus on — you are caught up'); return; } renderFocus(); show('focusModal'); }
+function renderFocus(){
+  const q=queueItems(); const inQueue=new Map(q.map(it=>[it.r.id,it]));
+  const actioned=focusQueue.filter(id=>!inQueue.has(id)).length;            // left the queue this run = actioned
+  const skipped=focusQueue.filter(id=>inQueue.has(id) && focusSkip.has(id)).length; // still pending, parked by user
+  const pending=focusQueue.filter(id=>inQueue.has(id) && !focusSkip.has(id));
+  const pct=focusTotal?Math.round(actioned/focusTotal*100):100;
+  const body=$('focusBody');
+  if(!pending.length){
+    const skipNote = skipped>0 ? '<div class="mt-1 text-[12.5px] text-[#B45309]">'+skipped+' skipped — still in your queue for later.</div>' : '';
+    body.innerHTML='<div class="flex flex-col items-center justify-center px-6 py-14 text-center"><span class="mb-4 grid h-16 w-16 place-items-center rounded-full bg-[#ECFDF5] text-[#10B981]"><svg class="h-9 w-9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><div class="text-[20px] font-extrabold text-[#0F172A]">'+(actioned?'Focus run complete':'Nothing left to action')+'</div><div class="mt-1 text-[13px] text-[#64748B]">You actioned '+actioned+' of '+focusTotal+' '+(focusTotal===1?'enquiry':'enquiries')+' in this run.</div>'+skipNote+'<button data-act="exitFocus" type="button" class="mt-6 inline-flex h-11 items-center rounded-xl bg-[#284CA5] px-5 text-[13px] font-semibold text-white hover:bg-[#203F8D]">Done</button></div>';
+    $('focusFooter').classList.add('hidden');
+    return;
+  }
+  const it=inQueue.get(pending[0]), r=it.r;
+  const a=actionFor(r);
+  body.innerHTML=''
+   +'<div class="mb-4"><div class="mb-1 flex items-center justify-between text-[11px] font-semibold text-[#64748B]"><span>Focus run · '+(focusTotal-actioned-skipped)+' to clear</span><span>'+actioned+' of '+focusTotal+' actioned</span></div><div class="h-2 w-full overflow-hidden rounded-full bg-[#EEF2F7]"><div class="bar-fill h-full rounded-full bg-[#284CA5]" style="width:'+pct+'%"></div></div></div>'
+   +'<div class="rounded-2xl border border-[#E2E8F0] bg-white p-4">'
+   +'<div class="flex flex-wrap items-center gap-2">'+statusChip(r.status)+parentInterestChip(r.parentInterest)+'</div>'
+   +'<div class="mt-3 flex items-start justify-between gap-3"><div class="flex min-w-0 items-center gap-3">'+avatar(r)+'<div class="min-w-0"><div class="truncate text-[18px] font-extrabold leading-tight">'+esc(r.parentName)+'</div><div class="truncate text-[12.5px] text-[#64748B]">Child: '+esc(r.childName)+' · '+esc(r.gradeApplied)+' · '+esc(r.area)+'</div></div></div><div class="flex shrink-0 items-center gap-1.5">'+waCallBtns(r)+'</div></div>'
+   +notesSection(r)
+   +followupSection(r)
+   +visitSection(r)
+   +'<button data-act="'+a.act+'" data-id="'+esc(r.id)+'" class="mt-4 inline-flex h-11 w-full items-center justify-center rounded-xl bg-[#284CA5] text-[13px] font-semibold text-white transition hover:bg-[#203F8D]">'+esc(a.label)+'</button>'
+   +(TERMINAL.includes(r.status)?'':'<button data-act="closeEnq" data-id="'+esc(r.id)+'" class="mt-2 inline-flex h-9 w-full items-center justify-center gap-1.5 rounded-lg text-[12px] font-semibold text-[#94A3B8] transition hover:bg-[#FEF2F2] hover:text-[#B91C1C]">'+icoSvg('close','h-3.5 w-3.5')+'Close enquiry</button>')
+   +'</div>';
+  $('focusFooter').classList.remove('hidden'); $('focusNextBtn').dataset.id=r.id;
+}
+
+/* ════════ NEXT BEST ACTION (hero) ════════ */
+function renderNBA(){
+  const all=queueItems();
+  const items=all.filter(it=>!nbaSkip.has(it.r.id));
+  const host=$('card-nba');
+  if(!all.length){
+    host.innerHTML='<div class="flex items-center gap-3 rounded-2xl border border-[#A7F3D0] bg-gradient-to-br from-[#ECFDF5] to-white px-5 py-4"><span class="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-[#10B981] text-white"><svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><div><div class="text-[15px] font-bold text-[#065F46]">Caught up for now</div><div class="text-[12.5px] text-[#047857]">No urgent action waiting. New enquiries surface here the moment they arrive.</div></div></div>';
+    return;
+  }
+  if(!items.length){ nbaSkip=new Set(); return renderNBA(); }
+  const it=items[0], r=it.r;
+  const pos=all.length-items.length+1;
+  host.innerHTML=''
+   +'<div class="overflow-hidden rounded-2xl border border-[#1E3A8A] bg-gradient-to-br from-[#0F2A66] via-[#284CA5] to-[#3257B8] text-white shadow-[0_10px_30px_rgba(40,76,165,0.35)]">'
+   +'<div class="flex items-center justify-between px-5 pt-4"><span class="inline-flex items-center gap-2 text-[10.5px] font-extrabold uppercase tracking-[1.6px] text-[#BFD3FF]"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>Next best action</span><span class="text-[11px] font-semibold text-[#BFD3FF]">'+pos+' of '+all.length+' to clear</span></div>'
+   +'<div class="px-5 pb-2 pt-2"><div class="flex flex-wrap items-center gap-2">'+statusChip(r.status)+parentInterestChip(r.parentInterest)+'<span class="rounded-full bg-white/15 px-2 py-0.5 text-[10px] font-bold text-white">'+esc(rel(r.createdAt))+'</span></div>'
+   +'<div class="mt-2 text-[22px] font-extrabold leading-tight">'+esc(r.parentName)+'</div><div class="text-[13px] text-[#D7E2FF]">Child: '+esc(r.childName)+' · '+esc(r.gradeApplied)+' · '+esc(r.academicYear)+(r.area?(' · '+esc(r.area)):'')+'</div></div>'
+   +'<div class="flex flex-wrap items-center gap-2 px-5 pb-4 pt-2">'
+   +'<button type="button" data-act="wa" data-id="'+esc(r.id)+'" class="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-[#25D366] text-[13.5px] font-bold text-white transition hover:bg-[#1FB855]" style="min-width:140px">'+icoSvg('wa','h-[18px] w-[18px]')+'WhatsApp now</button>'
+   +'<button type="button" data-act="call" data-id="'+esc(r.id)+'" class="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-white text-[13.5px] font-bold text-[#284CA5] transition hover:bg-[#EFF4FF]" style="min-width:120px"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.33 1.77.62 2.61a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.47-1.19a2 2 0 0 1 2.11-.45c.84.29 1.71.5 2.61.62A2 2 0 0 1 22 16.92z"/></svg>Call</button>'
+   +'<button type="button" data-act="view" data-id="'+esc(r.id)+'" class="inline-flex h-11 items-center justify-center rounded-xl border border-white/30 px-4 text-[13px] font-semibold text-white transition hover:bg-white/10">Open</button>'
+   +'<button type="button" data-act="skipNba" data-id="'+esc(r.id)+'" class="inline-flex h-11 items-center justify-center rounded-xl px-4 text-[13px] font-semibold text-[#BFD3FF] transition hover:bg-white/10">Skip &#8594;</button>'
+   +'</div>'
+   +'<button type="button" data-act="focus" class="flex w-full items-center justify-center gap-2 border-t border-white/15 bg-white/5 py-2.5 text-[12.5px] font-semibold text-white transition hover:bg-white/10"><svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 4 20 12 6 20 6 4"/></svg>Start focus run — clear all '+all.length+' one by one</button>'
+   +'</div>';
+}
+
+/* ════════ SECTION 0: START OF DAY ════════ */
+function renderSummary(){
+  const b=buckets(), calls=queueItems().length;
+  const tile=(n,label,tone,jump)=>'<button type="button" data-jump="'+jump+'" aria-label="Jump to '+label+' section" class="group flex cursor-pointer items-center gap-3 rounded-xl bg-[#FAFBFE] px-3.5 py-3 text-left ring-1 ring-inset ring-[#EEF2F8] transition hover:-translate-y-0.5 hover:bg-[#EEF3FF] hover:shadow-[0_6px_16px_-8px_rgba(40,76,165,0.4)] hover:ring-[#C3D6FF] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#284CA5] active:translate-y-0"><span class="text-[24px] font-extrabold leading-none tracking-[-0.02em] '+tone+'">'+n+'</span><span class="text-[11.5px] font-semibold leading-tight text-[#64748B] group-hover:text-[#284CA5]">'+label+'</span><svg class="ml-auto h-4 w-4 shrink-0 text-[#CBD5E1] transition group-hover:translate-x-0.5 group-hover:text-[#284CA5]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>';
+  const body='<div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">'
+    +tile(b.newToday.length,'New today','text-[#1D4ED8]','stage-new-enquiry')+tile(b.visits.length,'Visits','text-[#6D28D9]','stage-visit-revisit-scheduled')
+    +tile(b.today.length+b.overdue.length,'Follow-ups','text-[#B45309]','card-followups')+tile(b.overdue.length,'Overdue','text-[#B91C1C]','card-overdue')
+    +tile(calls,'To action','text-[#0B1220]','card-queue')+'</div>';
+  $('card-summary').innerHTML=sectionCard('summary','Your day at a glance','Tap a tile to jump to that section',body,
+    '<span class="hidden text-[11.5px] font-semibold text-[#94A3B8] sm:inline">'+esc(new Date().toLocaleDateString('en-GB',{weekday:'long'}))+'</span>');
+}
+
+/* ════════ NEEDS A NEXT STEP (leakage safety net) ════════ */
+function renderAttention(){
+  const list=buckets().idle; const host=$('card-attention');
+  if(!list.length){ host.innerHTML=''; return; }
+  const footer=r=>footerWrap(r, statusActionBtn(r));
+  const body=cardGrid(list.map(r=>card(r,{badge:reason('Follow-up not added','amber'),footer:footer(r)})).join(''));
+  host.innerHTML=sectionCard('attention','Action needed · follow-up not added','No enquiry should sit without a next step',body,pill(list.length,'bg-[#FEF2F2]','text-[#B91C1C]'));
+}
+
+/* ════════ SECTION 1: PROGRESS ════════ */
+function progressTile(label,val,target,icon){
+  const pct=target?Math.min(100,Math.round(val/target*100)):0;
+  const c=pct>=80?{bar:'bg-[#10B981]',pill:'bg-[#ECFDF5] text-[#047857] ring-[#A7F3D0]'}:pct>=50?{bar:'bg-[#F59E0B]',pill:'bg-[#FFFBEB] text-[#B45309] ring-[#FDE68A]'}:{bar:'bg-[#EF4444]',pill:'bg-[#FEF2F2] text-[#B91C1C] ring-[#FECACA]'};
+  const left=Math.max(0,target-val);
+  return '<div class="flex flex-col rounded-2xl bg-[#FAFBFE] p-4 ring-1 ring-inset ring-[#EEF2F8]">'
+   +'<div class="flex items-center gap-1.5 text-[12px] font-semibold text-[#64748B]"><svg class="h-4 w-4 text-[#94A3B8]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+icon+'</svg>'+esc(label)+'</div>'
+   +'<div class="mt-2.5 flex items-end gap-1.5"><span class="text-[28px] font-extrabold leading-none tracking-[-0.02em]">'+val+'</span><span class="pb-0.5 text-[13px] font-semibold text-[#94A3B8]">/ '+target+'</span><span class="ml-auto inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-bold ring-1 ring-inset '+c.pill+'">'+pct+'%</span></div>'
+   +'<div class="bar-track mt-3 h-2.5 w-full overflow-hidden rounded-full bg-[#EAEFF7]"><div class="bar-fill h-full rounded-full '+c.bar+'" style="width:'+pct+'%"></div></div>'
+   +'<div class="mt-2 text-[11px] font-medium text-[#94A3B8]">'+(left>0?left+' left to clear today':'Target met')+'</div></div>';
+}
+function targets(){ return STATE.view==='all' ? {enq:TARGET.enq*STAFF.length, vis:TARGET.vis*STAFF.length, adm:TARGET.adm*STAFF.length} : TARGET; }
+function renderProgress(){ const p=progress(); const avg=avgResponse(); const T=targets();
+  const badge=avg?'<span class="inline-flex items-center gap-1 rounded-full border border-[#A7F3D0] bg-[#ECFDF5] px-2.5 py-1 text-[11px] font-bold text-[#047857]">Avg response today · '+avg+'</span>':'<span class="inline-flex items-center gap-1 rounded-full border border-[#E2E8F0] bg-[#F8FAFC] px-2.5 py-1 text-[11px] font-bold text-[#64748B]">No replies logged yet</span>';
+  const body='<div class="grid grid-cols-1 gap-3 sm:grid-cols-3">'
+    +progressTile('Enquiries handled',p.enq,T.enq,'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>')
+    +progressTile('Visits done',p.vis,T.vis,'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>')
+    +progressTile('Admissions confirmed',p.adm,T.adm,'<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m22 4-10 10.01-3-3"/>')
+    +'</div>';
+  $('card-progress').innerHTML=sectionCard('progress','Daily target progress','Updates live as you work',body,badge);
+}
+
+/* ════════ SECTION 2: QUEUE ════════ */
+function queueFooter(it){ return footerWrap(it.r, statusActionBtn(it.r)); }
+function renderQueue(){ const all=queueItems(), list=all.slice(0,6), extra=all.length-list.length;
+  const body=list.length?cardGrid(list.map((it)=>card(it.r,{queue:true,footer:queueFooter(it)})).join(''))
+    +(extra>0?'<div class="mt-3 text-center"><a href="enquiries.html" class="inline-flex items-center gap-1 text-[12.5px] font-semibold text-[#284CA5] hover:underline">+'+extra+' more — open in Enquiries &#8594;</a></div>':'')
+    :emptyMini('You are all caught up — no urgent items right now.');
+  $('card-queue').innerHTML=sectionCard('queue','Today priority queue','Highest-value actions first',body,pill(all.length,'bg-[#FEF2F2]','text-[#B91C1C]')); }
+
+/* ════════ FOLLOW-UPS DUE (today + overdue) ════════ */
+function renderFollowups(){ const b=buckets();
+  const list=b.overdue.concat(b.today); // overdue first, then due-today
+  const body=list.length?cardGrid(list.map(r=>card(r,{badge:stageBadge(r),footer:statusFooter(r)})).join(''))
+    :emptyMini('No follow-ups due today — nothing waiting on a reply.');
+  $('card-followups').innerHTML=sectionCard('followups','Follow-ups due','Parents waiting to hear back — overdue and due today',body,pill(list.length,'bg-[#FFFBEB]','text-[#B45309]')); }
+
+/* ════════ OVERDUE (past-due follow-ups / actions) ════════ */
+function renderOverdue(){ const list=buckets().overdue;
+  const body=list.length?cardGrid(list.map(r=>card(r,{badge:stageBadge(r),footer:statusFooter(r)})).join(''))
+    :emptyMini('Nothing overdue — every follow-up is on time.');
+  $('card-overdue').innerHTML=sectionCard('overdue','Overdue follow-ups','Past their due date — clear these first',body,pill(list.length,'bg-[#FEF2F2]','text-[#B91C1C]')); }
+
+/* ════════ STATUS-FLOW SECTIONS (full coverage) ════════ */
+function nearestSlot(ts){ const d=new Date(ts); const cur=d.getHours()*60+d.getMinutes(); let best=ALL_SLOTS[0], bd=Infinity; ALL_SLOTS.forEach(s=>{ const m=s.match(/(\d+):(\d+)\s*(AM|PM)/i); if(!m) return; let h=(+m[1])%12; if(/pm/i.test(m[3])) h+=12; const mins=h*60+(+m[2]); const diff=Math.abs(mins-cur); if(diff<bd){ bd=diff; best=s; } }); return best; }
+function visitSlotLabel(v){ if(!v) return ''; return v.slot || nearestSlot(v.time); }
+function visitBadge(v){ return '<span class="inline-flex items-center gap-1 rounded-full border border-[#DDD6FE] bg-[#F5F3FF] px-2 py-0.5 text-[10px] font-semibold text-[#6D28D9]"><svg class="h-3 w-3 shrink-0 text-[#8B5CF6]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>'+esc(formatDatePretty(formatDateISO(new Date(v.time))))+' · '+esc(visitSlotLabel(v))+' Slot</span>'; }
+function followBadge(r){ const s=fuState(r); if(s==='overdue') return reason(dueLabel(r.followUp.dueAt),'red'); if(s==='today') return reason('Due today · '+clockOf(r.followUp.dueAt),'amber'); return reason(dueLabel(r.followUp.dueAt),'blue'); }
+function stageBadge(r){ if(r.followUp) return followBadge(r); if(r.visit && r.status==='Visit / Revisit Scheduled') return visitBadge(r.visit); return ''; }
+const STATUS_NEXT={'New Enquiry':'Contacted','Contacted':'Visit / Revisit Scheduled','Visit / Revisit Scheduled':'Visit Completed','Visit Completed':'Application in Progress','Application in Progress':'Admission Confirmed'};
+function nextStatusOf(s){ return STATUS_NEXT[s]||null; }
+function actionFor(r){
+  switch(r.status){
+    case 'New Enquiry': return {act:'advance', label:'Contact Parent'};
+    case 'Contacted': return {act:'schedVisit', label:'Schedule Visit'};
+    case 'Visit / Revisit Scheduled': return {act:'advance', label:'Visit Completed'};
+    case 'Visit Completed': return {act:'advance', label:'Start Application'};
+    case 'Application in Progress': return {act:'advance', label:'Admission Confirmed'};
+    default: return {act:'view', label:'Open'};
+  }
+}
+function statusActionBtn(r){ const a=actionFor(r); return tBtn(a.act, r.id, a.label, a.act==='view'?'ghost':'primary'); }
+function statusFooter(r){ return footerWrap(r, statusActionBtn(r)); }
+const STAGE_META={
+  'New Enquiry':{tint:'bg-[#EFF6FF]',text:'text-[#1D4ED8]',icon:'<path d="M12 5v14M5 12h14"/>',sub:'Make first contact quickly'},
+  'Contacted':{tint:'bg-[#ECFEFF]',text:'text-[#0E7490]',icon:'<path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.8 19.8 0 0 1 3 5.18 2 2 0 0 1 5 3h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L9.09 10.91a16 16 0 0 0 6 6l1.27-1.16a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>',sub:'Spoke with parent — keep nurturing'},
+  'Visit / Revisit Scheduled':{tint:'bg-[#F5F3FF]',text:'text-[#6D28D9]',icon:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',sub:'Campus visit booked'},
+  'Visit Completed':{tint:'bg-[#F0FDFA]',text:'text-[#0F766E]',icon:'<path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>',sub:'Visit done — move toward application'},
+  'Application in Progress':{tint:'bg-[#FFFBEB]',text:'text-[#B45309]',icon:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/>',sub:'Application underway'},
+  'Admission Confirmed':{tint:'bg-[#ECFDF5]',text:'text-[#047857]',icon:'<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m22 4-10 10.01-3-3"/>',sub:'Admission secured'},
+  'Closed':{tint:'bg-[#FEF2F2]',text:'text-[#B91C1C]',icon:'<circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/>',sub:'Enquiry closed'}
+};
+function stageSection(title,meta,bodyHtml,count,anchorId){
+  return '<div class="ssx-section"'+(anchorId?' id="'+anchorId+'"':'')+'>'
+   +'<div class="flex items-center justify-between gap-3 border-b border-[#F1F4F9] px-4 py-3.5 sm:px-5 sm:py-4">'
+   +'<div class="flex min-w-0 items-center gap-3"><span class="grid h-10 w-10 shrink-0 place-items-center rounded-2xl '+meta.tint+' '+meta.text+' ring-1 ring-inset ring-black/5"><svg class="h-[19px] w-[19px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+meta.icon+'</svg></span>'
+   +'<div class="min-w-0"><h2 class="truncate text-[15.5px] font-extrabold leading-tight tracking-[-0.01em]">'+esc(title)+'</h2><p class="truncate text-[12px] text-[#94A3B8]">'+esc(meta.sub||'')+'</p></div></div>'
+   +'<div class="shrink-0">'+pill(count,'bg-[#EFF4FF]','text-[#284CA5]')+'</div></div>'
+   +'<div class="p-3.5 sm:p-5">'+bodyHtml+'</div></div>';
+}
+function renderStages(){
+  const v=visible();
+  const html=statusList.filter(st=>!TERMINAL.includes(st)).map(st=>{
+    const list=v.filter(r=>r.status===st).slice().sort((a,b)=>leadScore(b).score-leadScore(a).score);
+    const meta=STAGE_META[st]||{tint:'bg-[#EFF4FF]',text:'text-[#284CA5]',icon:'<circle cx="12" cy="12" r="10"/>',sub:''};
+    const body=list.length?cardGrid(list.map(r=>card(r,{badge:stageBadge(r),footer:statusFooter(r)})).join('')):emptyMini('No enquiries in this stage.');
+    const aid='stage-'+st.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
+    return stageSection(st,meta,body,list.length,aid);
+  }).join('');
+  // Admission Confirmed — informational cards only (no actions)
+  const confList=v.filter(r=>r.status==='Admission Confirmed').slice().sort((a,b)=>b.createdAt-a.createdAt);
+  const confBody=confList.length?cardGrid(confList.map(r=>card(r,{plain:true,footer:false})).join('')):emptyMini('No confirmed admissions yet.');
+  const confSection=stageSection('Admission Confirmed',STAGE_META['Admission Confirmed'],confBody,confList.length,'stage-admission-confirmed');
+  // Closed Enquiries — closure info + Reopen
+  const closedList=v.filter(r=>r.status==='Closed').slice().sort((a,b)=>b.createdAt-a.createdAt);
+  const closedBody=closedList.length?cardGrid(closedList.map(r=>card(r,{plain:true,footer:closedFooter(r)})).join('')):emptyMini('No closed enquiries.');
+  const closedSection=stageSection('Closed Enquiries',STAGE_META['Closed'],closedBody,closedList.length,'stage-closed');
+  $('card-stages').innerHTML=html+confSection+closedSection;
+}
+
+/* ════════ SECTION 6: DONE TODAY ════════ */
+const ACT_LABEL={call:'Called',whatsapp:'WhatsApp sent',note:'Note added',status:'Status changed',visit:'Visit updated',brochure:'Brochure shared',followup:'Follow-up set'};
+function renderDone(){ const items=[];
+  visible().forEach(r=>r.activity.forEach(a=>{ if(isToday(a.ts)) items.push({r,a}); }));
+  items.sort((x,y)=>y.a.ts-x.a.ts);
+  const count=t=>items.filter(i=>i.a.type===t).length;
+  const counts='<div class="mb-3 flex flex-wrap gap-2">'
+    +['call','whatsapp','followup','visit','status'].map(t=>'<span class="inline-flex items-center gap-1.5 rounded-full border border-[#E2E8F0] bg-[#F8FAFC] px-2.5 py-1 text-[11.5px] font-semibold text-[#475569]">'+esc(ACT_LABEL[t])+' · '+count(t)+'</span>').join('')+'</div>';
+  const rows=items.map(i=>'<div class="flex items-center gap-3 border-t border-[#F1F5F9] py-2 first:border-t-0"><span class="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-[#ECFDF5] text-[#047857]"><svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><div class="min-w-0 flex-1"><div class="truncate text-[12.5px] font-semibold text-[#0F172A]">'+esc(ACT_LABEL[i.a.type]||'Action')+' — '+esc(i.r.parentName)+'</div><div class="truncate text-[11.5px] text-[#64748B]">'+esc(i.a.text)+'</div></div><span class="shrink-0 text-[11px] font-medium text-[#94A3B8]">'+esc(clockOf(i.a.ts))+'</span></div>').join('');
+  const rowsWrap = items.length>5 ? '<div class="max-h-[300px] overflow-y-auto pr-1">'+rows+'</div>' : rows;
+  const body = items.length
+    ? ('<details><summary class="flex cursor-pointer list-none items-center gap-1.5 text-[12.5px] font-semibold text-[#284CA5] [&::-webkit-details-marker]:hidden"><svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>Show today\'s activity log</summary><div class="mt-3">'+counts+rowsWrap+'</div></details>')
+    : emptyMini('Nothing logged yet today — your completed actions will appear here.');
+  $('card-done').innerHTML=sectionCard('done','Done today','A record of your work',body,pill(items.length,'bg-[#ECFDF5]','text-[#047857]')); }
+
+/* ════════ MASTER RENDER ════════ */
+function render(){ applyViewHeader(); renderSummary(); renderNBA(); renderAttention(); renderProgress(); renderQueue(); renderFollowups(); renderOverdue(); renderStages(); renderDone(); renderBell(); if(!$('focusModal').classList.contains('hidden')) renderFocus(); save(); }
+
+/* ════════ DETAIL MODAL ════════ */
+let detailId=null;
+function openDetail(r){ detailId=r.id;
+  const tl=r.activity.slice().sort((a,b)=>b.ts-a.ts).map(a=>'<div class="relative pl-1"><div class="tl-line"></div><div class="tl-dot relative"><div class="text-[12px] font-semibold text-[#0F172A]">'+esc(ACT_LABEL[a.type]||'Activity')+'</div><div class="text-[12px] text-[#475569]">'+esc(a.text)+'</div><div class="mt-0.5 text-[10.5px] text-[#94A3B8]">'+esc(rel(a.ts))+' · '+esc(clockOf(a.ts))+'</div></div></div>').join('') || '<p class="text-[12px] text-[#94A3B8]">No activity yet.</p>';
+  const det=(l,v)=>v?'<div class="min-w-0"><div class="text-[10px] font-semibold uppercase tracking-[0.4px] text-[#94A3B8]">'+esc(l)+'</div><div class="text-[12.5px] font-semibold text-[#334155] break-words">'+esc(v)+'</div></div>':'';
+  const latest=latestNoteOf(r);
+  const piCur = SC_INTEREST.includes(r.parentInterest)?r.parentInterest:(SC_INTEREST_MAP[r.parentInterest]||'Undecided');
+  $('detailBody').innerHTML=''
+   +'<div class="mb-3 flex items-center gap-3">'+avatar(r)+'<div class="min-w-0"><div class="text-[16px] font-bold">'+esc(r.parentName)+'</div><div class="text-[12.5px] text-[#64748B]">Child: '+esc(r.childName)+'</div></div></div>'
+   +'<div class="mb-3 flex flex-wrap items-center gap-2">'+statusChip(r.status)+parentInterestChip(r.parentInterest)+'</div>'
+   +'<div class="mb-3 grid grid-cols-2 gap-2">'
+   +'<div><label class="mb-1 block text-[11px] font-semibold uppercase tracking-[0.4px] text-[#64748B]">Update status</label>'
+   +'<div class="relative">'
+   +'<button type="button" id="detailStatusBtn" class="inline-flex h-10 w-full items-center justify-between gap-2 rounded-xl border border-[#D7E4FF] bg-white px-3 text-[13px] font-semibold text-[#284CA5] transition hover:bg-[#EFF4FF]" aria-haspopup="listbox" aria-expanded="false"><span id="detailStatusLabel" class="min-w-0 truncate">'+esc(r.status)+'</span><svg class="h-4 w-4 shrink-0 text-[#64748B]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>'
+   +'<div id="detailStatusMenu" class="absolute left-0 right-0 top-11 z-50 hidden max-h-[262px] overflow-y-auto rounded-2xl border border-[#E2E8F0] bg-white p-2 shadow-[0_12px_32px_rgba(15,23,42,0.16)]" role="listbox" aria-label="Update status" onclick="event.stopPropagation()">'
+   +statusList.map(s=>'<button type="button" data-setstatus="'+esc(s)+'" class="flex w-full cursor-pointer items-center justify-between gap-2 rounded-lg px-2.5 py-2 text-left text-[13px] '+(s===r.status?'bg-[#DCE8FF] font-semibold text-[#284CA5]':'text-[#0F172A] hover:bg-[#DCE8FF]')+'"><span class="min-w-0 truncate">'+esc(s)+'</span>'+(s===r.status?'<svg class="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>':'')+'</button>').join('')
+   +'</div></div></div>'
+   +'<div><label class="mb-1 block text-[11px] font-semibold uppercase tracking-[0.4px] text-[#64748B]">Parent interest</label>'
+   +'<div class="relative">'
+   +'<button type="button" id="detailInterestBtn" class="inline-flex h-10 w-full items-center justify-between gap-2 rounded-xl border border-[#D7E4FF] bg-white px-3 text-[13px] font-semibold text-[#284CA5] transition hover:bg-[#EFF4FF]" aria-haspopup="listbox" aria-expanded="false"><span id="detailInterestLabel" class="min-w-0 truncate">'+esc(piCur)+'</span><svg class="h-4 w-4 shrink-0 text-[#64748B]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>'
+   +'<div id="detailInterestMenu" class="absolute left-0 right-0 top-11 z-50 hidden max-h-[262px] overflow-y-auto rounded-2xl border border-[#E2E8F0] bg-white p-2 shadow-[0_12px_32px_rgba(15,23,42,0.16)]" role="listbox" aria-label="Parent interest" onclick="event.stopPropagation()">'
+   +SC_INTEREST.map(s=>'<button type="button" data-setinterest="'+esc(s)+'" class="flex w-full cursor-pointer items-center justify-between gap-2 rounded-lg px-2.5 py-2 text-left text-[13px] '+(s===piCur?'bg-[#DCE8FF] font-semibold text-[#284CA5]':'text-[#0F172A] hover:bg-[#DCE8FF]')+'"><span class="min-w-0 truncate">'+esc(s)+'</span>'+(s===piCur?'<svg class="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>':'')+'</button>').join('')
+   +'</div></div></div>'
+   +'</div>'
+   +followupSection(r)
+   +visitSection(r)
+   +notesSection(r)
+   +'<div class="mt-4 grid grid-cols-2 gap-x-3 gap-y-2.5 border-t border-[#F1F5F9] pt-3.5">'+det('Mobile',r.mobile)+det('Age',ageFromDob(r.dob))+det('Grade',r.gradeApplied)+det('Academic year',r.academicYear)+det('Curriculum',r.curriculum)+det('Area',r.area)+det('Source',r.source)+det('Assignee',r.assignee)+det('Received',rel(r.createdAt))+'</div>'
+   +(r.message?'<div class="mt-3 rounded-xl border border-[#EEF2F7] bg-[#FBFCFE] px-3 py-2.5"><div class="text-[10px] font-semibold uppercase tracking-[0.4px] text-[#94A3B8]">Parent\u2019s message</div><div class="mt-1 text-[12.5px] leading-relaxed text-[#334155]">'+esc(r.message)+'</div></div>':'')
+   +(TERMINAL.includes(r.status)?'':'<div class="mt-4 border-t border-[#F1F5F9] pt-3"><button data-act="closeEnq" data-id="'+esc(r.id)+'" class="inline-flex h-10 w-full items-center justify-center gap-1.5 rounded-lg border border-[#FECACA] bg-white text-[12.5px] font-semibold text-[#B91C1C] transition hover:bg-[#FEF2F2]">'+icoSvg('close','h-4 w-4')+'Close enquiry</button></div>')
+   +'<div class="mt-4 border-t border-[#F1F5F9] pt-3"><div class="mb-2 text-[11px] font-semibold uppercase tracking-[0.4px] text-[#64748B]">Activity timeline</div><div class="space-y-3 pl-5">'+tl+'</div></div>';
+  $('detailStatusBtn').onclick=(e)=>{ e.stopPropagation(); const m=$('detailStatusMenu'); const willOpen=m.classList.contains('hidden'); closeMenus(); if(willOpen){ m.classList.remove('hidden'); $('detailStatusBtn').setAttribute('aria-expanded','true'); } };
+  $('detailStatusMenu').querySelectorAll('[data-setstatus]').forEach(b=>{ b.onclick=(e)=>{ e.stopPropagation(); const ns=b.dataset.setstatus; $('detailStatusMenu').classList.add('hidden'); $('detailStatusBtn').setAttribute('aria-expanded','false'); if(ns===r.status) return; if(ns==='Closed'){ openClose(r); return; } openStatusConfirm(r, ns); }; });
+  $('detailInterestBtn').onclick=(e)=>{ e.stopPropagation(); const m=$('detailInterestMenu'); const willOpen=m.classList.contains('hidden'); closeMenus(); if(willOpen){ m.classList.remove('hidden'); $('detailInterestBtn').setAttribute('aria-expanded','true'); } };
+  $('detailInterestMenu').querySelectorAll('[data-setinterest]').forEach(b=>{ b.onclick=(e)=>{ e.stopPropagation(); const ni=b.dataset.setinterest; $('detailInterestMenu').classList.add('hidden'); $('detailInterestBtn').setAttribute('aria-expanded','false'); if(ni===piCur) return; snapshot(); r.parentInterest=ni; logAct(r,'note','Parent interest updated to '+ni); toast('Parent interest updated · '+r.parentName,true); render(); if(rec(r.id)) openDetail(rec(r.id)); }; });
+  $('detailWa').onclick=()=>openWa(r);
+  $('detailCall').onclick=()=>doCall(r);
+  show('detailModal');
+}
+
+/* ════════ NOTE MODAL ════════ */
+let noteId=null;
+function latestNoteOf(r){ const ns=r.activity.filter(a=>a.type==='note'); if(!ns.length) return null; return ns.slice().sort((a,b)=>b.ts-a.ts)[0]; }
+function recentNoteCard(note, r){ if(!note) return '';
+  const who = note.by || (r&&r.assignee) || 'Counsellor';
+  return '<div class="rounded-lg border border-[#E7ECF5] bg-white px-3 py-2.5">'
+    +'<p class="text-[12.5px] leading-relaxed text-[#334155]">'+esc(note.text)+'</p>'
+    +'<div class="mt-1.5 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-[11px] text-[#94A3B8]"><span class="font-semibold text-[#64748B]">'+esc(who)+'</span><span aria-hidden="true">·</span><span>'+esc(fupDateTime(note.ts))+'</span></div>'
+    +'</div>';
+}
+function notesSection(r){ const latest=latestNoteOf(r);
+  return '<div class="mt-3 rounded-xl border border-[#E7ECF5] bg-[#FBFCFE] p-3">'
+    +'<div class="mb-2 text-[10px] font-bold uppercase tracking-[0.5px] text-[#94A3B8]">Recent note</div>'
+    +(latest ? recentNoteCard(latest, r) : '<div class="rounded-lg border border-dashed border-[#E2E8F0] bg-white px-3 py-2.5 text-[12px] text-[#94A3B8]">No recent note added.</div>')
+    +'<button data-act="note" data-id="'+esc(r.id)+'" class="mt-2.5 inline-flex h-9 w-full items-center justify-center gap-1.5 rounded-lg border border-[#D7E4FF] bg-white text-[12.5px] font-semibold text-[#284CA5] transition hover:bg-[#EFF4FF]">'+icoSvg('plus','h-4 w-4')+'Note</button>'
+    +'</div>';
+}
+function iconAct(act,id,icon,tip,tone){ const t={blue:'border-[#D7E4FF] text-[#284CA5] hover:bg-[#EFF4FF]',green:'border-[#A7F3D0] text-[#059669] hover:bg-[#ECFDF5]',red:'border-[#FECACA] text-[#B91C1C] hover:bg-[#FEF2F2]'}[tone]||'border-[#E2E8F0] text-[#475569] hover:bg-[#F1F5F9]';
+  return '<button data-act="'+act+'" data-id="'+esc(id)+'" data-tip="'+esc(tip)+'" class="inline-grid h-7 w-7 shrink-0 place-items-center rounded-lg border bg-white '+t+' transition">'+icoSvg(icon,'h-3.5 w-3.5')+'</button>'; }
+function followupSection(r){ const fu=r.followUp; let inner;
+  if(fu){ const s=fuState(r); const stTxt=s==='overdue'?'Overdue':(s==='today'?'Due today':'Upcoming');
+    const stCls=s==='overdue'?'border-[#FECACA] bg-[#FEF2F2] text-[#B91C1C]':(s==='today'?'border-[#FDE68A] bg-[#FFFBEB] text-[#B45309]':'border-[#BFDBFE] bg-[#EFF6FF] text-[#1D4ED8]');
+    inner='<div class="rounded-lg border border-[#E2E8F0] bg-white p-3">'
+      +'<div class="mb-1 flex flex-wrap items-center gap-2"><span class="inline-flex min-w-0 items-center gap-1.5 text-[13px] font-semibold text-[#0F172A]">'+icoSvg('calendar','h-4 w-4 shrink-0 text-[#6D28D9]')+'<span class="truncate">'+esc(fupDateTime(fu.dueAt))+'</span></span><span class="inline-flex shrink-0 items-center rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.4px] '+stCls+'">'+stTxt+'</span></div>'
+      +(fu.note?'<p class="text-[12px] leading-relaxed text-[#475569]">'+esc(fu.note)+'</p>':'<p class="text-[12px] italic text-[#94A3B8]">No note added</p>')
+      +'<div class="mt-2.5 flex items-center gap-1.5 border-t border-[#F1F5F9] pt-2.5">'+iconAct('editFollow',r.id,'edit','Reschedule follow-up','blue')+iconAct('completeFollow',r.id,'check','Mark follow-up done','green')+iconAct('cancelFollow',r.id,'x','Cancel follow-up','red')+'</div>'
+      +'</div>';
+  } else {
+    inner='<div class="flex items-center justify-between gap-2 rounded-lg border border-dashed border-[#D7E4FF] bg-white px-3 py-2.5"><span class="text-[12px] text-[#94A3B8]">No follow-up scheduled.</span><button data-act="setStep" data-id="'+esc(r.id)+'" data-tip="Schedule follow-up" class="inline-flex shrink-0 items-center gap-1 rounded-lg border border-[#D7E4FF] bg-white px-2.5 py-1 text-[11.5px] font-semibold text-[#284CA5] transition hover:bg-[#EFF4FF]">'+icoSvg('plus','h-3.5 w-3.5')+'Add</button></div>';
+  }
+  return '<div class="mt-3 rounded-xl border border-[#E7ECF5] bg-[#FBFCFE] p-3"><div class="mb-2 text-[10px] font-bold uppercase tracking-[0.5px] text-[#94A3B8]">Upcoming follow-up</div>'+inner+'</div>';
+}
+function visitSection(r){ const v=r.visit; const done=r.status==='Visit Completed'; let inner;
+  if(v){
+    inner='<div class="rounded-lg border border-[#E2E8F0] bg-white p-3">'
+      +'<div class="flex flex-wrap items-center gap-2"><span class="inline-flex min-w-0 items-center gap-1.5 text-[13px] font-semibold text-[#0F172A]">'+icoSvg('calendar','h-4 w-4 shrink-0 text-[#6D28D9]')+'<span class="truncate">'+esc(formatDatePretty(formatDateISO(new Date(v.time))))+' · '+esc(visitSlotLabel(v))+' Slot</span></span><span class="inline-flex shrink-0 items-center rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.4px] '+(done?'border-[#A7F3D0] bg-[#ECFDF5] text-[#047857]':'border-[#DDD6FE] bg-[#F5F3FF] text-[#6D28D9]')+'">'+(done?'Completed':'Scheduled')+'</span></div>'
+      +(done?'':'<div class="mt-2.5 flex items-center gap-1.5 border-t border-[#F1F5F9] pt-2.5">'+iconAct('schedVisit',r.id,'edit','Reschedule visit','blue')+iconAct('markVisited',r.id,'check','Mark visit done','green')+'</div>')
+      +'</div>';
+  } else {
+    inner='<div class="flex items-center justify-between gap-2 rounded-lg border border-dashed border-[#D7E4FF] bg-white px-3 py-2.5"><span class="text-[12px] text-[#94A3B8]">No visit scheduled.</span><button data-act="schedVisit" data-id="'+esc(r.id)+'" data-tip="Schedule visit" class="inline-flex shrink-0 items-center gap-1 rounded-lg border border-[#D7E4FF] bg-white px-2.5 py-1 text-[11.5px] font-semibold text-[#284CA5] transition hover:bg-[#EFF4FF]">'+icoSvg('plus','h-3.5 w-3.5')+'Add</button></div>';
+  }
+  return '<div class="mt-3 rounded-xl border border-[#E7ECF5] bg-[#FBFCFE] p-3"><div class="mb-2 text-[10px] font-bold uppercase tracking-[0.5px] text-[#94A3B8]">Visit schedule</div>'+inner+'</div>';
+}
+function openNote(r,title,prefill){ noteId=r.id; $('noteTitle').textContent=title||'Note';
+  const latest=latestNoteOf(r);
+  const recentNoteHtml = latest ? ('<div class="mb-1.5 text-[10px] font-bold uppercase tracking-[0.5px] text-[#94A3B8]">Recent note</div>'+recentNoteCard(latest, r)) : '';
+  $('noteFor').innerHTML = recentNoteHtml + '<div class="'+(latest?'mt-3 ':'')+'text-[12.5px] font-medium text-[#64748B]">For '+esc(r.parentName)+' (child: '+esc(r.childName)+')</div>';
+  $('noteText').value=prefill||''; show('noteModal'); setTimeout(()=>$('noteText').focus(),60); }
+$('noteSaveBtn').onclick=()=>{ const t=$('noteText').value.trim(); if(!t){ toast('Type a note first'); return; } const r=rec(noteId); if(r){ snapshot(); logAct(r,'note',t,{by:r.assignee}); toast('Note saved · '+r.parentName,true); } hide('noteModal'); render(); refreshAux(); };
+
+/* ════════ SCHEDULE MODAL ════════ */
+let schedCtx=null; // {id, mode:'visit'|'followup', title, defaultTs, skippable, onSkip}
+const SCHED_CAL_ICON='<svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>';
+function openSched(opts){ schedCtx=opts; const r=rec(opts.id); if(!r) return;
+  $('schedTitle').textContent=opts.title||(opts.mode==='visit'?'Schedule Visit':'Add Follow-up');
+  const def=opts.defaultTs||(Date.now()+DAY); const todayISO=formatDateISO(new Date()); selectedSlot=null;
+  if(opts.mode==='visit'){
+    const preDate = r.visit ? formatDateISO(new Date(r.visit.time)) : '';
+    $('schedBody').innerHTML=''
+      +'<div class="mb-4"><label class="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.5px] text-[#475569]">Visit Date</label>'
+      +'<button type="button" id="calTrigger" onclick="openVisitCalendar(event)" class="flex h-10 w-full items-center justify-between gap-2 rounded-xl border border-[#D7E4FF] bg-white pl-3 pr-1.5 text-[13px] font-semibold text-[#284CA5] outline-none transition hover:bg-[#EFF4FF] focus:border-[#284CA5] focus:ring-2 focus:ring-[#DCE8FF]"><span id="calTriggerValue">'+(preDate?formatDatePretty(preDate):'Select date')+'</span><span class="grid h-6 w-6 place-items-center text-[#94A3B8]">'+SCHED_CAL_ICON+'</span></button></div>'
+      +'<div class="mb-5"><label class="mb-2 block text-[11px] font-semibold uppercase tracking-[0.5px] text-[#475569]">Available Time Slots</label><div id="slotGrid" class="flex flex-wrap gap-2"></div><p id="slotHelp" class="mt-1.5 text-[11px] text-[#94A3B8]">Select a date to view available slots.</p></div>'
+      +'<div class="flex gap-2 border-t border-[#EEF2F7] pt-4"><button type="button" onclick="closeSched()" class="h-10 flex-1 rounded-xl border border-[#E2E8F0] bg-white text-[13px] font-semibold text-[#475569] transition hover:bg-[#EFF4FF] hover:text-[#284CA5]">Cancel</button><button type="button" onclick="confirmVisitSchedule()" class="h-10 flex-1 rounded-xl bg-[#284CA5] text-[13px] font-semibold text-white transition hover:bg-[#203F8D]">Confirm Schedule</button></div>';
+    initCalendar('calContainer', preDate||'', todayISO);
+    renderSlots(preDate||'', null);
+  } else {
+    const preDate = r.followUp ? formatDateISO(new Date(r.followUp.dueAt)) : '';
+    const noteVal = r.followUp && r.followUp.note ? r.followUp.note : '';
+    const _d = r.followUp ? new Date(r.followUp.dueAt) : null;
+    let _H = _d ? _d.getHours() : 10; let _M = _d ? Math.round(_d.getMinutes()/5)*5 : 0; if(_M===60) _M=0;
+    const _ampm = _H>=12 ? 'PM' : 'AM'; let _h12 = _H%12; if(_h12===0) _h12=12;
+    const hourOpts = Array.from({length:12},(_,i)=>i+1).map(h=>{ const v=String(h).padStart(2,'0'); return '<option value="'+v+'"'+(h===_h12?' selected':'')+'>'+v+'</option>'; }).join('');
+    const minOpts = Array.from({length:12},(_,i)=>i*5).map(mm=>{ const v=String(mm).padStart(2,'0'); return '<option value="'+v+'"'+(mm===_M?' selected':'')+'>'+v+'</option>'; }).join('');
+    const ampmOpts = ['AM','PM'].map(a=>'<option value="'+a+'"'+(a===_ampm?' selected':'')+'>'+a+'</option>').join('');
+    let _recent=null;
+    if(r.followUp){ const s=fuState(r); _recent={dueAt:r.followUp.dueAt, note:r.followUp.note, status:(s==='overdue'?'Overdue':(s==='today'?'Due today':'Scheduled'))}; }
+    else if(r.lastFollowUp){ _recent={dueAt:r.lastFollowUp.dueAt, note:r.lastFollowUp.note, status:r.lastFollowUp.status||'Completed'}; }
+    const recentHtml = _recent ? (''
+      +'<div class="mb-4 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] p-3">'
+      +'<div class="mb-1 flex items-center justify-between gap-2"><span class="text-[10px] font-bold uppercase tracking-[0.5px] text-[#94A3B8]">Recent follow-up</span><span class="inline-flex shrink-0 items-center rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.4px] '+recentStatusCls(_recent.status)+'">'+esc(_recent.status)+'</span></div>'
+      +'<div class="text-[12.5px] font-semibold text-[#0F172A]">'+esc(fupDateTime(_recent.dueAt))+'</div>'
+      +(_recent.note?'<p class="mt-1 text-[12px] leading-relaxed text-[#475569]">'+esc(_recent.note)+'</p>':'')
+      +'</div>') : '';
+    $('schedBody').innerHTML=''
+      +recentHtml
+      +'<div class="mb-4 flex items-start gap-2 rounded-lg border border-[#FDE68A] bg-[#FFFBEB] px-3 py-2.5"><svg class="mt-0.5 h-4 w-4 shrink-0 text-[#B45309]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><p class="text-[12px] leading-relaxed text-[#92400E]">A follow-up is a reminder to reconnect with the parent.</p></div>'
+      +'<div class="mb-4"><label class="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.5px] text-[#475569]">Follow-up Date <span class="text-[#DC2626]">*</span></label>'
+      +'<button type="button" id="followupDateTrigger" onclick="openFollowupCalendar(event)" class="flex h-10 w-full items-center justify-between gap-2 rounded-xl border border-[#D7E4FF] bg-white pl-3 pr-1.5 text-[13px] font-semibold text-[#284CA5] outline-none transition hover:bg-[#EFF4FF] focus:border-[#284CA5] focus:ring-2 focus:ring-[#DCE8FF]"><span id="followupDateValue">'+(preDate?formatDatePretty(preDate):'Select date')+'</span><span class="grid h-6 w-6 place-items-center text-[#94A3B8]">'+SCHED_CAL_ICON+'</span></button></div>'
+      +'<div class="mb-4"><label class="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.5px] text-[#475569]">Follow-up Time <span class="text-[#DC2626]">*</span></label>'
+      +'<div class="flex items-center gap-2"><select id="fuHour" class="dd-native h-10 flex-1 rounded-xl border border-[#D7E4FF] bg-white pl-3 pr-8 text-[13px] font-semibold text-[#284CA5] transition hover:bg-[#EFF4FF] focus:border-[#284CA5] focus:outline-none focus:ring-2 focus:ring-[#DCE8FF]">'+hourOpts+'</select><span class="font-semibold text-[#94A3B8]">:</span><select id="fuMin" class="dd-native h-10 flex-1 rounded-xl border border-[#D7E4FF] bg-white pl-3 pr-8 text-[13px] font-semibold text-[#284CA5] transition hover:bg-[#EFF4FF] focus:border-[#284CA5] focus:outline-none focus:ring-2 focus:ring-[#DCE8FF]">'+minOpts+'</select><select id="fuAmpm" class="dd-native h-10 flex-1 rounded-xl border border-[#D7E4FF] bg-white pl-3 pr-8 text-[13px] font-semibold text-[#284CA5] transition hover:bg-[#EFF4FF] focus:border-[#284CA5] focus:outline-none focus:ring-2 focus:ring-[#DCE8FF]">'+ampmOpts+'</select></div></div>'
+      +'<div class="mb-5"><label class="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.5px] text-[#475569]">Reminder Note <span class="text-[#DC2626]">*</span></label><textarea id="followupNote" rows="3" placeholder="e.g. Call parent to discuss fee structure and confirm visit slot" class="w-full resize-none rounded-xl border border-[#E2E8F0] bg-white px-3 py-2 text-[13px] text-[#334155] outline-none transition placeholder:text-[#94A3B8] focus:border-[#BFD3FF] focus:ring-2 focus:ring-[#DCE8FF]">'+esc(noteVal)+'</textarea></div>'
+      +(opts.skippable?'<button type="button" onclick="schedSkipAction()" class="mb-3 inline-flex h-9 w-full items-center justify-center rounded-xl border border-[#E2E8F0] bg-white text-[12.5px] font-semibold text-[#64748B] transition hover:bg-[#F1F5F9]">No next step needed</button>':'')
+      +'<div class="flex gap-2 border-t border-[#EEF2F7] pt-4"><button type="button" onclick="closeSched()" class="h-10 flex-1 rounded-xl border border-[#E2E8F0] bg-white text-[13px] font-semibold text-[#475569] transition hover:bg-[#EFF4FF] hover:text-[#284CA5]">Cancel</button><button type="button" onclick="saveFollowup()" class="h-10 flex-1 rounded-xl bg-[#284CA5] text-[13px] font-semibold text-white transition hover:bg-[#203F8D]">Save</button></div>';
+    initCalendar('calContainer', preDate||'', todayISO);
+  }
+  show('schedModal'); }
+function openVisitCalendar(event){ calOnPick=(iso)=>{ const tv=$('calTriggerValue'); if(tv) tv.textContent=formatDatePretty(iso); selectedSlot=null; renderSlots(iso,null); }; openCalendarModal(event); }
+function openFollowupCalendar(event){ calOnPick=(iso)=>{ const tv=$('followupDateValue'); if(tv) tv.textContent=formatDatePretty(iso); const dt=$('followupDateTrigger'); if(dt) dt.classList.remove('border-[#DC2626]','ring-2','ring-[#FCA5A5]'); }; openCalendarModal(event); }
+function renderSlots(dateStr, preSelect){ const grid=$('slotGrid'); if(!grid) return; const help=$('slotHelp');
+  if(!dateStr){ selectedSlot=null; grid.innerHTML=ALL_SLOTS.map(s=>'<button type="button" class="slot-chip" disabled>'+s+'</button>').join(''); if(help) help.textContent='Select a date to view available slots.'; return; }
+  if(preSelect&&!selectedSlot) selectedSlot=preSelect;
+  grid.innerHTML=ALL_SLOTS.map(s=>{ const booked=BOOKED_SLOTS.includes(s); const active=s===selectedSlot; return '<button type="button" class="slot-chip'+(active?' selected':'')+'" '+(booked?'disabled':'onclick="selectSlot(\''+s+'\')"')+'>'+s+'</button>'; }).join('');
+  if(help) help.textContent='Greyed slots are already booked'; }
+function selectSlot(slot){ if(!calSelectedDate) return; selectedSlot=slot; renderSlots(calSelectedDate, slot); }
+function slotToTs(dateISO, slot){ const d=parseISO(dateISO); const m=slot.match(/(\d+):(\d+)\s*(AM|PM)/i); if(!m) return d.getTime(); let h=(+m[1])%12; if(/pm/i.test(m[3])) h+=12; d.setHours(h, +m[2], 0, 0); return d.getTime(); }
+function confirmVisitSchedule(){ const r=rec(schedCtx&&schedCtx.id); if(!r) return;
+  if(!calSelectedDate){ toast('Please select a date'); return; }
+  if(!selectedSlot){ toast('Please select a time slot'); return; }
+  const reschedule=!!r.visit; const ts=slotToTs(calSelectedDate, selectedSlot); snapshot();
+  r.visit={time:ts, slot:selectedSlot}; r.status='Visit / Revisit Scheduled';
+  logAct(r,'visit',(reschedule?'Visit rescheduled to ':'Visit scheduled for ')+formatDatePretty(calSelectedDate)+' at '+selectedSlot);
+  toast((reschedule?'Visit rescheduled · ':'Visit scheduled · ')+r.parentName,true);
+  selectedSlot=null; closeSched(); render(); refreshAux(); }
+function saveFollowup(){ const r=rec(schedCtx&&schedCtx.id); if(!r) return;
+  if(!calSelectedDate){ const dt=$('followupDateTrigger'); if(dt){ dt.classList.add('border-[#DC2626]','ring-2','ring-[#FCA5A5]'); } toast('Follow-up date is required — please select a date'); return; }
+  const hEl=$('fuHour'), mEl=$('fuMin'), aEl=$('fuAmpm');
+  if(!hEl||!mEl||!aEl||!hEl.value||!mEl.value||!aEl.value){ toast('Please select a follow-up time'); return; }
+  const ntEl=$('followupNote'); const note=ntEl?ntEl.value.trim():'';
+  if(!note){ toast('Add a reminder note'); if(ntEl) ntEl.focus(); return; }
+  let h=(+hEl.value)%12; if(/pm/i.test(aEl.value)) h+=12; const d=parseISO(calSelectedDate); d.setHours(h, +mEl.value, 0, 0); const ts=d.getTime(); snapshot();
+  r.followUp={dueAt:ts, note:note};
+  logAct(r,'followup','Follow-up set for '+fupDateTime(ts)+' — '+note);
+  toast('Follow-up scheduled · '+r.parentName,true);
+  closeSched(); render(); refreshAux(); }
+function schedSkipAction(){ if(schedCtx&&schedCtx.onSkip) schedCtx.onSkip(); closeSched(); render(); }
+function closeSched(){ closeCalendarModal(); hide('schedModal'); }
+
+/* ════════ MINI CALENDAR WIDGET (ported from enquiry detail reference) ════════ */
+const MONTH_NAMES=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const ALL_SLOTS=['9:00 AM','10:00 AM','11:00 AM','12:00 PM','2:00 PM','3:00 PM','4:00 PM'];
+const BOOKED_SLOTS=['9:00 AM','10:00 AM'];
+const CAL_W=320, CAL_GAP=8;
+let calViewYear=null, calViewMonth=null, calSelectedDate=null, calMinDate=null, calTargetId=null, calOnPick=null, selectedSlot=null;
+function formatDateISO(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function formatDatePretty(iso){ if(!iso) return ''; try{ return new Date(iso+'T00:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}); }catch(_){ return iso; } }
+function fupDateTime(ts){ if(ts==null) return ''; return formatDatePretty(formatDateISO(new Date(ts)))+' · '+clockOf(ts); }
+function slotRangeOf(v){ if(!v) return ''; if(v.slot){ const m=String(v.slot).match(/(\d+):(\d+)\s*(AM|PM)/i); if(m){ let h=(+m[1])%12; if(/pm/i.test(m[3])) h+=12; const start=new Date(v.time); start.setHours(h,+m[2],0,0); const end=new Date(start.getTime()+30*60000); return clockOf(start.getTime())+' - '+clockOf(end.getTime()); } return v.slot; } const s=new Date(v.time); const e=new Date(v.time+30*60000); return clockOf(s.getTime())+' - '+clockOf(e.getTime()); }
+function recentStatusCls(s){ s=(s||'').toLowerCase(); if(s.indexOf('complete')>=0) return 'border-[#A7F3D0] bg-[#ECFDF5] text-[#047857]'; if(s.indexOf('cancel')>=0||s.indexOf('overdue')>=0) return 'border-[#FECACA] bg-[#FEF2F2] text-[#B91C1C]'; if(s.indexOf('today')>=0) return 'border-[#FDE68A] bg-[#FFFBEB] text-[#B45309]'; return 'border-[#BFDBFE] bg-[#EFF6FF] text-[#1D4ED8]'; }
+function parseISO(iso){ const [y,m,d]=iso.split('-').map(Number); return new Date(y,m-1,d); }
+function initCalendar(targetId, initialISO, minISO){ calTargetId=targetId; calMinDate=minISO?parseISO(minISO):new Date(new Date().setHours(0,0,0,0)); const start=initialISO?parseISO(initialISO):new Date(); calViewYear=start.getFullYear(); calViewMonth=start.getMonth(); calSelectedDate=initialISO||null; renderCalendar(); const tv=document.getElementById('calTriggerValue'); if(tv && calSelectedDate) tv.textContent=formatDatePretty(calSelectedDate); }
+function renderCalendar(){ const target=document.getElementById(calTargetId); if(!target) return; const firstDayIndex=new Date(calViewYear,calViewMonth,1).getDay(); const daysInMonth=new Date(calViewYear,calViewMonth+1,0).getDate(); const daysInPrev=new Date(calViewYear,calViewMonth,0).getDate(); const todayISO=formatDateISO(new Date()); let cells=''; for(let i=firstDayIndex-1;i>=0;i--) cells+='<button class="cal-day outside" disabled>'+(daysInPrev-i)+'</button>'; for(let d=1;d<=daysInMonth;d++){ const iso=formatDateISO(new Date(calViewYear,calViewMonth,d)); const isToday=iso===todayISO; const isSelected=iso===calSelectedDate; const isPast=new Date(calViewYear,calViewMonth,d)<calMinDate; const cls=['cal-day']; if(isToday&&!isSelected) cls.push('today'); if(isSelected) cls.push('selected'); cells+='<button class="'+cls.join(' ')+'" '+(isPast?'disabled':'onclick="calPickDay(\''+iso+'\')"')+'>'+d+'</button>'; } const used=firstDayIndex+daysInMonth; for(let i=1;i<=42-used;i++) cells+='<button class="cal-day outside" disabled>'+i+'</button>'; const minY=calMinDate.getFullYear(), minM=calMinDate.getMonth(); const prevDisabled=(calViewYear<minY)||(calViewYear===minY&&calViewMonth<=minM); target.innerHTML='<div class="cal-widget"><div class="cal-header"><button class="cal-nav" onclick="calPrev()" '+(prevDisabled?'disabled':'')+'><svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button><div class="cal-title"><div class="relative"><button class="cal-title-btn" onclick="toggleCalPicker(\'month\',event)">'+MONTH_NAMES[calViewMonth]+'<svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button></div><div class="relative"><button class="cal-title-btn" onclick="toggleCalPicker(\'year\',event)">'+calViewYear+'<svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button></div></div><button class="cal-nav" onclick="calNext()"><svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button></div><div class="cal-weekdays"><span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span></div><div class="cal-days">'+cells+'</div></div>'; }
+function calPrev(){ closeCalPickers(); if(calViewMonth===0){ calViewMonth=11; calViewYear--; } else calViewMonth--; renderCalendar(); }
+function calNext(){ closeCalPickers(); if(calViewMonth===11){ calViewMonth=0; calViewYear++; } else calViewMonth++; renderCalendar(); }
+function calPickDay(iso){ closeCalPickers(); calSelectedDate=iso; renderCalendar(); if(typeof calOnPick==='function') calOnPick(iso); closeCalendarModal(); }
+function toggleCalPicker(type,event){ event.stopPropagation(); const ex=document.getElementById('calPickerPanel'); if(ex){ ex.remove(); return; } closeCalPickers(); const panel=document.createElement('div'); panel.className='cal-picker-panel'; panel.id='calPickerPanel'; panel.addEventListener('click',e=>e.stopPropagation()); if(type==='month'){ panel.innerHTML=MONTH_NAMES.map((m,i)=>'<button class="'+(i===calViewMonth?'active':'')+'" onclick="setCalMonth('+i+')">'+m+'</button>').join(''); } else { const cy=new Date().getFullYear(); const years=[]; for(let y=cy;y<=cy+6;y++) years.push(y); panel.innerHTML=years.map(y=>'<button class="'+(y===calViewYear?'active':'')+'" onclick="setCalYear('+y+')">'+y+'</button>').join(''); } event.currentTarget.parentElement.appendChild(panel); }
+function setCalMonth(m){ calViewMonth=m; closeCalPickers(); renderCalendar(); }
+function setCalYear(y){ calViewYear=y; closeCalPickers(); renderCalendar(); }
+function closeCalPickers(){ document.querySelectorAll('.cal-picker-panel').forEach(p=>p.remove()); }
+function positionCalendar(trigger){ const c=document.getElementById('calContainer'); if(!c||!trigger) return; const tr=trigger.getBoundingClientRect(); const vw=innerWidth, vh=innerHeight, calH=c.offsetHeight||380; let left=tr.right-CAL_W; if(left<CAL_GAP) left=tr.left; if(left+CAL_W>vw-CAL_GAP) left=vw-CAL_W-CAL_GAP; if(left<CAL_GAP) left=Math.max(CAL_GAP,(vw-CAL_W)/2); let top=tr.bottom+CAL_GAP; if(top+calH>vh-CAL_GAP) top=tr.top-calH-CAL_GAP; if(top<CAL_GAP) top=Math.max(CAL_GAP,(vh-calH)/2); c.style.left=Math.round(left)+'px'; c.style.top=Math.round(top)+'px'; }
+function openCalendarModal(event){ if(event) event.stopPropagation(); const m=document.getElementById('calendarModal'); if(!m) return; m.classList.add('open'); const trigger=(event&&event.currentTarget)||document.getElementById('calTrigger')||document.getElementById('followupDateTrigger'); requestAnimationFrame(()=>positionCalendar(trigger)); }
+function closeCalendarModal(){ const m=document.getElementById('calendarModal'); if(m) m.classList.remove('open'); closeCalPickers(); }
+function handleCalModalOverlayClick(e){ if(e.target===document.getElementById('calendarModal')) closeCalendarModal(); }
+
+/* ════════ STATUS CHANGE CONFIRMATION (optional note + parent interest) ════════ */
+const SC_INTEREST=['Highly Interested','Interested','Considering','Undecided','Low Interest','Not Interested'];
+const SC_INTEREST_MAP={'Very Interested':'Highly Interested','Interested':'Interested','Undecided':'Undecided','Not Interested':'Not Interested'};
+let scId=null, scTo=null, scInterestInit='Undecided', scInterestVal='Undecided';
+function openStatusConfirm(r, toStatus){ if(!r||!toStatus) return; scId=r.id; scTo=toStatus;
+  $('scTitle').textContent='Move to '+toStatus;
+  $('scFlow').innerHTML=statusChip(r.status)+'<svg class="h-4 w-4 shrink-0 text-[#94A3B8]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>'+statusChip(toStatus);
+  $('scConfirmLabel').textContent='Confirm — '+toStatus;
+  $('scNote').value='';
+  $('scInterestWrap').classList.toggle('hidden', toStatus==='Admission Confirmed'); /* (A) Parent Interest not relevant once admission is confirmed */
+  scInterestInit = SC_INTEREST.includes(r.parentInterest) ? r.parentInterest : (SC_INTEREST_MAP[r.parentInterest]||'Undecided'); /* (B) preselect saved value when set, else Undecided */
+  scInterestVal=scInterestInit; $('scInterestLabel').textContent=scInterestInit; buildSciMenu();
+  show('statusConfirmModal'); }
+function buildSciMenu(){ const CH='<svg class="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+  $('scInterestMenu').innerHTML=SC_INTEREST.map(s=>'<button type="button" data-setsci="'+esc(s)+'" class="flex w-full cursor-pointer items-center justify-between gap-2 rounded-lg px-2.5 py-2 text-left text-[13px] '+(s===scInterestVal?'bg-[#DCE8FF] font-semibold text-[#284CA5]':'text-[#0F172A] hover:bg-[#DCE8FF]')+'"><span class="min-w-0 truncate">'+esc(s)+'</span>'+(s===scInterestVal?CH:'')+'</button>').join('');
+  $('scInterestMenu').querySelectorAll('[data-setsci]').forEach(b=>{ b.onclick=(e)=>{ e.stopPropagation(); scInterestVal=b.dataset.setsci; $('scInterestLabel').textContent=scInterestVal; $('scInterestMenu').classList.add('hidden'); $('scInterestBtn').setAttribute('aria-expanded','false'); buildSciMenu(); }; });
+}
+$('scInterestBtn').onclick=(e)=>{ e.stopPropagation(); const m=$('scInterestMenu'); const willOpen=m.classList.contains('hidden'); closeMenus(); if(willOpen){ m.classList.remove('hidden'); $('scInterestBtn').setAttribute('aria-expanded','true'); } };
+$('scConfirm').onclick=()=>{ const r=rec(scId); if(!r||!scTo) return; const note=$('scNote').value.trim(); snapshot();
+  if(note) logAct(r,'note',note);
+  if(scTo!=='Admission Confirmed'){ const interest=scInterestVal; if(interest!==scInterestInit) r.parentInterest=interest; } /* (A) no interest for confirmed admission · (B) only updates when the admin changes it */
+  applyStatusChange(r, scTo);
+  toast('Moved to '+scTo+' · '+r.parentName,true);
+  hide('statusConfirmModal'); render(); refreshAux(); };
+function applyStatusChange(r, to){ const from=r.status; const meta = to==='Admission Confirmed'?{done:'admission'} : (to==='Visit Completed'?{done:'visit'}:undefined);
+  r.status=to;
+  if(to==='Contacted'){ r.lastContactedAt=Date.now(); if(!r.firstResponseAt) r.firstResponseAt=Date.now(); }
+  if(to==='Admission Confirmed') r.followUp=null;
+  logAct(r,'status','Status changed: '+from+' \u2192 '+to, meta); }
+
+/* ════════ FOLLOW-UP MANAGEMENT (manage an existing follow-up; prevents duplicates) ════════ */
+let fmId=null;
+function openFollowManage(r){ if(!r) return; if(!r.followUp){ openSched({id:r.id,mode:'followup',title:'Add follow-up',defaultTs:Date.now()+DAY}); return; } fmId=r.id;
+  const fu=r.followUp; const st=fuState(r); const stTxt = st==='overdue'?'Overdue':(st==='today'?'Due today':'Upcoming');
+  const stCls = st==='overdue'?'border-[#FECACA] bg-[#FEF2F2] text-[#B91C1C]':(st==='today'?'border-[#FDE68A] bg-[#FFFBEB] text-[#B45309]':'border-[#BFDBFE] bg-[#EFF6FF] text-[#1D4ED8]');
+  $('fmBody').innerHTML=''
+    +'<div class="rounded-xl border border-[#E2E8F0] bg-[#FBFCFE] p-3.5">'
+    +'<div class="mb-2 flex items-center justify-between gap-2"><span class="truncate text-[11px] font-semibold uppercase tracking-[0.4px] text-[#94A3B8]">For '+esc(r.parentName)+'</span><span class="inline-flex shrink-0 items-center rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.5px] '+stCls+'">'+stTxt+'</span></div>'
+    +'<div class="flex items-center gap-2 text-[13px] font-semibold text-[#0F172A]"><svg class="h-4 w-4 shrink-0 text-[#6D28D9]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>'+esc(formatDatePretty(formatDateISO(new Date(fu.dueAt))))+' · '+esc(clockOf(fu.dueAt))+'</div>'
+    +'<p class="mt-2 text-[12.5px] leading-relaxed text-[#475569]">'+(fu.note?esc(fu.note):'<span class="text-[#94A3B8]">No note added</span>')+'</p>'
+    +'</div>'
+    +'<p class="mb-1.5 mt-4 text-[11px] font-semibold uppercase tracking-[0.4px] text-[#94A3B8]">Manage this follow-up</p>'
+    +'<div class="grid grid-cols-2 gap-2">'
+    +'<button type="button" data-act="editFollow" data-id="'+esc(r.id)+'" class="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-[#D7E4FF] bg-white text-[12.5px] font-semibold text-[#284CA5] hover:bg-[#EFF4FF]"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>Edit / reschedule</button>'
+    +'<button type="button" data-act="completeFollow" data-id="'+esc(r.id)+'" class="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-[#ECFDF5] text-[12.5px] font-semibold text-[#059669] hover:bg-[#D1FAE5]"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Mark completed</button>'
+    +'<button type="button" data-act="cancelFollow" data-id="'+esc(r.id)+'" class="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-[#FECACA] bg-white text-[12.5px] font-semibold text-[#B91C1C] hover:bg-[#FEF2F2]"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>Cancel follow-up</button>'
+    +'<button type="button" onclick="hide(\'followManageModal\')" class="inline-flex h-10 items-center justify-center rounded-xl border border-[#E2E8F0] bg-white text-[12.5px] font-semibold text-[#64748B] hover:bg-[#F1F5F9]">Close</button>'
+    +'</div>'
+    +'<p class="mt-3 text-[11px] leading-relaxed text-[#94A3B8]">Complete or cancel this follow-up before scheduling a new one — this avoids duplicate reminders.</p>';
+  show('followManageModal'); }
+function editFollow(r){ hide('followManageModal'); openSched({id:r.id, mode:'followup', title:'Edit follow-up', defaultTs:r.followUp?r.followUp.dueAt:(Date.now()+DAY)}); }
+function completeFollow(r){ if(!r||!r.followUp) return; snapshot(); r.lastFollowUp={dueAt:r.followUp.dueAt, note:r.followUp.note, status:'Completed', ts:Date.now()}; logAct(r,'followup','Follow-up completed: '+(r.followUp.note||'(no note)')); r.followUp=null; r.lastContactedAt=Date.now(); toast('Follow-up marked done · '+r.parentName,true); hide('followManageModal'); render(); refreshAux(); }
+function cancelFollow(r){ if(!r||!r.followUp) return; snapshot(); r.lastFollowUp={dueAt:r.followUp.dueAt, note:r.followUp.note, status:'Cancelled', ts:Date.now()}; logAct(r,'followup','Follow-up cancelled: '+(r.followUp.note||'(no note)')); r.followUp=null; toast('Follow-up cancelled · '+r.parentName,true); hide('followManageModal'); render(); refreshAux(); }
+
+/* ════════ WHATSAPP TEMPLATES ════════ */
+function waTemplates(r){ const c=r.childName, p=r.parentName, g=r.gradeApplied;
+  return {
+    Welcome:'Hello '+p+', thank you for your enquiry with our school for '+c+' ('+g+'). I\u2019m '+(STATE.view==='all'?'from the admissions team':(STATE.view.split(' ')[0]+' from the admissions team'))+' and happy to help with the next steps.',
+    'Fee details':'Hi '+p+', sharing the fee structure for '+g+' as requested. Do let me know if you\u2019d like to discuss payment options or scholarships.',
+    Brochure:'Hi '+p+', here is our school brochure with curriculum, facilities and admission details for '+c+'. Happy to answer any questions.',
+    Location:'Hi '+p+', here is our campus location and directions. Looking forward to welcoming you for a visit.',
+    'Visit confirm':'Hi '+p+', confirming your campus visit for '+c+'. Please reply with a convenient time and we\u2019ll keep everything ready.',
+    'Follow-up':'Hi '+p+', following up on our conversation about admission for '+c+' in '+g+'. Is there anything I can help you decide?'
+  };
+}
+let waId=null;
+function openWa(r){ waId=r.id; const t=waTemplates(r); $('waFor').textContent='To '+r.parentName+' · '+r.mobile;
+  $('waChips').innerHTML=Object.keys(t).map(k=>'<button type="button" data-wt="'+esc(k)+'" class="inline-flex h-8 items-center rounded-full border border-[#D7E4FF] bg-[#F8FAFF] px-3 text-[11.5px] font-semibold text-[#284CA5] hover:bg-[#EFF4FF]">'+esc(k)+'</button>').join('');
+  $('waText').value=t.Welcome;
+  $('waChips').querySelectorAll('[data-wt]').forEach(b=>b.onclick=()=>{ $('waText').value=t[b.dataset.wt]; });
+  show('waModal'); }
+$('waSend').onclick=()=>{ const r=rec(waId); if(!r) return; const msg=$('waText').value.trim(); snapshot();
+  window.open('https://wa.me/91'+digits(r.mobile)+'?text='+encodeURIComponent(msg),'_blank','noopener');
+  markContacted(r,'whatsapp','WhatsApp sent: '+(msg.length>60?msg.slice(0,60)+'\u2026':msg)); hide('waModal'); render(); };
+
+/* ════════ CORE ACTIONS ════════ */
+function markContacted(r,type,text){ const wasNew=r.status==='New Enquiry'; r.lastContactedAt=Date.now(); if(!r.firstResponseAt) r.firstResponseAt=Date.now(); if(wasNew){ r.status='Contacted'; logAct(r,'status','Auto-advanced New \u2192 Contacted'); } logAct(r,type,text); toast((type==='call'?'Call logged':'Message logged')+' · '+r.parentName,true); }
+function doCall(r){ snapshot(); window.location.href='tel:+91'+digits(r.mobile); markContacted(r,'call','Called parent'); render(); refreshAux(); }
+
+document.addEventListener('click',e=>{
+  const el=e.target.closest('[data-act]'); if(!el) return;
+  const act=el.dataset.act, r=rec(el.dataset.id);
+  if(act==='skipNba'){ if(r){ nbaSkip.add(r.id); render(); } return; }
+  if(act==='focus'){ openFocus(); return; }
+  if(act==='focusNext'){ if(r){ focusSkip.add(r.id); renderFocus(); } return; }
+  if(act==='exitFocus'){ hide('focusModal'); return; }
+  if(!r) return;
+  if(act==='view'){ closeMenus(); openDetail(r); return; }
+  if(act==='wa'){ openWa(r); return; }
+  if(act==='call'){ doCall(r); return; }
+  if(act==='note'){ openNote(r); return; }
+  if(act==='brochure'){ snapshot(); window.open('https://wa.me/91'+digits(r.mobile)+'?text='+encodeURIComponent(waTemplates(r).Brochure),'_blank','noopener'); markContacted(r,'brochure','Brochure shared on WhatsApp'); render(); return; }
+  if(act==='contact'){ openWa(r); return; }
+  if(act==='setStep'){ openSched({id:r.id,mode:'followup',title:'Set the next step',defaultTs:Date.now()+DAY}); return; }
+  if(act==='reschedule'){ openSched({id:r.id, mode:r.visit&&isToday(r.visit.time)?'visit':'followup', title:r.visit&&isToday(r.visit.time)?'Reschedule visit':'Schedule follow-up', defaultTs:r.visit?r.visit.time:(Date.now()+DAY)}); return; }
+  if(act==='markVisited'){ snapshot(); r.status='Visit Completed'; logAct(r,'visit','Visit completed',{done:'visit'}); toast('Marked visited · '+r.parentName,true); render(); refreshAux();
+    openSched({id:r.id,mode:'followup',title:'Post-visit follow-up',defaultTs:Date.now()+2*DAY,skippable:true,onSkip:()=>{ logAct(r,'note','Visit done — no follow-up needed'); }}); return; }
+  if(act==='feedback'){ openNote(r,'Visit feedback','Visit feedback: '); return; }
+  if(act==='postFollow'){ openSched({id:r.id,mode:'followup',title:'Post-visit follow-up',defaultTs:Date.now()+2*DAY}); return; }
+  if(act==='markConfirmed'){ snapshot(); r.status='Admission Confirmed'; r.followUp=null; logAct(r,'status','Status set to Admission Confirmed',{done:'admission'}); toast('Admission confirmed · '+r.parentName,true); render(); return; }
+  if(act==='advance'){ const to=nextStatusOf(r.status); if(to) openStatusConfirm(r,to); return; }
+  if(act==='manageFollow'){ openFollowManage(r); return; }
+  if(act==='reopen'){ openReopen(r); return; }
+  if(act==='closeEnq'){ openClose(r); return; }
+  if(act==='editFollow'){ editFollow(r); return; }
+  if(act==='completeFollow'){ completeFollow(r); return; }
+  if(act==='cancelFollow'){ cancelFollow(r); return; }
+  if(act==='setContacted'){ snapshot(); r.status='Contacted'; if(!r.lastContactedAt) r.lastContactedAt=Date.now(); if(!r.firstResponseAt) r.firstResponseAt=Date.now(); logAct(r,'status','Status set to Contacted'); toast('Marked contacted · '+r.parentName,true); render(); return; }
+  if(act==='schedVisit'){ openSched({id:r.id,mode:'visit',title:'Schedule the visit',defaultTs:Date.now()+DAY}); return; }
+  if(act==='startApp'){ snapshot(); r.status='Application in Progress'; logAct(r,'status','Application started'); toast('Application started · '+r.parentName,true); render(); return; }
+  if(act==='followDone'){ snapshot(); logAct(r,'followup','Follow-up completed: '+(r.followUp?r.followUp.note:'')); r.followUp=null; r.lastContactedAt=Date.now(); toast('Follow-up done · set next step',true); render(); return; }
+});
+
+/* ════════ SUMMARY TILE → SECTION SCROLL ════════ */
+document.addEventListener('click',e=>{ const j=e.target.closest('[data-jump]'); if(!j) return; const t=document.getElementById(j.dataset.jump); if(t){ try{ t.scrollIntoView({behavior:'smooth',block:'start'}); }catch(_){ t.scrollIntoView(); } } });
+/* keyboard activation for clickable enquiry cards (article acts as the open-detail target) */
+document.addEventListener('keydown',e=>{ if(e.key!=='Enter'&&e.key!==' ') return; const el=document.activeElement; if(el && el.matches && el.matches('article[data-act="view"]')){ e.preventDefault(); const r=rec(el.dataset.id); if(r){ closeMenus(); openDetail(r); } } });
+
+/* ════════ MODAL PLUMBING ════════ */
+let lastFocused=null;
+function focusables(c){ return Array.prototype.slice.call(c.querySelectorAll('button,[href],input,select,textarea,[tabindex]')).filter(el=>!el.disabled && el.offsetParent!==null && el.getAttribute('tabindex')!=='-1'); }
+const MODAL_IDS=['detailModal','noteModal','schedModal','waModal','focusModal','closeModal','statusConfirmModal','followManageModal','reopenModal'];
+function anyModalOpen(){ return MODAL_IDS.some(id=>{ const e=document.getElementById(id); return e && !e.classList.contains('hidden'); }); }
+function syncScrollLock(){ const lock=anyModalOpen(); const v=lock?'hidden':''; document.documentElement.style.overflow=v; document.body.style.overflow=v; }
+function show(id){ lastFocused=document.activeElement; const m=$(id); m.classList.remove('hidden'); syncScrollLock(); const f=focusables(m); if(f.length) setTimeout(()=>{ try{f[0].focus();}catch(e){} },30); }
+function hide(id){ $(id).classList.add('hidden'); if(id==='detailModal') detailId=null; syncScrollLock(); if(lastFocused && lastFocused.focus){ try{ lastFocused.focus(); }catch(e){} } }
+document.querySelectorAll('[data-close]').forEach(el=>el.addEventListener('click',()=>{ const map={detail:'detailModal',note:'noteModal',sched:'schedModal',wa:'waModal',focus:'focusModal',close:'closeModal',statusConfirm:'statusConfirmModal',followManage:'followManageModal',reopen:'reopenModal'}; hide(map[el.dataset.close]); }));
+document.addEventListener('keydown',e=>{ if(e.key!=='Escape') return; const cm=document.getElementById('calendarModal'); if(cm&&cm.classList.contains('open')){ closeCalendarModal(); return; } ['reopenModal','statusConfirmModal','followManageModal','closeModal','waModal','schedModal','noteModal','detailModal','focusModal'].some(id=>{ if(!$(id).classList.contains('hidden')){ hide(id); return true; } return false; }); closeMenus(); });
+window.addEventListener('resize',()=>{ closeCalPickers(); const m=document.getElementById('calendarModal'); if(m&&m.classList.contains('open')){ const t=document.getElementById('calTrigger')||document.getElementById('followupDateTrigger'); if(t) positionCalendar(t); } });
+document.addEventListener('keydown',e=>{ if(e.key!=='Tab') return; const open=['reopenModal','statusConfirmModal','followManageModal','closeModal','waModal','schedModal','noteModal','detailModal','focusModal'].map(id=>$(id)).find(m=>!m.classList.contains('hidden')); if(!open) return; const f=focusables(open); if(!f.length) return; const first=f[0], last=f[f.length-1]; if(e.shiftKey && document.activeElement===first){ e.preventDefault(); last.focus(); } else if(!e.shiftKey && document.activeElement===last){ e.preventDefault(); first.focus(); } });
+
+/* ════════ HEADER MENUS ════════ */
+function closeMenus(){ $('bellMenu').classList.add('hidden'); $('viewMenu').classList.add('hidden'); ['detailStatusMenu','detailInterestMenu','closeReasonMenu','scInterestMenu'].forEach(mid=>{ const dm=document.getElementById(mid); if(dm) dm.classList.add('hidden'); }); ['detailStatusBtn','detailInterestBtn','closeReasonBtn','scInterestBtn'].forEach(bid=>{ const db=document.getElementById(bid); if(db) db.setAttribute('aria-expanded','false'); }); }
+$('bellBtn').onclick=e=>{ e.stopPropagation(); const h=$('bellMenu').classList.contains('hidden'); closeMenus(); if(h) $('bellMenu').classList.remove('hidden'); };
+$('markSeenBtn').onclick=()=>{ STATE.unseen=[]; render(); };
+/* staff / all-staff view dropdown */
+$('viewBtn').onclick=e=>{ e.stopPropagation(); const h=$('viewMenu').classList.contains('hidden'); closeMenus(); if(h){ renderViewMenu(); $('viewMenu').classList.remove('hidden'); $('viewBtn').setAttribute('aria-expanded','true'); } };
+function renderViewMenu(){ const opts=[{v:'all',label:'All Staff'}].concat(STAFF.map(n=>({v:n,label:n})));
+  $('viewOptions').innerHTML=opts.map(o=>{ const a=o.v===STATE.view;
+    return '<button type="button" data-view="'+esc(o.v)+'" class="flex w-full cursor-pointer items-center justify-between gap-2 rounded-lg px-2 py-2 text-left text-[13px] '+(a?'bg-[#DCE8FF] font-semibold text-[#284CA5]':'text-[#0F172A] hover:bg-[#DCE8FF]')+'"><span class="min-w-0 truncate">'+esc(o.label)+'</span>'+(a?'<svg class="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>':'')+'</button>'; }).join('');
+  $('viewOptions').querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>{ if(STATE.view!==b.dataset.view){ STATE.view=b.dataset.view; nbaSkip=new Set(); focusSkip=new Set(); } closeMenus(); $('viewBtn').setAttribute('aria-expanded','false'); applyViewHeader(); save(); render(); }); }
+function applyViewHeader(){ const all=STATE.view==='all';
+  $('viewLabel').textContent=all?'All Staff':STATE.view;
+  $('meName').textContent=all?'All staff · Admissions team':(STATE.view+' · Admission counsellor');
+  $('meAvatar').textContent=all?'ALL':(STATE.view.split(' ').map(x=>x[0]).slice(0,2).join('').toUpperCase()); }
+document.addEventListener('click',e=>{ const inBell=$('bellMenu').contains(e.target)||$('bellBtn').contains(e.target); const inView=$('viewMenu').contains(e.target)||$('viewBtn').contains(e.target); if(!inBell&&!inView) closeMenus(); });
+function renderBell(){ const ids=STATE.unseen.filter(id=>{ const r=rec(id); return r&&inView(r); }); const n=ids.length; const badge=$('bellBadge'); if(n>0){ badge.textContent=n; badge.classList.remove('hidden'); } else badge.classList.add('hidden');
+  $('bellList').innerHTML = n? ids.map(id=>{ const r=rec(id); if(!r) return ''; return '<button data-act="view" data-id="'+esc(id)+'" class="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left hover:bg-[#F1F5F9]">'+avatar(r)+'<div class="min-w-0"><div class="truncate text-[12.5px] font-semibold">'+esc(r.parentName)+'</div><div class="truncate text-[11px] text-[#64748B]">'+esc(r.gradeApplied)+' · '+esc(rel(r.createdAt))+'</div></div></button>'; }).join('') : '<p class="px-2 py-3 text-[12px] text-[#94A3B8]">No new enquiries.</p>'; }
+
+/* ════════ CLOSE / LOST REASON ════════ */
+let closeId=null, closeReason=null;
+const CLOSE_REASONS=['Not interested','Chose another school','Fees too high','Location issue','No response from parent','Duplicate enquiry'];
+function openClose(r){ if(!r) return; closeId=r.id; closeReason=null; $('closeNote').value=''; $('closeNote').classList.remove('border-[#DC2626]','ring-2','ring-[#FCA5A5]');
+  const lbl=$('closeReasonLabel'); lbl.textContent='Select a reason…'; lbl.classList.add('font-normal','text-[#94A3B8]');
+  $('closeReasonMenu').innerHTML='<div class="px-2 pb-1 pt-0.5 text-[10px] font-bold uppercase tracking-[0.5px] text-[#94A3B8]">Select a reason</div>'
+    +CLOSE_REASONS.map(x=>'<button type="button" data-cr="'+esc(x)+'" class="flex w-full cursor-pointer items-center justify-between gap-2 rounded-lg px-2.5 py-2 text-left text-[13px] text-[#0F172A] hover:bg-[#DCE8FF]"><span class="min-w-0 truncate">'+esc(x)+'</span></button>').join('');
+  $('closeReasonMenu').querySelectorAll('[data-cr]').forEach(b=>{ b.onclick=(e)=>{ e.stopPropagation(); closeReason=b.dataset.cr; const l=$('closeReasonLabel'); l.textContent=closeReason; l.classList.remove('font-normal','text-[#94A3B8]'); $('closeReasonMenu').querySelectorAll('[data-cr]').forEach(x=>x.classList.remove('bg-[#DCE8FF]','font-semibold','text-[#284CA5]')); b.classList.add('bg-[#DCE8FF]','font-semibold','text-[#284CA5]'); $('closeReasonMenu').classList.add('hidden'); $('closeReasonBtn').setAttribute('aria-expanded','false'); }; });
+  show('closeModal'); }
+$('closeReasonBtn').onclick=(e)=>{ e.stopPropagation(); const m=$('closeReasonMenu'); const willOpen=m.classList.contains('hidden'); closeMenus(); if(willOpen){ m.classList.remove('hidden'); $('closeReasonBtn').setAttribute('aria-expanded','true'); } };
+$('closeConfirm').onclick=()=>{ if(!closeReason){ toast('Pick a reason first'); return; } const d=$('closeNote').value.trim(); if(!d){ const nt=$('closeNote'); if(nt){ nt.classList.add('border-[#DC2626]','ring-2','ring-[#FCA5A5]'); nt.focus(); } toast('Please add a closure reason before closing this enquiry.'); return; } const r=rec(closeId); if(!r) return; snapshot(); if(!TERMINAL.includes(r.status)) r.closedFrom=r.status; r.status='Closed'; r.lostReason=closeReason+' — '+d; logAct(r,'note','Closure reason: '+d,{by:r.assignee}); logAct(r,'status','Closed — '+r.lostReason); toast('Enquiry closed · reason logged',true); hide('closeModal'); render(); refreshAux(); };
+$('closeNote').oninput=()=>{ $('closeNote').classList.remove('border-[#DC2626]','ring-2','ring-[#FCA5A5]'); };
+let reopenId=null;
+function openReopen(r){ if(!r) return; reopenId=r.id; $('reopenFor').textContent='For '+r.parentName+' (child: '+r.childName+')'; $('reopenNote').value=''; show('reopenModal'); }
+$('reopenConfirm').onclick=()=>{ const r=rec(reopenId); if(!r) return; snapshot(); const reason=$('reopenNote').value.trim(); const back=(r.closedFrom && r.closedFrom!=='New Enquiry' && !TERMINAL.includes(r.closedFrom))?r.closedFrom:'Contacted'; r.status=back; r.lostReason=null; logAct(r,'status','Enquiry reopened → '+back+(reason?(' · Reason: '+reason):'')); toast('Enquiry reopened · '+r.parentName,true); hide('reopenModal'); render(); refreshAux(); };
+
+/* ════════ TOAST (with Undo) ════════ */
+let toastTimer=null;
+function toast(msg,undo){ const t=$('toast'); t.innerHTML='<div class="pointer-events-auto flex items-center gap-3 rounded-full bg-[#0F172A] px-4 py-2.5 text-[12.5px] font-semibold text-white shadow-[0_12px_28px_rgba(15,23,42,0.28)]">'+esc(msg)+(undo?'<button id="undoBtn" class="rounded-full bg-white/15 px-2.5 py-1 text-[11.5px] font-bold hover:bg-white/25">Undo</button>':'')+'</div>';
+  t.classList.remove('hidden'); if(undo) $('undoBtn').onclick=()=>{ doUndo(); t.classList.add('hidden'); };
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.add('hidden'),3200); }
+
+/* ════════ RESET + SIMULATED ARRIVAL ════════ */
+$('resetBtn').onclick=()=>{ try{ localStorage.removeItem(STORE_KEY); sessionStorage.removeItem('ss_arrived'); }catch(e){} STATE={dayKey:TODAY_KEY,view:'all',unseen:[],enquiries:seed()}; nbaSkip=new Set(); focusSkip=new Set(); applyViewHeader(); render(); toast('Demo data reset'); };
+function simulateArrival(){ try{ if(sessionStorage.getItem('ss_arrived')) return; sessionStorage.setItem('ss_arrived','1'); }catch(e){ return; }
+  setTimeout(()=>{ const now=Date.now(); const nr={id:'new'+now,parentName:'Deepa Krishnan',childName:'Aadhya Krishnan',ageBand:'4-5 years',dob:'15-07-2020',mobile:'90080 12345',gradeApplied:'LKG',academicYear:'2026-27',curriculum:'CBSE',area:'Indiranagar',source:'Superschools',status:'New Enquiry',parentInterest:'Very Interested',assignee:COUNSELLOR,message:'',createdAt:now,lastContactedAt:null,firstResponseAt:null,visit:null,followUp:null,lostReason:null,activity:[]};
+    STATE.enquiries.unshift(nr); STATE.unseen.unshift(nr.id); render(); toast('New enquiry from Deepa Krishnan (LKG)'); }, 20000); }
+
+/* ════════ CUSTOM TOOLTIPS (product-styled, replaces native title= tooltips) ════════ */
+(function(){ let tipEl=null, tipFor=null;
+  function ensure(){ if(!tipEl){ tipEl=document.createElement('div'); tipEl.className='ss-tip'; tipEl.setAttribute('role','tooltip'); tipEl.setAttribute('aria-hidden','true'); document.body.appendChild(tipEl); } return tipEl; }
+  function place(t){ const txt=t.getAttribute('data-tip'); if(!txt){ hide(); return; } const tip=ensure(); tipFor=t; tip.textContent=txt; tip.classList.add('show');
+    const r=t.getBoundingClientRect(); const tr=tip.getBoundingClientRect();
+    let left=r.left + r.width/2 - tr.width/2; left=Math.max(6, Math.min(left, window.innerWidth - tr.width - 6));
+    let top=r.top - tr.height - 8; if(top < 6) top = r.bottom + 8;
+    tip.style.left=left+'px'; tip.style.top=top+'px'; }
+  function hide(){ if(tipEl) tipEl.classList.remove('show'); tipFor=null; }
+  document.addEventListener('mouseover', e=>{ const t=e.target.closest && e.target.closest('[data-tip]'); if(t && t!==tipFor) place(t); });
+  document.addEventListener('mouseout', e=>{ const t=e.target.closest && e.target.closest('[data-tip]'); if(!t) return; const to=e.relatedTarget; if(!to || !(to.closest && to.closest('[data-tip]')===t)) hide(); });
+  document.addEventListener('focusin', e=>{ const t=e.target.closest && e.target.closest('[data-tip]'); if(t) place(t); });
+  document.addEventListener('focusout', hide);
+  document.addEventListener('click', hide, true);
+  window.addEventListener('scroll', hide, true);
+})();
+
+/* ════════ INIT ════════ */
+$('todayDateText').textContent=new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+applyViewHeader();
+renderViewMenu();
+render();
+simulateArrival();
+</script>
+<script src="../../components/RouteLoader.js"></script>
+</body>
+</html>

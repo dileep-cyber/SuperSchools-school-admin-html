@@ -1,0 +1,36 @@
+/* shell.css — base rules the global shell needs on pages that do not load
+   the full dashboard.css (enquiries, workflow, HR list/detail). Extracted
+   from the original dashboard so the shell renders identically. */
+    body { font-family: 'Inter', sans-serif; }
+    [x-cloak] { display: none !important; }
+    .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* Toast container */
+    .cfg-toast-stack { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 80; display: flex; flex-direction: column; align-items: center; gap: 10px; max-width: 90vw; pointer-events: none; }
+    .cfg-toast { pointer-events: auto; display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 8px; background: #fff; border: 1px solid #e2e8f0; box-shadow: 0 8px 24px rgba(15,23,42,.10); animation: cfg-toast-in .3s ease-out; }
+    @keyframes cfg-toast-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    .cfg-toast.is-success { background: #EEFFFE; border-color: #359694; color: #359694; }
+    .cfg-toast.is-error { background: #FFF3F3; border-color: #D54545; color: #D54545; }
+    .cfg-toast.is-info { background: #EFF4FF; border-color: #284CA5; color: #284CA5; }
+    @media (max-width: 640px) {
+      .cfg-toast-stack { bottom: 16px; max-width: 92vw; }
+      .cfg-brand-tile { width: 40px; height: 40px; border-radius: 12px; }
+    }
+
+/* ── Global route loader (controlled by components/RouteLoader.js) ───
+   The loader stays up for a minimum, deterministic time, then is removed
+   INSTANTLY (display:none) while the app content (.ss-app) fades in — so the
+   loader and the page content never overlap during the navigation reload. */
+.route-loader{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;background:#F6F8FC;}
+.route-loader.is-hidden{display:none;}
+.route-loader__box{display:flex;flex-direction:column;align-items:center;gap:14px;}
+.route-loader__spinner{width:46px;height:46px;border-radius:9999px;border:4px solid #DCE8FF;border-top-color:#284CA5;animation:routeSpin .7s linear infinite;}
+.route-loader__text{font-size:13px;font-weight:600;color:#284CA5;letter-spacing:.01em;}
+@keyframes routeSpin{to{transform:rotate(360deg);}}
+.ss-app{opacity:0;}
+.ss-ready .ss-app{opacity:1;transition:opacity .35s ease;}

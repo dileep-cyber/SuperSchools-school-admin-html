@@ -1,0 +1,1970 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Aarav Sharma — Admission Enquiry Workflow · SuperSchools</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] } } }
+    };
+  </script>
+  <style>
+    /* ── Design tokens (ported from v3) ── */
+    :root {
+      --brand: #284CA5;
+      --brand-dark: #203F8D;
+      --brand-soft: #EFF4FF;
+      --line: #E2E8F0;
+      --line-soft: #EEF2F7;
+      --ink: #0F172A;
+      --muted: #64748B;
+      --faint: #94A3B8;
+      --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px; --sp-5: 20px; --sp-6: 24px;
+      --r-sm: 8px; --r-md: 12px; --r-lg: 16px; --r-xl: 20px;
+    }
+    /* ── Base ── */
+    html, body { font-family: 'Inter', sans-serif; }
+    * { scrollbar-width: thin; scrollbar-color: #CBD5E1 transparent; }
+    *::-webkit-scrollbar { width: 6px; height: 6px; }
+    *::-webkit-scrollbar-track { background: transparent; }
+    *::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 999px; }
+    *::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+
+    /* ── Detail grid ── */
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 160px minmax(0, 1fr) 160px minmax(0, 1fr);
+      column-gap: 24px; row-gap: 20px;
+    }
+    @media (max-width: 900px) { .detail-grid { grid-template-columns: 140px minmax(0, 1fr); } }
+    @media (max-width: 560px) {
+      .detail-grid { grid-template-columns: minmax(0, 1fr); row-gap: 4px; }
+      .detail-grid > .dg-label { margin-top: 14px; }
+      .detail-grid > .dg-label:first-child { margin-top: 0; }
+      .detail-grid > .dg-empty { display: none; }
+    }
+    .dg-label { font-size: 12.5px; font-weight: 500; color: #64748B; line-height: 1.35; }
+    .dg-value { font-size: 13px; font-weight: 500; color: #0F172A; line-height: 1.5; }
+
+    /* ── Status pill (editable) ── */
+    .status-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      height: 32px; padding: 0 10px 0 13px;
+      font-size: 13px; font-weight: 600; color: #475569;
+      background: #F1F5F9; border: 1px solid var(--line);
+      border-radius: 9999px; cursor: pointer; transition: filter .15s; white-space: nowrap;
+    }
+    .status-pill:hover { filter: brightness(0.97); }
+    .status-pill svg { opacity: .65; flex-shrink: 0; }
+    .status-dot { width: 7px; height: 7px; border-radius: 999px; flex-shrink: 0; }
+
+    /* ── Source key:value badge ── */
+    .source-badge {
+      display: inline-flex; align-items: center; height: 26px;
+      background: white; border: 1px solid #E2E8F0;
+      border-radius: 9999px; overflow: hidden;
+      font-size: 12px; font-weight: 500;
+    }
+    .source-badge .sb-key { padding: 0 7px 0 11px; color: #64748B; font-size: 11px; font-weight: 500; letter-spacing: 0.01em; }
+    .source-badge .sb-divider { width: 1px; height: 12px; background: #E2E8F0; }
+    .source-badge .sb-value { padding: 0 11px 0 7px; color: #0F172A; font-weight: 600; font-size: 12px; }
+
+    /* ── Dropdown panel ── */
+    .dropdown-panel {
+      position: fixed; background: white;
+      border: 1px solid #E2E8F0; border-radius: 12px;
+      box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
+      z-index: 9999; min-width: 230px; max-width: calc(100vw - 24px);
+      overflow: hidden; display: none;
+    }
+    .dropdown-panel.open { display: block; }
+    .dp-header {
+      padding: 12px 14px 10px; font-size: 11px; font-weight: 600;
+      color: #475569; text-transform: uppercase; letter-spacing: 0.6px;
+      border-bottom: 1px solid #EEF2F7;
+    }
+    .dp-list { padding: 6px; display: flex; flex-direction: column; gap: 2px; max-height: 320px; overflow-y: auto; }
+    .dp-item {
+      display: flex; align-items: center; gap: 8px;
+      width: 100%; padding: 8px 10px;
+      font-size: 13px; color: #0F172A; font-weight: 500;
+      background: none; border: none; border-radius: 8px;
+      cursor: pointer; text-align: left; white-space: nowrap;
+      transition: background 0.12s;
+    }
+    .dp-item:hover { background: #EFF4FF; }
+    .dp-item.active { background: #284CA5; color: white; }
+    .dp-item.active:hover { background: #203F8D; }
+    .dp-dot { width: 8px; height: 8px; border-radius: 999px; flex: none; }
+
+    /* ── Toast ── */
+    #toast {
+      position: fixed; bottom: 28px; left: 50%;
+      transform: translateX(-50%) translateY(12px);
+      display: inline-flex; align-items: flex-start; gap: 11px;
+      padding: 13px 14px 13px 16px; background: #FFFFFF;
+      border: 1px solid #E2E8F0; border-radius: 14px;
+      box-shadow: 0 12px 30px rgba(15,23,42,0.12), 0 1px 3px rgba(15,23,42,0.07);
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.22s ease, transform 0.22s ease; z-index: 99999;
+      min-width: 280px; max-width: calc(100vw - 32px);
+    }
+    .toast-icon { display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:999px; flex:none; margin-top:1px; }
+    .toast-body { display:flex; flex-direction:column; gap:1px; min-width:0; flex:1 1 auto; }
+    .toast-title { color:#0F172A; font-size:13px; font-weight:600; line-height:18px; }
+    .toast-text { color:#64748B; font-size:12.5px; font-weight:500; line-height:17px; }
+    .toast-close { display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px; border-radius:8px; color:#94A3B8; background:none; border:none; cursor:pointer; flex:none; margin-top:1px; transition:background .12s, color .12s; }
+    .toast-close:hover { background:#F1F5F9; color:#475569; }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+
+    /* ── Timeline ── */
+    .timeline { position: relative; padding-left: 22px; }
+    .timeline::before { content: ''; position: absolute; left: 7px; top: 6px; bottom: 6px; width: 1.5px; background: #E2E8F0; }
+    .timeline-item { position: relative; padding-bottom: 16px; }
+    .timeline-item:last-child { padding-bottom: 0; }
+    .timeline-item::before {
+      content: ''; position: absolute; left: -19px; top: 6px;
+      width: 9px; height: 9px; border-radius: 999px;
+      background: white; border: 2px solid #284CA5;
+    }
+    .timeline-item.muted::before { border-color: #94A3B8; }
+    .timeline-item.accent::before { background: #284CA5; }
+
+    /* ── Print ── */
+    @media print {
+      body { background: white; }
+      .no-print { display: none !important; }
+      .print-card { box-shadow: none !important; border-color: #E2E8F0 !important; break-inside: avoid; }
+      .sticky-rail { position: static !important; }
+    }
+
+    /* ── Accordion sections ── */
+    .accordion-body { overflow: hidden; transition: max-height 0.25s ease; }
+
+    /* ══════════ GUIDED WORKFLOW ══════════ */
+    .wf-progress-badge { display:inline-flex; align-items:center; gap:8px; font-size:12px; font-weight:600; color:var(--brand); background:var(--brand-soft); border:1px solid #D7E4FF; border-radius:999px; padding:5px 11px; white-space:nowrap; }
+    .wf-bar { height:6px; border-radius:999px; background:#EEF2F7; overflow:hidden; }
+    .wf-bar > span { display:block; height:100%; background:linear-gradient(90deg,#284CA5,#3a63c4); border-radius:999px; transition:width .35s ease; }
+
+    .wf-rail { display:flex; align-items:flex-start; gap:0; padding:8px var(--sp-2) 2px; overflow-x:auto; }
+    .wf-node { position:relative; flex:1 0 92px; min-width:92px; display:flex; flex-direction:column; align-items:center; gap:7px; cursor:default; padding-top:6px; background:none; border:none; }
+    .wf-line { position:absolute; top:21px; height:2px; background:var(--line); z-index:0; }
+    .wf-dot { position:relative; z-index:1; width:30px; height:30px; border-radius:999px; display:grid; place-items:center; background:#fff; border:2px solid var(--line); color:var(--faint); font-size:12px; font-weight:700; transition:all .18s; }
+    .wf-node.done .wf-dot { background:var(--brand); border-color:var(--brand); color:#fff; }
+    .wf-node.current .wf-dot { background:#fff; border-color:var(--brand); color:var(--brand); box-shadow:0 0 0 4px var(--brand-soft); }
+    .wf-node.paused .wf-dot { background:#fff; border-color:#F59E0B; color:#B45309; box-shadow:0 0 0 4px #FEF3C7; }
+    .wf-node-label { font-size:11px; font-weight:600; color:var(--faint); text-align:center; line-height:1.2; max-width:88px; }
+    .wf-node.done .wf-node-label, .wf-node.current .wf-node-label { color:var(--brand); }
+    .wf-node.paused .wf-node-label { color:#B45309; }
+    /* step rail is display-only — no hover affordance on step numbers */
+    .wf-rail.closed { opacity:.5; filter:grayscale(.5); pointer-events:none; }
+
+    .wf-focus { margin:8px var(--sp-4) 18px; border:1px solid var(--line); border-radius:14px; background:linear-gradient(180deg,#FAFCFF,#fff); padding:var(--sp-4); }
+    .wf-focus-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:var(--sp-3); }
+    .wf-cell { border-left:2px solid var(--line-soft); padding-left:11px; }
+    .wf-cell.accent { border-left-color:var(--brand); }
+    .wf-k { display:block; font-size:10.5px; font-weight:600; text-transform:uppercase; letter-spacing:.5px; color:var(--faint); margin-bottom:5px; }
+    .wf-v { font-size:13.5px; font-weight:600; color:var(--ink); line-height:1.35; }
+    .wf-recommend { margin-top:14px; display:flex; gap:9px; align-items:flex-start; font-size:13px; line-height:1.5; color:#334155; background:#fff; border:1px dashed #C7D7FF; border-radius:11px; padding:11px 13px; }
+    .wf-actions { margin-top:14px; display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+    .wf-cta { display:inline-flex; align-items:center; gap:8px; height:42px; padding:0 18px; border-radius:var(--r-md); background:var(--brand); color:#fff; font-size:14px; font-weight:600; border:none; cursor:pointer; transition:all .15s; box-shadow:0 6px 16px rgba(40,76,165,.22); }
+    .wf-cta:hover { background:var(--brand-dark); }
+    .wf-cta.green { background:#16A34A; box-shadow:0 6px 16px rgba(22,163,74,.22); }
+    .wf-cta.green:hover { background:#15803D; }
+    .wf-override { display:inline-flex; align-items:center; gap:6px; height:42px; padding:0 14px; border-radius:var(--r-md); background:#fff; color:#475569; font-size:13px; font-weight:600; border:1px solid var(--line); cursor:pointer; transition:all .15s; }
+    .wf-override:hover { background:var(--brand-soft); color:var(--brand); border-color:#D7E4FF; }
+    .wf-chips { margin-top:14px; display:flex; flex-wrap:wrap; gap:6px; align-items:center; }
+    .wf-chip { display:inline-flex; align-items:center; gap:5px; height:24px; padding:0 9px; border-radius:999px; font-size:11.5px; font-weight:600; background:#F0FDF4; color:#15803D; border:1px solid #BBF7D0; }
+    .wf-banner { display:flex; gap:11px; align-items:flex-start; border-radius:var(--r-md); padding:13px 14px; font-size:13px; }
+    .wf-banner.paused { background:#FFFBEB; border:1px solid #FDE68A; color:#92400E; }
+    .wf-banner.closed { background:#FEF2F2; border:1px solid #FECACA; color:#B91C1C; }
+    .wf-banner.success { background:#F0FDF4; border:1px solid #BBF7D0; color:#166534; }
+    /* compact follow-up / visit controls (live inside wf-actions, beside Close) */
+    .wf-chip-action { display:inline-flex; align-items:center; gap:6px; height:42px; padding:0 6px 0 12px; border-radius:var(--r-md); font-size:13px; font-weight:600; border:1px solid; }
+    .wf-chip-action .wf-chip-meta { display:inline-flex; align-items:center; gap:7px; white-space:nowrap; }
+    .wf-chip-action.amber { background:#FFF7ED; border-color:#FED7AA; color:#9A3412; }
+    .wf-chip-action.red { background:#FEF2F2; border-color:#FECACA; color:#B91C1C; }
+    .wf-chip-action.indigo { background:#EEF2FF; border-color:#C7D2FE; color:#3730A3; }
+    .wf-chip-action.slate { background:#F8FAFC; border-color:#E2E8F0; color:#475569; }
+    .wf-chip-btn { display:inline-flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:8px; border:1px solid transparent; background:rgba(255,255,255,.65); color:inherit; cursor:pointer; transition:all .15s; }
+    .wf-chip-btn:hover { background:#fff; border-color:currentColor; }
+    .wf-chip-btn.done { background:#16A34A; color:#fff; border-color:#16A34A; }
+    .wf-chip-btn.done:hover { background:#15803D; border-color:#15803D; }
+
+    /* ── Mobile / tablet (<768px): vertical step rail + single-column focus ──
+       Placed after the base .wf-* rules so it correctly overrides them down to 0px
+       (previously it sat before them, so 641–767px fell back to the 3-column desktop grid). */
+    @media (max-width: 767px) {
+      /* Section: 2-col layout — vertical step dots (left) | focus content (right) */
+      #guidedWorkflowSection { display:grid; grid-template-columns:36px 1fr; grid-template-rows:auto auto auto; column-gap:6px; align-items:stretch; padding-left:16px; padding-right:16px; }
+      /* Header & footer keep their own px-4 — pull them back to the full card width so only the steps row picks up the new side padding (matches the Follow-up/Visit cards below). */
+      #guidedWorkflowSection > div:first-child { grid-column:1/-1; grid-row:1; margin-left:-16px; margin-right:-16px; }
+      #wfRail  { grid-column:1; grid-row:2; align-self:stretch; justify-self:center; }
+      #wfFocus { grid-column:2; grid-row:2; }
+      #guidedWorkflowSection > div:last-child { grid-column:1/-1; grid-row:3; margin-left:-16px; margin-right:-16px; }
+      /* Vertical step rail — fills the full height of the focus content, dots centered in the column */
+      .wf-rail { flex-direction:column; flex-wrap:nowrap; overflow-x:visible; align-items:center; justify-content:flex-start; row-gap:0; padding:6px 0; width:100%; }
+      .wf-node { flex:1 1 0; width:100%; min-width:0; padding:0; gap:0; position:relative; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; }
+      .wf-node:last-child { flex:0 0 auto; }
+      .wf-node:not(:last-child)::after { content:''; position:absolute; left:50%; transform:translateX(-50%); width:2px; top:13px; bottom:-13px; background:var(--line-soft); z-index:0; }
+      .wf-node.done:not(:last-child)::after { background:var(--brand); }
+      .wf-line { display:none; }
+      .wf-dot { width:26px; height:26px; font-size:11px; }
+      .wf-node-label { display:none; }
+      /* Focus panel: compact, single column (Current Status / Pending Task / Next Status stack vertically) */
+      .wf-focus { margin:4px 0 10px 0; padding:10px; border-radius:10px; }
+      .wf-focus-grid { grid-template-columns:1fr; gap:7px; }
+      .wf-recommend { margin-top:8px; font-size:12px; line-height:1.4; padding:9px 10px; }
+      .wf-actions { margin-top:8px; gap:8px; }
+      .wf-cta { height:38px; font-size:13px; padding:0 14px; box-shadow:none; }
+      .wf-override { height:38px; font-size:12px; padding:0 12px; }
+    }
+
+    @media (max-width:640px){
+      .wf-focus-grid { grid-template-columns:1fr; gap:10px; }
+      .wf-cta, .wf-override { width:100%; justify-content:center; }
+      .wf-chip-action { width:100%; justify-content:space-between; }
+    }
+
+    /* ── Modal ── */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(15, 23, 42, 0.45);
+      z-index: 10000; display: flex; align-items: center; justify-content: center;
+      padding: 16px; opacity: 0; pointer-events: none; transition: opacity 0.2s ease;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: auto; }
+    .modal-card {
+      background: white; border-radius: 20px; width: 100%; max-width: 420px;
+      box-shadow: 0 20px 60px rgba(15, 23, 42, 0.18);
+      transform: translateY(8px); transition: transform 0.2s ease;
+      max-height: calc(100vh - 32px); overflow-y: auto;
+    }
+    .modal-overlay.open .modal-card { transform: translateY(0); }
+
+    /* ── Time slot chips ── */
+    .slot-chip {
+      display: inline-flex; align-items: center; justify-content: center;
+      height: 32px; padding: 0 14px; font-size: 12.5px; font-weight: 500; color: #475569;
+      border: 1px solid #E2E8F0; background: white; border-radius: 999px; cursor: pointer;
+      transition: background 0.12s, border-color 0.12s, color 0.12s;
+    }
+    .slot-chip:hover:not([disabled]) { background: #EFF6FF; border-color: #BFDBFE; color: #1D4ED8; }
+    .slot-chip.selected { background: #1D4ED8; border-color: #1D4ED8; color: white; }
+    .slot-chip[disabled] { opacity: 0.55; cursor: not-allowed; background: #F8FAFC; color: #94A3B8; }
+
+    /* ── Calendar ── */
+    .cal-widget { background: white; border: 1px solid #E2E8F0; border-radius: 14px; padding: 14px; }
+    .cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .cal-nav {
+      display: grid; place-items: center; height: 32px; width: 32px;
+      border-radius: 8px; border: 1px solid #E2E8F0; background: white; color: #64748B; cursor: pointer;
+      transition: background 0.12s, color 0.12s, border-color 0.12s;
+    }
+    .cal-nav:hover:not(:disabled) { background: #EFF4FF; border-color: #D7E4FF; color: #284CA5; }
+    .cal-nav:disabled { opacity: 0.35; cursor: not-allowed; }
+    .cal-title { display: flex; align-items: center; gap: 2px; }
+    .cal-title-btn {
+      display: inline-flex; align-items: center; gap: 4px; height: 32px; padding: 0 10px;
+      font-size: 13.5px; font-weight: 600; color: #0F172A; background: none; border: none; border-radius: 7px;
+      cursor: pointer; transition: background 0.12s, color 0.12s; position: relative;
+    }
+    .cal-title-btn:hover { background: #EFF4FF; color: #284CA5; }
+    .cal-title-btn svg { color: #94A3B8; flex-shrink: 0; }
+    .cal-weekdays { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; margin-bottom: 4px; }
+    .cal-weekdays span { font-size: 11px; font-weight: 600; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.4px; padding: 8px 0; }
+    .cal-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+    .cal-day {
+      display: grid; place-items: center; aspect-ratio: 1 / 1;
+      font-size: 13px; font-weight: 500; color: #334155; background: none; border: none; border-radius: 50%;
+      cursor: pointer; transition: background 0.12s, color 0.12s;
+    }
+    .cal-day:hover:not(:disabled):not(.selected) { background: #EFF4FF; color: #284CA5; border-radius: 50%; }
+    .cal-day.outside { color: #CBD5E1; cursor: default; }
+    .cal-day.today:not(.selected) { font-weight: 700; color: #284CA5; }
+    .cal-day.selected { background: #284CA5; color: white; font-weight: 600; border-radius: 50%; }
+    .cal-day.selected:hover { background: #203F8D; border-radius: 50%; }
+    .cal-day:disabled:not(.outside) { color: #CBD5E1; cursor: not-allowed; }
+    .cal-picker-panel {
+      position: absolute; top: calc(100% + 4px); left: 0; background: white;
+      border: 1px solid #E2E8F0; border-radius: 10px; box-shadow: 0 12px 32px rgba(15, 23, 42, 0.14);
+      z-index: 100; padding: 6px; min-width: 130px; max-height: 200px; overflow-y: auto;
+    }
+    .cal-picker-panel button {
+      display: block; width: 100%; padding: 6px 10px; font-size: 12.5px; font-weight: 500; color: #0F172A;
+      background: none; border: none; border-radius: 6px; cursor: pointer; text-align: left;
+      transition: background 0.12s, color 0.12s;
+    }
+    .cal-picker-panel button:hover { background: #EFF4FF; color: #284CA5; }
+    .cal-picker-panel button.active { background: #284CA5; color: white; }
+    .cal-modal-overlay {
+      position: fixed; inset: 0; background: transparent; z-index: 11000;
+      opacity: 0; pointer-events: none; transition: opacity 0.12s ease;
+    }
+    .cal-modal-overlay.open { opacity: 1; pointer-events: auto; }
+    .cal-modal-overlay #calContainer { position: absolute; width: 320px; }
+    .cal-modal-overlay .cal-widget {
+      width: 100%; box-shadow: 0 8px 32px rgba(15, 23, 42, 0.20), 0 2px 8px rgba(15, 23, 42, 0.10);
+      transform: translateY(-6px); opacity: 0; transition: transform 0.15s ease, opacity 0.15s ease;
+    }
+    .cal-modal-overlay.open .cal-widget { transform: translateY(0); opacity: 1; }
+    /* ── Ported from v3: card / section-title / contact buttons / status menu dot ── */
+    .card { border: 1px solid var(--line); background: #fff; border-radius: var(--r-lg); box-shadow: 0 1px 2px rgba(15,23,42,0.03); }
+    .sec-title { font-size: 12px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; color: var(--muted); }
+    .dp-item .status-dot { margin-left: auto; }
+    .dp-sep { height: 1px; background: var(--line-soft); margin: 4px 6px; }
+    .contact-btn { display: inline-flex; align-items: center; justify-content: center; gap: 7px; height: 38px; padding: 0 14px; border-radius: 11px; font-size: 13px; font-weight: 600; transition: all .14s; white-space: nowrap; }
+    .contact-wa { background: #25D366; color: #fff; }
+    .contact-wa:hover { background: #1EBE5A; }
+    .contact-out { background: #fff; color: var(--brand); border: 1px solid #D7E4FF; }
+    .contact-out:hover { background: var(--brand-soft); }
+    .wf-close { color: #B91C1C; border-color: #FECACA; }
+    .wf-close:hover { background: #FEF2F2; color: #B91C1C; border-color: #FCA5A5; }
+    @media print {
+      .card { box-shadow: none !important; border-color: var(--line) !important; break-inside: avoid; }
+      #enqHeader { position: static !important; }
+    }
+
+  </style>
+</head>
+<body class="min-h-screen bg-[#F6F8FC] text-[#0F172A] antialiased">
+
+  <main class="mx-auto max-w-7xl px-3 py-4 sm:px-6 lg:px-6 xl:px-[50px] xl:py-6">
+
+
+
+    <!-- ── Top action bar ── -->
+    <div class="no-print mt-4 flex flex-wrap items-center justify-between gap-2">
+      <button onclick="window.location.href='enquiries.html'"
+              class="mr-auto inline-flex h-9 items-center gap-2 rounded-xl border border-[#D7E4FF] bg-white px-3.5 text-[13px] font-semibold text-[#284CA5] transition hover:bg-[#EFF4FF]">
+        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M19 12H5"/><path d="m12 19-7-7 7-7"/>
+        </svg>
+        <span>Back to enquiries</span>
+      </button>
+      <div class="flex flex-wrap items-center gap-2">
+      <button onclick="copyLink()"
+              class="inline-flex h-9 items-center gap-2 rounded-xl border border-[#D7E4FF] bg-white px-3.5 text-[13px] font-semibold text-[#284CA5] transition hover:bg-[#EFF4FF]">
+        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M13.83 10.17a4 4 0 0 0-5.66 0l-4 4a4 4 0 0 0 5.66 5.66l1.1-1.1m-.76-4.9a4 4 0 0 0 5.66 0l4-4a4 4 0 0 0-5.66-5.66l-1.1 1.1"/>
+        </svg>
+        <span class="hidden sm:inline">Copy Link</span>
+      </button>
+      <button onclick="downloadPDF()"
+              class="inline-flex h-9 items-center gap-2 rounded-xl border border-[#D7E4FF] bg-white px-3.5 text-[13px] font-semibold text-[#284CA5] transition hover:bg-[#EFF4FF]">
+        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/>
+        </svg>
+        <span class="hidden sm:inline">Download PDF</span>
+      </button>
+      </div>
+    </div>
+
+    <!-- ── Toast ── -->
+    <div id="toast" role="status" aria-live="polite">
+      <span id="toastIcon" class="toast-icon"></span>
+      <div class="toast-body">
+        <p class="toast-title" id="toastTitle">Success</p>
+        <p class="toast-text" id="toastMsg">Link copied successfully</p>
+      </div>
+      <button type="button" id="toastClose" class="toast-close no-print" onclick="hideToast()" aria-label="Dismiss notification"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+    <!-- ═══════════ STICKY IDENTITY + STATUS HEADER ═══════════ -->
+    <header id="enqHeader" class="card mt-3 p-4 sm:p-5">
+      <div class="flex flex-col gap-3.5">
+
+        <!-- Row A: identity + status -->
+        <div class="flex flex-col items-start gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+          <div class="flex min-w-0 flex-1 flex-col gap-1.5">
+            <!-- Profile row: avatar + Name -->
+            <div class="flex min-w-0 items-center gap-3">
+              <div id="hdrAvatar" class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-[#284CA5] to-[#3a63c4] text-[14px] font-semibold tracking-tight text-white shadow-[0_4px_10px_rgba(40,76,165,0.20)]">AS</div>
+              <div class="min-w-0">
+                <h1 id="hdrParentName" class="truncate text-[19px] font-semibold leading-tight tracking-[-0.01em] text-[#0F172A]">Aarav Sharma</h1>
+                <span class="mt-1.5 inline-flex items-center gap-1.5 rounded-full border border-[#D7E4FF] bg-[#EFF4FF] py-1 pl-2 pr-2.5 text-[11.5px] font-semibold whitespace-nowrap">
+                  <svg class="h-3.5 w-3.5 shrink-0 text-[#284CA5]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                  <span class="font-medium text-[#64748B]">Assigned to</span>
+                  <span id="hdrAssignee" class="text-[#284CA5]">Priya Menon</span>
+                </span>
+              </div>
+            </div>
+            <!-- Combined meta row: Grade · Years · Address · Admission (Admission group wraps as one unit) -->
+            <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-[12.5px] text-[#64748B]">
+              <span class="inline-flex items-center gap-1.5 whitespace-nowrap text-[#0F172A]"><svg class="h-3.5 w-3.5 shrink-0 text-[#94A3B8]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg><span id="hdrGrade">Grade 1</span></span>
+              <span class="inline-flex items-center gap-1.5 whitespace-nowrap text-[#0F172A]"><svg class="h-3.5 w-3.5 shrink-0 text-[#94A3B8]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span id="hdrAge">5 yrs</span></span>
+              <span class="inline-flex items-center gap-1.5 text-[#0F172A]"><svg class="h-3.5 w-3.5 shrink-0 text-[#94A3B8]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><span id="hdrArea">Indiranagar, Bengaluru</span></span>
+              <span class="inline-flex flex-wrap items-center gap-x-4 gap-y-1">
+                <span class="inline-flex items-center whitespace-nowrap"><span id="hdrAcadYear" class="font-semibold text-[#334155]">2026–27</span></span>
+                <span class="inline-flex items-center whitespace-nowrap"><span id="hdrAppliedDate" class="font-semibold text-[#334155]">25 May 2026</span></span>
+                <span class="inline-flex items-center whitespace-nowrap"><span id="hdrSource" class="font-semibold text-[#334155]">Superschools</span></span>
+              </span>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <div class="flex items-center gap-1.5">
+              <span class="hidden text-[10.5px] font-semibold uppercase tracking-[0.5px] text-[#94A3B8] sm:inline">Status</span>
+              <div class="relative inline-flex">
+                <button class="status-pill" id="statusPill" onclick="toggleDropdown('statusPanel', event)" title="Override status manually">
+                  <span id="statusValue">Visit / Revisit Scheduled</span>
+                  <svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                </button>
+                <div class="dropdown-panel" id="statusPanel">
+                  <div class="dp-header">Override status manually…</div>
+                  <div class="dp-list" id="statusList"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row B: enquiry meta (Admission Year · Applied Date · Source) + contact actions -->
+        <div class="flex flex-wrap items-center justify-between gap-3 border-t border-[#EEF2F7] pt-3">
+          <div id="topIndicators" class="flex flex-wrap items-center gap-1.5"></div>
+          <div class="no-print flex shrink-0 items-center gap-2">
+            <a id="hdrWhatsApp" class="contact-btn contact-wa" href="https://wa.me/919876543210" target="_blank" rel="noopener" onclick="logContact('WhatsApp')">
+              <svg class="h-[15px] w-[15px]" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M13.6 2.33A7.85 7.85 0 0 0 7.99 0C3.63 0 .07 3.56.06 7.93c0 1.4.37 2.76 1.06 3.96L0 16l4.2-1.1a7.93 7.93 0 0 0 3.79.96h.01c4.37 0 7.93-3.56 7.93-7.93a7.9 7.9 0 0 0-2.33-5.6Zm-5.6 12.2a6.57 6.57 0 0 1-3.36-.92l-.24-.14-2.5.65.67-2.43-.16-.25a6.56 6.56 0 0 1-1.01-3.51c0-3.62 2.96-6.58 6.6-6.58a6.56 6.56 0 0 1 4.66 1.93 6.56 6.56 0 0 1 1.93 4.66c0 3.64-2.96 6.59-6.59 6.59Zm3.62-4.93c-.2-.1-1.17-.58-1.36-.65-.18-.06-.31-.1-.44.1-.13.2-.51.65-.63.78-.11.13-.23.14-.43.05-.2-.1-.83-.31-1.59-.99-.59-.52-.98-1.17-1.1-1.37-.12-.2-.01-.3.08-.4.09-.09.2-.23.3-.35.1-.11.13-.2.2-.33.06-.13.03-.25-.02-.35-.05-.1-.44-1.08-.61-1.47-.16-.39-.32-.34-.44-.34h-.38a.73.73 0 0 0-.53.25c-.18.2-.69.68-.69 1.65 0 .98.71 1.92.81 2.05.1.13 1.4 2.13 3.38 2.99.47.2.84.33 1.13.42.48.15.91.13 1.25.08.38-.06 1.17-.48 1.34-.94.16-.47.16-.86.11-.94-.05-.08-.18-.13-.38-.23Z"/></svg>
+              <span>WhatsApp</span>
+            </a>
+            <a id="hdrCall" class="contact-btn contact-out" href="tel:+919876543210" onclick="logContact('Call')">
+              <svg class="h-[15px] w-[15px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6.62 10.79c1.44 2.83 3.76 5.15 6.59 6.59l2.2-2.2c.28-.28.67-.36 1.02-.25 1.12.37 2.32.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1C10.61 21 3 13.39 3 4c0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2Z"/></svg>
+              <span class="hidden sm:inline">Call</span>
+            </a>
+            <a class="contact-btn contact-out" href="mailto:priya.sharma@example.com" onclick="logContact('Email')">
+              <svg class="h-[15px] w-[15px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+              <span class="hidden sm:inline">Email</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ═══════════ GUIDED WORKFLOW ═══════════ -->
+    <section id="guidedWorkflowSection" class="card mt-4 overflow-hidden">
+      <div class="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-b border-[#EEF2F7] px-4 py-3 sm:px-5">
+        <div class="flex items-center gap-2">
+          <span class="grid h-7 w-7 place-items-center rounded-lg bg-[#EFF4FF] text-[#284CA5]"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg></span>
+          <h2 class="text-[14px] font-semibold text-[#0F172A]">Guided Workflow</h2>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="scrollToNotes()" title="Jump to Notes" class="no-print inline-flex h-7 items-center gap-1.5 rounded-lg border border-[#E2E8F0] bg-white px-2.5 text-[12px] font-semibold text-[#475569] transition hover:bg-[#EFF4FF] hover:text-[#284CA5]"><svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Quick notes</button>
+          <span id="wfProgressBadge"></span>
+        </div>
+      </div>
+      <div id="wfRail" class="wf-rail"></div>
+      <div id="wfFocus"></div>
+      <div class="border-t border-[#EEF2F7] bg-[#FBFCFE] px-4 py-4 sm:px-5"><div class="grid grid-cols-1 gap-3 sm:grid-cols-2"><div id="wfFollowupPanel" class="min-h-[140px]"></div><div id="wfVisitPanel" class="min-h-[140px]"></div></div></div>
+    </section>
+
+    <!-- (Follow-up + Campus Visit now render as highlighted panels inside the Guided Workflow) -->
+
+    <!-- ── Main 2-col layout ── -->
+    <div class="mt-4 flex flex-col gap-4 lg:grid lg:grid-cols-[minmax(0,1fr)_320px]">
+
+      <!-- LEFT — reference details (lower priority, sits below Notes) -->
+      <div class="order-3 min-w-0 space-y-4 lg:col-start-1 lg:row-start-2">
+
+        <!-- Child Details -->
+        <article class="print-card overflow-hidden rounded-2xl border border-[#E2E8F0] bg-white shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
+          <header class="flex cursor-pointer select-none items-center justify-between border-b border-[#EEF2F7] h-[60px] px-4 sm:px-5" onclick="toggleAccordion('child-details')">
+            <div class="flex items-center gap-2">
+              <svg id="accordion-icon-child-details" class="no-print h-4 w-4 shrink-0 text-[#94A3B8] transition-transform duration-200" style="transform:rotate(0deg)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+              <h2 class="text-[13px] font-semibold uppercase tracking-[0.6px] text-[#475569]">Child Details</h2>
+            </div>
+            <span id="acthdr-child-details" class="flex items-center gap-2"><button onclick="event.stopPropagation();enterEdit('child-details')" class="no-print inline-flex h-7 items-center gap-1 px-1 text-[12px] font-semibold text-[#284CA5] transition hover:text-[#203F8D]">Edit</button></span>
+          </header>
+          <div id="accordion-child-details" class="accordion-body">
+            <div class="px-4 py-5 sm:px-5">
+              <div class="detail-grid" id="view-child"></div>
+              <div id="edit-child" class="hidden"></div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Parent Details -->
+        <article class="print-card overflow-hidden rounded-2xl border border-[#E2E8F0] bg-white shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
+          <header class="flex cursor-pointer select-none items-center justify-between border-b border-[#EEF2F7] h-[60px] px-4 sm:px-5" onclick="toggleAccordion('parent-details')">
+            <div class="flex items-center gap-2">
+              <svg id="accordion-icon-parent-details" class="no-print h-4 w-4 shrink-0 text-[#94A3B8] transition-transform duration-200" style="transform:rotate(0deg)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+              <h2 class="text-[13px] font-semibold uppercase tracking-[0.6px] text-[#475569]">Parent Details</h2>
+            </div>
+            <span id="acthdr-parent-details" class="flex items-center gap-2"><button onclick="event.stopPropagation();enterEdit('parent-details')" class="no-print inline-flex h-7 items-center gap-1 px-1 text-[12px] font-semibold text-[#284CA5] transition hover:text-[#203F8D]">Edit</button></span>
+          </header>
+          <div id="accordion-parent-details" class="accordion-body">
+            <div class="px-4 py-5 sm:px-5"><div class="detail-grid" id="parentDetailsGrid"></div>
+              <div id="edit-parent" class="hidden"></div></div>
+          </div>
+        </article>
+
+        <!-- Admission Preferences -->
+        <article class="print-card overflow-hidden rounded-2xl border border-[#E2E8F0] bg-white shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
+          <header class="flex cursor-pointer select-none items-center justify-between border-b border-[#EEF2F7] h-[60px] px-4 sm:px-5" onclick="toggleAccordion('admission-prefs')">
+            <div class="flex items-center gap-2">
+              <svg id="accordion-icon-admission-prefs" class="no-print h-4 w-4 shrink-0 text-[#94A3B8] transition-transform duration-200" style="transform:rotate(0deg)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+              <h2 class="text-[13px] font-semibold uppercase tracking-[0.6px] text-[#475569]">Admission Preferences</h2>
+            </div>
+            <span id="acthdr-admission-prefs" class="flex items-center gap-2"><button onclick="event.stopPropagation();enterEdit('admission-prefs')" class="no-print inline-flex h-7 items-center gap-1 px-1 text-[12px] font-semibold text-[#284CA5] transition hover:text-[#203F8D]">Edit</button></span>
+          </header>
+          <div id="accordion-admission-prefs" class="accordion-body">
+            <div class="px-4 py-5 sm:px-5">
+              <div class="detail-grid" id="view-prefs"></div>
+              <div id="edit-prefs" class="hidden"></div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Enquiry Message -->
+        <article class="print-card overflow-hidden rounded-2xl border border-[#E2E8F0] bg-white shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
+          <header class="flex cursor-pointer select-none items-center justify-between border-b border-[#EEF2F7] h-[60px] px-4 sm:px-5" onclick="toggleAccordion('enquiry-message')">
+            <div class="flex items-center gap-2">
+              <svg id="accordion-icon-enquiry-message" class="no-print h-4 w-4 shrink-0 text-[#94A3B8] transition-transform duration-200" style="transform:rotate(0deg)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+              <h2 class="text-[13px] font-semibold uppercase tracking-[0.6px] text-[#475569]">Enquiry Message</h2>
+            </div>
+            <span id="acthdr-enquiry-message" class="flex items-center gap-2"><button onclick="event.stopPropagation();enterEdit('enquiry-message')" class="no-print inline-flex h-7 items-center gap-1 px-1 text-[12px] font-semibold text-[#284CA5] transition hover:text-[#203F8D]">Edit</button></span>
+          </header>
+          <div id="accordion-enquiry-message" class="accordion-body">
+            <div class="px-4 py-5 sm:px-5">
+              <p id="view-message" class="text-[13.5px] leading-relaxed text-[#334155]"></p>
+              <div id="edit-message" class="hidden"></div>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <!-- Notes — top priority in the main column (above reference details) -->
+      <article id="notesSection" class="order-1 print-card flex flex-col overflow-hidden rounded-2xl border border-[#E2E8F0] bg-white shadow-[0_1px_2px_rgba(15,23,42,0.03)] lg:col-start-1 lg:row-start-1">
+        <header class="flex items-center justify-between border-b border-[#EEF2F7] px-4 py-3 sm:px-5">
+          <h2 class="text-[13px] font-semibold uppercase tracking-[0.6px] text-[#475569]">Notes</h2>
+          <span class="text-[12px] text-[#94A3B8]" id="notesCount">2 notes</span>
+        </header>
+        <div class="flex-1 min-h-[80px] max-h-[288px] overflow-y-auto divide-y divide-[#EEF2F7]" id="notesList"></div>
+        <div class="no-print shrink-0 border-t border-[#EEF2F7] bg-[#FAFBFD] px-4 py-3 sm:px-5">
+          <div class="flex items-center gap-2">
+            <input id="noteInput" type="text" placeholder="Add a note about this enquiry…"
+                   class="h-9 flex-1 rounded-xl border border-[#E2E8F0] bg-white px-3 text-[13px] text-[#0F172A] placeholder:text-[#94A3B8] focus:border-[#284CA5] focus:outline-none focus:ring-2 focus:ring-[#DCE8FF]"
+                   oninput="updateAddNoteBtn()" onkeydown="if(event.key==='Enter' && this.value.trim())addNote()" />
+            <button id="addNoteBtn" onclick="addNote()" disabled title="Add note"
+                    class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#284CA5] text-white transition hover:bg-[#203F8D] disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none">
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2L11 13"/><path d="M22 2L15 22l-4-9-9-4 20-7z"/></svg>
+            </button>
+          </div>
+        </div>
+      </article>
+
+      <!-- RIGHT sidebar -->
+      <div class="order-2 flex flex-col gap-4 min-w-0 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:sticky lg:top-5 lg:self-start lg:max-h-[calc(100vh-2.5rem)] sticky-rail">
+        <!-- Activity -->
+        <article class="flex min-h-[100px] flex-col overflow-hidden print-card rounded-2xl border border-[#E2E8F0] bg-white shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
+          <header class="shrink-0 border-b border-[#EEF2F7] px-4 py-3"><h2 class="text-[13px] font-semibold uppercase tracking-[0.6px] text-[#475569]">Activity</h2></header>
+          <div id="activityScroll" class="overflow-y-auto overscroll-contain max-h-[60vh] lg:max-h-[calc(100vh-10rem)] px-4 py-4"><div id="activityTimeline"></div></div>
+        </article>
+      </div>
+    </div>
+
+    <div class="h-6"></div>
+  </main>
+
+  <!-- ── Modals ── -->
+  <!-- Child DOB calendar (ported from the reference Add Enquiry form) -->
+  <div id="dobCal" class="fixed z-[90] hidden w-[326px] max-w-[calc(100vw-16px)] rounded-2xl border border-[#E2E8F0] bg-white p-3 shadow-[0_16px_40px_rgba(15,23,42,0.16)]" role="dialog" aria-label="Date of birth picker">
+    <div class="flex items-center gap-1">
+      <button id="dobCalPrev" type="button" class="grid h-7 w-7 place-items-center rounded-lg text-[#64748B] transition hover:bg-[#EFF4FF] hover:text-[#284CA5]" aria-label="Previous month"><svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+      <div class="min-w-0 flex-1 text-center"><div class="grid grid-cols-[128px_74px] justify-center gap-1">
+        <div class="relative min-w-0"><select id="dobCalMonthSelect" class="h-8 w-full appearance-none rounded-lg border border-[#D7E4FF] bg-white py-0 pl-2 pr-7 text-[12px] font-semibold text-[#0F172A] outline-none transition focus:border-[#284CA5]" aria-label="Select month"></select><svg class="pointer-events-none absolute right-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#64748B]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></div>
+        <div class="relative min-w-0"><select id="dobCalYearSelect" class="h-8 w-full appearance-none rounded-lg border border-[#D7E4FF] bg-white py-0 pl-2 pr-7 text-[12px] font-semibold text-[#0F172A] outline-none transition focus:border-[#284CA5]" aria-label="Select year"></select><svg class="pointer-events-none absolute right-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#64748B]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></div>
+      </div><p id="dobCalFieldLabel" class="mt-1 text-[11px] font-medium text-[#64748B]">Date of birth</p></div>
+      <button id="dobCalNext" type="button" class="grid h-7 w-7 place-items-center rounded-lg text-[#64748B] transition hover:bg-[#EFF4FF] hover:text-[#284CA5]" aria-label="Next month"><svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+      <button id="dobCalClose" type="button" class="grid h-7 w-7 place-items-center rounded-lg text-[#64748B] transition hover:bg-[#EEF2F7] hover:text-[#0F172A]" aria-label="Close date picker"><svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="mt-2 grid grid-cols-7 gap-1 text-center text-[11px] font-semibold text-[#64748B]"><span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span></div>
+    <div id="dobCalDays" class="mt-2 grid grid-cols-7 gap-1"></div>
+    <div class="mt-3 flex justify-between gap-2">
+      <button id="dobCalClear" type="button" class="h-8 rounded-lg border border-[#D7E4FF] bg-white px-3 text-[12px] font-semibold text-[#284CA5] transition hover:bg-[#EFF4FF]">Clear</button>
+      <button id="dobCalToday" type="button" class="h-8 rounded-lg bg-[#284CA5] px-3 text-[12px] font-semibold text-white transition hover:bg-[#203F8D]">Today</button>
+    </div>
+  </div>
+  <div id="scheduleTourModal" class="modal-overlay" onclick="handleModalOverlayClick(event)">
+    <div class="modal-card" onclick="event.stopPropagation()"><div id="scheduleTourContent"></div></div>
+  </div>
+  <div id="calendarModal" class="cal-modal-overlay" onclick="handleCalModalOverlayClick(event)">
+    <div id="calContainer" onclick="event.stopPropagation()"></div>
+  </div>
+  <div id="followupModal" class="modal-overlay" onclick="handleFollowupOverlayClick(event)">
+    <div class="modal-card" onclick="event.stopPropagation()"><div id="followupContent"></div></div>
+  </div>
+  <div id="closeModal" class="modal-overlay" onclick="handleCloseOverlayClick(event)">
+    <div class="modal-card" onclick="event.stopPropagation()"><div id="closeContent"></div></div>
+  </div>
+  <div id="discardModal" class="modal-overlay" onclick="handleDiscardOverlayClick(event)">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <div class="px-5 pt-5 pb-5">
+        <div class="mb-4 flex items-center justify-between"><h3 class="text-[15px] font-semibold text-[#0F172A]">Discard changes?</h3><button onclick="discardKeep()" class="grid h-7 w-7 place-items-center rounded-lg text-[#64748B] transition hover:bg-[#EEF2F7] hover:text-[#0F172A]"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+        <div class="mb-5 flex items-start gap-2 rounded-lg border border-[#FECACA] bg-[#FEF2F2] px-3 py-2.5"><svg class="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#B91C1C]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg><p class="text-[12px] text-[#B91C1C]">You have unsaved changes. Discarding will revert these fields to the last saved values.</p></div>
+        <div class="flex gap-2 border-t border-[#EEF2F7] pt-4"><button onclick="discardKeep()" class="h-9 flex-1 rounded-xl border border-[#E2E8F0] bg-white text-[13px] font-semibold text-[#475569] transition hover:bg-[#EFF4FF] hover:text-[#284CA5]">Keep editing</button><button onclick="discardConfirm()" class="h-9 flex-1 rounded-xl bg-[#DC2626] text-[13px] font-semibold text-white transition hover:bg-[#B91C1C]">Discard changes</button></div>
+      </div>
+    </div>
+  </div>
+  <div id="followupCancelModal" class="modal-overlay" onclick="handleFollowupCancelOverlayClick(event)">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <div class="px-5 pt-5 pb-5">
+        <div class="mb-4 flex items-center justify-between"><h3 class="text-[15px] font-semibold text-[#0F172A]">Cancel this follow-up?</h3><button onclick="closeFollowupCancel()" class="grid h-7 w-7 place-items-center rounded-lg text-[#64748B] transition hover:bg-[#EEF2F7] hover:text-[#0F172A]"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+        <div class="mb-5 flex items-start gap-2 rounded-lg border border-[#FECACA] bg-[#FEF2F2] px-3 py-2.5"><svg class="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#B91C1C]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg><p class="text-[12px] text-[#B91C1C]">This removes the pending follow-up and its reminder. You can add a new follow-up afterwards.</p></div>
+        <div class="flex gap-2 border-t border-[#EEF2F7] pt-4"><button onclick="closeFollowupCancel()" class="h-9 flex-1 rounded-xl border border-[#E2E8F0] bg-white text-[13px] font-semibold text-[#475569] transition hover:bg-[#EFF4FF] hover:text-[#284CA5]">Keep follow-up</button><button onclick="confirmFollowupCancel()" class="h-9 flex-1 rounded-xl bg-[#DC2626] text-[13px] font-semibold text-white transition hover:bg-[#B91C1C]">Cancel follow-up</button></div>
+      </div>
+    </div>
+  </div>
+  <div id="visitCancelModal" class="modal-overlay" onclick="handleVisitCancelOverlayClick(event)">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <div class="px-5 pt-5 pb-5">
+        <div class="mb-4 flex items-center justify-between"><h3 class="text-[15px] font-semibold text-[#0F172A]">Cancel this campus visit?</h3><button onclick="closeVisitCancel()" class="grid h-7 w-7 place-items-center rounded-lg text-[#64748B] transition hover:bg-[#EEF2F7] hover:text-[#0F172A]"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+        <div class="mb-5 flex items-start gap-2 rounded-lg border border-[#FECACA] bg-[#FEF2F2] px-3 py-2.5"><svg class="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#B91C1C]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg><p class="text-[12px] text-[#B91C1C]">This cancels the scheduled visit and moves the enquiry back to “Interested”. You can reschedule a visit anytime afterwards.</p></div>
+        <div class="flex gap-2 border-t border-[#EEF2F7] pt-4"><button onclick="closeVisitCancel()" class="h-9 flex-1 rounded-xl border border-[#E2E8F0] bg-white text-[13px] font-semibold text-[#475569] transition hover:bg-[#EFF4FF] hover:text-[#284CA5]">Keep visit</button><button onclick="confirmVisitCancel()" class="h-9 flex-1 rounded-xl bg-[#DC2626] text-[13px] font-semibold text-white transition hover:bg-[#B91C1C]">Cancel visit</button></div>
+      </div>
+    </div>
+  </div>
+  <div id="noteDeleteModal" class="modal-overlay" onclick="handleNoteDeleteOverlayClick(event)">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <div class="px-5 pt-5 pb-5">
+        <div class="mb-4 flex items-center justify-between"><h3 class="text-[15px] font-semibold text-[#0F172A]">Delete this note?</h3><button onclick="closeNoteDelete()" class="grid h-7 w-7 place-items-center rounded-lg text-[#64748B] transition hover:bg-[#EEF2F7] hover:text-[#0F172A]"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+        <div class="mb-5 flex items-start gap-2 rounded-lg border border-[#FECACA] bg-[#FEF2F2] px-3 py-2.5"><svg class="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#B91C1C]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg><p class="text-[12px] text-[#B91C1C]">This permanently removes the note. This action cannot be undone.</p></div>
+        <div class="flex gap-2 border-t border-[#EEF2F7] pt-4"><button onclick="closeNoteDelete()" class="h-9 flex-1 rounded-xl border border-[#E2E8F0] bg-white text-[13px] font-semibold text-[#475569] transition hover:bg-[#EFF4FF] hover:text-[#284CA5]">Keep note</button><button onclick="confirmNoteDelete()" class="h-9 flex-1 rounded-xl bg-[#DC2626] text-[13px] font-semibold text-white transition hover:bg-[#B91C1C]">Delete note</button></div>
+      </div>
+    </div>
+  </div>
+  <!-- Close-reason dropdown panel: body-level so it layers above the modal; reuses the top status-dropdown styling -->
+  <div class="dropdown-panel" id="closeReasonPanel" style="z-index:10001;min-width:260px">
+    <div class="dp-header">Select a reason</div>
+    <div class="dp-list" id="closeReasonList"></div>
+  </div>
+
+  <!-- Shared CRM store — single source of truth for the whole Super CRM module. Must load BEFORE the page script. -->
+  <script src="../../lib/crm-store.js"></script>
+
+  <script>
+  /* ════════════════ STATUS DICTIONARY ════════════════ */
+  const STATUS_LIST = ['New Enquiry','Contacted','Interested','Visit / Revisit Scheduled','Visit Completed','Application in Progress','Admission Confirmed','Closed'];
+  const STATUS_STYLES = {
+    'New Enquiry':              { color:'#1D4ED8', bg:'#DBEAFE', border:'#93C5FD' },
+    'Contacted':                { color:'#0369A1', bg:'#E0F2FE', border:'#7DD3FC' },
+    'Follow-up Required':       { color:'#B45309', bg:'#FEF3C7', border:'#FDE68A' },
+    'Interested':               { color:'#6D28D9', bg:'#EDE9FE', border:'#C4B5FD' },
+    'Visit / Revisit Scheduled':{ color:'#4338CA', bg:'#E0E7FF', border:'#A5B4FC' },
+    'Visit Completed':          { color:'#0F766E', bg:'#CCFBF1', border:'#5EEAD4' },
+    'Application in Progress':  { color:'#C2410C', bg:'#FFEDD5', border:'#FDBA74' },
+    'Admission Confirmed':      { color:'#15803D', bg:'#DCFCE7', border:'#86EFAC' },
+    'Closed':                   { color:'#B91C1C', bg:'#FEE2E2', border:'#FCA5A5' }
+  };
+
+  /* ════════════════ WORKFLOW DEFINITION ════════════════
+     The linear admission lifecycle. Each milestone has a single
+     pending task, a recommendation, and a primary completion action
+     that auto-advances to the next status. */
+  const WORKFLOW = [
+    { key:'new',        status:'New Enquiry',                railLabel:'New',         taskTitle:'Make first contact with the parent',  taskShort:'First contact made',
+      recommend:'Call or WhatsApp the parent to introduce the school and answer their first questions.',
+      cta:'Mark contact made', icon:'phone' },
+    { key:'contacted',  status:'Contacted',                 railLabel:'Contacted',   taskTitle:'Qualify the enquiry & confirm interest', taskShort:'Interest confirmed',
+      recommend:'Discuss curriculum, fees and transport, then confirm the family wants to proceed.',
+      cta:'Mark as interested', icon:'msg' },
+    { key:'interested', status:'Interested',                railLabel:'Interested',  taskTitle:'Schedule a campus visit',             taskShort:'Visit scheduled',
+      recommend:'Create a visit schedule for the parent so they can tour the campus before deciding.',
+      cta:'Schedule visit', icon:'calendar', action:'schedule' },
+    { key:'visit',      status:'Visit / Revisit Scheduled', railLabel:'Visit / Revisit',taskTitle:'Conduct the campus visit',            taskShort:'Visit completed',
+      recommend:'Host the family on the scheduled date, then mark the visit completed.',
+      cta:'Mark visit completed', icon:'building' },
+    { key:'visited',    status:'Visit Completed',           railLabel:'Visited',     taskTitle:'Begin the admission application',     taskShort:'Application started',
+      recommend:'Share the application form and start the admission paperwork.',
+      cta:'Start application', icon:'doc' },
+    { key:'application', status:'Application in Progress',   railLabel:'Application', taskTitle:'Confirm the admission',               taskShort:'Admission confirmed',
+      recommend:'Verify documents and fee payment, then confirm the admission.',
+      cta:'Confirm admission', icon:'check' },
+    { key:'confirmed',  status:'Admission Confirmed',       railLabel:'Confirmed',   taskTitle:'Admission confirmed',                 taskShort:'Confirmed',
+      recommend:'This enquiry is complete — the admission is confirmed. No further workflow action is needed.',
+      terminal:true, icon:'trophy' },
+  ];
+  const WF_STATUS = WORKFLOW.map(w=>w.status);
+  const IDX_VISIT = 3, IDX_VISITED = 4, IDX_LAST = WORKFLOW.length-1;
+  function wfIndexOf(st){ return WF_STATUS.indexOf(st); }
+
+  /* ════════════════ STATE ════════════════ */
+  let workflowIndex = 3;                 // furthest active milestone (mirrors initial "Visit Scheduled")
+  let currentStatus = 'Visit / Revisit Scheduled';
+  let completedTasks = new Set([0,1,2]); // stages already finished
+  let scheduledTour = { iso: '2026-05-28', date: 'Tomorrow, 28 May 2026', time: '11:00 AM' };
+  let followup = null;                   // active follow-up pauses progression
+  let closeReason = null;                // reason captured when an enquiry is closed
+  let preCloseStatus = null;             // active status to restore when reopening
+  let preCloseFollowup = null;           // pending follow-up to restore when reopening
+  let closeReasonValue = null;           // reason chosen in the Close dialog (custom dropdown)
+
+  let busy = false;                      // guards against duplicate rapid actions
+
+  /* ════════════════ CRM BINDING ════════════════
+     `rec` is the real enquiry this page is showing (from the shared CRM store).
+     The page's own UI vocabulary differs slightly from the store's canonical
+     statuses, so we translate in both directions:
+       UI status  ⇄  CRM status
+       Interested            → Visit / Revisit Scheduled (no CRM equivalent; folded into the visit stage on save)
+       Application in Progress ⇄ Application Pending
+     Everything else maps 1:1. */
+  let rec = null;                        // the live enquiry record (or null when not found)
+  function uiToCrmStatus(s){
+    if(s==='Application in Progress') return 'Application Pending';
+    if(s==='Interested')             return 'Contacted';   // closest canonical bucket
+    return s;
+  }
+  function crmToUiStatus(s){
+    if(s==='Application Pending') return 'Application in Progress';
+    return s;   // 'Interested' never comes from the store
+  }
+  /* Persist the current UI status to the store (no-op if no record / no store). */
+  function persistStatus(){
+    if(rec && window.CRM && CRM.setEnquiryStatus){ try { CRM.setEnquiryStatus(rec.id, uiToCrmStatus(currentStatus)); } catch(e){} }
+  }
+  /* Persist a partial patch to the store and keep our local `rec` mirror in sync. */
+  function persistPatch(patch){
+    if(rec && window.CRM && CRM.updateEnquiry){ try { CRM.updateEnquiry(rec.id, patch); Object.assign(rec, patch); } catch(e){} }
+  }
+  /* Persist the current follow-up state → rec.followUp ({dueDate,note}|null). */
+  function persistFollowup(){
+    var fu = followup ? { dueDate: followup.dateISO, note: followup.note || '' } : null;
+    persistPatch({ followUp: fu });
+  }
+  /* Persist the current visit/tour state → rec.visit. */
+  function persistVisit(state){
+    if(!rec) return;
+    var v = null;
+    if(currentStatus!=='Closed' && (workflowIndex>=IDX_VISIT) && scheduledTour && scheduledTour.iso){
+      var st = state || (workflowIndex>=IDX_VISITED ? 'Visited' : 'Confirmed');
+      var prevHost = (rec.visit && rec.visit.host) || null;
+      v = { type:(rec.visit&&rec.visit.type)||'Campus Tour', state:st, date:scheduledTour.iso, time:scheduledTour.time, host:prevHost };
+    }
+    persistPatch({ visit: v });
+  }
+
+  const SLOTS_CONFIGURED = true;
+  const ALL_SLOTS    = ['9:00 AM','10:00 AM','11:00 AM','12:00 PM','2:00 PM','3:00 PM','4:00 PM'];
+  const BOOKED_SLOTS = ['9:00 AM','10:00 AM'];
+  let selectedSlot = null;
+
+  const CLOSE_REASONS = ['Not interested','Chose another school','Fees too high','Location issue','No response from parent','Duplicate enquiry'];
+
+  const FEED_ICONS = {
+    calendar:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
+    arrow:'<path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>',
+    phone:'<path d="M6.62 10.79c1.44 2.83 3.76 5.15 6.59 6.59l2.2-2.2c.28-.28.67-.36 1.02-.25 1.12.37 2.32.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1C10.61 21 3 13.39 3 4c0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2Z"/>',
+    inbox:'<path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>',
+    check:'<path d="M20 6 9 17l-5-5"/>',
+    bell:'<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>',
+    msg:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+    x:'<path d="M18 6 6 18M6 6l12 12"/>',
+    building:'<path d="M3 21h18"/><path d="M5 21V7l8-4 8 4v14"/><path d="M9 9h1M9 13h1M9 17h1M14 9h1M14 13h1M14 17h1"/>',
+    doc:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6M9 17h6"/>',
+    trophy:'<path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 0 1-10 0V4z"/><path d="M5 4H3v2a3 3 0 0 0 3 3M19 4h2v2a3 3 0 0 0-3 3"/>',
+    flag:'<path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><path d="M4 22V15"/>',
+    pause:'<path d="M10 4H6v16h4zM18 4h-4v16h4z"/>',
+    refresh:'<path d="M3 12a9 9 0 1 0 9-9"/><path d="M3 4v5h5"/>'
+  };
+
+  function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function shorten(s,n){ return s.length>n?s.slice(0,n-1)+'…':s; }
+
+  /* ════════════════ STATUS PILL + OVERRIDE LIST ════════════════ */
+  function renderStatusList(){
+    const el=document.getElementById('statusList'); if(!el) return;
+    el.innerHTML = STATUS_LIST.map(s=>{
+      return `<button class="dp-item ${s===currentStatus?'active':''}" onclick="overrideStatus('${s.replace(/'/g,"\\'")}')">${s}</button>`;
+    }).join('');
+  }
+
+  function updateStatusPill(){
+    const pill=document.getElementById('statusPill'); const s=STATUS_STYLES[currentStatus]||STATUS_STYLES['New Enquiry'];
+    document.getElementById('statusValue').textContent=currentStatus;
+    pill.style.color=s.color; pill.style.background=s.bg; pill.style.borderColor=s.border;
+  }
+
+  /* ════════════════ GUIDED WORKFLOW RENDER ════════════════ */
+  function progressPct(){ return Math.round((workflowIndex/IDX_LAST)*100); }
+
+  function renderGuidedWorkflow(){
+    const closed    = currentStatus==='Closed';
+    const confirmed = workflowIndex>=IDX_LAST && !closed;
+    const pct = progressPct();
+
+    const badge=document.getElementById('wfProgressBadge');
+    if(closed)         badge.innerHTML=`<span class="wf-progress-badge" style="color:#B91C1C;background:#FEE2E2;border-color:#FCA5A5">Progress: ${pct}%</span>`;
+    else if(confirmed) badge.innerHTML='<span class="wf-progress-badge" style="color:#15803D;background:#DCFCE7;border-color:#86EFAC">Progress: 100%</span>';
+    else               badge.innerHTML=`<span class="wf-progress-badge">Progress: ${pct}%</span>`;
+
+    renderRail(closed, false, confirmed);
+    renderFocus(closed, confirmed, false);
+  }
+
+  function renderRail(closed, paused, confirmed){
+    const el=document.getElementById('wfRail'); if(!el) return;
+    el.className='wf-rail'+(closed?' closed':'');
+    el.innerHTML=WORKFLOW.map((w,i)=>{
+      const isDone = i<workflowIndex || (confirmed && i===workflowIndex);   // final step ticks once Admitted is reached
+      let cls='wf-node';
+      if(isDone) cls+=' done';
+      else if(i===workflowIndex) cls+= paused?' paused':' current';
+      const lineL = i===0?'':`<span class="wf-line" style="left:0;right:50%;${(i-1)<workflowIndex?'background:var(--brand)':''}"></span>`;
+      const lineR = i===WORKFLOW.length-1?'':`<span class="wf-line" style="left:50%;right:0;${i<workflowIndex?'background:var(--brand)':''}"></span>`;
+      let inner;
+      if(isDone) inner='<svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+      else if(i===workflowIndex && paused) inner='<svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">'+FEED_ICONS.pause+'</svg>';
+      else inner=(i+1);
+      return `<div class="${cls}" title="${esc(w.status)}">${lineL}${lineR}<span class="wf-dot">${inner}</span><span class="wf-node-label">${w.railLabel}</span></div>`;
+    }).join('');
+  }
+
+  function railClick(i){
+    if(currentStatus==='Closed'){ showToast('Reopen the enquiry to change stages', true); return; }
+    if(i===workflowIndex && !followup){ showToast('This is the current stage', 'info'); return; }
+    overrideStatus(WORKFLOW[i].status);
+  }
+
+  function chipsHTML(){
+    const done=[...completedTasks].filter(i=>i<=IDX_LAST).sort((a,b)=>a-b);
+    if(!done.length) return '';
+    return `<div class="wf-chips"><span class="text-[11px] font-semibold uppercase tracking-[.4px] text-[#94A3B8]">Completed &amp; locked</span>${done.map(i=>`<span class="wf-chip" title="${esc(WORKFLOW[i].taskTitle)}"><svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>${WORKFLOW[i].railLabel}</span>`).join('')}</div>`;
+  }
+
+  function closeBtnHTML(){
+    return `<button class="wf-override wf-close" onclick="openCloseModal()">Close enquiry</button>`;
+  }
+
+  function renderFocus(closed, confirmed, paused){
+    const el=document.getElementById('wfFocus'); if(!el) return;
+    if(closed){ el.innerHTML=focusClosed(); return; }
+    if(paused){ el.innerHTML=focusPaused(); return; }
+    if(confirmed){ el.innerHTML=focusConfirmed(); return; }
+    el.innerHTML=focusActive();
+  }
+
+  function focusActive(){
+    const stage=WORKFLOW[workflowIndex];
+    const next = workflowIndex<IDX_LAST ? WORKFLOW[workflowIndex+1].status : '—';
+    const sp=STATUS_STYLES[currentStatus]||STATUS_STYLES['New Enquiry'];
+    const nextCol = STATUS_STYLES[next] ? STATUS_STYLES[next].color : '#0F172A';
+    return `<div class="wf-focus">
+      <div class="wf-focus-grid">
+        <div class="wf-cell"><span class="wf-k">Current status</span><span class="wf-v">${currentStatus}</span></div>
+        <div class="wf-cell accent"><span class="wf-k">Current pending task</span><span class="wf-v">${stage.taskTitle}</span></div>
+        <div class="wf-cell"><span class="wf-k">Next status after completion</span><span class="wf-v" style="color:${nextCol}">${next}</span></div>
+      </div>
+      <div class="wf-recommend"><span class="grid h-5 w-5 shrink-0 place-items-center rounded-md" style="background:var(--brand-soft);color:var(--brand)"><svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span><span><b style="color:#1E293B">Recommended next step — </b>${stage.recommend}</span></div>
+      <div class="wf-actions">
+        <button class="wf-cta" onclick="completeCurrentTask()">${stage.cta}</button>
+        ${closeBtnHTML()}
+      </div>
+    </div>`;
+  }
+
+  /* Visit + follow-up folded into the Guided Workflow as compact actions beside Close (no separate cards) */
+  function wfVisitHTML(){
+    const ic=`<svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${FEED_ICONS.building}</svg>`;
+    const reIco=`<svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${FEED_ICONS.refresh}</svg>`;
+    if(workflowIndex===IDX_VISIT){
+      return `<span class="wf-chip-action indigo" title="Visit on ${esc(scheduledTour.date)} at ${esc(scheduledTour.time)}"><span class="wf-chip-meta">${ic}Visit · ${esc(scheduledTour.date)}, ${esc(scheduledTour.time)}</span><button class="wf-chip-btn no-print" title="Reschedule visit" onclick="openScheduleTourModal('reschedule')">${reIco}</button><button class="wf-chip-btn no-print" title="Cancel visit" onclick="openVisitCancel()"><svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${FEED_ICONS.x}</svg></button></span>`;
+    }
+    if(workflowIndex>=IDX_VISITED){
+      return `<span class="wf-chip-action slate" title="Visited ${esc(scheduledTour.date)} — schedule a revisit if needed"><span class="wf-chip-meta">${ic}Visit done · ${esc(scheduledTour.date)}</span><button class="wf-chip-btn no-print" title="Schedule revisit" onclick="openScheduleTourModal('revisit')">${reIco}</button></span>`;
+    }
+    if(WORKFLOW[workflowIndex].action==='schedule') return '';   // Interested: the prominent primary CTA already schedules
+    return `<button class="wf-override no-print" onclick="openScheduleTourModal('schedule')">${ic}Schedule visit</button>`;
+  }
+
+  function wfFollowupHTML(){
+    const ic=`<svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${FEED_ICONS.bell}</svg>`;
+    if(followup){
+      const overdue = followup.dateISO && followup.dateISO < formatDateISO(new Date());
+      const cls = overdue ? 'red' : 'amber';
+      const label = (overdue ? 'Overdue · ' : 'Follow-up · ') + esc(followup.date);
+      const tip = (overdue ? 'Follow-up overdue' : 'Follow-up pending') + (followup.note ? ' — '+esc(shorten(followup.note,60)) : '');
+      return `<span class="wf-chip-action ${cls}" title="${tip}"><span class="wf-chip-meta">${ic}${label}${followup.note?' · '+esc(shorten(followup.note,30)):''}</span><button class="wf-chip-btn done no-print" title="Mark follow-up done" onclick="completeFollowup()"><svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></button><button class="wf-chip-btn no-print" title="Edit / reschedule follow-up" onclick="openFollowupModal()"><svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg></button></span>`;
+    }
+    return `<button class="wf-override no-print" onclick="openFollowupModal()">${ic}Add follow-up</button>`;
+  }
+
+  function cancelVisit(){
+    closeDropdowns();
+    if(currentStatus==='Closed'){ showToast('Reopen the enquiry to manage the visit', true); return; }
+    if(workflowIndex!==IDX_VISIT){ showToast('No scheduled visit to cancel', 'info'); return; }
+    completedTasks=new Set([0,1]); workflowIndex=2; currentStatus='Interested';
+    renderAll();
+    persistPatch({ status: uiToCrmStatus('Interested'), visit: null });   // → CRM (clears the visit)
+    addActivity('Visit cancelled',{icon:'x',accent:true,meta:'Reverted to “Interested” — reschedule when ready'});
+    showToast('Visit cancelled · status moved to “Interested”');
+  }
+
+  function focusPaused(){
+    const stage=WORKFLOW[workflowIndex];
+    return `<div class="wf-focus">
+      <div class="wf-banner paused"><span class="grid h-7 w-7 shrink-0 place-items-center rounded-lg" style="background:#FEF3C7;color:#B45309"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${FEED_ICONS.pause}</svg></span><div><p class="font-semibold">Workflow paused — follow-up pending</p><p class="mt-0.5 text-[12.5px] leading-relaxed">Follow-up due <b>${followup.date}</b>${followup.note?` · ${esc(shorten(followup.note,60))}`:''}. Complete it to resume at “${stage.status}”.</p></div></div>
+      <div class="wf-actions">
+        <button class="wf-cta green" onclick="completeFollowup()"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Mark follow-up done &amp; resume</button>
+        <button class="wf-override" onclick="openFollowupModal()"><svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>Edit follow-up</button>
+        ${closeBtnHTML()}
+      </div>
+    </div>`;
+  }
+
+  function focusConfirmed(){
+    return `<div class="wf-focus">
+      <div class="wf-banner success"><span class="grid h-7 w-7 shrink-0 place-items-center rounded-lg" style="background:#DCFCE7;color:#16A34A"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${FEED_ICONS.trophy}</svg></span><div><p class="font-semibold">Admission confirmed — workflow complete 🎉</p><p class="mt-0.5 text-[12.5px] leading-relaxed">All stages are done. No further workflow action is required for this enquiry.</p></div></div>
+    </div>`;
+  }
+
+  function focusClosed(){
+    const reasonLine = closeReason ? `<p class="mt-1 text-[12px] font-semibold text-[#B91C1C]">Reason: ${esc(closeReason)}</p>` : '';
+    return `<div class="wf-focus">
+      <div class="wf-banner closed"><span class="grid h-7 w-7 shrink-0 place-items-center rounded-lg" style="background:#FEE2E2;color:#B91C1C"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${FEED_ICONS.x}</svg></span><div><p class="font-semibold">Enquiry closed — workflow stopped</p><p class="mt-0.5 text-[12.5px] leading-relaxed">Progression is disabled. Reopen the enquiry to resume from where it left off.</p>${reasonLine}</div></div>
+      <div class="wf-actions">
+        <button class="wf-cta" onclick="reopenEnquiry()"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${FEED_ICONS.refresh}</svg>Reopen enquiry</button>
+      </div>
+    </div>`;
+  }
+
+  function scrollToWorkflow(){ document.getElementById('guidedWorkflowSection')?.scrollIntoView({behavior:'smooth',block:'start'}); }
+  function scrollToNotes(){ document.getElementById('notesSection')?.scrollIntoView({behavior:'smooth',block:'start'}); }
+
+  /* ════════════════ NEXT-UP HEADER HINT ════════════════ */
+  function nextUpHTML(){
+    if(currentStatus==='Closed')           return tag('#94A3B8','x', closeReason ? ('Enquiry closed — '+closeReason+'. Reopen to resume.') : 'Enquiry closed — reopen to resume the workflow.');
+    if(workflowIndex>=IDX_LAST)            return tag('#15803D','trophy','Admission confirmed — workflow complete.');
+    const stage=WORKFLOW[workflowIndex];
+    const col=(STATUS_STYLES[currentStatus]||{}).color||'#284CA5';
+    return tag(col, stage.icon, `${stage.taskTitle}.`, 'Go to task','scrollToWorkflow()');
+  }
+  function tag(color, icon, text, btnLabel, btnAction){
+    const ic=FEED_ICONS[icon]||FEED_ICONS.arrow;
+    return `<span class="grid h-6 w-6 shrink-0 place-items-center rounded-md" style="background:${color}1A;color:${color}"><svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ic}</svg></span>
+      <span class="min-w-0 truncate font-medium text-[#334155]"><span class="text-[#94A3B8]">Next:</span> ${text}</span>
+      ${btnLabel?`<button class="no-print ml-1 shrink-0 rounded-md px-1.5 py-0.5 text-[12px] font-semibold text-[#284CA5] transition hover:bg-[#EFF4FF]" onclick="${btnAction}">${btnLabel}</button>`:''}`;
+  }
+  function renderNextUp(){ const el=document.getElementById('nextUp'); if(el) el.innerHTML=nextUpHTML(); }
+
+  /* ════════════════ PENDING FOLLOW-UP HIGHLIGHT (top profile) ════════════════ */
+  function renderFollowupHighlight(){
+    const el=document.getElementById('followupHighlight'); if(!el) return;
+    if(followup && currentStatus!=='Closed'){
+      el.style.display='';
+      el.innerHTML=`<div class="flex flex-wrap items-center gap-x-3 gap-y-2 rounded-xl border border-[#FED7AA] bg-[#FFF7ED] px-3 py-2">
+        <span class="flex min-w-0 items-center gap-2">
+          <span class="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-[#FFEDD5] text-[#C2410C]"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${FEED_ICONS.bell}</svg></span>
+          <span class="min-w-0">
+            <span class="block text-[10.5px] font-semibold uppercase tracking-[0.5px] text-[#9A3412]">Follow-up pending</span>
+            <span class="block truncate text-[13px] font-semibold text-[#7C2D12]">${followup.date}${followup.note?` · <span class="font-medium text-[#9A3412]">${esc(shorten(followup.note,60))}</span>`:''}</span>
+          </span>
+        </span>
+        <span class="no-print ml-auto flex shrink-0 items-center gap-1.5">
+          <button onclick="completeFollowup()" class="inline-flex h-7 items-center gap-1 rounded-lg bg-[#16A34A] px-2.5 text-[12px] font-semibold text-white transition hover:bg-[#15803D]"><svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Done</button>
+          <button onclick="openFollowupModal()" class="inline-flex h-7 items-center rounded-lg border border-[#FED7AA] bg-white px-2.5 text-[12px] font-semibold text-[#C2410C] transition hover:bg-[#FFF7ED]">Edit</button>
+        </span>
+      </div>`;
+    } else {
+      el.style.display='none'; el.innerHTML='';
+    }
+  }
+
+  /* ════════════════ CENTRAL RENDER ════════════════ */
+  /* ══════════════ HIGHLIGHTED FOLLOW-UP + CAMPUS VISIT PANELS (inside Guided Workflow) ══════════════ */
+  let lastFollowupDone = null;   // remembers the most recently completed follow-up (until a new one is added)
+  const WF_ICON_BELL='<svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+FEED_ICONS.bell+'</svg>';
+  const WF_ICON_BLD='<svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+FEED_ICONS.building+'</svg>';
+  const WF_PLUS='<svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>';
+  const WF_CHK='<svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+  const WF_REFRESH='<svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+FEED_ICONS.refresh+'</svg>';
+  const WF_BTN_PRIMARY='no-print mt-auto self-start inline-flex h-8 items-center gap-1.5 rounded-lg bg-[#284CA5] px-3 text-[12px] font-semibold text-white transition hover:bg-[#203F8D]';
+  function wfPill(text,cls){ return '<span class="inline-flex h-[18px] items-center rounded-full border px-2 text-[10px] font-semibold '+cls+'">'+text+'</span>'; }
+  function wfPanel(o){ return '<div class="flex h-full flex-col rounded-xl border '+o.border+' '+o.bg+' p-3.5">'
+    +'<div class="mb-2 flex items-center justify-between gap-2"><span class="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.4px] '+o.labelCls+'">'+o.icon+o.label+'</span></div>'+o.body+'</div>'; }
+
+  function renderFollowupCard(){ const el=document.getElementById('wfFollowupPanel'); if(!el) return; const lbl='Follow-up';
+    if(currentStatus==='Closed'){ el.innerHTML=wfPanel({border:'border-[#E2E8F0]',bg:'bg-[#F8FAFC]',labelCls:'text-[#94A3B8]',label:lbl,icon:WF_ICON_BELL,pill:'',body:'<p class="text-[13px] font-semibold text-[#475569]">No active follow-up</p><p class="mt-1 text-[12px] leading-relaxed text-[#94A3B8]">Reopen the enquiry to manage follow-ups.</p>'}); return; }
+    if(workflowIndex>=IDX_LAST && !followup){ el.innerHTML=wfPanel({border:'border-[#BBF7D0]',bg:'bg-[#F0FDF4]',labelCls:'text-[#15803D]',label:lbl,icon:WF_ICON_BELL,pill:'',body:'<p class="text-[13px] font-semibold text-[#15803D]">No follow-up needed</p><p class="mt-1 text-[12px] leading-relaxed text-[#475569]">Admission confirmed — you are all set.</p>'}); return; }
+    if(followup){ const overdue=followup.dateISO && followup.dateISO<formatDateISO(new Date());
+      const border=overdue?'border-[#FECACA]':'border-[#FED7AA]', bg=overdue?'bg-[#FEF2F2]':'bg-[#FFF7ED]', txt=overdue?'text-[#B91C1C]':'text-[#C2410C]';
+      const pill=overdue?wfPill('Overdue','border-[#FCA5A5] bg-[#FEE2E2] text-[#B91C1C]'):wfPill('Pending','border-[#FED7AA] bg-[#FFEDD5] text-[#C2410C]');
+      const note=followup.note?'<p class="mt-1 mb-3 max-h-[60px] overflow-y-auto pr-1 text-[12px] leading-relaxed text-[#64748B]">'+esc(followup.note)+'</p>':'<p class="mt-1 mb-3 text-[12px] italic leading-relaxed text-[#94A3B8]">No note added.</p>';
+      el.innerHTML=wfPanel({border:border,bg:bg,labelCls:txt,label:lbl,icon:WF_ICON_BELL,pill:'',
+        body:'<p class="text-[13px] font-semibold text-[#0F172A]">'+esc(followup.date)+'</p>'+note
+          +'<div class="mt-auto flex flex-wrap gap-2"><button onclick="completeFollowup()" class="no-print inline-flex h-8 items-center gap-1.5 rounded-lg bg-[#16A34A] px-3 text-[12px] font-semibold text-white transition hover:bg-[#15803D]">Done</button>'
+          +'<button onclick="openFollowupModal()" class="no-print inline-flex h-8 items-center gap-1.5 rounded-lg border border-[#E2E8F0] bg-white px-3 text-[12px] font-semibold text-[#475569] transition hover:bg-[#EFF4FF] hover:text-[#284CA5]">Edit</button>'+'<button onclick="openFollowupCancel()" class="no-print inline-flex h-8 items-center gap-1.5 rounded-lg border border-[#FECACA] bg-white px-3 text-[12px] font-semibold text-[#DC2626] transition hover:bg-[#FEF2F2]">Cancel</button></div>'}); return; }
+    if(lastFollowupDone){ el.innerHTML=wfPanel({border:'border-[#BBF7D0]',bg:'bg-[#F0FDF4]',labelCls:'text-[#15803D]',label:lbl,icon:WF_ICON_BELL,pill:wfPill('Completed','border-[#BBF7D0] bg-[#DCFCE7] text-[#15803D]'),
+      body:'<p class="text-[13px] font-semibold text-[#15803D]">Follow-up completed</p><p class="mt-1 mb-3 text-[12px] leading-relaxed text-[#475569]">'+(lastFollowupDone.date?'Completed on '+esc(lastFollowupDone.date):'Marked as done')+'.</p><button onclick="openFollowupModal()" class="'+WF_BTN_PRIMARY+'">'+WF_PLUS+'Add follow-up</button>'}); return; }
+    el.innerHTML=wfPanel({border:'border-[#E2E8F0]',bg:'bg-[#F8FAFC]',labelCls:'text-[#64748B]',label:lbl,icon:WF_ICON_BELL,pill:wfPill('None','border-[#E2E8F0] bg-white text-[#94A3B8]'),
+      body:'<p class="text-[13px] font-semibold text-[#0F172A]">No follow-up added yet</p><p class="mt-1 mb-3 text-[12px] leading-relaxed text-[#94A3B8]">Add one to remind yourself to circle back.</p><button onclick="openFollowupModal()" class="'+WF_BTN_PRIMARY+'">'+WF_PLUS+'Add follow-up</button>'}); }
+
+  function updateScheduleCard(){ const el=document.getElementById('wfVisitPanel'); if(!el) return; const lbl='Campus Visit';
+    if(currentStatus==='Closed'){ el.innerHTML=wfPanel({border:'border-[#E2E8F0]',bg:'bg-[#F8FAFC]',labelCls:'text-[#94A3B8]',label:lbl,icon:WF_ICON_BLD,pill:'',body:'<p class="text-[13px] font-semibold text-[#475569]">No active visit</p><p class="mt-1 text-[12px] leading-relaxed text-[#94A3B8]">Reopen the enquiry to schedule a campus visit.</p>'}); return; }
+    if(workflowIndex>=IDX_LAST){ el.innerHTML=wfPanel({border:'border-[#99F6E4]',bg:'bg-[#F0FDFA]',labelCls:'text-[#0F766E]',label:lbl,icon:WF_ICON_BLD,pill:'',body:'<p class="text-[13px] font-semibold text-[#0F766E]">Visit completed</p><p class="mt-1 text-[12px] leading-relaxed text-[#475569]">Admission confirmed — no further visits required.</p>'}); return; }
+    if(workflowIndex>=IDX_VISITED){ el.innerHTML=wfPanel({border:'border-[#99F6E4]',bg:'bg-[#F0FDFA]',labelCls:'text-[#0F766E]',label:lbl,icon:WF_ICON_BLD,pill:wfPill('Completed','border-[#99F6E4] bg-[#CCFBF1] text-[#0F766E]'),
+      body:'<p class="text-[13px] font-semibold text-[#0F766E]">Visit completed</p>'+(scheduledTour.iso?'<p class="mt-1 mb-3 text-[12px] leading-relaxed text-[#475569]">Last visit · '+esc(scheduledTour.date)+' at '+esc(scheduledTour.time)+'</p>':'<p class="mt-1 mb-3 text-[12px] leading-relaxed text-[#475569]">The campus visit has been completed.</p>')+'<button onclick="openScheduleTourModal(\'revisit\')" class="'+WF_BTN_PRIMARY+'">'+WF_REFRESH+'Schedule revisit</button>'}); return; }
+    if(workflowIndex===IDX_VISIT && scheduledTour.iso){ el.innerHTML=wfPanel({border:'border-[#C7D2FE]',bg:'bg-[#EEF2FF]',labelCls:'text-[#4338CA]',label:lbl,icon:WF_ICON_BLD,pill:wfPill('Scheduled','border-[#C7D2FE] bg-[#E0E7FF] text-[#4338CA]'),
+      body:'<p class="text-[13px] font-semibold text-[#0F172A]">'+esc(scheduledTour.date)+'</p><p class="mt-1 mb-3 text-[12px] leading-relaxed text-[#475569]">'+esc(scheduledTour.time)+' · Hosted by Priya Menon</p><div class="mt-auto flex gap-2"><button onclick="openScheduleTourModal(\'reschedule\')" class="no-print inline-flex h-8 items-center gap-1.5 rounded-lg border border-[#C7D2FE] bg-white px-3 text-[12px] font-semibold text-[#4338CA] transition hover:bg-[#EEF2FF]">'+WF_REFRESH+'Reschedule</button><button onclick="openVisitCancel()" class="no-print inline-flex h-8 items-center gap-1.5 rounded-lg border border-[#E2E8F0] bg-white px-3 text-[12px] font-semibold text-[#475569] transition hover:border-[#FECACA] hover:bg-[#FEF2F2] hover:text-[#B91C1C]">Cancel</button></div>'}); return; }
+    el.innerHTML=wfPanel({border:'border-[#E2E8F0]',bg:'bg-[#F8FAFC]',labelCls:'text-[#64748B]',label:lbl,icon:WF_ICON_BLD,pill:wfPill('Not set','border-[#E2E8F0] bg-white text-[#94A3B8]'),
+      body:'<p class="text-[13px] font-semibold text-[#0F172A]">No visit scheduled yet</p><p class="mt-1 mb-3 text-[12px] leading-relaxed text-[#94A3B8]">Invite the parent to tour the campus.</p><button onclick="openScheduleTourModal(\'schedule\')" class="'+WF_BTN_PRIMARY+'">'+WF_PLUS+'Schedule visit</button>'}); }
+
+  function topChip(cls,icon,text){ return '<span class="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-semibold '+cls+'">'+icon+esc(text)+'</span>'; }
+  function renderTopIndicators(){ const el=document.getElementById('topIndicators'); if(!el) return;
+    if(currentStatus==='Closed'){ el.innerHTML=''; return; }
+    const bell='<svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+FEED_ICONS.bell+'</svg>';
+    const calIcon='<svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>';
+    let html='';
+    if(workflowIndex===IDX_VISIT && scheduledTour.iso){ html+=topChip('border-[#C7D2FE] bg-[#EEF2FF] text-[#4338CA]', calIcon, 'Visit · '+scheduledTour.date); }
+    if(followup){ const overdue=followup.dateISO && followup.dateISO<formatDateISO(new Date());
+      html += overdue ? topChip('border-[#FCA5A5] bg-[#FEE2E2] text-[#B91C1C]', bell, 'Follow-up overdue · '+followup.date)
+                      : topChip('border-[#FED7AA] bg-[#FFF7ED] text-[#C2410C]', bell, 'Follow-up · '+followup.date); }
+    el.innerHTML=html; }
+  /* Follow-up cancel (remove a follow-up added by mistake) — with confirmation */
+  function openFollowupCancel(){ const m=document.getElementById('followupCancelModal'); if(m){ m.classList.add('open'); lockBodyScroll(); } }
+  function closeFollowupCancel(){ const m=document.getElementById('followupCancelModal'); if(m) m.classList.remove('open'); unlockBodyScrollIfAllClosed(); }
+  function confirmFollowupCancel(){ closeFollowupCancel(); if(!followup) return; followup=null; lastFollowupDone=null; renderAll(); persistFollowup(); addActivity('Follow-up cancelled',{icon:'x'}); showToast('Follow-up cancelled'); }
+  function handleFollowupCancelOverlayClick(e){ if(e.target===document.getElementById('followupCancelModal')) closeFollowupCancel(); }
+
+  function openVisitCancel(){
+    closeDropdowns();
+    if(currentStatus==='Closed'){ showToast('Reopen the enquiry to manage the visit', true); return; }
+    if(workflowIndex!==IDX_VISIT){ showToast('No scheduled visit to cancel', 'info'); return; }
+    const m=document.getElementById('visitCancelModal'); if(m){ m.classList.add('open'); lockBodyScroll(); }
+  }
+  function closeVisitCancel(){ const m=document.getElementById('visitCancelModal'); if(m) m.classList.remove('open'); unlockBodyScrollIfAllClosed(); }
+  function confirmVisitCancel(){ closeVisitCancel(); cancelVisit(); }
+  function handleVisitCancelOverlayClick(e){ if(e.target===document.getElementById('visitCancelModal')) closeVisitCancel(); }
+  function renderAll(){
+    updateStatusPill();
+    renderStatusList();
+    renderGuidedWorkflow();
+    renderTopIndicators();    /* top-profile follow-up / visit summary */
+    updateScheduleCard();     /* restored separate Campus Visit card */
+    renderFollowupCard();     /* restored separate Follow-up card */
+  }
+
+  /* ════════════════ TASK COMPLETION + AUTO PROGRESSION ════════════════ */
+  function completeCurrentTask(){
+    closeDropdowns();
+    if(currentStatus==='Closed'){ showToast('Enquiry is closed — reopen it to continue', true); return; }
+    const stage=WORKFLOW[workflowIndex];
+    if(stage.terminal){ showToast('Admission already confirmed — no further action needed', 'info'); return; }
+    if(busy) return;                                  // guard duplicate rapid clicks
+    if(stage.action==='schedule'){ openScheduleTourModal('schedule'); return; } // advance happens on confirm
+    advanceWorkflow();
+  }
+
+  function advanceWorkflow(){
+    if(workflowIndex>=IDX_LAST) return;
+    busy=true;
+    const stage=WORKFLOW[workflowIndex];
+    completedTasks.add(workflowIndex);
+    workflowIndex++;
+    currentStatus=WORKFLOW[workflowIndex].status;
+    renderAll();
+    persistStatus();                                   // → CRM
+    if(workflowIndex>=IDX_VISITED) persistVisit('Visited');
+    const to=currentStatus;
+    if(to==='Admission Confirmed') addActivity('Admission confirmed',{icon:'trophy',accent:true});
+    else addActivity('Task completed: '+stage.taskTitle,{icon:'check',accent:true,meta:'Stage advanced to “'+to+'”'});
+    showToast('✓ '+stage.taskShort+' · moved to “'+to+'”');
+    setTimeout(()=>{ busy=false; }, 350);
+  }
+
+  function reopenEnquiry(){
+    if(currentStatus!=='Closed') return;
+    const resume = preCloseStatus || WORKFLOW[workflowIndex].status;   // restore previous active state (fallback: current stage)
+    currentStatus = resume;
+    followup = preCloseFollowup || null;                               // restore any pending follow-up
+    closeReason = null; preCloseStatus = null; preCloseFollowup = null;
+    renderAll();
+    persistStatus();                                   // → CRM (reopened status)
+    persistPatch({ closeReason: null });
+    persistFollowup();                                 // restore any pending follow-up
+    addActivity('Enquiry reopened',{icon:'refresh',accent:true,meta:'Resumed at “'+resume+'”'});
+    showToast('Enquiry reopened · resumed at “'+resume+'”');
+  }
+
+  /* ════════════════ MANUAL OVERRIDE ════════════════ */
+  function overrideStatus(value){
+    closeDropdowns();
+    const prev=currentStatus;
+    if(value===prev){ showToast('Already at “'+value+'”'); return; }
+    if(value==='Closed'){ openCloseModal(); return; }                  // route to the close-reason flow
+
+    currentStatus=value;
+    const idx=wfIndexOf(value);
+    if(idx>=0){
+      workflowIndex=idx;
+      completedTasks=new Set();
+      for(let i=0;i<idx;i++) completedTasks.add(i);
+      if(value==='Admission Confirmed'){ for(let i=0;i<IDX_LAST;i++) completedTasks.add(i); }
+    }
+    /* 'Closed' keeps workflowIndex so the enquiry can be reopened in place. Follow-up is independent of status. */
+    renderAll();
+    persistStatus();                                   // → CRM
+    persistVisit();                                    // keep visit record consistent with the new stage
+    addActivity('Status updated',{icon:'flag',accent:true,meta:prev+' → '+value});
+    showToast('Status updated successfully');
+  }
+
+  /* ════════════════ CLOSE ENQUIRY (with reason) ════════════════ */
+  function openCloseModal(){
+    if(currentStatus==='Closed'){ showToast('Enquiry is already closed', 'info'); return; }
+    closeReasonValue=null;
+    renderCloseForm(document.getElementById('closeContent'));
+    renderCloseReasonPanel();
+    document.getElementById('closeModal').classList.add('open'); lockBodyScroll();
+  }
+  function closeCloseModal(){ closeDropdowns(); document.getElementById('closeModal')?.classList.remove('open'); unlockBodyScrollIfAllClosed(); }
+  function handleCloseOverlayClick(e){ if(e.target===document.getElementById('closeModal')) closeCloseModal(); }
+  function updateCloseBtn(){ const btn=document.getElementById('closeConfirmBtn'); if(btn) btn.disabled=!closeReasonValue; }
+  function renderCloseReasonPanel(){
+    const el=document.getElementById('closeReasonList'); if(!el) return;
+    el.innerHTML=CLOSE_REASONS.map(r=>`<button class="dp-item ${r===closeReasonValue?'active':''}" onclick="pickCloseReason('${r.replace(/'/g,"\\'")}')">${esc(r)}</button>`).join('');
+  }
+  function pickCloseReason(r){
+    closeReasonValue=r;
+    const lbl=document.getElementById('closeReasonValue');
+    if(lbl){ lbl.textContent=r; lbl.classList.remove('text-[#94A3B8]'); lbl.classList.add('text-[#334155]'); }
+    renderCloseReasonPanel();
+    updateCloseBtn();
+    closeDropdowns();
+  }
+  function renderCloseForm(container){
+    const placeholder = closeReasonValue || 'Select a reason…';
+    container.innerHTML=`<div class="px-5 pt-5 pb-5"><div class="mb-4 flex items-center justify-between"><h3 class="text-[15px] font-semibold text-[#0F172A]">Close Enquiry</h3><button onclick="closeCloseModal()" class="grid h-7 w-7 place-items-center rounded-lg text-[#64748B] transition hover:bg-[#EEF2F7] hover:text-[#0F172A]"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+      <div class="mb-4 flex items-start gap-2 rounded-lg border border-[#FECACA] bg-[#FEF2F2] px-3 py-2.5"><svg class="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#B91C1C]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg><p class="text-[12px] text-[#B91C1C]">Closing stops the workflow. You can reopen this enquiry later to resume from the current stage.</p></div>
+      <div class="mb-5"><label class="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.5px] text-[#475569]">Reason for closing</label>
+        <button type="button" id="closeReasonTrigger" onclick="toggleDropdown('closeReasonPanel', event)" class="flex h-9 w-full items-center justify-between gap-2 rounded-lg border border-[#E2E8F0] bg-white pl-3 pr-2 text-[13px] outline-none transition hover:border-[#D7E4FF] focus:border-[#BFD3FF] focus:ring-2 focus:ring-[#DCE8FF]"><span id="closeReasonValue" class="${closeReasonValue?'text-[#334155]':'text-[#94A3B8]'}">${esc(placeholder)}</span><svg class="h-3.5 w-3.5 shrink-0 text-[#94A3B8]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
+      </div>
+      <div class="flex gap-2 border-t border-[#EEF2F7] pt-4"><button onclick="closeCloseModal()" class="h-9 flex-1 rounded-xl border border-[#E2E8F0] bg-white text-[13px] font-semibold text-[#475569] transition hover:bg-[#EFF4FF] hover:text-[#284CA5]">Cancel</button><button id="closeConfirmBtn" onclick="confirmCloseEnquiry()" ${closeReasonValue?'':'disabled'} class="h-9 flex-1 rounded-xl bg-[#DC2626] text-[13px] font-semibold text-white transition hover:bg-[#B91C1C] disabled:cursor-not-allowed disabled:opacity-40">Close enquiry</button></div></div>`;
+  }
+  function confirmCloseEnquiry(){
+    const reason=closeReasonValue;
+    if(!reason){ showToast('Please select a reason to close', 'error'); return; }
+    if(currentStatus!=='Closed'){ preCloseStatus=currentStatus; preCloseFollowup=followup; }  // remember where to resume
+    closeReason=reason; currentStatus='Closed';                                                // workflowIndex preserved for in-place reopen
+    closeCloseModal();
+    renderAll();
+    persistPatch({ status:'Closed', closeReason: reason });   // → CRM
+    addActivity('Enquiry closed',{icon:'x',accent:true,meta:'Reason: '+reason});
+    showToast('Enquiry closed · '+reason);
+  }
+
+  /* ════════════════ SCHEDULE / CALENDAR ════════════════ */
+  function lockBodyScroll(){ document.body.style.overflow='hidden'; }
+  function unlockBodyScrollIfAllClosed(){ const s=document.getElementById('scheduleTourModal')?.classList.contains('open'); const c=document.getElementById('calendarModal')?.classList.contains('open'); const f=document.getElementById('followupModal')?.classList.contains('open'); const x=document.getElementById('closeModal')?.classList.contains('open'); const dd=document.getElementById('discardModal')?.classList.contains('open'); const fc=document.getElementById('followupCancelModal')?.classList.contains('open'); const vc=document.getElementById('visitCancelModal')?.classList.contains('open'); const nd=document.getElementById('noteDeleteModal')?.classList.contains('open'); if(!s&&!c&&!f&&!x&&!dd&&!fc&&!vc&&!nd) document.body.style.overflow=''; }
+
+  function openScheduleTourModal(mode){
+    if(currentStatus==='Closed'){ showToast('Reopen the enquiry to schedule a visit', true); return; }
+    if(workflowIndex>=IDX_LAST){ showToast('Admission confirmed — visit scheduling is not required', 'info'); return; }
+    selectedSlot=null; const content=document.getElementById('scheduleTourContent');
+    content.dataset.mode=mode;
+    if(!SLOTS_CONFIGURED) renderEmptyState(content); else renderScheduleForm(content,mode);
+    document.getElementById('scheduleTourModal').classList.add('open'); lockBodyScroll();
+  }
+  function closeScheduleTourModal(){ document.getElementById('scheduleTourModal').classList.remove('open'); closeCalendarModal(); unlockBodyScrollIfAllClosed(); }
+  function handleModalOverlayClick(e){ if(e.target===document.getElementById('scheduleTourModal')) closeScheduleTourModal(); }
+
+  const CAL_W=320, CAL_GAP=8;
+  function openCalendarModal(event){ if(event) event.stopPropagation(); const m=document.getElementById('calendarModal'); m.classList.add('open'); lockBodyScroll(); const trigger=(event&&event.currentTarget)||document.getElementById('calTrigger'); requestAnimationFrame(()=>positionCalendar(trigger)); }
+  function positionCalendar(trigger){ const c=document.getElementById('calContainer'); if(!c||!trigger) return; const tr=trigger.getBoundingClientRect(); const vw=innerWidth, vh=innerHeight, calH=c.offsetHeight||380; let left=tr.right-CAL_W; if(left<CAL_GAP) left=tr.left; if(left+CAL_W>vw-CAL_GAP) left=vw-CAL_W-CAL_GAP; if(left<CAL_GAP) left=Math.max(CAL_GAP,(vw-CAL_W)/2); let top=tr.bottom+CAL_GAP; if(top+calH>vh-CAL_GAP) top=tr.top-calH-CAL_GAP; if(top<CAL_GAP) top=Math.max(CAL_GAP,(vh-calH)/2); c.style.left=Math.round(left)+'px'; c.style.top=Math.round(top)+'px'; }
+  function closeCalendarModal(){ const m=document.getElementById('calendarModal'); if(m) m.classList.remove('open'); closeCalPickers(); unlockBodyScrollIfAllClosed(); }
+  function handleCalModalOverlayClick(e){ if(e.target===document.getElementById('calendarModal')) closeCalendarModal(); }
+
+  function renderEmptyState(container){
+    container.innerHTML=`<div class="px-5 py-5"><div class="mb-4 flex items-center justify-between"><h3 class="text-[15px] font-semibold text-[#0F172A]">Schedule Visit</h3><button onclick="closeScheduleTourModal()" class="grid h-7 w-7 place-items-center rounded-lg text-[#64748B] transition hover:bg-[#EEF2F7] hover:text-[#0F172A]"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div><div class="rounded-xl border border-[#EEF2F7] bg-[#FAFBFD] px-4 py-8 text-center"><div class="mx-auto mb-3 grid h-12 w-12 place-items-center rounded-xl bg-[#F1F5F9]"><svg class="h-6 w-6 text-[#94A3B8]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div><p class="text-[13.5px] font-semibold text-[#0F172A]">Visit slots are not configured</p><p class="mt-1.5 text-[12.5px] leading-relaxed text-[#64748B]">Configure available visit timings in Settings before scheduling.</p><button onclick="closeScheduleTourModal()" class="mt-4 inline-flex h-9 items-center gap-2 rounded-xl bg-[#284CA5] px-4 text-[13px] font-semibold text-white transition hover:bg-[#203F8D]">Go to Settings</button></div></div>`;
+  }
+
+  function openVisitCalendar(event){ calOnPick=(iso)=>{ const tv=document.getElementById('calTriggerValue'); if(tv) tv.textContent=formatDatePretty(iso); selectedSlot=null; renderSlots(iso,null); }; openCalendarModal(event); }
+
+  function renderScheduleForm(container, mode){
+    const isReschedule=mode==='reschedule', isRevisit=mode==='revisit';
+    const heading=isRevisit?'Schedule Revisit':(isReschedule?'Reschedule Visit':'Schedule Visit');
+    const today=new Date(); const todayStr=formatDateISO(today); const preDate=(isReschedule&&scheduledTour.iso)?scheduledTour.iso:'';
+    container.innerHTML=`<div class="px-5 pt-5 pb-5"><div class="mb-4 flex items-center justify-between"><h3 class="text-[15px] font-semibold text-[#0F172A]">${heading}</h3><button onclick="closeScheduleTourModal()" class="grid h-7 w-7 place-items-center rounded-lg text-[#64748B] transition hover:bg-[#EEF2F7] hover:text-[#0F172A]"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+      ${isReschedule?`<div class="mb-4 flex items-start gap-2 rounded-lg border border-[#FDE68A] bg-[#FEFCE8] px-3 py-2.5"><svg class="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#A16207]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg><p class="text-[12px] text-[#A16207]">Currently scheduled: <span class="font-semibold">${scheduledTour.date}, ${scheduledTour.time}</span></p></div>`:''}
+      ${isRevisit?`<div class="mb-4 flex items-start gap-2 rounded-lg border border-[#BBF7D0] bg-[#F0FDF4] px-3 py-2.5"><svg class="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#16A34A]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><p class="text-[12px] text-[#166534]">Previous visit completed. Scheduling a revisit moves the workflow back to “Visit / Revisit Scheduled”.</p></div>`:''}
+      <div class="mb-4"><label class="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.5px] text-[#475569]">Visit Date</label><button type="button" id="calTrigger" onclick="openVisitCalendar(event)" class="flex h-9 w-full items-center justify-between gap-2 rounded-lg border border-[#E2E8F0] bg-white pl-3 pr-1.5 text-[13px] text-[#334155] outline-none transition hover:border-[#D7E4FF] focus:border-[#BFD3FF] focus:ring-2 focus:ring-[#DCE8FF]"><span id="calTriggerValue">${preDate?formatDatePretty(preDate):'Select date'}</span><span class="grid h-6 w-6 place-items-center text-[#94A3B8]"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span></button></div>
+      <div class="mb-5"><label class="mb-2 block text-[11px] font-semibold uppercase tracking-[0.5px] text-[#475569]">Available Time Slots</label><div id="slotGrid" class="flex flex-wrap gap-2"></div><p id="slotHelp" class="mt-1.5 text-[11px] text-[#94A3B8]">Select a date to view available slots.</p></div>
+      <div class="flex gap-2 border-t border-[#EEF2F7] pt-4"><button onclick="closeScheduleTourModal()" class="h-9 flex-1 rounded-xl border border-[#E2E8F0] bg-white text-[13px] font-semibold text-[#475569] transition hover:bg-[#EFF4FF] hover:text-[#284CA5]">Cancel</button><button onclick="confirmTourSchedule('${mode}')" class="h-9 flex-1 rounded-xl bg-[#284CA5] text-[13px] font-semibold text-white transition hover:bg-[#203F8D]">${isRevisit?'Confirm Revisit':(isReschedule?'Confirm Reschedule':'Confirm Schedule')}</button></div></div>`;
+    initCalendar('calContainer',preDate,todayStr);
+    renderSlots(preDate, isReschedule?scheduledTour.time:null);
+  }
+
+  function renderSlots(dateStr, preSelect){ const grid=document.getElementById('slotGrid'); if(!grid) return; const help=document.getElementById('slotHelp');
+    if(!dateStr){ selectedSlot=null; grid.innerHTML=ALL_SLOTS.map(slot=>`<button class="slot-chip" disabled>${slot}</button>`).join(''); if(help) help.textContent='Select a date to view available slots.'; return; }
+    if(preSelect&&!selectedSlot) selectedSlot=preSelect; grid.innerHTML=ALL_SLOTS.map(slot=>{ const booked=BOOKED_SLOTS.includes(slot); const active=slot===selectedSlot; return `<button class="slot-chip${active?' selected':''}" ${booked?'disabled':`onclick="selectSlot('${slot}')"`}>${slot}</button>`; }).join(''); if(help) help.textContent='Greyed slots are already booked'; }
+  function selectSlot(slot){ if(!calSelectedDate) return; selectedSlot=slot; renderSlots(calSelectedDate,slot); }
+
+  function confirmTourSchedule(mode){
+    if(!selectedSlot){ showToast('Please select a time slot', 'error'); return; }
+    if(!calSelectedDate){ showToast('Please select a date', 'error'); return; }
+    scheduledTour={ iso:calSelectedDate, date:formatDatePretty(calSelectedDate), time:selectedSlot }; selectedSlot=null;
+    closeScheduleTourModal();
+
+    if(mode==='revisit'){
+      // Revisit moves the workflow back to the "Visit Scheduled" stage.
+      completedTasks=new Set([0,1,2]); workflowIndex=IDX_VISIT; currentStatus='Visit / Revisit Scheduled'; followup=null;
+      renderAll();
+      persistStatus(); persistVisit('Confirmed'); persistFollowup();   // → CRM (revisit)
+      addActivity('Revisit scheduled',{accent:true,icon:'calendar',meta:scheduledTour.date+', '+scheduledTour.time});
+      showToast('Revisit scheduled · moved back to “Visit / Revisit Scheduled”');
+      return;
+    }
+
+    const advancing = workflowIndex<IDX_VISIT;   // scheduling completes the "Interested" stage
+    if(advancing){ completedTasks=new Set([0,1,2]); workflowIndex=IDX_VISIT; }
+    if(currentStatus!=='Closed') currentStatus='Visit / Revisit Scheduled';
+    renderAll();
+    persistStatus(); persistVisit('Confirmed');   // → CRM (schedule / reschedule)
+    const verb = mode==='reschedule' ? 'Visit rescheduled' : 'Visit scheduled';
+    addActivity(verb,{accent:true,icon:'calendar',meta:scheduledTour.date+', '+scheduledTour.time});
+    showToast(advancing ? '✓ Visit scheduled · moved to “Visit / Revisit Scheduled”' : (verb+' · '+scheduledTour.date+', '+scheduledTour.time));
+  }
+
+  /* Calendar widget */
+  const MONTH_NAMES=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  let calViewYear=null, calViewMonth=null, calSelectedDate=null, calMinDate=null, calTargetId=null, calOnPick=null;
+  function formatDateISO(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+  function formatDatePretty(iso){ if(!iso) return ''; try{ return new Date(iso+'T00:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}); }catch(_){ return iso; } }
+  function parseISO(iso){ const[y,m,d]=iso.split('-').map(Number); return new Date(y,m-1,d); }
+  function initCalendar(targetId, initialISO, minISO){ calTargetId=targetId; calMinDate=minISO?parseISO(minISO):new Date(new Date().setHours(0,0,0,0)); const start=initialISO?parseISO(initialISO):new Date(); calViewYear=start.getFullYear(); calViewMonth=start.getMonth(); calSelectedDate=initialISO||null; renderCalendar(); const tv=document.getElementById('calTriggerValue'); if(tv && calSelectedDate) tv.textContent=formatDatePretty(calSelectedDate); }
+  function renderCalendar(){ const target=document.getElementById(calTargetId); if(!target) return; const firstDayIndex=new Date(calViewYear,calViewMonth,1).getDay(); const daysInMonth=new Date(calViewYear,calViewMonth+1,0).getDate(); const daysInPrev=new Date(calViewYear,calViewMonth,0).getDate(); const todayISO=formatDateISO(new Date()); let cells=''; for(let i=firstDayIndex-1;i>=0;i--) cells+=`<button class="cal-day outside" disabled>${daysInPrev-i}</button>`; for(let d=1;d<=daysInMonth;d++){ const iso=formatDateISO(new Date(calViewYear,calViewMonth,d)); const isToday=iso===todayISO; const isSelected=iso===calSelectedDate; const isPast=new Date(calViewYear,calViewMonth,d)<calMinDate; const cls=['cal-day']; if(isToday&&!isSelected) cls.push('today'); if(isSelected) cls.push('selected'); cells+=`<button class="${cls.join(' ')}" ${isPast?'disabled':`onclick="calPickDay('${iso}')"`}>${d}</button>`; } const used=firstDayIndex+daysInMonth; for(let i=1;i<=42-used;i++) cells+=`<button class="cal-day outside" disabled>${i}</button>`; const minY=calMinDate.getFullYear(), minM=calMinDate.getMonth(); const prevDisabled=(calViewYear<minY)||(calViewYear===minY&&calViewMonth<=minM); target.innerHTML=`<div class="cal-widget"><div class="cal-header"><button class="cal-nav" onclick="calPrev()" ${prevDisabled?'disabled':''}><svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button><div class="cal-title"><div class="relative"><button class="cal-title-btn" onclick="toggleCalPicker('month',event)">${MONTH_NAMES[calViewMonth]}<svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button></div><div class="relative"><button class="cal-title-btn" onclick="toggleCalPicker('year',event)">${calViewYear}<svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button></div></div><button class="cal-nav" onclick="calNext()"><svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button></div><div class="cal-weekdays"><span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span></div><div class="cal-days">${cells}</div></div>`; }
+  function calPrev(){ closeCalPickers(); if(calViewMonth===0){ calViewMonth=11; calViewYear--; } else calViewMonth--; renderCalendar(); }
+  function calNext(){ closeCalPickers(); if(calViewMonth===11){ calViewMonth=0; calViewYear++; } else calViewMonth++; renderCalendar(); }
+  function calPickDay(iso){ closeCalPickers(); calSelectedDate=iso; renderCalendar(); if(typeof calOnPick==='function') calOnPick(iso); closeCalendarModal(); }
+  function toggleCalPicker(type,event){ event.stopPropagation(); const ex=document.getElementById('calPickerPanel'); if(ex){ ex.remove(); return; } closeCalPickers(); const panel=document.createElement('div'); panel.className='cal-picker-panel'; panel.id='calPickerPanel'; panel.addEventListener('click',e=>e.stopPropagation()); if(type==='month'){ panel.innerHTML=MONTH_NAMES.map((m,i)=>`<button class="${i===calViewMonth?'active':''}" onclick="setCalMonth(${i})">${m}</button>`).join(''); } else { const cy=new Date().getFullYear(); const years=[]; for(let y=cy;y<=cy+6;y++) years.push(y); panel.innerHTML=years.map(y=>`<button class="${y===calViewYear?'active':''}" onclick="setCalYear(${y})">${y}</button>`).join(''); } event.currentTarget.parentElement.appendChild(panel); }
+  function setCalMonth(m){ calViewMonth=m; closeCalPickers(); renderCalendar(); }
+  function setCalYear(y){ calViewYear=y; closeCalPickers(); renderCalendar(); }
+  function closeCalPickers(){ document.querySelectorAll('.cal-picker-panel').forEach(p=>p.remove()); }
+
+  /* ════════════════ FOLLOW-UP MODAL ════════════════ */
+  let followupDraftDate=null;
+  function openFollowupModal(){
+    if(currentStatus==='Closed'){ showToast('Reopen the enquiry to set a follow-up', true); return; }
+    renderFollowupForm(document.getElementById('followupContent')); document.getElementById('followupModal').classList.add('open'); lockBodyScroll();
+  }
+  function closeFollowupModal(){ document.getElementById('followupModal').classList.remove('open'); closeCalendarModal(); unlockBodyScrollIfAllClosed(); }
+  function handleFollowupOverlayClick(e){ if(e.target===document.getElementById('followupModal')) closeFollowupModal(); }
+  function openFollowupCalendar(event){ calOnPick=(iso)=>{ followupDraftDate=iso; const tv=document.getElementById('followupDateValue'); if(tv) tv.textContent=formatDatePretty(iso); }; openCalendarModal(event); }
+  function renderFollowupForm(container){
+    followupDraftDate=followup?followup.dateISO:null; const today=formatDateISO(new Date());
+    const dateLabel=followupDraftDate?formatDatePretty(followupDraftDate):'Select date'; const noteVal=followup?(followup.note||''):''; const isUpdate=!!followup;
+    container.innerHTML=`<div class="px-5 pt-5 pb-5"><div class="mb-4 flex items-center justify-between"><h3 class="text-[15px] font-semibold text-[#0F172A]">${isUpdate?'Update Follow-up':'Add Follow-up'}</h3><button onclick="closeFollowupModal()" class="grid h-7 w-7 place-items-center rounded-lg text-[#64748B] transition hover:bg-[#EEF2F7] hover:text-[#0F172A]"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+      <div class="mb-4 flex items-start gap-2 rounded-lg border border-[#FDE68A] bg-[#FFFBEB] px-3 py-2.5"><svg class="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#B45309]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${FEED_ICONS.bell}</svg><p class="text-[12px] text-[#92400E]">A follow-up is a reminder to reconnect with the parent.</p></div>
+      <div class="mb-4"><label class="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.5px] text-[#475569]">Follow-up Date</label><button type="button" id="followupDateTrigger" onclick="openFollowupCalendar(event)" class="flex h-9 w-full items-center justify-between gap-2 rounded-lg border border-[#E2E8F0] bg-white pl-3 pr-1.5 text-[13px] text-[#334155] outline-none transition hover:border-[#D7E4FF] focus:border-[#BFD3FF] focus:ring-2 focus:ring-[#DCE8FF]"><span id="followupDateValue">${dateLabel}</span><span class="grid h-6 w-6 place-items-center text-[#94A3B8]"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span></button></div>
+      <div class="mb-5"><label class="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.5px] text-[#475569]">Reminder Note</label><textarea id="followupNote" rows="3" placeholder="e.g. Call parent to discuss fee structure and confirm visit slot" class="w-full resize-none rounded-lg border border-[#E2E8F0] bg-white px-3 py-2 text-[13px] text-[#334155] outline-none transition placeholder:text-[#94A3B8] focus:border-[#BFD3FF] focus:ring-2 focus:ring-[#DCE8FF]">${esc(noteVal)}</textarea></div>
+      <div class="flex gap-2 border-t border-[#EEF2F7] pt-4"><button onclick="closeFollowupModal()" class="h-9 flex-1 rounded-xl border border-[#E2E8F0] bg-white text-[13px] font-semibold text-[#475569] transition hover:bg-[#EFF4FF] hover:text-[#284CA5]">Cancel</button><button onclick="saveFollowup()" class="h-9 flex-1 rounded-xl bg-[#284CA5] text-[13px] font-semibold text-white transition hover:bg-[#203F8D]">${isUpdate?'Update':'Save'}</button></div></div>`;
+    initCalendar('calContainer', followupDraftDate||'', today);
+  }
+  function saveFollowup(){
+    if(!followupDraftDate){ showToast('Please select a follow-up date', 'error'); return; }
+    const note=(document.getElementById('followupNote')?.value||'').trim(); const isUpdate=!!followup;
+    followup={ dateISO:followupDraftDate, date:formatDatePretty(followupDraftDate), note }; lastFollowupDone=null;
+    closeFollowupModal();
+    persistFollowup();   // → CRM (rec.followUp)
+    addActivity(isUpdate?'Follow-up updated':'Follow-up added',{meta:followup.note?followup.date+' · '+followup.note:followup.date,accent:true,icon:'bell'});
+    renderAll();
+    showToast(isUpdate?'Follow-up updated':'Follow-up added');
+  }
+  function completeFollowup(){
+    if(!followup) return;
+    const done=followup; followup=null; lastFollowupDone=done;
+    renderAll();
+    persistFollowup();   // → CRM (clears rec.followUp)
+    addActivity('Follow-up completed',{meta:done.date,accent:true,icon:'check'});
+    showToast('Follow-up completed');
+  }
+
+  /* ════════════════ DROPDOWN POSITIONING ════════════════ */
+  function closeDropdowns(){ document.querySelectorAll('.dropdown-panel').forEach(p=>p.classList.remove('open')); }
+  function placePanel(panel, trigger){
+    const list=panel.querySelector('.dp-list'); if(list) list.style.maxHeight='';
+    panel.style.maxHeight='';
+    const rect=trigger.getBoundingClientRect();
+    const m=12, gap=6, vh=window.innerHeight, vw=window.innerWidth;
+    const pw=panel.offsetWidth; let ph=panel.offsetHeight;
+    const spaceBelow=vh-rect.bottom-gap-m, spaceAbove=rect.top-gap-m;
+    const up=(ph>spaceBelow)&&(spaceAbove>spaceBelow);   // open up only when it doesn't fit below and there's more room above
+    const avail=up?spaceAbove:spaceBelow;
+    if(ph>avail){ if(list){ const chrome=ph-list.offsetHeight; list.style.maxHeight=Math.max(96, avail-chrome)+'px'; } else { panel.style.maxHeight=Math.max(96,avail)+'px'; } ph=Math.min(ph, Math.max(96,avail)); }
+    let left=rect.left; if(left+pw>vw-m) left=vw-pw-m; if(left<m) left=m;
+    let top=up?(rect.top-gap-ph):(rect.bottom+gap);
+    if(top<m) top=m; if(top+ph>vh-m) top=Math.max(m, vh-ph-m);
+    panel.style.top=Math.round(top)+'px'; panel.style.left=Math.round(left)+'px';
+  }
+  function toggleDropdown(panelId, event){ event.stopPropagation(); const panel=document.getElementById(panelId); const trigger=event.currentTarget; const isOpen=panel.classList.contains('open'); closeDropdowns(); if(isOpen) return; panel.style.visibility='hidden'; panel.classList.add('open'); placePanel(panel, trigger); panel.style.visibility=''; }
+
+  /* ════════════════ MISC ════════════════ */
+  const TOAST_ICONS = {
+    success:{ title:'Success', bg:'#DCFCE7', color:'#16A34A', svg:'<path d="M20 6 9 17l-5-5"/>' },
+    warning:{ title:'Warning', bg:'#FEF3C7', color:'#D97706', svg:'<path d="M10.3 3.3 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.3a2 2 0 0 0-3.4 0Z"/><path d="M12 10v4"/><path d="M12 18h.01"/>' },
+    error:{ title:'Error', bg:'#FEE2E2', color:'#DC2626', svg:'<circle cx="12" cy="12" r="9"/><path d="m15 9-6 6M9 9l6 6"/>' },
+    info:{ title:'Info', bg:'#DBEAFE', color:'#2563EB', svg:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/>' }
+  };
+  let toastTimer;
+  function hideToast(){ const t=document.getElementById('toast'); if(t) t.classList.remove('show'); clearTimeout(toastTimer); }
+  function showToast(msg, type){
+    const t=document.getElementById('toast'); if(!t) return;
+    const key = type===true ? 'warning' : ((typeof type==='string' && TOAST_ICONS[type]) ? type : 'success');
+    const conf=TOAST_ICONS[key]; const ic=document.getElementById('toastIcon');
+    t.style.boxShadow='inset 3px 0 0 0 '+conf.color+', 0 12px 30px rgba(15,23,42,0.12), 0 1px 3px rgba(15,23,42,0.07)';
+    if(ic){ ic.style.background=conf.bg; ic.style.color=conf.color; ic.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">'+conf.svg+'</svg>'; }
+    const tt=document.getElementById('toastTitle'); if(tt) tt.textContent=conf.title;
+    document.getElementById('toastMsg').textContent=String(msg).replace(/^\u2713\s*/,'');
+    t.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove('show'),2800);
+  }
+  function copyLink(){ navigator.clipboard.writeText(location.href).catch(()=>{}); document.getElementById('morePanel')?.classList.remove('open'); showToast('Link copied to clipboard'); }
+  function downloadPDF(){ document.getElementById('morePanel')?.classList.remove('open'); showToast('Preparing PDF…', 'info'); setTimeout(()=>print(),300); }
+  function logContact(channel){ addActivity(`${channel} contact opened`,{icon:channel==='Call'?'phone':channel==='Email'?'inbox':'msg'}); }
+  function editToast(section){ showToast(section+' — inline editing opens here', 'info'); }
+
+  document.addEventListener('click',()=>{ closeDropdowns(); closeCalPickers(); });
+  window.addEventListener('resize',()=>{ closeDropdowns(); closeCalPickers(); if(document.getElementById('calendarModal')?.classList.contains('open')){ const t=document.getElementById('calTrigger'); if(t) positionCalendar(t); } });
+  document.addEventListener('keydown',(e)=>{ if(e.key!=='Escape') return; closeDropdowns(); if(document.getElementById('calendarModal')?.classList.contains('open')){ closeCalendarModal(); return; } if(document.getElementById('closeModal')?.classList.contains('open')){ closeCloseModal(); return; } if(document.getElementById('followupModal')?.classList.contains('open')){ closeFollowupModal(); return; } closeScheduleTourModal(); });
+
+    /* ═════════════════════════════════════════════════════
+       Activity timeline
+    ═════════════════════════════════════════════════════ */
+    function nowLabel() {
+      const d = new Date(); let h = d.getHours(); const m = String(d.getMinutes()).padStart(2,'0');
+      const ap = h >= 12 ? 'PM' : 'AM'; h = h % 12 || 12;
+      return `Today, ${h}:${m} ${ap}`;
+    }
+    let activityLog = [
+      { title:'Visit scheduled · Tomorrow, 28 May 2026, 11:00 AM', time:'Today, 11:24 AM', meta:'Auto-advanced: Interested → Visit / Revisit Scheduled', accent:true },
+      { title:'Marked as Interested', time:'Yesterday, 4:10 PM', meta:'Auto-advanced: Contacted → Interested' },
+      { title:'Parent contacted', time:'Yesterday, 10:05 AM', meta:'Auto-advanced: New Enquiry → Contacted' },
+      { title:'Enquiry created', time:'25 May 2026, 9:30 AM', meta:'Received via Superschools', muted:true }
+    ];
+
+    function renderActivity() {
+      const c = document.getElementById('activityTimeline');
+      const scroll = document.getElementById('activityScroll');
+      if (!c) return;
+      if (activityLog.length === 0) {
+        c.className = '';
+        if (scroll) { scroll.classList.remove('overflow-y-auto'); scroll.classList.add('overflow-hidden'); }
+        c.innerHTML = `
+          <div class="flex flex-col items-center justify-center py-8 text-center">
+            <div class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-[#F1F5F9]"><svg class="h-5 w-5 text-[#94A3B8]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+            <p class="text-[13px] font-medium text-[#475569]">No activity yet</p>
+            <p class="mt-1 text-[12px] text-[#94A3B8]">Status changes, notes, and actions will appear here.</p>
+          </div>`;
+        return;
+      }
+      c.className = 'timeline pr-1';
+      if (scroll) { scroll.classList.remove('overflow-hidden'); scroll.classList.add('overflow-y-auto'); }
+      c.innerHTML = activityLog.map(a => {
+        const meta = a.meta ? `<p class="text-[11.5px] text-[#94A3B8]">${a.meta} · ${a.time}</p>` : `<p class="text-[11.5px] text-[#94A3B8]">${a.time}</p>`;
+        return `<div class="timeline-item${a.muted ? ' muted' : ''}${a.accent ? ' accent' : ''}">
+          <p class="text-[12.5px] font-semibold text-[#0F172A]">${a.title}</p>${meta}</div>`;
+      }).join('');
+    }
+    function addActivity(title, opts = {}) {
+      activityLog.unshift({ title, time: opts.time || nowLabel(), meta: opts.meta || null, accent: opts.accent, muted: opts.muted });
+      renderActivity();
+    }
+
+    /* ═════════════════════════════════════════════════════
+       Notes
+    ═════════════════════════════════════════════════════ */
+    let notes = [
+      { id:1, author:'Priya Menon', av:'PM', avBg:'#FEF3C7', avCol:'#92400E', text:'Spoke with Priya — wants to visit the campus before deciding. Aarav is currently in UKG at Little Millennium. Confirmed CBSE preference and asked about transport from Indiranagar. Visit scheduled for tomorrow at 11 AM.', time:'Today, 11:24 AM', editing:false },
+      { id:2, author:'Arjun Shah', av:'AS', avBg:'#DBE1FF', avCol:'#284CA5', text:'Enquiry looks serious — parent confirmed timeline for April 2026 intake and asked about fee structure. Lives close-by in Indiranagar. Worth prioritizing for a visit this week.', time:'Yesterday, 5:42 PM', editing:false }
+    ];
+    let noteNextId = 3;
+    function renderNotes() {
+      const list = document.getElementById('notesList'); const count = document.getElementById('notesCount');
+      if (!list) return;
+      if (count) count.textContent = `${notes.length} note${notes.length !== 1 ? 's' : ''}`;
+      if (notes.length === 0) {
+        list.innerHTML = `
+          <div class="flex flex-col items-center justify-center px-4 py-8 text-center">
+            <div class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-[#F1F5F9]"><svg class="h-5 w-5 text-[#94A3B8]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></div>
+            <p class="text-[13px] font-medium text-[#475569]">No notes added yet</p><p class="mt-1 text-[12px] text-[#94A3B8]">Use the field below to add the first note.</p>
+          </div>`;
+        return;
+      }
+      list.innerHTML = notes.map(n => `
+        <div class="group flex gap-3 px-4 py-4 sm:px-5">
+          <div class="grid h-8 w-8 shrink-0 place-items-center rounded-full text-[11px] font-semibold" style="background:${n.avBg};color:${n.avCol}">${n.av}</div>
+          <div class="min-w-0 flex-1">
+            <div class="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
+              <div class="flex items-baseline gap-2"><span class="text-[12.5px] font-semibold text-[#0F172A]">${n.author}</span><span class="text-[11.5px] text-[#94A3B8]">${n.time}</span></div>
+              <div class="no-print flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+                <button onclick="editNote(${n.id})" title="Edit note" class="grid h-6 w-6 place-items-center rounded-md text-[#94A3B8] hover:bg-[#EFF4FF] hover:text-[#284CA5] transition"><svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg></button>
+                <button onclick="deleteNote(${n.id})" title="Delete note" class="grid h-6 w-6 place-items-center rounded-md text-[#94A3B8] hover:bg-[#FEF2F2] hover:text-[#DC2626] transition"><svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>
+              </div>
+            </div>
+            ${n.editing ? `
+              <div class="mt-2">
+                <textarea id="editInput-${n.id}" rows="3" class="w-full resize-none rounded-lg border border-[#E2E8F0] bg-white px-3 py-2 text-[13px] text-[#334155] outline-none focus:border-[#284CA5] focus:ring-2 focus:ring-[#DCE8FF]">${n.text}</textarea>
+                <div class="mt-2 flex gap-2"><button onclick="saveEditNote(${n.id})" class="h-8 rounded-lg bg-[#284CA5] px-3 text-[12px] font-semibold text-white transition hover:bg-[#203F8D]">Save</button><button onclick="cancelEditNote(${n.id})" class="h-8 rounded-lg border border-[#E2E8F0] bg-white px-3 text-[12px] font-semibold text-[#475569] transition hover:bg-[#F1F5F9]">Cancel</button></div>
+              </div>` : `<p class="mt-1 text-[13px] leading-relaxed text-[#334155]">${n.text}</p>`}
+          </div>
+        </div>`).join('<div class="h-px bg-[#EEF2F7]"></div>');
+    }
+    function updateAddNoteBtn() { const input = document.getElementById('noteInput'), btn = document.getElementById('addNoteBtn'); if (input && btn) btn.disabled = !input.value.trim(); }
+    /* Persist the full notes list to the store (strip the transient `editing` flag). */
+    function persistNotes(){ persistPatch({ notes: notes.map(n => { const { editing, ...rest } = n; return rest; }) }); }
+    function addNote() {
+      const input = document.getElementById('noteInput'); const text = input?.value.trim();
+      if (!text) return;
+      notes.unshift({ id: noteNextId++, author:'Priya Menon', av:'PM', avBg:'#FEF3C7', avCol:'#92400E', text, time:'Just now', editing:false });
+      input.value = ''; updateAddNoteBtn(); renderNotes(); persistNotes();
+      addActivity('Note added by Priya M.');
+    }
+    function editNote(id) { notes = notes.map(n => ({ ...n, editing: n.id === id })); renderNotes(); document.getElementById(`editInput-${id}`)?.focus(); }
+    function saveEditNote(id) { const val = document.getElementById(`editInput-${id}`)?.value.trim(); if (!val) return; notes = notes.map(n => n.id === id ? { ...n, text: val, time: n.time.replace(' (edited)', '') + ' (edited)', editing:false } : n); renderNotes(); persistNotes(); addActivity('Note edited by Priya M.'); }
+    function cancelEditNote(id) { notes = notes.map(n => ({ ...n, editing:false })); renderNotes(); }
+    let noteDeletePending = null;
+    function deleteNote(id) { noteDeletePending = id; const m=document.getElementById('noteDeleteModal'); if(m){ m.classList.add('open'); lockBodyScroll(); } }
+    function closeNoteDelete(){ const m=document.getElementById('noteDeleteModal'); if(m) m.classList.remove('open'); noteDeletePending=null; unlockBodyScrollIfAllClosed(); }
+    function confirmNoteDelete(){ if(noteDeletePending!=null){ notes = notes.filter(n => n.id !== noteDeletePending); renderNotes(); persistNotes(); addActivity('Note deleted'); } closeNoteDelete(); }
+    function handleNoteDeleteOverlayClick(e){ if(e.target===document.getElementById('noteDeleteModal')) closeNoteDelete(); }
+
+    /* ═════════════════════════════════════════════════════
+       Parent details
+    ═════════════════════════════════════════════════════ */
+    const parentData = { relation:'Mother', motherName:'Priya Sharma', motherMobile:'+91 98765 43210', fatherName:'Rohit Sharma', fatherMobile:'+91 98765 12345', homeCity:'Bengaluru, Karnataka', homeAddress:'Flat 402, Sunshine Apartments, 4th Cross, Indiranagar' };
+    function pdPair(label, value) {
+      const empty = !value || value === '—'; const valClass = empty ? 'text-[#94A3B8]' : '';
+      return `<div class="dg-label">${label}</div><div class="dg-value ${valClass}">${empty ? '—' : value}</div>`;
+    }
+    function renderParentDetails() {
+      const grid = document.getElementById('parentDetailsGrid'); if (!grid) return;
+      const rel = parentData.relation;
+      const relationRow = `<div class="dg-label">Relation to Child</div><div class="dg-value">${rel}</div><div class="dg-empty"></div><div class="dg-empty"></div>`;
+      let conditionalRows = '';
+      if (rel === 'Father') {
+        conditionalRows = pdPair('Father Name', parentData.fatherName) + pdPair('Father Mobile Number', parentData.fatherMobile) + pdPair('Mother Name', parentData.motherName) + pdPair('Mother Mobile Number', parentData.motherMobile);
+      } else if (rel === 'Mother') {
+        conditionalRows = pdPair('Mother Name', parentData.motherName) + pdPair('Mother Mobile Number', parentData.motherMobile) + pdPair('Father Name', parentData.fatherName) + pdPair('Father Mobile Number', parentData.fatherMobile);
+      } else {
+        conditionalRows = pdPair(`${rel} Name`, parentData.relationName) + pdPair('Father Name', parentData.fatherName) + pdPair('Father Mobile Number', parentData.fatherMobile) + pdPair('Mother Name', parentData.motherName) + pdPair('Mother Mobile Number', parentData.motherMobile);
+      }
+      const commonRows = pdPair('Home City', parentData.homeCity) + pdPair('Home Address', parentData.homeAddress);
+      grid.innerHTML = relationRow + conditionalRows + commonRows;
+    }
+
+    /* ── Accordion ── */
+    function toggleAccordion(id) {
+      const body = document.getElementById('accordion-' + id); const icon = document.getElementById('accordion-icon-' + id);
+      if (!body) return;
+      if (body.style.maxHeight === '0px') {
+        body.style.maxHeight = body.scrollHeight + 'px';
+        if (icon) icon.style.transform = 'rotate(0deg)';
+        const cleanup = () => { if (body.style.maxHeight !== '0px') body.style.maxHeight = 'none'; body.removeEventListener('transitionend', cleanup); };
+        body.addEventListener('transitionend', cleanup);
+      } else {
+        const cfg = (typeof ED_ACC !== 'undefined') ? ED_ACC[id] : null;
+        const ec = cfg ? document.getElementById(cfg.edit) : null;
+        if (ec && !ec.classList.contains('hidden')) {
+          if (edDirty(id)) { edPendingDiscard = id; edPendingCollapse = id; openDiscardModal(); return; }
+          closeEditNow(id);
+        }
+        body.style.maxHeight = body.scrollHeight + 'px'; body.offsetHeight; body.style.maxHeight = '0px';
+        if (icon) icon.style.transform = 'rotate(-90deg)';
+      }
+    }
+
+  /* ══════════════ INLINE DETAILS EDIT ══════════════
+     Form schema, options, conditional logic and validation are collected verbatim
+     from enquiries_v5.html (Add Enquiry 3-step dialog). Edit happens inline inside
+     each Details accordion — no popup/dialog. */
+  const ED_REL_OPTS = ['Father','Mother','Uncle','Aunt','Siblings','Grandparent'];
+  const ED_REL_VIS = {
+    'Father':      { relationName:false, fatherName:true,  motherName:true,  fatherMobile:false, motherMobile:true  },
+    'Mother':      { relationName:false, fatherName:true,  motherName:true,  fatherMobile:true,  motherMobile:false },
+    'Uncle':       { relationName:true,  fatherName:true,  motherName:true,  fatherMobile:true,  motherMobile:true  },
+    'Aunt':        { relationName:true,  fatherName:true,  motherName:true,  fatherMobile:true,  motherMobile:true  },
+    'Siblings':    { relationName:true,  fatherName:true,  motherName:true,  fatherMobile:true,  motherMobile:true  },
+    'Grandparent': { relationName:true,  fatherName:true,  motherName:true,  fatherMobile:true,  motherMobile:true  }
+  };
+  const ED_CITY    = ['Bengaluru','Mumbai','Delhi','Hyderabad','Chennai','Pune','Kolkata','Ahmedabad'];
+  const ED_CURRIC  = ['CBSE','ICSE','IB','IGCSE','State Board','Montessori','Cambridge'];
+  const ED_GENDER  = ['Male','Female','Prefer not to say'];
+  const ED_ACAD    = ['2025-26','2026-27','2027-28'];
+  const ED_ADM     = ['Preschool','Day School','Boarding School'];
+  const ED_PRESCHOOL_GRADES = ['Playgroup','Pre-Nursery','Nursery','LKG','UKG'];
+  const ED_DAY_GRADES = ['Grade 1','Grade 2','Grade 3','Grade 4','Grade 5','Grade 6','Grade 7','Grade 8','Grade 9','Grade 10','Grade 11','Grade 12'];
+  const ED_DIST    = ['Within 2 km','Within 5 km','Within 10 km','Within 15 km','More than 15 km','No Preference'];
+
+  /* Editable data — initialised from the values currently displayed */
+  const childData = { childName:'Aarav Sharma', dob:'15-03-2020', age:'5 years', gender:'Male',
+    acadYear:'2026-27', admissionType:'Day School', gradeApplied:'Grade 1', currentSchool:'Little Millennium, Indiranagar (UKG)' };
+  const prefsData = { curriculum:['CBSE','ICSE'], city:'Bengaluru', area:'Indiranagar, HSR Layout, Koramangala',
+    distance:'Within 5 km', transport:'Yes', hostel:'No' };
+  const msgData = { message:`Hi, I'm looking for a good CBSE or ICSE school for my son Aarav for Grade 1 admission in the 2026–27 session. We live in Indiranagar and prefer a school within 5 km. He's currently in UKG at Little Millennium and enjoys reading and outdoor activities. Would like to know about the fee structure, transport facilities from our area, and an opportunity to visit the campus before we decide. Please get in touch at your earliest convenience.` };
+  if(typeof parentData==='object' && parentData){ if(parentData.relationName===undefined) parentData.relationName=''; }
+
+  /* ── small helpers (mirror enquiries_v5 validation behaviour) ── */
+  function edEsc(s){ return esc(String(s==null?'':s)); }
+  function edDigits(s){ return String(s||'').replace(/\D/g,''); }
+  function edValidMobile(v){ const d=edDigits(v); return d.length===10 && /^[6-9]/.test(d); }
+  function edLocalMobile(v){ const d=edDigits(v); return d.length>10 ? d.slice(-10) : d; }
+  function edParseDob(str){
+    if(!str) return null;
+    const m=String(str).trim().match(/^(\d{2})-(\d{2})-(\d{4})$/); if(!m) return null;
+    const dd=+m[1], mm=+m[2], yy=+m[3], d=new Date(yy,mm-1,dd);
+    if(d.getFullYear()!==yy||d.getMonth()!==mm-1||d.getDate()!==dd) return null;
+    if(d>new Date()) return null; return d;
+  }
+  function edAgeYears(str){ const d=edParseDob(str); if(!d) return null;
+    const n=new Date(); let y=n.getFullYear()-d.getFullYear(); const mo=n.getMonth()-d.getMonth();
+    if(mo<0||(mo===0&&n.getDate()<d.getDate())) y--; return Math.max(0,y); }
+  function edDobPretty(str){ const d=edParseDob(str); return d? d.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) : (str||''); }
+  function edVal(id){ const el=document.getElementById(id); return el?(el.value||'').trim():''; }
+  function edRadio(name){ const r=document.querySelector('input[name="'+name+'"]:checked'); return r?r.value:''; }
+  function edErr(id,show){ const e=document.getElementById(id); if(e) e.classList.toggle('hidden',!show); }
+  function edMark(id,bad){ const trg=document.getElementById(id+'__t'); const el=document.getElementById(id); if(!trg && !el) return;
+    const t = trg || (el.tagName==='SELECT' ? el : (el.closest('[data-edwrap]')||el));
+    if(bad){ t.classList.add('border-[#DC2626]'); t.classList.remove('border-[#E2E8F0]'); }
+    else { t.classList.remove('border-[#DC2626]'); t.classList.add('border-[#E2E8F0]'); } }
+
+  /* ── control builders (match enquiries_v5 field styling) ── */
+  const EDCHEV='<svg class="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#64748B]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>';
+  function edInput(id,val,ph){ return '<div data-edwrap class="flex h-10 items-center rounded-xl border border-[#E2E8F0] bg-white px-3 transition focus-within:border-[#284CA5]"><input id="'+id+'" type="text" value="'+edEsc(val)+'" placeholder="'+edEsc(ph||'')+'" class="min-w-0 flex-1 bg-transparent text-[13px] text-[#334155] placeholder:text-[#94A3B8] outline-none border-0 ring-0 focus:outline-none focus-visible:outline-none"></div>'; }
+  /* Custom dropdowns — same .dp-item menu as the top status dropdown. A hidden input keeps the value so edVal/edSnap/validation work unchanged. */
+  const ED_DD = {};
+  function edSelect(id,opts,val,ph,onchange){
+    ED_DD[id]={ opts:opts.slice(), ph:ph||'Select', onchange:onchange||'' };
+    const has=!!(val && opts.includes(val));
+    return '<div class="relative">'
+      +'<input type="hidden" id="'+id+'" value="'+edEsc(has?val:'')+'">'
+      +'<button type="button" id="'+id+'__t" data-eddd="'+id+'" onclick="edDDOpen(\''+id+'\', event)" class="flex h-10 w-full items-center justify-between gap-2 rounded-lg border border-[#E2E8F0] bg-white pl-3 pr-2.5 text-left text-[13px] outline-none transition hover:border-[#CBD5E1] focus:border-[#284CA5]">'
+        +'<span id="'+id+'__l" class="truncate '+(has?'text-[#334155]':'text-[#94A3B8]')+'">'+edEsc(has?val:(ph||'Select'))+'</span>'
+        +'<svg class="h-3.5 w-3.5 shrink-0 text-[#64748B]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>'
+      +'</button></div>'; }
+  function edDDLabel(id){ const cfg=ED_DD[id]; const l=document.getElementById(id+'__l'); if(!l||!cfg) return; const v=edVal(id);
+    if(v){ l.textContent=v; l.classList.remove('text-[#94A3B8]'); l.classList.add('text-[#334155]'); }
+    else { l.textContent=cfg.ph; l.classList.add('text-[#94A3B8]'); l.classList.remove('text-[#334155]'); } }
+  function edDDSetOptions(id,opts,ph){ const cfg=ED_DD[id]; if(!cfg) return; cfg.opts=opts.slice(); if(ph!=null) cfg.ph=ph; const cur=edVal(id); if(cur && !opts.includes(cur)){ const h=document.getElementById(id); if(h) h.value=''; } edDDLabel(id); }
+  function edDDOpen(id,event){ event.stopPropagation(); const trigger=document.getElementById(id+'__t'); const cfg=ED_DD[id]; if(!trigger||!cfg) return;
+    let panel=document.getElementById('edDDPanel'); if(!panel){ panel=document.createElement('div'); panel.id='edDDPanel'; panel.className='dropdown-panel'; document.body.appendChild(panel); }
+    const wasOpen=panel.classList.contains('open') && panel.dataset.for===id; closeDropdowns(); if(wasOpen) return;
+    const cur=edVal(id); panel.dataset.for=id;
+    panel.innerHTML='<div class="dp-list">'+cfg.opts.map(x=>'<button type="button" class="dp-item'+(x===cur?' active':'')+'" onclick="edDDPick(\''+id+'\', this)" data-val="'+edEsc(x)+'">'+edEsc(x)+'</button>').join('')+'</div>';
+    panel.style.minWidth=Math.max(trigger.offsetWidth,180)+'px';
+    panel.style.visibility='hidden'; panel.classList.add('open'); placePanel(panel, trigger); panel.style.visibility=''; }
+  function edDDPick(id,btn){ const v=btn.getAttribute('data-val'); const h=document.getElementById(id); if(h) h.value=v; edDDLabel(id); closeDropdowns();
+    const cfg=ED_DD[id]; const fn=((cfg&&cfg.onchange)||'').replace(/\(\)\s*;?\s*$/,''); if(fn && typeof window[fn]==='function') window[fn]();
+    if(h) h.dispatchEvent(new Event('change',{bubbles:true})); }
+  function edYesNo(name,val){ const r=(v)=>'<label class="inline-flex cursor-pointer items-center gap-2"><input type="radio" name="'+name+'" value="'+v+'"'+(val===v?' checked':'')+' class="h-4 w-4 cursor-pointer accent-[#284CA5]"><span class="text-[13px] text-[#334155]">'+v+'</span></label>';
+    return '<div class="flex h-10 items-center gap-5 rounded-xl border border-[#E2E8F0] bg-white px-3">'+r('Yes')+r('No')+'</div>'; }
+  function edTextarea(id,val,ph){ return '<div data-edwrap class="rounded-xl border border-[#E2E8F0] bg-white px-3 py-2.5 transition focus-within:border-[#284CA5]"><textarea id="'+id+'" rows="4" placeholder="'+edEsc(ph||'')+'" class="w-full resize-none bg-transparent text-[13px] leading-relaxed text-[#334155] placeholder:text-[#94A3B8] outline-none border-0 ring-0 focus:outline-none focus-visible:outline-none">'+edEsc(val)+'</textarea></div>'; }
+  function edField(label,control,o){ o=o||{}; return '<div class="'+(o.span2?'sm:col-span-2 ':'')+'min-w-0"'+(o.wrapId?' id="'+o.wrapId+'"':'')+'><label class="mb-1.5 flex items-center gap-1 text-[12px] font-semibold text-[#334155]">'+label+(o.req?'<span class="text-[#DC2626]">*</span>':'')+(o.optional?'<span class="ml-1 text-[11px] font-normal text-[#94A3B8]">(optional)</span>':'')+'</label>'+control+(o.errId?'<p id="'+o.errId+'" class="mt-1 hidden text-[11px] text-[#DC2626]">'+(o.errMsg||'')+'</p>':'')+'</div>'; }
+  function edGrid(inner){ return '<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">'+inner+'</div>'; }
+  function edActions(acc){ return ''; }   /* Save/Cancel now live in the accordion header (text-style) */
+
+  /* ── CHILD DETAILS ── */
+  function renderChildView(){ const c=childData, g=document.getElementById('view-child'); if(!g) return;
+    const row=(l,v)=>'<div class="dg-label">'+l+'</div><div class="dg-value'+(!v?' text-[#94A3B8]':'')+'">'+(!v?'—':edEsc(v))+'</div>';
+    g.innerHTML = row('Child Name',c.childName)+row('Date of Birth',edDobPretty(c.dob))+row('Age',c.age)+row('Gender',c.gender)
+      +row('Academic Year',c.acadYear)+row('Seeking Admission For',c.gradeApplied)+row('Seeking Admission Type',c.admissionType)
+      +row('Current School',c.currentSchool)+'<div class="dg-empty"></div><div class="dg-empty"></div>'; }
+  function edGradesFor(t){ return t==='Preschool'?ED_PRESCHOOL_GRADES:(t?ED_DAY_GRADES:[]); }
+  function edGradePh(t){ return t==='Preschool'?'Select preschool grade':(t?'Select grade':'Select admission type first'); }
+  function buildChildEdit(){ const c=childData;
+    const inner =
+      edField('Child Full Name', edInput('edChildName',c.childName,"Enter child's full name"), {req:true,errId:'edChildNameErr',errMsg:'Child name is required.'})
+    + edField('Child Date of Birth', '<div data-edwrap class="relative flex h-10 items-center rounded-lg border border-[#E2E8F0] bg-white px-3 transition focus-within:border-[#284CA5]"><input id="edDob" type="text" inputmode="numeric" maxlength="10" value="'+edEsc(c.dob)+'" placeholder="dd-mm-yyyy" oninput="edDobCheck()" class="min-w-0 flex-1 border-0 bg-transparent p-0 text-[13px] text-[#334155] placeholder:text-[#94A3B8] outline-none ring-0 focus:outline-none focus-visible:outline-none"><button type="button" data-dobcal-open="edDob" class="ml-2 grid h-6 w-6 shrink-0 cursor-pointer place-items-center rounded-md text-[#64748B] transition hover:bg-[#EFF4FF] hover:text-[#284CA5]" aria-label="Open date of birth calendar"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></button></div>', {optional:true, errId:'edDobErr'})
+    + edField('Child Gender', edSelect('edGender',ED_GENDER,c.gender,'Select gender'), {})
+    + edField('Academic Year', edSelect('edAcadYear',ED_ACAD,c.acadYear,'Select academic year'), {})
+    + edField('Seeking Admission Type', edSelect('edAdmType',ED_ADM,c.admissionType,'Select admission type','edChildTypeChange()'), {req:true,errId:'edAdmTypeErr',errMsg:'Please select an admission type.'})
+    + edField('Seeking Admission For', edSelect('edGrade',edGradesFor(c.admissionType),c.gradeApplied,edGradePh(c.admissionType)), {req:true,wrapId:'edGradeWrap',errId:'edGradeErr',errMsg:'Please select what the child is applying for.'})
+    + edField('Current School Name', edInput('edCurrentSchool',c.currentSchool,'Enter current school name'), {});
+    document.getElementById('edit-child').innerHTML = edGrid(inner)+edActions('child-details'); }
+  function edChildTypeChange(){ const t=edVal('edAdmType'); edDDSetOptions('edGrade', edGradesFor(t), edGradePh(t)); if(t){ edErr('edAdmTypeErr',false); edMark('edAdmType',false); } }
+  function validateChild(){ const name=edVal('edChildName'), type=edVal('edAdmType'), grade=edVal('edGrade');
+    const e1=!name; edErr('edChildNameErr',e1); edMark('edChildName',e1);
+    const e2=!type; edErr('edAdmTypeErr',e2); edMark('edAdmType',e2);
+    const e3=!!type&&!grade; edErr('edGradeErr',e3); edMark('edGrade',e3);
+    return !e1&&!e2&&!e3; }
+  function commitChild(){ const c=childData;
+    c.childName=edVal('edChildName'); c.dob=edVal('edDob'); c.gender=edVal('edGender'); c.acadYear=edVal('edAcadYear');
+    c.admissionType=edVal('edAdmType'); c.gradeApplied=edVal('edGrade'); c.currentSchool=edVal('edCurrentSchool');
+    const a=edAgeYears(c.dob); if(a!=null) c.age=a+' year'+(a===1?'':'s');
+    renderChildView();
+    persistPatch({ studentName:c.childName, gender:c.gender, acadYear:c.acadYear, gradeApplied:c.gradeApplied, age:c.age });   // → CRM
+    populateHeader(); }
+
+  /* ── PARENT DETAILS (view reuses renderParentDetails) ── */
+  function edRelApplyVis(){ const v=edVal('edRelation'); const cfg=ED_REL_VIS[v]||{relationName:false,fatherName:false,motherName:false,fatherMobile:false,motherMobile:false};
+    const tog=(id,sh)=>{const el=document.getElementById(id); if(el) el.classList.toggle('hidden',!sh);};
+    tog('edRelNameWrap',cfg.relationName); tog('edFatherNameWrap',cfg.fatherName); tog('edMotherNameWrap',cfg.motherName);
+    tog('edFatherMobileWrap',cfg.fatherMobile); tog('edMotherMobileWrap',cfg.motherMobile);
+    const lbl=document.getElementById('edRelNameLabel'); if(lbl) lbl.textContent=(cfg.relationName&&v)?(v+' Name'):'Relation Name';
+    const fr=document.getElementById('edFatherReq'), mr=document.getElementById('edMotherReq');
+    if(fr) fr.classList.toggle('hidden', v!=='Father'); if(mr) mr.classList.toggle('hidden', v!=='Mother'); }
+  function edRelationChange(){
+    ['edRelName','edFatherName','edMotherName','edFatherMobile','edMotherMobile'].forEach(id=>{const el=document.getElementById(id); if(el) el.value='';});
+    ['edRelNameErr','edFatherNameErr','edMotherNameErr','edFatherMobileErr','edMotherMobileErr'].forEach(id=>edErr(id,false));
+    ['edRelName','edFatherName','edMotherName','edFatherMobile','edMotherMobile'].forEach(id=>edMark(id,false));
+    edRelApplyVis(); const v=edVal('edRelation'); if(v){ edErr('edRelationErr',false); edMark('edRelation',false); } }
+  function buildParentEdit(){ const p=parentData;
+    const cityPre = ED_CITY.find(c=>p.homeCity && p.homeCity.indexOf(c)===0) || (ED_CITY.includes(p.homeCity)?p.homeCity:'');
+    const inner =
+      edField('Relation to Child', edSelect('edRelation',ED_REL_OPTS,p.relation,'Select relation to child','edRelationChange()'), {req:true,span2:true,errId:'edRelationErr',errMsg:'Relation is required.'})
+    + edField('<span id="edRelNameLabel">Relation Name</span>', edInput('edRelName',p.relationName,'Enter full name'), {req:true,wrapId:'edRelNameWrap',errId:'edRelNameErr',errMsg:'Name is required.'})
+    + edField('Father Name<span id="edFatherReq" class="ml-0.5 hidden text-[#DC2626]">*</span>', edInput('edFatherName',p.fatherName,"Enter father's full name"), {wrapId:'edFatherNameWrap',errId:'edFatherNameErr',errMsg:'Father name is required.'})
+    + edField('Mother Name<span id="edMotherReq" class="ml-0.5 hidden text-[#DC2626]">*</span>', edInput('edMotherName',p.motherName,"Enter mother's full name"), {wrapId:'edMotherNameWrap',errId:'edMotherNameErr',errMsg:'Mother name is required.'})
+    + edField('Father Mobile Number', edInput('edFatherMobile',edLocalMobile(p.fatherMobile),"Enter father's mobile number"), {wrapId:'edFatherMobileWrap',errId:'edFatherMobileErr',errMsg:'Enter a valid 10-digit mobile number.'})
+    + edField('Mother Mobile Number', edInput('edMotherMobile',edLocalMobile(p.motherMobile),"Enter mother's mobile number"), {wrapId:'edMotherMobileWrap',errId:'edMotherMobileErr',errMsg:'Enter a valid 10-digit mobile number.'})
+    + edField('Home City', edSelect('edHomeCity',ED_CITY,cityPre,'Select city'), {req:true,errId:'edHomeCityErr',errMsg:'Home city is required.'})
+    + edField('Home Address', edInput('edHomeAddress',p.homeAddress,'Enter full home address'), {optional:true});
+    document.getElementById('edit-parent').innerHTML = edGrid(inner)+edActions('parent-details'); }
+  function validateParent(){ const rel=edVal('edRelation'), city=edVal('edHomeCity'), cfg=ED_REL_VIS[rel]||null;
+    const er=!rel; edErr('edRelationErr',er); edMark('edRelation',er);
+    let ern=false; if(cfg&&cfg.relationName) ern=!edVal('edRelName'); edErr('edRelNameErr',ern); edMark('edRelName',ern);
+    let ef=false,em=false;
+    if(rel==='Father'&&cfg&&cfg.fatherName) ef=!edVal('edFatherName');
+    if(rel==='Mother'&&cfg&&cfg.motherName) em=!edVal('edMotherName');
+    edErr('edFatherNameErr',ef); edMark('edFatherName',ef); edErr('edMotherNameErr',em); edMark('edMotherName',em);
+    let efm=false,emm=false; const fm=edVal('edFatherMobile'), mm=edVal('edMotherMobile');
+    if(fm) efm=!edValidMobile(fm); if(mm) emm=!edValidMobile(mm);
+    edErr('edFatherMobileErr',efm); edMark('edFatherMobile',efm); edErr('edMotherMobileErr',emm); edMark('edMotherMobile',emm);
+    const ec=!city; edErr('edHomeCityErr',ec); edMark('edHomeCity',ec);
+    return !er&&!ern&&!ef&&!em&&!efm&&!emm&&!ec; }
+  function commitParent(){ const p=parentData;
+    p.relation=edVal('edRelation'); p.relationName=edVal('edRelName');
+    p.fatherName=edVal('edFatherName'); p.motherName=edVal('edMotherName');
+    p.fatherMobile=edVal('edFatherMobile'); p.motherMobile=edVal('edMotherMobile');
+    p.homeCity=edVal('edHomeCity'); p.homeAddress=edVal('edHomeAddress');
+    renderParentDetails();
+    /* Push the primary parent contact back to the canonical record. */
+    var primaryName = (p.relation==='Father') ? p.fatherName : (p.relation==='Mother') ? p.motherName : (p.relationName||p.fatherName||p.motherName);
+    var primaryMob  = (p.relation==='Father') ? p.fatherMobile : (p.relation==='Mother') ? p.motherMobile : (p.fatherMobile||p.motherMobile);
+    persistPatch({ parentName: primaryName||rec&&rec.parentName, mobile: primaryMob||rec&&rec.mobile, city: (p.homeCity||'').split(',')[0].trim() });   // → CRM
+    populateHeader(); }
+
+  /* ── ADMISSION PREFERENCES ── */
+  function renderPrefsView(){ const p=prefsData, g=document.getElementById('view-prefs'); if(!g) return;
+    const disp=(v)=>{ const empty=(!v||(Array.isArray(v)&&!v.length)); return '<div class="dg-value'+(empty?' text-[#94A3B8]':'')+'">'+(empty?'—':edEsc(Array.isArray(v)?v.join(', '):v))+'</div>'; };
+    const row=(l,v)=>'<div class="dg-label">'+l+'</div>'+disp(v);
+    g.innerHTML = row('Preferred Curriculum',p.curriculum)+row('Preferred City',p.city)+row('Preferred Area',p.area)
+      +row('Distance Willing to Travel',p.distance)+row('Transport Requirement',p.transport)+row('Hostel Requirement',p.hostel); }
+  function buildPrefsEdit(){ const p=prefsData;
+    const curric='<div data-edwrap class="flex flex-wrap gap-x-4 gap-y-2 rounded-xl border border-[#E2E8F0] bg-white px-3 py-2.5">'+
+      ED_CURRIC.map(c=>'<label class="inline-flex cursor-pointer items-center gap-2"><input type="checkbox" name="edCurric" value="'+edEsc(c)+'"'+(p.curriculum.includes(c)?' checked':'')+' class="h-4 w-4 cursor-pointer accent-[#284CA5]"><span class="text-[13px] text-[#334155]">'+edEsc(c)+'</span></label>').join('')+'</div>';
+    const inner =
+      edField('Preferred Curriculum', curric, {span2:true,optional:true})
+    + edField('Preferred City', edSelect('edPrefCity',ED_CITY,p.city,'Select city'), {})
+    + edField('Preferred Area', edInput('edPrefArea',p.area,'e.g. Indiranagar, HSR Layout'), {optional:true})
+    + edField('Distance Willing to Travel', edSelect('edDistance',ED_DIST,p.distance,'Select distance'), {})
+    + edField('Transport Requirement', edYesNo('edTransport',p.transport), {})
+    + edField('Hostel Requirement', edYesNo('edHostel',p.hostel), {});
+    document.getElementById('edit-prefs').innerHTML = edGrid(inner)+edActions('admission-prefs'); }
+  function validatePrefs(){ return true; }
+  function commitPrefs(){ const p=prefsData;
+    p.curriculum=Array.from(document.querySelectorAll('input[name="edCurric"]:checked')).map(x=>x.value);
+    p.city=edVal('edPrefCity'); p.area=edVal('edPrefArea'); p.distance=edVal('edDistance');
+    const t=edRadio('edTransport'); if(t) p.transport=t; const h=edRadio('edHostel'); if(h) p.hostel=h;
+    renderPrefsView();
+    persistPatch({ curriculum:(p.curriculum&&p.curriculum[0])||'', area:p.area, city:p.city, travelPref:p.distance });   // → CRM
+    populateHeader(); }
+
+  /* ── ENQUIRY MESSAGE ── */
+  function renderMessageView(){ const el=document.getElementById('view-message'); if(el) el.textContent=msgData.message||''; }
+  function buildMessageEdit(){ document.getElementById('edit-message').innerHTML = edTextarea('edMessage',msgData.message,'Enter the enquiry message / notes')+edActions('enquiry-message'); }
+  function validateMessage(){ return true; }
+  function commitMessage(){ const el=document.getElementById('edMessage'); msgData.message=el?(el.value||'').trim():msgData.message; renderMessageView();
+    persistPatch({ enquiryMessage: msgData.message }); }   // → CRM (custom field, preserved by the store)
+
+  /* ── dispatcher ── */
+  const ED_ACC = {
+    'child-details':  { view:'view-child',        edit:'edit-child',   build:buildChildEdit,  post:null,           validate:validateChild,  commit:commitChild,  label:'Child details' },
+    'parent-details': { view:'parentDetailsGrid', edit:'edit-parent',  build:buildParentEdit, post:edRelApplyVis,  validate:validateParent, commit:commitParent, label:'Parent details' },
+    'admission-prefs':{ view:'view-prefs',         edit:'edit-prefs',   build:buildPrefsEdit,  post:null,           validate:validatePrefs,  commit:commitPrefs,  label:'Admission preferences' },
+    'enquiry-message':{ view:'view-message',       edit:'edit-message', build:buildMessageEdit,post:null,           validate:validateMessage,commit:commitMessage,label:'Enquiry message' }
+  };
+  function edEnsureOpen(acc){ const b=document.getElementById('accordion-'+acc), i=document.getElementById('accordion-icon-'+acc);
+    if(b) b.style.maxHeight='none'; if(i) i.style.transform='rotate(0deg)'; }
+  function edHdrEditBtn(acc){ return '<button onclick="event.stopPropagation();enterEdit(\''+acc+'\')" class="no-print inline-flex h-7 items-center gap-1 px-1 text-[12px] font-semibold text-[#284CA5] transition hover:text-[#203F8D]">Edit</button>'; }
+  function edHdrSaveCancel(acc){ return '<button onclick="event.stopPropagation();cancelEdit(\''+acc+'\')" class="no-print inline-flex h-7 items-center px-1 text-[12px] font-semibold text-[#DC2626] transition hover:text-[#B91C1C]">Cancel</button><button id="edSave-'+acc+'" disabled onclick="event.stopPropagation();saveEdit(\''+acc+'\')" class="no-print inline-flex h-7 items-center px-1 text-[12px] font-semibold text-[#284CA5] transition hover:text-[#203F8D]" style="opacity:.4;cursor:not-allowed;pointer-events:none">Save</button>'; }
+  function edSetHeader(acc,html){ const h=document.getElementById('acthdr-'+acc); if(h) h.innerHTML=html; }
+  function edSnap(c){ const sn={i:{},g:{}}; c.querySelectorAll('input,select,textarea').forEach(el=>{ if(el.type==='checkbox'||el.type==='radio'){ const k=el.name||el.id; (sn.g[k]=sn.g[k]||[]); if(el.checked) sn.g[k].push(el.value); } else if(el.id){ sn.i[el.id]=el.value; } }); Object.keys(sn.g).forEach(k=>sn.g[k].sort()); return sn; }
+  function edDirty(acc){ const cfg=ED_ACC[acc]; const c=document.getElementById(cfg.edit); if(!c||!cfg._snap) return false; const n=edSnap(c);
+    for(const k in cfg._snap.i){ if((n.i[k]||'')!==(cfg._snap.i[k]||'')) return true; }
+    for(const k in n.i){ if(!(k in cfg._snap.i)&&(n.i[k]||'')!=='') return true; }
+    const keys=new Set([...Object.keys(cfg._snap.g),...Object.keys(n.g)]);
+    for(const k of keys){ if((cfg._snap.g[k]||[]).join('|')!==(n.g[k]||[]).join('|')) return true; }
+    return false; }
+  function edSaveState(acc){ const b=document.getElementById('edSave-'+acc); if(!b) return; const dirty=edDirty(acc);
+    b.disabled=!dirty; b.style.opacity=dirty?'1':'.4'; b.style.cursor=dirty?'pointer':'not-allowed'; b.style.pointerEvents=dirty?'auto':'none'; }
+  function enterEdit(acc){ const cfg=ED_ACC[acc]; if(!cfg) return;
+    cfg.build(); if(cfg.post) cfg.post();
+    const v=document.getElementById(cfg.view), e=document.getElementById(cfg.edit);
+    if(v) v.classList.add('hidden'); if(e) e.classList.remove('hidden');
+    edSetHeader(acc, edHdrSaveCancel(acc));
+    cfg._snap = e ? edSnap(e) : null;
+    if(e){ e.oninput=function(){ edSaveState(acc); }; e.onchange=function(){ edSaveState(acc); }; }
+    edSaveState(acc);
+    edEnsureOpen(acc); }
+  function closeEditNow(acc){ const cfg=ED_ACC[acc];
+    const v=document.getElementById(cfg.view), e=document.getElementById(cfg.edit);
+    if(e){ e.classList.add('hidden'); e.innerHTML=''; } if(v) v.classList.remove('hidden');
+    edSetHeader(acc, edHdrEditBtn(acc)); cfg._snap=null; edEnsureOpen(acc); }
+  function cancelEdit(acc){ const cfg=ED_ACC[acc]; if(!cfg) return;
+    if(edDirty(acc)){ edPendingDiscard=acc; openDiscardModal(); } else { closeEditNow(acc); } }
+  function saveEdit(acc){ const cfg=ED_ACC[acc]; if(!cfg) return;
+    if(!edDirty(acc)) return;
+    if(!cfg.validate()){ showToast('Please fix the highlighted fields', 'error'); return; }
+    cfg.commit(); closeEditNow(acc);
+    addActivity(cfg.label+' updated',{icon:'flag',accent:true}); showToast(cfg.label+' updated'); }
+  let edPendingDiscard=null, edPendingCollapse=null;
+  function openDiscardModal(){ const m=document.getElementById('discardModal'); if(m){ m.classList.add('open'); lockBodyScroll(); } }
+  function closeDiscardModal(){ const m=document.getElementById('discardModal'); if(m) m.classList.remove('open'); unlockBodyScrollIfAllClosed(); }
+  function discardConfirm(){ const acc=edPendingDiscard; const col=edPendingCollapse; closeDiscardModal(); if(acc) closeEditNow(acc);
+    if(col){ const b=document.getElementById('accordion-'+col), i=document.getElementById('accordion-icon-'+col); if(b){ b.style.maxHeight=b.scrollHeight+'px'; b.offsetHeight; b.style.maxHeight='0px'; } if(i) i.style.transform='rotate(-90deg)'; }
+    edPendingDiscard=null; edPendingCollapse=null; }
+  function discardKeep(){ closeDiscardModal(); edPendingDiscard=null; edPendingCollapse=null; }
+  function handleDiscardOverlayClick(e){ if(e.target===document.getElementById('discardModal')) discardKeep(); }
+
+
+  /* ══════════════ CHILD DOB CALENDAR (ported pixel-for-pixel from the reference Add Enquiry form) ══════════════ */
+  let dobCalMonthDate = new Date();
+  let dobCalTrigger = null;
+  function dobIsoToDate(v){ const m=String(v||'').match(/^(\d{4})-(\d{2})-(\d{2})$/); return m?new Date(+m[1],+m[2]-1,+m[3]):null; }
+  function dobDateToISO(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+  function dobDisplayToISO(v){ const s=String(v||'').trim(); const m=s.match(/^(\d{2})-(\d{2})-(\d{4})$/); if(m) return m[3]+'-'+m[2]+'-'+m[1]; return /^\d{4}-\d{2}-\d{2}$/.test(s)?s:''; }
+  function dobISOToDisplay(v){ const m=String(v||'').match(/^(\d{4})-(\d{2})-(\d{2})$/); return m?m[3]+'-'+m[2]+'-'+m[1]:String(v||''); }
+  function dobCalPosition(trigger){ const pop=document.getElementById('dobCal'); if(!pop||!trigger) return;
+    pop.classList.remove('hidden'); pop.style.visibility='hidden'; pop.style.left='0px'; pop.style.top='0px';
+    const gap=8,margin=10,tr=trigger.getBoundingClientRect(),pw=pop.offsetWidth||326,ph=pop.offsetHeight||340,vw=window.innerWidth,vh=window.innerHeight;
+    let left=tr.left; if(left+pw>vw-margin) left=tr.right-pw; if(left<margin) left=margin; if(left+pw>vw-margin) left=Math.max(margin,vw-pw-margin);
+    let top=tr.bottom+gap; if(top+ph>vh-margin) top=tr.top-ph-gap; if(top<margin) top=Math.max(margin,vh-ph-margin);
+    pop.style.left=left+'px'; pop.style.top=top+'px'; pop.style.visibility='visible'; }
+  function dobCalRender(){ const daysEl=document.getElementById('dobCalDays'); if(!daysEl) return;
+    const year=dobCalMonthDate.getFullYear(), month=dobCalMonthDate.getMonth();
+    const ms=document.getElementById('dobCalMonthSelect');
+    if(ms){ const mn=Array.from({length:12},(_,i)=>new Date(2000,i,1).toLocaleDateString('en-US',{month:'short'})); if(!ms.options.length) ms.innerHTML=mn.map((n,i)=>'<option value="'+i+'">'+n+'</option>').join(''); ms.value=String(month); }
+    const ys=document.getElementById('dobCalYearSelect');
+    if(ys){ const sy=year-10; ys.innerHTML=Array.from({length:21},(_,i)=>sy+i).map(y=>'<option value="'+y+'">'+y+'</option>').join(''); ys.value=String(year); }
+    const firstDay=new Date(year,month,1).getDay(), lastDate=new Date(year,month+1,0).getDate();
+    const input=document.getElementById('edDob'); const selected=input?dobDisplayToISO(input.value):''; const today=dobDateToISO(new Date());
+    let html=''; for(let i=0;i<firstDay;i++) html+='<span class="h-8"></span>';
+    for(let d=1;d<=lastDate;d++){ const iso=year+'-'+String(month+1).padStart(2,'0')+'-'+String(d).padStart(2,'0'); const isSel=iso===selected, isTod=iso===today;
+      html+='<button type="button" data-dobcal-day="'+iso+'" class="grid h-8 w-8 place-items-center rounded-full text-[12px] font-semibold transition '+(isSel?'bg-[#284CA5] text-white hover:bg-[#203F8D]':isTod?'bg-[#EFF4FF] text-[#284CA5] ring-1 ring-inset ring-[#BFD3FF] hover:bg-[#DCE8FF]':'text-[#334155] hover:bg-[#DCE8FF] hover:text-[#284CA5]')+'">'+d+'</button>'; }
+    daysEl.innerHTML=html; }
+  function dobCalOpen(trigger){ dobCalTrigger=trigger; const input=document.getElementById('edDob'); const iso=input?dobDisplayToISO(input.value):''; const sd=iso?dobIsoToDate(iso):null;
+    dobCalMonthDate=sd||new Date(); dobCalMonthDate=new Date(dobCalMonthDate.getFullYear(),dobCalMonthDate.getMonth(),1); dobCalRender(); dobCalPosition(trigger); }
+  function dobCalClose(){ const pop=document.getElementById('dobCal'); if(pop) pop.classList.add('hidden'); dobCalTrigger=null; }
+  function dobCalSet(iso){ const input=document.getElementById('edDob'); if(input){ input.value=iso?dobISOToDisplay(iso):''; input.dispatchEvent(new Event('input',{bubbles:true})); } dobCalClose(); }
+  document.addEventListener('click',(e)=>{
+    const ob=e.target.closest('[data-dobcal-open]'); if(ob){ e.preventDefault(); e.stopPropagation(); dobCalOpen(ob); return; }
+    const db=e.target.closest('[data-dobcal-day]'); if(db){ e.preventDefault(); dobCalSet(db.dataset.dobcalDay); return; }
+    const pop=document.getElementById('dobCal'); if(pop && !pop.classList.contains('hidden') && !pop.contains(e.target)) dobCalClose();
+  });
+  (function dobCalBind(){
+    const c=document.getElementById('dobCalClose'); if(c) c.addEventListener('click',dobCalClose);
+    const cl=document.getElementById('dobCalClear'); if(cl) cl.addEventListener('click',()=>dobCalSet(''));
+    const t=document.getElementById('dobCalToday'); if(t) t.addEventListener('click',()=>dobCalSet(dobDateToISO(new Date())));
+    const pv=document.getElementById('dobCalPrev'); if(pv) pv.addEventListener('click',(e)=>{e.stopPropagation(); dobCalMonthDate=new Date(dobCalMonthDate.getFullYear(),dobCalMonthDate.getMonth()-1,1); dobCalRender(); dobCalPosition(dobCalTrigger);});
+    const nx=document.getElementById('dobCalNext'); if(nx) nx.addEventListener('click',(e)=>{e.stopPropagation(); dobCalMonthDate=new Date(dobCalMonthDate.getFullYear(),dobCalMonthDate.getMonth()+1,1); dobCalRender(); dobCalPosition(dobCalTrigger);});
+    const ms=document.getElementById('dobCalMonthSelect'); if(ms) ms.addEventListener('change',(e)=>{e.stopPropagation(); dobCalMonthDate=new Date(dobCalMonthDate.getFullYear(),Number(e.target.value),1); dobCalRender(); dobCalPosition(dobCalTrigger);});
+    const ys=document.getElementById('dobCalYearSelect'); if(ys) ys.addEventListener('change',(e)=>{e.stopPropagation(); dobCalMonthDate=new Date(Number(e.target.value),dobCalMonthDate.getMonth(),1); dobCalRender(); dobCalPosition(dobCalTrigger);});
+  })();
+  window.addEventListener('resize',()=>{ if(dobCalTrigger) dobCalPosition(dobCalTrigger); });
+  window.addEventListener('scroll',()=>{ if(dobCalTrigger) dobCalPosition(dobCalTrigger); }, true);
+  function edDobCheck(){ const v=edVal('edDob'); const e=document.getElementById('edDobErr'); if(!e) return;
+    if(!v){ e.classList.add('hidden'); e.textContent=''; return; }
+    if(!edParseDob(v)){ e.classList.add('hidden'); e.textContent=''; return; }
+    const a=edAgeYears(v);
+    if(a<1){ e.textContent='Child age should be at least 1 year.'; e.classList.remove('hidden'); }
+    else if(a>20){ e.textContent='Child age should be below 20 years.'; e.classList.remove('hidden'); }
+    else { e.classList.add('hidden'); e.textContent=''; } }
+
+
+  /* ════════════════ CRM HYDRATION ════════════════
+     Pull the REAL enquiry from the shared store and seed every part of the page
+     from it: identity header, status/workflow stage, child/parent/prefs/message
+     details, notes, activity, follow-up and visit. Falls back gracefully when the
+     id is missing or unknown, and shows a "not found" state when the store is
+     empty. */
+  function prettyDate(iso){ if(!iso) return ''; try { return new Date(iso+'T00:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}); } catch(_){ return iso; } }
+  function ageYearsLabel(ageStr){
+    if(!ageStr) return '—';
+    var m = String(ageStr).match(/\d+/);
+    if(!m) return ageStr;            // e.g. "Below 2 years" — show as-is
+    return m[0]+' yr'+(m[0]==='1'?'':'s');
+  }
+  function recInitials(name){ return String(name||'').trim().split(/\s+/).map(function(w){return w[0]||'';}).slice(0,2).join('').toUpperCase()||'—'; }
+
+  /* Map the canonical CRM status → this page's workflow state (workflowIndex,
+     currentStatus, completedTasks). */
+  function seedWorkflowFromStatus(crmStatus){
+    var ui = crmToUiStatus(crmStatus);
+    if(ui==='Closed'){
+      // Closed keeps the prior active stage so it can be reopened in place.
+      currentStatus='Closed';
+      preCloseStatus = (rec && rec.visit) ? 'Visit / Revisit Scheduled' : 'Contacted';
+      workflowIndex = wfIndexOf(preCloseStatus); if(workflowIndex<0) workflowIndex=1;
+      closeReason = (rec && rec.closeReason) || null;
+    } else {
+      currentStatus = ui;
+      var idx = wfIndexOf(ui);
+      workflowIndex = idx>=0 ? idx : 0;
+      closeReason = null;
+    }
+    completedTasks = new Set();
+    for(var i=0;i<workflowIndex;i++) completedTasks.add(i);
+    if(currentStatus==='Admission Confirmed'){ for(var j=0;j<IDX_LAST;j++) completedTasks.add(j); completedTasks.add(IDX_LAST); }
+  }
+
+  /* Reflect the identity header from `rec`. Safe to call repeatedly. */
+  function populateHeader(){
+    if(!rec) return;
+    var set=function(id,val){ var el=document.getElementById(id); if(el!=null && val!=null) el.textContent=val; };
+    set('hdrParentName', rec.parentName || '—');
+    set('hdrAvatar', recInitials(rec.parentName));
+    set('hdrAssignee', rec.assignee || 'Unassigned');
+    set('hdrGrade', rec.gradeApplied || '—');
+    set('hdrAge', ageYearsLabel(rec.age));
+    var areaCity = [rec.area, rec.city].filter(Boolean).join(', ');
+    set('hdrArea', areaCity || '—');
+    set('hdrAcadYear', rec.acadYear || '—');
+    set('hdrAppliedDate', prettyDate(rec.enquiryDate));
+    set('hdrSource', rec.source || '—');
+    document.title = (rec.studentName||rec.parentName||'Enquiry') + ' — Admission Enquiry Workflow · SuperSchools';
+    // Contact links
+    var digits = String(rec.mobile||'').replace(/\D/g,'');
+    var wa=document.getElementById('hdrWhatsApp'); if(wa && digits) wa.href='https://wa.me/91'+digits;
+    var call=document.getElementById('hdrCall'); if(call && digits) call.href='tel:+91'+digits;
+  }
+
+  /* Copy `rec` into the inline-edit data objects (child / parent / prefs / message). */
+  function hydrateDetailData(){
+    if(!rec) return;
+    // Child details
+    childData.childName    = rec.studentName || '';
+    childData.gender       = rec.gender || '';
+    childData.acadYear     = rec.acadYear || '';
+    childData.gradeApplied = rec.gradeApplied || '';
+    childData.age          = rec.age ? ageYearsLabel(rec.age) : '';
+    childData.admissionType= /Grade/.test(rec.gradeApplied||'') ? 'Day School'
+                            : /Nursery|LKG|UKG|Playgroup|Pre/i.test(rec.gradeApplied||'') ? 'Preschool' : childData.admissionType;
+    // dob / currentSchool aren't in the store — keep whatever the user had (sample-free defaults cleared below)
+    childData.dob = childData.dob && rec.__keptDob ? childData.dob : '';
+    childData.currentSchool = childData.currentSchool && rec.__keptSchool ? childData.currentSchool : '';
+    // Parent details — store has a single parent contact; default the relation to Mother.
+    parentData.relation     = parentData.relation || 'Mother';
+    if(parentData.relation==='Father'){ parentData.fatherName=rec.parentName||''; parentData.fatherMobile=rec.mobile||''; parentData.motherName=''; parentData.motherMobile=''; }
+    else { parentData.motherName=rec.parentName||''; parentData.motherMobile=rec.mobile||''; parentData.fatherName=''; parentData.fatherMobile=''; }
+    parentData.relationName = '';
+    parentData.homeCity     = [rec.area, rec.city].filter(Boolean).join(', ') || rec.city || '';
+    parentData.homeAddress  = '';
+    // Admission preferences
+    prefsData.curriculum = rec.curriculum ? [rec.curriculum] : [];
+    prefsData.city       = rec.city || '';
+    prefsData.area       = rec.area || '';
+    prefsData.distance   = rec.travelPref || '';
+    prefsData.transport  = (rec.amenities||[]).indexOf('Transport')>=0 ? 'Yes' : 'No';
+    prefsData.hostel     = 'No';
+    // Enquiry message (custom field, falls back to a generated summary)
+    msgData.message = rec.enquiryMessage || ('Enquiry for '+(rec.studentName||'the child')+(rec.gradeApplied?(' — '+rec.gradeApplied):'')+(rec.curriculum?(' ('+rec.curriculum+')'):'')+'. Source: '+(rec.source||'—')+'.');
+  }
+
+  /* Hydrate follow-up + visit + notes + activity from `rec`. */
+  function hydrateSubsections(){
+    if(!rec) return;
+    // Follow-up
+    if(rec.followUp && rec.followUp.dueDate){ followup = { dateISO: rec.followUp.dueDate, date: prettyDate(rec.followUp.dueDate), note: rec.followUp.note||'' }; }
+    else followup = null;
+    // Visit / scheduled tour — ONLY from the real record; never keep the hardcoded default.
+    if(rec.visit && rec.visit.date){ scheduledTour = { iso: rec.visit.date, date: prettyDate(rec.visit.date), time: rec.visit.time || '11:00 AM' }; }
+    else { scheduledTour = { iso: null, date: '', time: '' }; }
+    // Notes — adopt the stored list (rich shape preserved; fall back to author/initials)
+    if(Array.isArray(rec.notes)){
+      var nid=1;
+      notes = rec.notes.map(function(n){
+        if(typeof n==='string') return { id:nid++, author:(rec.assignee||'Staff'), av:recInitials(rec.assignee||'Staff'), avBg:'#DBE1FF', avCol:'#284CA5', text:n, time:'', editing:false };
+        return { id:(n.id!=null?n.id:nid++), author:n.author||(rec.assignee||'Staff'), av:n.av||recInitials(n.author||rec.assignee||'Staff'),
+                 avBg:n.avBg||'#DBE1FF', avCol:n.avCol||'#284CA5', text:n.text||'', time:n.time||'', editing:false };
+      });
+      noteNextId = notes.reduce(function(m,n){ return Math.max(m, (typeof n.id==='number'?n.id:0)); }, 0) + 1;
+    }
+    // Activity — adopt the stored timeline when present, else start empty
+    if(Array.isArray(rec.activity) && rec.activity.length){
+      activityLog = rec.activity.map(function(a){ return { title:a.title||'', time:a.time||'', meta:a.meta||null, accent:a.accent, muted:a.muted }; });
+    } else {
+      activityLog = [ { title:'Enquiry created', time:prettyDate(rec.enquiryDate), meta:'Received via '+(rec.source||'—'), muted:true } ];
+    }
+  }
+
+  /* ════════════════ NOT-FOUND STATE ════════════════ */
+  function renderNotFound(){
+    var main=document.querySelector('main'); if(!main) return;
+    main.innerHTML = ''
+      + '<div class="no-print mt-4"><button onclick="window.location.href=\'enquiries.html\'" class="inline-flex h-9 items-center gap-2 rounded-xl border border-[#D7E4FF] bg-white px-3.5 text-[13px] font-semibold text-[#284CA5] transition hover:bg-[#EFF4FF]"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg><span>Back to enquiries</span></button></div>'
+      + '<div class="card mt-6 flex flex-col items-center justify-center px-6 py-16 text-center">'
+      +   '<div class="mb-4 grid h-14 w-14 place-items-center rounded-2xl bg-[#F1F5F9]"><svg class="h-7 w-7 text-[#94A3B8]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/><path d="M11 8v3M11 14h.01"/></svg></div>'
+      +   '<h1 class="text-[18px] font-semibold text-[#0F172A]">Enquiry not found</h1>'
+      +   '<p class="mt-1.5 max-w-md text-[13.5px] leading-relaxed text-[#64748B]">We couldn\'t find this enquiry in the system. It may have been removed, or there are no enquiries yet. Head back to the list to pick one.</p>'
+      +   '<button onclick="window.location.href=\'enquiries.html\'" class="mt-5 inline-flex h-10 items-center gap-2 rounded-xl bg-[#284CA5] px-4 text-[13px] font-semibold text-white transition hover:bg-[#203F8D]">Go to enquiries</button>'
+      + '</div>';
+  }
+
+  /* ════════════════ INIT (CRM-driven) ════════════════ */
+  /* Suppress re-hydration while WE are the writer (our persist* calls fire CRM.onChange). */
+  var _selfWrite = false;
+  function loadRecord(){
+    try {
+      var id = new URLSearchParams(location.search).get('id');
+      if(window.CRM && CRM.enquiry){
+        rec = (id && CRM.enquiry(id)) || null;
+        if(!rec){ var all = CRM.enquiries ? CRM.enquiries() : []; rec = all.length ? all[0] : null; }   // graceful fallback to the first enquiry
+      }
+    } catch(e){ rec = null; }
+  }
+
+  function hydrateAndRender(){
+    if(!rec){ renderNotFound(); return; }
+    seedWorkflowFromStatus(rec.status);
+    populateHeader();
+    hydrateDetailData();
+    hydrateSubsections();
+    renderParentDetails();
+    renderChildView(); renderPrefsView(); renderMessageView();
+    renderNotes();
+    renderActivity();
+    renderAll();             /* header status pill, guided workflow, visit + follow-up cards */
+    // Child Details open by default; the other accordions start collapsed.
+    ['parent-details','admission-prefs','enquiry-message'].forEach(function(k){ var b=document.getElementById('accordion-'+k), i=document.getElementById('accordion-icon-'+k); if(b) b.style.maxHeight='0px'; if(i) i.style.transform='rotate(-90deg)'; });
+    var cb=document.getElementById('accordion-child-details'), ci=document.getElementById('accordion-icon-child-details'); if(cb) cb.style.maxHeight='none'; if(ci) ci.style.transform='rotate(0deg)';
+  }
+
+  loadRecord();
+  hydrateAndRender();
+
+  /* Cross-module sync: when another sub-module edits the store, re-read and
+     re-render — but skip the echo of our own writes (which we apply locally). */
+  if(window.CRM && CRM.onChange){
+    CRM.onChange(function(){
+      if(_selfWrite) return;
+      var prevId = rec ? rec.id : null;
+      var fresh = (prevId && CRM.enquiry) ? CRM.enquiry(prevId) : null;
+      if(!fresh){ loadRecord(); } else { rec = fresh; }
+      // Don't yank the page out from under an open inline editor.
+      var editing = document.querySelector('#edit-child:not(.hidden), #edit-parent:not(.hidden), #edit-prefs:not(.hidden), #edit-message:not(.hidden)');
+      if(editing) { populateHeader(); return; }
+      hydrateAndRender();
+    });
+  }
+  /* Wrap the persist* helpers so their CRM.onChange echo is ignored. */
+  (function(){
+    ['persistStatus','persistPatch','persistFollowup','persistVisit','persistNotes'].forEach(function(fn){
+      var orig = window[fn]; if(typeof orig!=='function') return;
+      window[fn] = function(){ _selfWrite=true; try { return orig.apply(this, arguments); } finally { setTimeout(function(){ _selfWrite=false; }, 0); } };
+    });
+  })();
+  </script>
+  <script src="../../components/RouteLoader.js"></script>
+</body>
+</html>

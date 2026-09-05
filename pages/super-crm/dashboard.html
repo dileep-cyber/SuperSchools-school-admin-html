@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admissions Dashboard</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root { --primary:#284CA5; }
+    * { box-sizing:border-box; }
+    body { font-family:'Inter',system-ui,sans-serif; background:#f5f7fa; color:#0f172a; margin:0; -webkit-font-smoothing:antialiased; }
+    .material-symbols-outlined { font-family:'Material Symbols Outlined'; font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24; line-height:1; }
+
+    /* Minimal card: just a soft border, no heavy shadow */
+    .card { background:#fff; border:1px solid #e8edf3; border-radius:16px; }
+    .card-pad { padding:22px; }
+    .card-title { font-size:15px; font-weight:700; color:#0f172a; letter-spacing:-.01em; }
+    .card-sub { margin-top:3px; font-size:12px; color:#94a3b8; }
+
+    /* Period toggle */
+    .seg { display:inline-flex; background:#eef1f6; border-radius:10px; padding:3px; gap:2px; }
+    .seg__opt { font-size:12px; font-weight:600; color:#64748b; padding:6px 15px; border-radius:7px; border:0; background:transparent; cursor:pointer; text-transform:capitalize; transition:color .15s, background .15s; }
+    .seg__opt:hover { color:var(--primary); }
+    .seg__opt.is-active { background:#fff; color:var(--primary); box-shadow:0 1px 3px rgba(15,23,42,.12); }
+
+    /* KPI card — icon chip + label + value, nothing else */
+    .kpi { display:flex; align-items:center; gap:14px; background:#fff; border:1px solid #e8edf3; border-radius:16px; padding:18px 20px; transition:border-color .15s; }
+    .kpi:hover { border-color:#cdd7e5; }
+    .kpi-ico { display:grid; place-items:center; height:42px; width:42px; border-radius:12px; flex-shrink:0; overflow:hidden; }
+    .kpi-ico .material-symbols-outlined { font-size:22px; }
+    .kpi-label { font-size:12px; font-weight:600; color:#64748b; }
+    .kpi-value { margin-top:2px; font-size:27px; font-weight:800; line-height:1; letter-spacing:-.02em; color:#0f172a; font-variant-numeric:tabular-nums; }
+
+    /* Funnel + charts */
+    .funnel-shell { position:relative; border-radius:14px; overflow:hidden; background:#fafbfc; }
+    .funnel-svg { position:absolute; inset:0; width:100%; height:100%; display:block; }
+    .funnel-stage, .src-seg { transition:opacity .15s ease; cursor:default; }
+    /* dim others ONLY when a stage/slice itself is hovered (empty space does nothing) */
+    .funnel-svg:has(.funnel-stage:hover) .funnel-stage { opacity:.3; }
+    .funnel-svg:has(.funnel-stage:hover) .funnel-stage:hover { opacity:1; }
+    .chart-svg { display:block; width:100%; height:100%; }
+    .chart-svg:has(.src-seg:hover) .src-seg { opacity:.3; }
+    .chart-svg:has(.src-seg:hover) .src-seg:hover { opacity:1; }
+
+    /* Layout */
+    .shell { max-width:1280px; margin:0 auto; padding:24px; }
+    .kpi-grid { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:14px; }
+    .split { display:grid; grid-template-columns:1fr 1fr; gap:16px; align-items:stretch; }
+    .split-main { display:grid; grid-template-columns:1.7fr 1fr; gap:16px; align-items:start; }
+
+    /* Staff conversion — table (name · converted/total · rate), compact + scrollable */
+    .staff-head { display:grid; grid-template-columns:1fr 96px 60px; gap:12px; padding-bottom:10px; border-bottom:1px solid #e8edf3; font-size:11px; font-weight:600; color:#94a3b8; text-transform:uppercase; letter-spacing:.03em; }
+    .staff-card { min-height:0; }
+    .staff-list { flex:1; min-height:0; overflow-y:auto; -webkit-overflow-scrolling:touch; scrollbar-width:thin; scrollbar-color:#cbd5e1 transparent; }
+    .staff-list::-webkit-scrollbar { width:6px; }
+    .staff-list::-webkit-scrollbar-track { background:transparent; }
+    .staff-list::-webkit-scrollbar-thumb { background:#d3dceb; border-radius:999px; }
+    .staff-list::-webkit-scrollbar-thumb:hover { background:#b9c5d8; }
+    .staff-row { display:grid; grid-template-columns:1fr 96px 60px; gap:12px; align-items:center; padding:12px 0; border-bottom:1px solid #f1f5f9; }
+    .staff-row:last-child { border-bottom:0; }
+    .staff-name { font-size:13.5px; font-weight:600; color:#1e293b; }
+    .staff-col { text-align:right; }
+    .staff-conv { text-align:right; font-size:13px; font-weight:700; color:#334155; font-variant-numeric:tabular-nums; }
+    .staff-conv .sep { color:#cbd5e1; font-weight:600; margin:0 1px; }
+    .staff-conv .tot { color:#94a3b8; font-weight:600; }
+    .staff-rate { text-align:right; font-size:14px; font-weight:800; color:var(--primary); font-variant-numeric:tabular-nums; }
+    /* cap height + scroll when stacked (tablet/mobile) so the page doesn't grow */
+    @media (max-width:980px){ .staff-list { max-height:340px; } }
+    @media (max-width:620px){
+      .staff-head, .staff-row { grid-template-columns:1fr 84px 54px; gap:10px; }
+      .staff-list { max-height:300px; }
+    }
+
+    @media (max-width:1080px){ .kpi-grid { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+    @media (max-width:980px){ .split-main { grid-template-columns:1fr; } }
+    @media (max-width:880px){ .split { grid-template-columns:1fr; } }
+    @media (max-width:620px){
+      .shell { padding:16px; }
+      .kpi-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+      .kpi { padding:14px 16px; gap:11px; }
+      .kpi-value { font-size:23px; }
+    }
+    @media (max-width:380px){ .kpi-grid { grid-template-columns:1fr; } }
+    [x-cloak]{ display:none !important; }
+  </style>
+</head><body>
+  <div x-data="dashboard()" x-init="init()" x-cloak class="shell">
+
+    <!-- Header -->
+    <header class="flex flex-wrap items-center justify-between gap-4 mb-6">
+      <div class="min-w-0">
+        <h1 class="text-[24px] sm:text-[28px] font-extrabold tracking-tight text-slate-900">Admissions Dashboard</h1>
+        <p class="mt-1 text-[13px] text-slate-500">Enquiry to admission performance</p>
+      </div>
+      <div class="seg">
+        <template x-for="opt in ['day','week','month']" :key="opt">
+          <button type="button" @click="setPeriod(opt)" :class="period===opt ? 'is-active' : ''" class="seg__opt" x-text="opt"></button>
+        </template>
+      </div>
+    </header>
+
+    <!-- 1 · KPI strip -->
+    <section class="kpi-grid mb-5">
+      <template x-for="k in kpis" :key="k.key">
+        <div class="kpi">
+          <span class="kpi-ico" :style="`background:${k.tint}`">
+            <span class="material-symbols-outlined" :style="`color:${k.ink}`" x-text="k.icon"></span>
+          </span>
+          <div class="min-w-0">
+            <p class="kpi-label" x-text="k.label"></p>
+            <p class="kpi-value" x-text="k.display"></p>
+          </div>
+        </div>
+      </template>
+    </section>
+
+    <!-- 2 · Admission funnel + Staff conversion -->
+    <section class="split-main mb-5">
+      <!-- Funnel (left) -->
+      <div class="card card-pad flex flex-col">
+        <h2 class="card-title">Admission Funnel</h2>
+        <p class="card-sub">Stage counts and share of total</p>
+        <div class="funnel-shell mt-4" style="height:440px">
+          <svg id="funnelSvg" class="funnel-svg" viewBox="0 0 760 440" role="img" aria-label="Admission funnel"></svg>
+        </div>
+      </div>
+
+      <!-- Staff conversion (right) -->
+      <div class="card card-pad flex flex-col staff-card">
+        <h2 class="card-title">Staff Conversion</h2>
+        <p class="card-sub">Counsellor enquiry → admission rate</p>
+        <div class="staff-head mt-4">
+          <span>Counsellor</span>
+          <span class="staff-col">Conv / Total</span>
+          <span class="staff-col">Rate</span>
+        </div>
+        <div class="staff-list">
+          <template x-for="s in staff" :key="s.name">
+            <div class="staff-row">
+              <span class="staff-name truncate" x-text="s.name"></span>
+              <span class="staff-conv"><span x-text="s.admits"></span><span class="sep">/</span><span class="tot" x-text="s.handled"></span></span>
+              <span class="staff-rate" x-text="s.rate.toFixed(1) + '%'"></span>
+            </div>
+          </template>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 · Lost reasons + Source -->
+    <section class="split mb-5">
+      <!-- Lost Reasons (left) -->
+      <div class="card card-pad flex flex-col">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div class="min-w-0">
+            <h2 class="card-title">Lost Reasons</h2>
+            <p class="card-sub">Why enquiries did not convert</p>
+          </div>
+          <span class="text-[13px] font-semibold text-slate-400"><span style="color:#dc2626" x-text="lostTotal.toLocaleString()"></span> lost</span>
+        </div>
+        <div class="flex-1 mt-3" style="min-height:330px">
+          <svg id="lostSvg" class="chart-svg" viewBox="0 0 620 360" role="img" aria-label="Lost reasons"></svg>
+        </div>
+      </div>
+
+      <!-- Source (right) -->
+      <div class="card card-pad flex flex-col">
+        <h2 class="card-title">Source Performance</h2>
+        <p class="card-sub">Where enquiries come from</p>
+        <div class="flex-1 flex items-center justify-center mt-2" style="min-height:330px">
+          <svg id="sourceSvg" class="chart-svg" viewBox="0 0 540 400" role="img" aria-label="Sources"></svg>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+<!-- ───────────── Data model ───────────── -->
+  <script>
+    function dashboard() {
+      // ── Funnel: the 7 real stages/statuses (from the main CRM) ──
+      const FC = ['#7DB7FF', '#A58AF2', '#F2B24E', '#5BC8D6', '#E6C944', '#EC7F7F', '#5FD48C'];
+      const FUNNEL_LABELS = ['New Enquiry', 'Contacted', 'Visit / Revisit Scheduled', 'Visit Completed', 'Application Pending', 'Closed', 'Admitted Closed'];
+      const mkFunnel = (v) => FUNNEL_LABELS.map((label, idx) => ({ label, value: v[idx], color: FC[idx] }));
+
+      // ── Sources: the real 8 channels ──
+      const SRC = [
+        { name: 'Facebook Ads', color: '#5B9BD5' }, { name: 'Instagram',    color: '#57BB63' },
+        { name: 'Website',      color: '#F4A93C' }, { name: 'Referral',     color: '#B255C2' },
+        { name: 'Google Ads',   color: '#E8554E' }, { name: 'Campaign',     color: '#1FC7B6' },
+        { name: 'SuperSchools', color: '#4259AC' }, { name: 'Others',       color: '#8E97A6' },
+      ];
+      const mkSources = (vals) => SRC.map((s, idx) => ({ name: s.name, color: s.color, total: vals[idx] }));
+
+      // ── Lost reasons: split of the funnel "Closed" (lost) count for each period ──
+      const LOST = [
+        { label: 'Not interested',          color: '#9f1239' },
+        { label: 'Chose another school',    color: '#be123c' },
+        { label: 'Fees too high',           color: '#e11d48' },
+        { label: 'Location issues',         color: '#fb7185' },
+        { label: 'No response from parent', color: '#fda4af' },
+        { label: 'Duplicate enquiry',       color: '#fecdd3' },
+      ];
+
+      // ── Staff (counsellors) — conversion rate per period ──
+      const STAFF = [
+        { name: 'Priya Sharma', initials: 'PS', color: '#4259AC' },
+        { name: 'Rahul Verma',  initials: 'RV', color: '#0E9488' },
+        { name: 'Anjali Nair',  initials: 'AN', color: '#E08A1E' },
+        { name: 'Karan Mehta',  initials: 'KM', color: '#7C3AED' },
+        { name: 'Sneha Iyer',   initials: 'SI', color: '#DB2777' },
+      ];
+      const mkStaff = (rows) => STAFF.map((s, i) => ({ ...s, handled: rows[i][0], admits: rows[i][1], rate: rows[i][2] }));
+      const mkLost = (vals) => LOST.map((l, idx) => ({ label: l.label, color: l.color, value: vals[idx] }));
+
+      const data = {
+        // funnel order: [NewEnquiry, Contacted, Visit/Revisit, VisitCompleted, ApplicationPending, Closed, AdmissionClosed]
+        day: {
+          funnel:  mkFunnel([38, 28, 18, 14, 9, 5, 4]),
+          sources: mkSources([14, 9, 18, 11, 8, 7, 16, 5]),
+          lost:    mkLost([2, 1, 1, 1, 0, 0]),                 // sums to Closed = 5
+          staff:   mkStaff([[9,1,11.1],[8,1,12.5],[8,1,12.5],[7,1,14.3],[6,0,0.0]]),
+        },
+        week: {
+          funnel:  mkFunnel([196, 142, 94, 72, 38, 22, 18]),
+          sources: mkSources([88, 64, 102, 41, 58, 47, 79, 36]),
+          lost:    mkLost([6, 5, 4, 3, 2, 2]),                 // sums to Closed = 22
+          staff:   mkStaff([[44,5,11.4],[42,4,9.5],[38,4,10.5],[38,3,7.9],[34,2,5.9]]),
+        },
+        month: {
+          funnel:  mkFunnel([842, 612, 398, 298, 164, 89, 71]),
+          sources: mkSources([412, 286, 344, 128, 276, 202, 296, 157]),
+          lost:    mkLost([24, 21, 18, 12, 9, 5]),             // sums to Closed = 89
+          staff:   mkStaff([[188,20,10.6],[178,17,9.6],[168,14,8.3],[158,12,7.6],[150,8,5.3]]),
+        },
+      };
+
+      const ICONS = {
+        enquiries:    { icon: 'forum',            tint: '#eef4ff', ink: '#3b5bd9' },
+        visits:       { icon: 'event_available',  tint: '#fff7ed', ink: '#ea7c2b' },
+        admissions:   { icon: 'school',           tint: '#ecfdf5', ink: '#0d9488' },
+        applications: { icon: 'description',      tint: '#ecfeff', ink: '#0e7490' },
+        conversion:   { icon: 'percent',          tint: '#f5f3ff', ink: '#7c3aed' },
+      };
+
+      return {
+        period: 'month',
+        data,
+
+        get cur()           { return this.data[this.period]; },
+        get funnel()        { return this.cur.funnel; },
+        get sources()       { return this.cur.sources; },
+        get lost()          { return this.cur.lost; },
+        get staff()         { return this.cur.staff; },
+        // funnel stage helpers (by status label)
+        stage(label)        { const s = this.funnel.find(x => x.label === label); return s ? s.value : 0; },
+        get enquiriesTotal(){ return this.stage('New Enquiry'); },
+        get lostTotal()     { return this.cur.lost.reduce((s, x) => s + x.value, 0); },
+        // overall enquiry → admission conversion, from the real funnel
+        get conversionRate(){
+          const e = this.stage('New Enquiry'), a = this.stage('Admitted Closed');
+          return e ? (a / e * 100) : 0;
+        },
+        get funnelOverall() { return Math.round(this.conversionRate); },
+        get kpis() {
+          return [
+            { key:'enquiries',    label:'Enquiries',    display:this.stage('New Enquiry').toLocaleString(),      sub:'New enquiries',       ...ICONS.enquiries },
+            { key:'visits',       label:'Visits',       display:this.stage('Visit Completed').toLocaleString(),  sub:'Visits completed',    ...ICONS.visits },
+            { key:'admissions',   label:'Admissions',   display:this.stage('Admitted Closed').toLocaleString(), sub:'Admissions closed',   ...ICONS.admissions },
+            { key:'applications', label:'Applications', display:this.stage('Application Pending').toLocaleString(), sub:'Applications pending', ...ICONS.applications },
+            { key:'conversion',   label:'Conversion',   display:this.conversionRate.toFixed(1) + '%',            sub:'Enquiry → admission', ...ICONS.conversion },
+          ];
+        },
+
+        renderAll() {
+          drawAdmissionFunnel('funnelSvg', this.funnel);
+          drawSourceDonut('sourceSvg', this.sources);
+          drawLostReasons('lostSvg', this.lost);
+          syncStaffHeight();
+        },
+        setPeriod(p) { this.period = p; this.$nextTick(() => this.renderAll()); },
+        init() {
+          this.$nextTick(() => setTimeout(() => this.renderAll(), 40));
+          // brief poll so the funnel reads its settled shell size
+          let n = 0; const iv = setInterval(() => { this.renderAll(); if (++n >= 8) clearInterval(iv); }, 140);
+          let t; window.addEventListener('resize', () => { clearTimeout(t); t = setTimeout(() => this.renderAll(), 120); });
+        },
+      };
+    }
+  </script>
+<!-- ───────────── SVG renderers ───────────── -->
+  <script>
+    function escapeText(v){ return String(v).replace(/[<>&"']/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&#39;'}[c])); }
+
+    /* Match the staff card height to the funnel card when side-by-side; the inner
+       list (flex:1) then fills it and scrolls if there are more staff than fit. */
+    function syncStaffHeight(){
+      const cards = document.querySelectorAll('.split-main > .card');
+      if (cards.length < 2) return;
+      const funnelCard = cards[0], staffCard = cards[1];
+      if (window.matchMedia('(min-width: 981px)').matches) {
+        staffCard.style.height = funnelCard.getBoundingClientRect().height + 'px';
+      } else {
+        staffCard.style.height = '';   // stacked (tablet/mobile): natural height, list caps via CSS
+      }
+    }
+    function polarToCartesian(cx, cy, r, angle){ const rad=(angle-90)*Math.PI/180; return { x:cx+r*Math.cos(rad), y:cy+r*Math.sin(rad) }; }
+    function describeArc(cx, cy, r, a0, a1){ const s=polarToCartesian(cx,cy,r,a1), e=polarToCartesian(cx,cy,r,a0); const large=a1-a0<=180?'0':'1'; return ['M',cx,cy,'L',s.x,s.y,'A',r,r,0,large,0,e.x,e.y,'Z'].join(' '); }
+
+    /* ── Admission funnel with left labels, centre counts, right drop-offs ── */
+    function drawAdmissionFunnel(svgId, data){
+      const svg = document.getElementById(svgId); if (!svg || !data.length) return;
+      const shell = svg.closest('.funnel-shell');
+      const W = Math.max(640, Math.round(shell ? shell.clientWidth : 1000));
+      const H = Math.max(300, Math.round(shell ? shell.clientHeight : 392));
+      svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+
+      const labelW = Math.min(208, Math.max(118, W * 0.24));   // left label column
+      const rightPad = 22;                                     // small right margin (no drop column)
+      const fL = labelW + 8, fR = W - rightPad;
+      const centerX = (fL + fR) / 2;
+      const maxBarW = fR - fL;
+      const lblFont = W < 720 ? 11 : 12.5;                     // shrink on narrow widths
+
+      const gap = 2, n = data.length;
+      const stageH = Math.max(34, Math.floor((H - 26) / n));
+      const maxValue = Math.max(...data.map(d => d.value));
+      const total = data.reduce((s, d) => s + d.value, 0);
+      const totalH = n * stageH + (n - 1) * gap;
+      const topY = Math.max(10, (H - totalH) / 2);
+
+      // wrap a label onto up to 2 lines if it's long (split near the middle space)
+      const wrapLabel = (text) => {
+        if (text.length <= 16) return [text];
+        const parts = text.split(' ');
+        if (parts.length < 2) return [text];
+        let best = 0, bestDiff = Infinity, run = 0;
+        for (let k = 0; k < parts.length - 1; k++) {
+          run += parts[k].length + 1;
+          const diff = Math.abs(run - text.length / 2);
+          if (diff < bestDiff) { bestDiff = diff; best = k; }
+        }
+        return [parts.slice(0, best + 1).join(' '), parts.slice(best + 1).join(' ')];
+      };
+
+      let m = `<defs><filter id="fsh-${svgId}" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="5" stdDeviation="6" flood-color="#0F172A" flood-opacity="0.10"/></filter></defs>`;
+
+      data.forEach((item, i) => {
+        const y = topY + i * (stageH + gap);
+        const ratio = Math.max(item.value / maxValue, 0.18);
+        const nextRatio = data[i+1] ? Math.max(data[i+1].value / maxValue, 0.18) : Math.max(ratio * 0.7, 0.12);
+        const topW = maxBarW * ratio, botW = maxBarW * nextRatio;
+        const x1 = centerX - topW/2, x2 = centerX + topW/2, x3 = centerX + botW/2, x4 = centerX - botW/2;
+        const midY = y + stageH / 2;
+        const pctTotal = total ? Math.round((item.value / total) * 100) : 0;
+
+        // left label (wrapped to 1-2 lines, vertically centred)
+        const lines = wrapLabel(item.label);
+        const lh = lblFont + 3;
+        const startY = midY - (lines.length - 1) * lh / 2;
+        let labelSvg = '';
+        lines.forEach((ln, li) => {
+          labelSvg += `<text x="${labelW-12}" y="${(startY + li*lh).toFixed(1)}" text-anchor="end" dominant-baseline="middle" fill="#0F172A" font-size="${lblFont}" font-weight="700">${escapeText(ln)}</text>`;
+        });
+
+        m += `<g class="funnel-stage" aria-label="${escapeText(item.label)} ${item.value}">`
+          +  `<polygon points="${x1},${y} ${x2},${y} ${x3},${y+stageH} ${x4},${y+stageH}" fill="${item.color}" stroke="rgba(255,255,255,.95)" stroke-width="1.5" filter="url(#fsh-${svgId})"/>`
+          +  `<text x="${centerX}" y="${(midY-6).toFixed(1)}" text-anchor="middle" dominant-baseline="middle" fill="#0F172A" font-size="15.5" font-weight="800">${item.value.toLocaleString()}</text>`
+          +  `<text x="${centerX}" y="${(midY+11).toFixed(1)}" text-anchor="middle" dominant-baseline="middle" fill="#1F2937" font-size="11" font-weight="700" opacity="0.7">${pctTotal}%</text>`
+          +  labelSvg;
+
+        m += `</g>`;
+      });
+      svg.innerHTML = m;
+    }
+
+    /* ── Source donut with external callout labels (reused engine) ── */
+    function drawSourceDonut(svgId, sources){
+      const svg = document.getElementById(svgId);
+      if (!svg || !Array.isArray(sources) || !sources.length) return;
+      const cx = 270, cy = 198, rOuter = 120, rHole = 70, rKnee = 136;
+      const colRight = 420, colLeft = 120, minGap = 32, topClamp = 24, bottomClamp = 384;
+      const total = sources.reduce((s, x) => s + (x.total || 0), 0) || 1;
+
+      let start = 0;
+      const segs = sources.map(s => {
+        const frac = (s.total || 0) / total, end = start + frac * 360, mid = (start + end) / 2;
+        const seg = { name:s.name, total:s.total||0, color:s.color, pct:frac*100, mid, path:describeArc(cx,cy,rOuter,start,Math.max(end,start+0.0001)) };
+        start = end; return seg;
+      });
+      const labels = segs.map(w => {
+        const edge = polarToCartesian(cx, cy, rOuter, w.mid), knee = polarToCartesian(cx, cy, rKnee, w.mid);
+        return { name:w.name, total:w.total, pct:w.pct, color:w.color, path:w.path, edge, knee, right:knee.x>=cx, y:knee.y };
+      });
+      ['r','l'].forEach(side => {
+        const g = labels.filter(l => l.right === (side === 'r')).sort((a,b) => a.y - b.y);
+        for (let i=1;i<g.length;i++) if (g[i].y - g[i-1].y < minGap) g[i].y = g[i-1].y + minGap;
+        if (g.length){ const over = g[g.length-1].y - bottomClamp; if (over>0) g.forEach(l=>l.y-=over);
+          const under = topClamp - g[0].y; if (under>0) g.forEach(l=>l.y+=under); }
+      });
+      // one group per segment: wedge + leader line + label (so hover highlights the whole thing)
+      const groups = labels.map(l => {
+        const colX = l.right ? colRight : colLeft, textX = l.right ? colX+6 : colX-6, anchor = l.right ? 'start':'end';
+        const pts = `${l.edge.x.toFixed(1)},${l.edge.y.toFixed(1)} ${l.knee.x.toFixed(1)},${l.knee.y.toFixed(1)} ${colX},${l.y.toFixed(1)}`;
+        return `<g class="src-seg">`
+          + `<path d="${l.path}" fill="${l.color}" stroke="#fff" stroke-width="2"><title>${escapeText(l.name)}: ${l.total} (${l.pct.toFixed(1)}%)</title></path>`
+          + `<polyline points="${pts}" fill="none" stroke="#cbd5e1" stroke-width="1"></polyline>`
+          + `<text x="${textX}" y="${(l.y-2).toFixed(1)}" text-anchor="${anchor}" font-size="12" font-weight="600" fill="#334155">${escapeText(l.name)}</text>`
+          + `<text x="${textX}" y="${(l.y+13).toFixed(1)}" text-anchor="${anchor}" font-size="10.5" fill="#94a3b8">${l.total} ( ${l.pct.toFixed(1)}% )</text>`
+          + `</g>`;
+      }).join('');
+
+      // center hole + total drawn last so they sit above the wedges (and are unaffected by hover)
+      svg.innerHTML = `${groups}<circle cx="${cx}" cy="${cy}" r="${rHole}" fill="#fff"></circle>`
+        + `<text x="${cx}" y="${cy-7}" text-anchor="middle" font-size="26" font-weight="800" fill="#0f172a">${total.toLocaleString()}</text>`
+        + `<text x="${cx}" y="${cy+14}" text-anchor="middle" font-size="11.5" font-weight="600" fill="#94a3b8">enquiries</text>`;
+    }
+
+    /* ── Lost reasons — ranked rose bars (no track), value + % at the end ── */
+    function drawLostReasons(svgId, data){
+      const svg = document.getElementById(svgId); if (!svg || !data.length) return;
+      const vb = (svg.getAttribute('viewBox')||'0 0 620 360').split(' ').map(Number);
+      const W = vb[2], H = vb[3];
+      const labelW = 196, padR = 92, gap = 20;
+      const n = data.length;
+      const total = data.reduce((s,d) => s + d.value, 0) || 1;
+      const maxV = Math.max(...data.map(d => d.value));
+      const barAreaW = W - labelW - padR;
+      const rowH = Math.min(24, (H - gap*(n-1)) / n);
+      const blockH = n*rowH + (n-1)*gap;
+      const top = Math.max(0, (H - blockH) / 2);
+
+      let m = '';
+      data.forEach((d,i) => {
+        const y = top + i*(rowH+gap);
+        const w = Math.max(6, barAreaW * d.value / maxV);
+        const pct = Math.round(d.value / total * 100);
+        const cy = y + rowH/2 + 4;
+        m += `<text x="${labelW-12}" y="${cy.toFixed(1)}" text-anchor="end" font-size="12" font-weight="600" fill="#475569">${escapeText(d.label)}</text>`
+          +  `<rect x="${labelW}" y="${y.toFixed(1)}" width="${w.toFixed(1)}" height="${rowH.toFixed(1)}" rx="7" fill="${d.color}"><title>${escapeText(d.label)}: ${d.value} (${pct}%)</title></rect>`
+          +  `<text x="${(labelW+w+12).toFixed(1)}" y="${cy.toFixed(1)}" font-size="12.5" font-weight="800" fill="#0f172a">${d.value.toLocaleString()}<tspan font-size="11" font-weight="600" fill="#94a3b8" dx="5">(${pct}%)</tspan></text>`;
+      });
+      svg.innerHTML = m;
+    }
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+<script src="../../components/RouteLoader.js"></script>
+</body>
+</html>
