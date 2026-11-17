@@ -10,6 +10,12 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <script src="../../styles/tailwind-config.js"></script>
   <link rel="stylesheet" href="../../styles/dashboard.css" />
+<style id="ss-layout">/* console page layout: same side margins and the same title / description style on every page */
+:root{--ss-gx:12px}@media(min-width:768px){:root{--ss-gx:24px}}@media(min-width:1024px){:root{--ss-gx:48px}}
+section.custom-scrollbar > div.w-full{padding:16px var(--ss-gx)!important}
+.hs-title{font-family:Inter,system-ui,sans-serif!important;font-size:20px!important;line-height:25px!important;font-weight:700!important;letter-spacing:-0.2px!important;color:#2B2B2B!important;margin:0!important;text-transform:none!important;}
+.hs-sub{font-family:Inter,system-ui,sans-serif!important;font-size:13px!important;line-height:19.5px!important;font-weight:400!important;letter-spacing:normal!important;color:#707070!important;margin:4px 0 0!important;text-transform:none!important;}
+</style>
 </head>
 <body class="bg-slate-200 text-slate-900 min-h-screen" x-data="schoolConsole({ module: 'settings', sub: 'settings' })">
   <div id="routeLoader" class="route-loader" role="status" aria-live="polite" aria-label="Loading">

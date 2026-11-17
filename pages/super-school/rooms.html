@@ -486,6 +486,11 @@ tbody tr:last-child td{border-bottom:none}
 .del-confirm input::placeholder{color:var(--faint)}
 .del-confirm input:focus{outline:none;border-color:var(--danger);box-shadow:0 0 0 3px var(--danger-soft)}
 </style>
+<style id="ss-layout">/* console page layout: same side margins and the same title / description style on every page */
+:root{--ss-gx:12px}@media(min-width:768px){:root{--ss-gx:24px}}@media(min-width:1024px){:root{--ss-gx:48px}}
+main.content{padding:16px var(--ss-gx)!important}
+main.content h1{font-family:Inter,system-ui,sans-serif!important;font-size:20px!important;line-height:25px!important;font-weight:700!important;letter-spacing:-0.2px!important;color:#2B2B2B!important;margin:0!important;text-transform:none!important;}
+</style>
 </head>
 <body>
 <div class="app">

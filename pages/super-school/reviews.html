@@ -1,0 +1,2614 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Reviews · Super Schools</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: light;
+      --navy: #1b3a94;
+      --navy-dark: #16307c;
+      --navy-active: #2a4aa8;
+      --ink: #14275c;
+      --ink-strong: #0f2350;
+      --blue: #2354c7;
+      --blue-soft: #e8eefc;
+      --muted: #6b7a99;
+      --page: #eef1f7;
+      --card: #ffffff;
+      --line: #e7ecf4;
+      --tile: #f7f9fc;
+      --amber: #e8a13a;
+      --rail: 68px;
+      --topbar: 72px;
+      --bnav: 66px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Inter", "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
+      background: var(--page);
+      color: var(--ink);
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      font: inherit;
+      color: inherit;
+      background: none;
+      border: 0;
+      cursor: pointer;
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--blue);
+      outline-offset: 2px;
+      border-radius: 6px;
+    }
+
+    /* ---------- Left rail ---------- */
+    .rail {
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: var(--rail);
+      background: var(--navy);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 20;
+    }
+
+    .rail__logo {
+      width: var(--rail);
+      height: var(--topbar);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--navy-dark);
+      flex-shrink: 0;
+    }
+
+    .rail__logo span {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      border: 2px solid #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .rail__logo span::before {
+      content: "";
+      width: 0;
+      height: 0;
+      border-left: 7px solid #fff;
+      border-top: 5px solid transparent;
+      border-bottom: 5px solid transparent;
+      margin-left: 2px;
+    }
+
+    .rail__nav {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .rail__item {
+      width: 100%;
+      padding: 14px 4px 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      color: #dce4f7;
+      font-size: 10px;
+      font-weight: 500;
+      line-height: 1.25;
+      text-align: center;
+      transition: background .15s ease;
+    }
+
+    .rail__item svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.7;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .rail__item:hover {
+      background: rgba(255, 255, 255, .07);
+    }
+
+    .rail__item.is-active {
+      background: var(--navy-active);
+      color: #fff;
+    }
+
+    /* ---------- Bottom nav (mobile only) ---------- */
+    .bnav {
+      display: none;
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 30;
+      background: #fff;
+      border-top: 1px solid var(--line);
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+      box-shadow: 0 -6px 20px rgba(15, 35, 80, .05);
+    }
+
+    .bnav__item {
+      flex: 1 1 0;
+      min-width: 0;
+      height: var(--bnav);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      color: #4a5876;
+      font-size: 11.5px;
+      font-weight: 500;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .bnav__item svg {
+      width: 23px;
+      height: 23px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .bnav__item.is-active {
+      color: var(--blue);
+      font-weight: 600;
+    }
+
+    /* ---------- Top bar ---------- */
+    .topbar {
+      position: fixed;
+      top: 0;
+      left: var(--rail);
+      right: 0;
+      height: var(--topbar);
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 26px 0 28px;
+      z-index: 15;
+    }
+
+    .tabs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      height: 100%;
+    }
+
+    .tab {
+      padding: 0 10px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      font-size: 15px;
+      font-weight: 500;
+      color: #5c6a85;
+      border-bottom: 3px solid transparent;
+    }
+
+    .tab.is-active {
+      color: var(--blue);
+      font-weight: 600;
+      border-bottom-color: var(--blue);
+    }
+
+    .tab:hover {
+      color: var(--blue);
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .icon-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      color: #3f5170;
+    }
+
+    .icon-btn svg {
+      width: 17px;
+      height: 17px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .icon-btn:hover {
+      background: #f4f7fd;
+    }
+
+    .dot {
+      position: absolute;
+      top: 4px;
+      right: 5px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #e0453a;
+      border: 1.5px solid #fff;
+    }
+
+    /* ---------- Layout ---------- */
+    .main {
+      margin-left: var(--rail);
+      padding: 28px 30px 60px;
+      padding-top: calc(var(--topbar) + 28px);
+    }
+
+    .grid {
+      display: grid;
+      gap: 26px;
+    }
+
+    .row-top {
+      grid-template-columns: minmax(0, 1.85fr) minmax(0, 1fr);
+    }
+
+    .row-bottom {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.12fr);
+      margin-top: 26px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 26px 28px;
+    }
+
+    /* ---------- Profile card ---------- */
+    .profile__head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 20px;
+    }
+
+    .eyebrow {
+      color: var(--blue);
+      font-size: 14px;
+      font-weight: 500;
+      margin: 0 0 8px;
+    }
+
+    .profile__title {
+      margin: 0;
+      font-size: 29px;
+      line-height: 1.2;
+      font-weight: 700;
+      letter-spacing: -.4px;
+      color: var(--ink-strong);
+    }
+
+    .profile__desc {
+      margin: 12px 0 0;
+      max-width: 62ch;
+      font-size: 14.5px;
+      line-height: 1.5;
+      color: var(--muted);
+    }
+
+    .badge {
+      flex-shrink: 0;
+      width: 52px;
+      height: 52px;
+      border-radius: 12px;
+      background: var(--blue-soft);
+      color: var(--blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .badge svg {
+      width: 24px;
+      height: 24px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.7;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 26px;
+    }
+
+    .stat {
+      background: var(--tile);
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      padding: 18px 18px 16px;
+    }
+
+    .stat__value {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--ink-strong);
+      letter-spacing: -.4px;
+    }
+
+    .stat__label {
+      margin-top: 6px;
+      font-size: 13.5px;
+      color: var(--muted);
+    }
+
+    /* ---------- Profile strength ---------- */
+    .strength__head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .card h2 {
+      margin: 0;
+      font-size: 17.5px;
+      font-weight: 700;
+      color: var(--ink-strong);
+      letter-spacing: -.2px;
+    }
+
+    .strength__pct {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--blue);
+    }
+
+    .bar {
+      margin-top: 16px;
+      height: 7px;
+      border-radius: 99px;
+      background: #e3e9f4;
+      overflow: hidden;
+    }
+
+    .bar span {
+      display: block;
+      height: 100%;
+      width: 82%;
+      border-radius: 99px;
+      background: var(--navy);
+    }
+
+    .checks {
+      list-style: none;
+      margin: 24px 0 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .checks li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 14.5px;
+      color: #2c3e66;
+    }
+
+    .checks svg {
+      width: 19px;
+      height: 19px;
+      flex-shrink: 0;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .checks .ok {
+      color: var(--blue);
+    }
+
+    .checks .pending {
+      color: var(--amber);
+    }
+
+    /* ---------- Checklist ---------- */
+    .tasks {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    .task {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px 18px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+      text-align: left;
+      font-size: 14.5px;
+      color: #2c3e66;
+      transition: border-color .15s ease, background .15s ease;
+    }
+
+    .task:hover {
+      border-color: #c8d6f0;
+      background: #fafcff;
+    }
+
+    .task svg {
+      width: 17px;
+      height: 17px;
+      color: #93a3bd;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex-shrink: 0;
+    }
+
+    /* ---------- Activity ---------- */
+    .feed {
+      list-style: none;
+      margin: 22px 0 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    .feed li {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .feed__icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      background: var(--blue-soft);
+      color: var(--blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .feed__icon svg {
+      width: 17px;
+      height: 17px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.7;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .feed__title {
+      font-size: 14.5px;
+      font-weight: 600;
+      color: var(--ink-strong);
+    }
+
+    .feed__time {
+      margin-top: 4px;
+      font-size: 12.5px;
+      color: var(--muted);
+    }
+
+    /* ---------- Responsive ---------- */
+    @media (max-width:1100px) {
+
+      .row-top,
+      .row-bottom {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .row-bottom {
+        margin-top: 26px;
+      }
+    }
+
+    @media (max-width:760px) {
+      :root {
+        --topbar: 60px;
+      }
+
+      .main {
+        padding: 22px 16px 48px;
+        padding-top: calc(var(--topbar) + 22px);
+      }
+
+      .card {
+        padding: 20px 18px;
+      }
+
+      .stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .profile__title {
+        font-size: 23px;
+      }
+
+      .tab {
+        font-size: 13.5px;
+        padding: 0 6px;
+      }
+
+      .topbar {
+        padding: 0 12px 0 14px;
+      }
+
+      .actions {
+        gap: 8px;
+      }
+    }
+
+    /* ---------- Views (tab switching) ---------- */
+    [data-view][hidden] {
+      display: none !important;
+    }
+
+    /* ---------- Reviews: school sign-in ---------- */
+    .rv-login {
+      max-width: 460px;
+      margin: 40px auto 0;
+      padding: 34px 32px 30px;
+    }
+
+    .rv-login .badge {
+      margin: 0 0 18px;
+    }
+
+    .rv-login h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -.3px;
+      color: var(--ink-strong);
+    }
+
+    .rv-login p {
+      margin: 8px 0 22px;
+      font-size: 14.5px;
+      line-height: 1.5;
+      color: var(--muted);
+    }
+
+    .rv-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #2c3e66;
+      margin-bottom: 7px;
+    }
+
+    .rv-phone {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 14px;
+      border: 1px solid #cfd8e8;
+      border-radius: 10px;
+      background: #fff;
+      transition: border-color .15s, box-shadow .15s;
+    }
+
+    .rv-phone:focus-within {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(35, 84, 199, .12);
+    }
+
+    .rv-phone.is-err {
+      border-color: #e0453a;
+    }
+
+    .rv-phone i {
+      font-style: normal;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    .rv-phone input {
+      flex: 1;
+      min-width: 0;
+      border: 0;
+      outline: 0;
+      padding: 13px 0;
+      font: inherit;
+      font-size: 15px;
+      color: var(--ink-strong);
+      background: transparent;
+      letter-spacing: .02em;
+    }
+
+    .rv-err {
+      display: none;
+      margin: 10px 0 0;
+      font-size: 13px;
+      line-height: 1.45;
+      color: #c0392b;
+    }
+
+    .rv-err.is-show {
+      display: block;
+    }
+
+    .rv-submit {
+      width: 100%;
+      margin-top: 18px;
+      padding: 13px;
+      border-radius: 10px;
+      background: var(--navy);
+      color: #fff;
+      font-weight: 600;
+      font-size: 15px;
+      transition: background .15s;
+    }
+
+    .rv-submit:hover {
+      background: var(--navy-dark);
+    }
+
+    .rv-hint {
+      margin: 16px 0 0;
+      font-size: 12.5px;
+      line-height: 1.5;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .rv-known {
+      margin: 22px 0 0;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+    }
+
+    .rv-known__lbl {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    .rv-known__list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .rv-known__item {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 11px 13px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--tile);
+      text-align: left;
+      transition: border-color .15s, background .15s;
+    }
+
+    .rv-known__item:hover {
+      border-color: var(--blue);
+      background: #f7f9ff;
+    }
+
+    .rv-known__item b {
+      display: block;
+      font-size: 14px;
+      color: var(--ink-strong);
+    }
+
+    .rv-known__item span {
+      display: block;
+      margin-top: 1px;
+      font-size: 12.5px;
+      color: var(--muted);
+    }
+
+    .rv-known__item em {
+      font-style: normal;
+      flex-shrink: 0;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--blue);
+      white-space: nowrap;
+    }
+
+    .rv-known__item em.none {
+      color: #b9740c;
+    }
+
+    .rv-known__empty {
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--muted);
+    }
+
+    /* ---------- Reviews: page ---------- */
+    .rv-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 22px;
+    }
+
+    .rv-head h1 {
+      margin: 0;
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: -.4px;
+      color: var(--ink-strong);
+    }
+
+    .rv-head .sub {
+      margin: 6px 0 0;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .rv-school {
+      text-align: right;
+    }
+
+    .rv-school b {
+      display: block;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--ink-strong);
+    }
+
+    .rv-school span {
+      display: block;
+      margin-top: 2px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .rv-school button {
+      margin-top: 6px;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--blue);
+    }
+
+    .rv-school button:hover {
+      text-decoration: underline;
+    }
+
+    /* overall rating (left) | per-category star ratings (right) */
+    .rv-breakdown {
+      display: grid;
+      grid-template-columns: minmax(220px, 300px) 1px minmax(0, 1fr);
+      gap: 28px;
+      align-items: center;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 24px 28px;
+      margin-bottom: 18px;
+    }
+
+    .rv-bd-head {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 6px;
+    }
+
+    .rv-bd-head h2 {
+      margin: 0 0 4px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .rv-bd-overall {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .rv-bd-overall b {
+      font-size: 54px;
+      line-height: 1;
+      font-weight: 700;
+      letter-spacing: -1.5px;
+      color: var(--ink-strong);
+    }
+
+    .rv-bd-overall .stars {
+      display: inline-flex;
+      gap: 3px;
+    }
+
+    .rv-bd-overall .stars svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    .rv-bd-overall small {
+      font-size: 13.5px;
+      color: var(--muted);
+    }
+
+    .rv-bd-divider {
+      width: 1px;
+      align-self: stretch;
+      background: var(--line);
+    }
+
+    .rv-bd-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px 36px;
+    }
+
+    .rv-bd-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .rv-bd-row .lbl {
+      flex: 0 0 108px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #2c3e66;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .rv-bd-row .track {
+      flex: 1;
+      min-width: 0;
+      height: 10px;
+      border-radius: 99px;
+      background: #e3e9f4;
+      overflow: hidden;
+    }
+
+    .rv-bd-row .track i {
+      display: block;
+      height: 100%;
+      border-radius: 99px;
+      background: var(--amber);
+      transition: width .4s ease;
+    }
+
+    .rv-bd-row .val {
+      flex: 0 0 auto;
+      min-width: 30px;
+      text-align: right;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--ink-strong);
+    }
+
+    .rv-filters {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .rv-pill {
+      padding: 9px 15px;
+      border: 1px solid #cfd8e8;
+      border-radius: 999px;
+      background: #fff;
+      font-size: 13.5px;
+      font-weight: 500;
+      color: #3f5170;
+      transition: all .15s;
+    }
+
+    .rv-pill:hover {
+      border-color: var(--blue);
+      color: var(--blue);
+    }
+
+    .rv-pill[aria-pressed="true"] {
+      background: var(--blue);
+      border-color: var(--blue);
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .rv-pill .n {
+      margin-left: 6px;
+      font-size: 12px;
+      opacity: .8;
+    }
+
+    .rv-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .rv-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 22px 24px;
+    }
+
+    .rv-card__top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .rv-who {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .rv-avatar {
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      background: var(--blue-soft);
+      color: var(--blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 15px;
+    }
+
+    .rv-who>div:last-child {
+      min-width: 0;
+    }
+
+    .rv-name {
+      font-size: 15.5px;
+      font-weight: 700;
+      color: var(--ink-strong);
+    }
+
+    .rv-meta {
+      margin-top: 2px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .rv-divider {
+      height: 1px;
+      background: var(--line);
+      margin: 16px 0 14px;
+    }
+
+    .rv-rating-row {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px 16px;
+    }
+
+    .rv-rating-row h4 {
+      margin: 0;
+      flex-shrink: 0;
+      font-size: 12.5px;
+      font-weight: 700;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .rv-rating-main {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+      min-width: 0;
+    }
+
+    .rv-reviewed {
+      font-size: 12.5px;
+      color: var(--muted);
+    }
+
+    .rv-rating {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .rv-rating .stars {
+      display: inline-flex;
+      gap: 2px;
+    }
+
+    .rv-rating .stars svg {
+      width: 17px;
+      height: 17px;
+    }
+
+    .rv-rating b {
+      font-size: 15px;
+      color: var(--ink-strong);
+    }
+
+    .rv-rating small {
+      font-size: 12.5px;
+      color: var(--muted);
+    }
+
+    .st-on {
+      fill: var(--amber);
+    }
+
+    .st-off {
+      fill: #dbe2ee;
+    }
+
+    .st-half {
+      fill: url(#rvHalf);
+    }
+
+    .rv-text {
+      margin: 14px 0 0;
+      font-size: 14.5px;
+      line-height: 1.6;
+      color: #2c3e66;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    .rv-subs {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 9px;
+      flex: 1 1 auto;
+    }
+
+    .rv-sub {
+      padding: 5px 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--tile);
+      font-size: 12px;
+      color: var(--muted);
+      text-align: center;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .rv-sub b {
+      color: #2c3e66;
+      font-weight: 600;
+    }
+
+    .rv-reply {
+      margin-top: 16px;
+      padding: 14px 16px;
+      border-left: 3px solid var(--blue);
+      border-radius: 0 10px 10px 0;
+      background: var(--blue-soft);
+    }
+
+    .rv-reply__head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--blue);
+    }
+
+    .rv-reply p {
+      margin: 6px 0 0;
+      font-size: 14px;
+      line-height: 1.55;
+      color: #2c3e66;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    .rv-foot {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+      flex-shrink: 0;
+      margin-top: 15px;
+    }
+
+    .rv-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      min-height: 38px;
+      padding: 0 15px;
+      border-radius: 9px;
+      border: 1px solid #cfd8e8;
+      background: #fff;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: #2c3e66;
+      transition: all .15s;
+    }
+
+    .rv-btn svg {
+      width: 15px;
+      height: 15px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .rv-btn:hover {
+      border-color: var(--blue);
+      color: var(--blue);
+      background: #f7f9ff;
+    }
+
+    .rv-btn--primary {
+      background: var(--navy);
+      border-color: var(--navy);
+      color: #fff;
+    }
+
+    .rv-btn--primary:hover {
+      background: var(--navy-dark);
+      border-color: var(--navy-dark);
+      color: #fff;
+    }
+
+    .rv-btn--danger {
+      color: #c0392b;
+    }
+
+    .rv-btn--danger:hover {
+      border-color: #e0453a;
+      color: #c0392b;
+      background: #fff4f3;
+    }
+
+    .rv-reported {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      font-size: 13px;
+      font-weight: 600;
+      color: #b9740c;
+    }
+
+    .rv-reported svg {
+      width: 16px;
+      height: 16px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .rv-reported button {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--muted);
+      text-decoration: underline;
+    }
+
+    .rv-editor {
+      display: none;
+      margin-top: 14px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--tile);
+    }
+
+    .rv-editor.is-open {
+      display: block;
+    }
+
+    .rv-card:has(.rv-editor.is-open) .rv-foot {
+      display: none;
+    }
+
+    .rv-editor label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #2c3e66;
+      margin-bottom: 8px;
+    }
+
+    .rv-editor textarea {
+      width: 100%;
+      min-height: 96px;
+      resize: vertical;
+      padding: 11px 12px;
+      border: 1px solid #cfd8e8;
+      border-radius: 10px;
+      font: inherit;
+      font-size: 14px;
+      color: var(--ink-strong);
+      background: #fff;
+      outline: 0;
+    }
+
+    .rv-editor textarea:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(35, 84, 199, .12);
+    }
+
+    .rv-editor__row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .rv-editor__row small {
+      font-size: 12.5px;
+      color: var(--muted);
+    }
+
+    .rv-editor__actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .rv-editor .rv-err {
+      margin-top: 8px;
+    }
+
+    /* ---------- Report review modal ---------- */
+    .rpt-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      display: none;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 32px 16px;
+      background: rgba(15, 35, 80, .45);
+      overflow-y: auto;
+    }
+
+    .rpt-overlay.is-open {
+      display: flex;
+    }
+
+    .rpt-modal {
+      width: 100%;
+      max-width: 560px;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 24px 60px rgba(15, 35, 80, .28);
+      overflow: hidden;
+    }
+
+    .rpt-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .rpt-back {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #3f5170;
+      flex-shrink: 0;
+    }
+
+    .rpt-back:hover {
+      background: #f4f7fd;
+    }
+
+    .rpt-back svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .rpt-head h2 {
+      margin: 0;
+      font-size: 17.5px;
+      font-weight: 700;
+      letter-spacing: -.2px;
+      color: var(--ink-strong);
+    }
+
+    .rpt-sub {
+      padding: 12px 20px 0;
+      margin: 0;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .rpt-body {
+      max-height: min(58vh, 480px);
+      overflow-y: auto;
+      margin-top: 8px;
+    }
+
+    .rpt-opt {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      padding: 15px 20px;
+      border-top: 1px solid var(--line);
+      cursor: pointer;
+    }
+
+    .rpt-opt:hover {
+      background: #f7f9ff;
+    }
+
+    .rpt-radio {
+      flex-shrink: 0;
+      margin: 2px 0 0;
+      width: 19px;
+      height: 19px;
+      accent-color: var(--blue);
+      cursor: pointer;
+    }
+
+    .rpt-txt b {
+      display: block;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--ink-strong);
+    }
+
+    .rpt-txt>span {
+      display: block;
+      margin-top: 3px;
+      font-size: 13.5px;
+      line-height: 1.45;
+      color: var(--muted);
+    }
+
+    .rpt-warn {
+      display: inline-block;
+      margin-top: 6px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #fdf1e0;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: #b9740c;
+    }
+
+    .rpt-foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      padding: 16px 20px;
+      border-top: 1px solid var(--line);
+      background: var(--tile);
+    }
+
+    .rpt-note {
+      flex: 1;
+      min-width: 230px;
+      margin: 0;
+      font-size: 12.5px;
+      line-height: 1.5;
+      color: var(--muted);
+    }
+
+    .rpt-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .rpt-actions .rv-btn[disabled] {
+      opacity: .5;
+      cursor: not-allowed;
+    }
+
+    .rv-empty {
+      text-align: center;
+      padding: 60px 20px;
+    }
+
+    .rv-empty .badge {
+      margin: 0 auto 16px;
+    }
+
+    .rv-empty h2 {
+      font-size: 18px;
+    }
+
+    .rv-empty p {
+      margin: 8px auto 0;
+      max-width: 380px;
+      font-size: 14.5px;
+      line-height: 1.5;
+      color: var(--muted);
+    }
+
+    .rv-toast {
+      position: fixed;
+      left: 50%;
+      bottom: 26px;
+      transform: translateX(-50%) translateY(16px);
+      padding: 11px 18px;
+      border-radius: 999px;
+      background: var(--ink-strong);
+      color: #fff;
+      font-size: 13.5px;
+      font-weight: 600;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s, transform .2s;
+      z-index: 70;
+      box-shadow: 0 12px 30px rgba(15, 35, 80, .25);
+      max-width: calc(100% - 32px);
+      text-align: center;
+    }
+
+    .rv-toast.is-visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @media (max-width:760px) {
+      .rv-login {
+        margin-top: 8px;
+        padding: 24px 20px;
+      }
+
+      .rv-breakdown {
+        grid-template-columns: 1fr;
+        gap: 18px;
+        padding: 18px 16px;
+      }
+
+      .rv-bd-divider {
+        width: 100%;
+        height: 1px;
+      }
+
+      .rv-bd-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 12px;
+      }
+
+      .rv-school {
+        text-align: left;
+      }
+
+      .rpt-overlay {
+        padding: 0;
+        align-items: flex-end;
+      }
+
+      .rpt-modal {
+        border-radius: 16px 16px 0 0;
+        max-width: none;
+      }
+    }
+
+    /* the two-column breakdown (rating bars) is too tight for its own two sub-columns
+     right around 761–784px (e.g. a 768px tablet) and its labels/values overlap and
+     push the page wider — stack it to one column a little earlier to give it room */
+    @media (max-width:800px) {
+      .rv-breakdown {
+        grid-template-columns: 1fr;
+        gap: 18px;
+      }
+
+      .rv-bd-divider {
+        width: 100%;
+        height: 1px;
+      }
+
+      .rv-bd-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 12px;
+      }
+    }
+
+    /* =========================================================
+       MOBILE APP LAYOUT (≤760px)
+       - left sidebar hidden, navigation moves to a bottom bar
+       - top tabs scroll sideways, fewer header icons
+       - review cards follow the "My reviews" app card design
+       ========================================================= */
+    @media (max-width:760px) {
+
+      /* shell */
+      .rail {
+        display: none;
+      }
+
+      .bnav {
+        display: flex;
+      }
+
+      .topbar {
+        left: 0;
+        gap: 10px;
+        padding: 0 12px;
+      }
+
+      .tabs {
+        flex: 1;
+        min-width: 0;
+        gap: 2px;
+        overflow-x: auto;
+        scrollbar-width: none;
+      }
+
+      .tabs::-webkit-scrollbar {
+        display: none;
+      }
+
+      .tab {
+        flex-shrink: 0;
+        white-space: nowrap;
+        padding: 0 10px;
+        font-size: 14px;
+      }
+
+      .actions .icon-btn[aria-label="Search"],
+      .actions .icon-btn[aria-label="Settings"],
+      .actions .icon-btn[aria-label="Menu"] {
+        display: none;
+      }
+
+      .main {
+        margin-left: 0;
+        padding-bottom: calc(var(--bnav) + 28px + env(safe-area-inset-bottom, 0px));
+      }
+
+      .rv-toast {
+        bottom: calc(var(--bnav) + 14px + env(safe-area-inset-bottom, 0px));
+      }
+
+      /* reviews page header */
+      .rv-head {
+        gap: 12px;
+        margin-bottom: 18px;
+      }
+
+      .rv-head h1 {
+        font-size: 26px;
+      }
+
+      .rv-head .sub {
+        font-size: 15px;
+        line-height: 1.5;
+      }
+
+      .rv-filters {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        scrollbar-width: none;
+        margin: 0 -16px 18px;
+        padding: 0 16px;
+      }
+
+      .rv-filters::-webkit-scrollbar {
+        display: none;
+      }
+
+      .rv-pill {
+        flex-shrink: 0;
+      }
+
+      /* review card */
+      .rv-card {
+        padding: 18px 16px 20px;
+        border-radius: 16px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* stack order on mobile: who -> divider -> overall rating + category breakdown side by side -> text -> reply/actions */
+      .rv-card__top {
+        order: 1;
+      }
+
+      .rv-divider {
+        order: 2;
+      }
+
+      .rv-rating-row {
+        order: 3;
+      }
+
+      .rv-text {
+        order: 4;
+      }
+
+      .rv-reply {
+        order: 5;
+      }
+
+      .rv-foot {
+        order: 6;
+      }
+
+      .rv-editor {
+        order: 8;
+      }
+
+      .rv-card__top {
+        flex-direction: column;
+        align-items: stretch;
+        flex-wrap: nowrap;
+        gap: 18px;
+      }
+
+      .rv-who {
+        align-items: flex-start;
+        gap: 14px;
+      }
+
+      .rv-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        background: var(--blue-soft);
+        color: var(--blue);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 15px;
+      }
+
+      .rv-name {
+        font-size: 18px;
+        line-height: 1.3;
+        letter-spacing: -.2px;
+      }
+
+      .rv-meta {
+        margin-top: 4px;
+        font-size: 14px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      /* Reply / Report as two equal outlined buttons */
+      .rv-foot {
+        display: grid;
+        grid-auto-flow: column;
+        gap: 10px;
+      }
+
+      .rv-foot:empty {
+        display: none;
+      }
+
+      .rv-foot .rv-btn {
+        justify-content: center;
+        min-height: 44px;
+        border-radius: 10px;
+        font-size: 15px;
+        gap: 8px;
+      }
+
+      .rv-foot .rv-btn svg {
+        width: 17px;
+        height: 17px;
+      }
+
+      .rv-foot .rv-btn--primary {
+        background: #fff;
+        border-color: #cfd8e8;
+        color: #2c3e66;
+      }
+
+      .rv-foot .rv-btn--primary:hover {
+        background: #f7f9ff;
+        border-color: var(--blue);
+        color: var(--blue);
+      }
+
+      .rv-divider {
+        margin: 18px 0 16px;
+      }
+
+      .rv-rating-row {
+        gap: 10px 12px;
+      }
+
+      .rv-rating-row h4 {
+        font-size: 12px;
+      }
+
+      .rv-rating {
+        gap: 10px;
+      }
+
+      .rv-rating .stars {
+        gap: 3px;
+      }
+
+      .rv-rating .stars svg {
+        width: 20px;
+        height: 20px;
+      }
+
+      .rv-rating b {
+        font-size: 17px;
+      }
+
+      .rv-rating small {
+        display: none;
+      }
+
+      .rv-reviewed {
+        font-size: 14px;
+      }
+
+      .rv-text {
+        margin-top: 16px;
+        font-size: 15.5px;
+        color: #33415e;
+      }
+
+      /* category chips, right aligned beside the overall rating */
+      .rv-subs {
+        justify-content: flex-start;
+        gap: 8px;
+      }
+
+      .rv-subs .rv-sub {
+        flex: 0 0 auto;
+        padding: 7px 12px;
+        border-color: #e4e8f0;
+        background: #f3f5f9;
+        font-size: 13px;
+        color: var(--muted);
+      }
+
+      .rv-sub b {
+        color: #2c3e66;
+        font-weight: 600;
+      }
+
+      .rv-editor__row small {
+        flex-basis: 100%;
+      }
+
+      .rv-editor__actions {
+        width: 100%;
+      }
+
+      .rv-editor__actions .rv-btn {
+        flex: 1;
+        justify-content: center;
+        min-height: 42px;
+      }
+    }
+
+    /* smallest phones: overall-rating row and category chips no longer fit
+       comfortably side by side, so stack them full-width */
+    @media (max-width:420px) {
+      .rv-rating-row {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .rv-subs {
+        width: 100%;
+      }
+    }
+
+    @media (prefers-reduced-motion:reduce) {
+      * {
+        transition: none !important;
+      }
+    }
+  /* Embedded in the console shell (index.html): the shell owns the sidebar + top navigation. */
+:root{--rail:0px!important;--topbar:0px!important;--bnav:0px!important}
+.main{margin-left:0!important;padding-top:28px!important}
+@media (max-width:760px){.main{padding-top:22px!important}}
+</style>
+<style id="ss-layout">/* console page layout: same side margins and the same title / description style on every page */
+:root{--ss-gx:12px}@media(min-width:768px){:root{--ss-gx:24px}}@media(min-width:1024px){:root{--ss-gx:48px}}
+.main{padding:16px var(--ss-gx)!important}
+.rv-head h1{font-family:Inter,system-ui,sans-serif!important;font-size:20px!important;line-height:25px!important;font-weight:700!important;letter-spacing:-0.2px!important;color:#2B2B2B!important;margin:0!important;text-transform:none!important;}
+.rv-head .sub{font-family:Inter,system-ui,sans-serif!important;font-size:13px!important;line-height:19.5px!important;font-weight:400!important;letter-spacing:normal!important;color:#707070!important;margin:4px 0 0!important;text-transform:none!important;}
+</style>
+</head>
+
+<body>
+
+  <!-- Content -->
+  <main class="main">
+    <div data-view="school">
+      <div class="grid row-top">
+
+        <section class="card">
+          <div class="profile__head">
+            <div>
+              <p class="eyebrow">School profile</p>
+              <h1 class="profile__title">Eva World Preschool</h1>
+              <p class="profile__desc">CBSE school profile, admissions demand, hiring status, and profile completeness
+                in one operating view.</p>
+            </div>
+            <div class="badge" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <rect x="4" y="3" width="16" height="18" rx="1.5" />
+                <path d="M8 7h.01M12 7h.01M16 7h.01M8 11h.01M12 11h.01M16 11h.01M8 15h.01M16 15h.01" />
+                <path d="M11 21v-4h2v4" />
+              </svg>
+            </div>
+          </div>
+
+          <div class="stats">
+            <div class="stat">
+              <div class="stat__value">1.8k</div>
+              <div class="stat__label">Profile views</div>
+            </div>
+            <div class="stat">
+              <div class="stat__value">126</div>
+              <div class="stat__label">Enquiries</div>
+            </div>
+            <div class="stat">
+              <div class="stat__value">34</div>
+              <div class="stat__label">Visits</div>
+            </div>
+            <div class="stat">
+              <div class="stat__value">06</div>
+              <div class="stat__label">Open roles</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="strength__head">
+            <h2>Profile strength</h2>
+            <span class="strength__pct">82%</span>
+          </div>
+          <div class="bar" role="progressbar" aria-valuenow="82" aria-valuemin="0" aria-valuemax="100"
+            aria-label="Profile strength">
+            <span></span>
+          </div>
+          <ul class="checks">
+            <li><svg class="ok" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="9" />
+                <path d="m8.5 12.2 2.4 2.4 4.6-4.9" />
+              </svg> Photos added</li>
+            <li><svg class="ok" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="9" />
+                <path d="m8.5 12.2 2.4 2.4 4.6-4.9" />
+              </svg> Fee range verified</li>
+            <li><svg class="pending" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="9" />
+                <path d="M8 12h.01M12 12h.01M16 12h.01" />
+              </svg> Transport details pending</li>
+          </ul>
+        </section>
+      </div>
+
+      <div class="grid row-bottom">
+
+        <section class="card">
+          <h2>Today’s operating checklist</h2>
+          <div class="tasks">
+            <button class="task">Verify admission fee range
+              <svg viewBox="0 0 24 24">
+                <path d="m9 6 6 6-6 6" />
+              </svg></button>
+            <button class="task">Assign 7 overdue parent follow-ups
+              <svg viewBox="0 0 24 24">
+                <path d="m9 6 6 6-6 6" />
+              </svg></button>
+            <button class="task">Review 5 shortlisted teacher profiles
+              <svg viewBox="0 0 24 24">
+                <path d="m9 6 6 6-6 6" />
+              </svg></button>
+            <button class="task">Update transport availability by locality
+              <svg viewBox="0 0 24 24">
+                <path d="m9 6 6 6-6 6" />
+              </svg></button>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>Recent school activity</h2>
+          <ul class="feed">
+            <li>
+              <span class="feed__icon"><svg viewBox="0 0 24 24">
+                  <path d="M4 7h10M4 12h7M4 17h5" />
+                  <path d="m15.5 17.5 5-5 2 2-5 5-2.6.6.6-2.6Z" />
+                </svg></span>
+              <div>
+                <div class="feed__title">Admission counsellor added follow-up note</div>
+                <div class="feed__time">12 minutes ago</div>
+              </div>
+            </li>
+            <li>
+              <span class="feed__icon"><svg viewBox="0 0 24 24">
+                  <rect x="3" y="5" width="18" height="16" rx="2" />
+                  <path d="M3 10h18M8 3v4M16 3v4" />
+                </svg></span>
+              <div>
+                <div class="feed__title">Parent visit scheduled for Grade 1</div>
+                <div class="feed__time">42 minutes ago</div>
+              </div>
+            </li>
+            <li>
+              <span class="feed__icon"><svg viewBox="0 0 24 24">
+                  <circle cx="10" cy="8" r="3.2" />
+                  <path d="M3 20c0-3.3 3.1-5 7-5 1.1 0 2.2.1 3.1.4" />
+                  <path d="m16 17.5 1.8 1.8 3.4-3.6" />
+                </svg></span>
+              <div>
+                <div class="feed__title">Primary teacher candidate shortlisted</div>
+                <div class="feed__time">1 hour ago</div>
+              </div>
+            </li>
+          </ul>
+        </section>
+      </div>
+    </div>
+
+    <!-- ================= REVIEWS TAB =================
+     Data comes from the same localStorage the parent school page writes:
+     ss_schools · ss_users · ss_reviews. The school's own login lives in
+     ss_school_session (separate from the parent's ss_session). The school is
+     resolved by mobile number, unless BOUND_SCHOOL (script below) pins this
+     page to one school — then no sign-in is needed.
+     Report lifecycle (ss_reviews[].report): the school files a report
+     (status "pending"); the review stays visible to parents and the
+     dashboard shows nothing about it. Only SuperSchools acts on it:
+     approve → hidden from parents, reject → stays visible. -->
+    <div data-view="reviews" hidden>
+
+      <div class="rv-head">
+        <div>
+          <h1>Reviews</h1>
+          <p class="sub">Parent reviews written on your school page. Reply to keep families informed.</p>
+        </div>
+        <div class="rv-school">
+          <b data-rv="school-name"></b>
+          <span data-rv="school-place"></span>
+          <button type="button" data-rv="logout">Sign out</button>
+        </div>
+      </div>
+
+      <!-- state A: no school session -->
+      <section class="card rv-login" data-rv="login" hidden>
+        <div class="badge" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+          </svg>
+        </div>
+        <h1>Parent Reviews</h1>
+        <p>Sign in to manage your school's reviews.</p>
+        <form data-rv="login-form" novalidate>
+          <label class="rv-label" for="rvMobile">Mobile number</label>
+          <div class="rv-phone" data-rv="login-wrap"><i>+91</i><input id="rvMobile" type="tel" inputmode="numeric"
+              autocomplete="tel-national" maxlength="14" placeholder="98765 43210" data-rv="login-mobile"></div>
+          <p class="rv-err" data-rv="login-err"></p>
+          <button class="rv-submit" type="submit">Continue</button>
+        </form>
+        <p class="rv-hint">Use the mobile number listed on your school's SuperSchools page.</p>
+        <div class="rv-known">
+          <div class="rv-known__lbl">Schools registered in this browser</div>
+          <div class="rv-known__list" data-rv="known"></div>
+        </div>
+      </section>
+
+      <!-- state B: signed in -->
+      <div data-rv="page" hidden>
+        <section class="rv-breakdown" data-rv="breakdown" hidden>
+          <div class="rv-bd-head">
+            <h2>Overall Rating</h2>
+            <div class="rv-bd-overall">
+              <b data-rv="bd-avg">—</b>
+              <span class="stars" data-rv="bd-stars"></span>
+              <small data-rv="bd-count"></small>
+            </div>
+          </div>
+          <div class="rv-bd-divider" role="presentation"></div>
+          <div class="rv-bd-grid" data-rv="bd-grid"></div>
+        </section>
+        <div class="rv-filters" role="group" aria-label="Filter reviews" data-rv="filters">
+          <button class="rv-pill" type="button" data-filter="all" aria-pressed="true">All<span class="n"
+              data-n="all"></span></button>
+          <button class="rv-pill" type="button" data-filter="need" aria-pressed="false">Needs reply<span class="n"
+              data-n="need"></span></button>
+          <button class="rv-pill" type="button" data-filter="replied" aria-pressed="false">Replied<span class="n"
+              data-n="replied"></span></button>
+        </div>
+        <div class="rv-list" data-rv="list"></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Report review modal -->
+  <div class="rpt-overlay" data-rv="report-modal" role="dialog" aria-modal="true" aria-labelledby="rptTitle">
+    <div class="rpt-modal">
+      <div class="rpt-head">
+        <button class="rpt-back" type="button" data-rv="report-close" aria-label="Close">
+          <svg viewBox="0 0 24 24">
+            <path d="M19 12H5" />
+            <path d="m12 19-7-7 7-7" />
+          </svg>
+        </button>
+        <h2 id="rptTitle">Why are you reporting this review?</h2>
+      </div>
+      <p class="rpt-sub" data-rv="report-who"></p>
+      <div class="rpt-body" data-rv="report-list"></div>
+      <div class="rpt-foot">
+        <p class="rpt-note">You’re reporting a policy violation to SuperSchools. The review stays visible to parents
+          until our team approves the report.</p>
+        <span class="rpt-actions">
+          <button class="rv-btn" type="button" data-rv="report-cancel">Cancel</button>
+          <button class="rv-btn rv-btn--danger" type="button" data-rv="report-submit" disabled>Report review</button>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="rv-toast" data-rv="toast" role="status" aria-live="polite"></div>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <defs>
+      <linearGradient id="rvHalf" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="50%" stop-color="#e8a13a" />
+        <stop offset="50%" stop-color="#dbe2ee" />
+      </linearGradient>
+    </defs>
+  </svg>
+
+  <script>
+    /* This dashboard is pinned to one school (no sign-in). Same slug / phone as
+       school-1-eva-world-preschool.html, so both resolve to one ss_schools record. */
+    window.BOUND_SCHOOL = {
+      "id": "sch_eva_world_preschool_rau_indore",
+      "name": "Eva World Preschool",
+      "slug": "eva-world-preschool-rau-indore",
+      "city": "Indore",
+      "locality": "Rau",
+      "address": "AB Road, Rau, Opposite Akashwani, Indore, Madhya Pradesh, 453331",
+      "phone": "+91 91091 02626",
+      "canonical": "https://superschools.com/indore/eva-world-preschool-rau-indore"
+    };
+  </script>
+  <script id="ss-demo-seed">
+    /* DEMO DATA — the Reviews tab reads parent reviews from the same browser storage the public school page writes
+       (ss_schools · ss_users · ss_reviews). Nothing is there on a fresh browser, so seed a realistic set the first time
+       this school has none. It covers every state the page can show:
+         · 5 / 4.5 / 4 / 3 / 2 / 1-star reviews (the overall + the six category averages)
+         · unreplied ("Needs reply"), replied ("Replied", with Edit reply) and a reported review (pending, no actions)
+         · posted minutes, hours, days, weeks and months ago
+         · a short and a long review, so wrapping and the text limit are visible
+       Existing data always wins: nothing is written if the school already has reviews. */
+    (function () {
+      try {
+        var S = window.BOUND_SCHOOL; if (!S) return;
+        function read(k) { try { var v = JSON.parse(localStorage.getItem(k)); return Array.isArray(v) ? v : []; } catch (e) { return []; } }
+        function write(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { } }
+        var schools = read('ss_schools');
+        var school = schools.filter(function (x) { return x.id === S.id || (S.slug && x.slug === S.slug); })[0];
+        if (!school) { school = Object.assign({ createdAt: new Date().toISOString() }, S); schools.push(school); write('ss_schools', schools); }
+        var reviews = read('ss_reviews');
+        if (reviews.some(function (r) { return r.schoolId === school.id; })) return;
+
+        var NOW = Date.now(), MIN = 6e4, HR = 36e5, DAY = 864e5;
+        function ago(ms) { return new Date(NOW - ms).toISOString(); }
+        var people = [
+          ['u_aditi', 'Aditi Sharma', 'Parent'], ['u_rahul', 'Rahul Verma', 'Parent'], ['u_neha', 'Neha Gupta', 'Parent'],
+          ['u_vikram', 'Vikram Singh', 'Parent'], ['u_pooja', 'Pooja Jain', 'Parent'], ['u_sandeep', 'Sandeep Patel', 'Parent'],
+          ['u_meera', 'Meera Nair', 'Parent'], ['u_kunal', 'Kunal Mehta', 'Parent'], ['u_ritu', 'Ritu Agarwal', 'Parent'],
+          ['u_farhan', 'Farhan Qureshi', 'Parent'], ['u_anita', 'Anita Desai', 'Parent'], ['u_manish', 'Manish Tiwari', 'Parent']
+        ];
+        var users = read('ss_users');
+        people.forEach(function (u) { if (!users.some(function (x) { return x.id === u[0]; })) users.push({ id: u[0], name: u[1], role: u[2] }); });
+        write('ss_users', users);
+
+        var C = ['Academics', 'Faculty', 'Facilities', 'Sports', 'Infrastructure', 'Safety'];
+        function R(id, user, when, overall, scores, text, extra) {
+          var ratings = {}; C.forEach(function (c, i) { ratings[c] = scores[i]; });
+          return Object.assign({ id: 'rev_demo_' + id, schoolId: school.id, userId: user, createdAt: ago(when), overall: overall, ratings: ratings, text: text }, extra || {});
+        }
+        function reply(text, when, edited) { return { reply: { text: text, byName: school.name, schoolId: school.id, createdAt: ago(when), updatedAt: ago(edited || when) } }; }
+
+        var demo = [
+          /* needs a reply — newest first */
+          R(1, 'u_aditi', 12 * MIN, 5, [5, 5, 4, 5, 4, 5], 'Our daughter started here two months ago and has already come out of her shell. The teachers greet every child by name and send a short note home each day. Highly recommended for anyone looking at preschools in Rau.'),
+          R(2, 'u_rahul', 3 * HR, 4, [4, 5, 4, 3, 4, 5], 'Warm and caring staff. The activity-based learning is great. Would love a bigger play area and a few more sports activities, but overall very happy.'),
+          R(3, 'u_neha', 1 * DAY + 2 * HR, 3, [3, 4, 3, 2, 3, 4], 'Good teachers but the fee structure was not explained clearly at admission and we were surprised by the transport charges. Communication on this could be better.'),
+          /* replied */
+          R(4, 'u_vikram', 2 * DAY, 5, [5, 5, 5, 4, 5, 5], 'Excellent school! Clean classrooms, CCTV, trained staff and a safe pick-up and drop process. My son looks forward to going every morning.',
+            reply('Thank you so much, Vikram. We are delighted that your son enjoys his mornings with us. Our team will keep up the daily routines that make school a happy place.', 2 * DAY - 3 * HR)),
+          R(5, 'u_pooja', 4 * DAY, 4.5, [5, 4, 4, 4, 5, 5], 'Lovely campus and a very structured curriculum. The annual day was beautifully organised. Parent-teacher meetings are regular and useful.',
+            reply('We appreciate the kind words, Pooja! Thank you for taking part in Annual Day. We will share the photo album with all parents this week.', 4 * DAY - 5 * HR, 3 * DAY)),
+          /* needs a reply */
+          R(6, 'u_sandeep', 6 * DAY, 2, [2, 3, 2, 2, 3, 3], 'The classroom was crowded on the day we visited and our questions about the teacher-student ratio were not answered properly. Expected better for the fee we were quoted.'),
+          /* replied */
+          R(7, 'u_meera', 2 * 7 * DAY, 5, [5, 5, 5, 5, 5, 5], 'Perfect! The best decision we made for our little one.',
+            reply('Thank you Meera, this made our day.', 2 * 7 * DAY - 2 * HR)),
+          /* reported (pending) — the card shows no actions, only SuperSchools acts on it */
+          R(8, 'u_kunal', 3 * 7 * DAY, 1, [1, 1, 1, 1, 1, 1], 'Do not join. Worst school. Visit our academy instead, we give 50% discount, call now!!!',
+            { report: { schoolId: school.id, reason: 'Spam', harmful: false, status: 'pending', hidden: false, createdAt: ago(3 * 7 * DAY - 6 * HR), reviewedAt: null } }),
+          /* needs a reply — a long review to show wrapping */
+          R(9, 'u_ritu', 5 * 7 * DAY, 4, [4, 4, 5, 3, 4, 4], 'We toured six preschools in Indore before choosing this one, and the deciding factor was how patient the staff were with our very shy son. The first two weeks were hard — he cried at drop-off — but his class teacher called us every evening with an update and small things to try at home. By the third week he was walking in on his own. The curriculum mixes play, phonics and a lot of outdoor time. The only reasons it is not five stars: the pick-up queue gets long around 12:30 and we would like a few more field trips and sports activities in the second term.'),
+          /* replied, with an edited reply */
+          R(10, 'u_farhan', 3 * 30 * DAY, 3.5, [4, 3, 3, 3, 4, 4], 'Decent school. Teachers are friendly, though homework is a bit heavy for the age group.',
+            reply('Thank you for your feedback, Farhan. We have reviewed the homework policy for Nursery and UKG and reduced written work from this term. Please do share any more suggestions.', 3 * 30 * DAY - DAY, 3 * 30 * DAY - 2 * DAY)),
+          R(11, 'u_anita', 5 * 30 * DAY, 5, [5, 5, 4, 5, 5, 5], 'Our elder child studied here and now the younger one has joined. The staff remember us, which says a lot.'),
+          R(12, 'u_manish', 14 * 30 * DAY, 4, [4, 4, 4, 4, 4, 5], 'Safe, friendly and affordable. A good start to school life.',
+            reply('Thank you, Manish. We hope to keep earning that trust as your child grows.', 14 * 30 * DAY - 3 * DAY))
+        ];
+        write('ss_reviews', reviews.concat(demo));
+      } catch (e) { /* demo data is optional */ }
+    })();
+  </script>
+  <script>
+    /* ===== SCHOOL DASHBOARD · REVIEWS TAB ===== */
+    (function () {
+      'use strict';
+      var CATS = ['Academics', 'Faculty', 'Facilities', 'Sports', 'Infrastructure', 'Safety'];
+      var K = { schools: 'ss_schools', users: 'ss_users', reviews: 'ss_reviews', schoolSession: 'ss_school_session' };
+      /* Set to a school record to pin this dashboard to one school (no sign-in).
+         Must use the same slug / phone as that school's SuperSchools page so both
+         resolve to the same ss_schools entry. null = generic dashboard with sign-in. */
+      var BOUND_SCHOOL = window.BOUND_SCHOOL || null;
+
+      /* ---- storage ---- */
+      function read(k) { try { var v = JSON.parse(localStorage.getItem(k)); return Array.isArray(v) ? v : []; } catch (e) { return []; } }
+      function write(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { } }
+      var DB = {
+        schools: {
+          all: function () { return read(K.schools); },
+          get: function (id) { return this.all().filter(function (x) { return x.id === id; })[0] || null; },
+          /* create the record only if the school page has not registered it yet (existing data wins) */
+          ensure: function (s) {
+            var list = read(K.schools);
+            var hit = list.filter(function (x) { return x.id === s.id || (s.slug && x.slug === s.slug); })[0];
+            if (hit) return hit;
+            var rec = Object.assign({ createdAt: new Date().toISOString() }, s);
+            list.push(rec); write(K.schools, list); return rec;
+          }
+        },
+        users: { get: function (id) { return read(K.users).filter(function (u) { return u.id === id; })[0] || null; } },
+        reviews: {
+          bySchool: function (schoolId) { return read(K.reviews).filter(function (r) { return r.schoolId === schoolId; }); },
+          get: function (id) { return read(K.reviews).filter(function (r) { return r.id === id; })[0] || null; },
+          update: function (id, patch) {
+            var list = read(K.reviews);
+            list.forEach(function (r, i) { if (r.id === id) list[i] = Object.assign({}, r, patch); });
+            write(K.reviews, list); return this.get(id);
+          }
+        },
+        session: {
+          get: function () { try { var s = JSON.parse(localStorage.getItem(K.schoolSession)); return s && s.schoolId ? s : null; } catch (e) { return null; } },
+          set: function (s) { try { localStorage.setItem(K.schoolSession, JSON.stringify(s)); } catch (e) { } },
+          clear: function () { try { localStorage.removeItem(K.schoolSession); } catch (e) { } }
+        }
+      };
+
+      /* ---- helpers ---- */
+      var $ = function (q, r) { return (r || document).querySelector(q); };
+      var $$ = function (q, r) { return Array.prototype.slice.call((r || document).querySelectorAll(q)); };
+      var rv = function (n, r) { return (r || document).querySelector('[data-rv="' + n + '"]'); };
+      function esc(v) { return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+      function normalizePhone(v) { var d = String(v || '').replace(/\D/g, ''); if (d.length === 12 && d.slice(0, 2) === '91') d = d.slice(2); if (d.length === 11 && d[0] === '0') d = d.slice(1); return d; }
+      function fmtMobile(m) { return m.length === 10 ? m.slice(0, 5) + ' ' + m.slice(5) : m; }
+      function validMobile(v) { return /^[6-9]\d{9}$/.test(v); }
+      function initials(name) { return String(name || 'P').trim().split(/\s+/).slice(0, 2).map(function (w) { return w[0]; }).join('').toUpperCase(); }
+      function timeAgo(iso) {
+        var ms = Date.now() - new Date(iso).getTime();
+        var mins = Math.floor(ms / 6e4);
+        if (mins < 1) return 'Just now';
+        if (mins < 60) return plural(mins, 'min') + ' ago';
+        var hrs = Math.floor(mins / 60);
+        if (hrs < 24) return plural(hrs, 'hour') + ' ago';
+        var d = Math.floor(hrs / 24);
+        if (d < 7) return plural(d, 'day') + ' ago';
+        if (d < 31) return plural(Math.floor(d / 7), 'week') + ' ago';
+        if (d < 365) return plural(Math.floor(d / 30), 'month') + ' ago';
+        return plural(Math.floor(d / 365), 'year') + ' ago';
+      }
+      function longDate(iso) { return new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }); }
+      function plural(n, w) { return n + ' ' + w + (n === 1 ? '' : 's'); }
+      function placeOf(sc) { return [sc.locality, sc.city].filter(Boolean).join(', ') || sc.address || ''; }
+      function schoolDetail(sc) { return [placeOf(sc), sc.address, sc.phone].filter(Boolean).filter(function (v, i, a) { return a.indexOf(v) === i; }).join(' \u00b7 '); }
+      var STAR = 'M12 2.4l2.94 5.96 6.58.96-4.76 4.64 1.12 6.55L12 17.45l-5.88 3.06 1.12-6.55L2.48 9.32l6.58-.96z';
+      function stars(score) {
+        var out = '';
+        for (var i = 0; i < 5; i++) {
+          var d = score - i, cls = d >= 0.75 ? 'st-on' : (d >= 0.25 ? 'st-half' : 'st-off');
+          out += '<svg class="' + cls + '" viewBox="0 0 24 24" aria-hidden="true"><path d="' + STAR + '"/></svg>';
+        }
+        return out;
+      }
+      var toastT;
+      function toast(msg) { var t = rv('toast'); t.textContent = msg; t.classList.add('is-visible'); clearTimeout(toastT); toastT = setTimeout(function () { t.classList.remove('is-visible'); }, 2600); }
+
+      /* ---- tabs ---- */
+      var views = { school: $('[data-view="school"]'), reviews: $('[data-view="reviews"]') };
+      function showTab(name) {
+        $$('.tab[data-tab]').forEach(function (t) { t.classList.toggle('is-active', t.getAttribute('data-tab') === name); });
+        Object.keys(views).forEach(function (k) { views[k].hidden = k !== name; });
+        if (name === 'reviews') renderReviews(); else syncSchoolProfile();
+        window.scrollTo(0, 0);
+      }
+      $$('.tab[data-tab]').forEach(function (t) {
+        t.addEventListener('click', function (e) { e.preventDefault(); showTab(t.getAttribute('data-tab')); history.replaceState(null, '', '#' + t.getAttribute('data-tab')); });
+      });
+
+      /* ---- reviews: session gate ---- */
+      var filter = 'all';
+      function currentSchool() {
+        if (BOUND_SCHOOL) {
+          var bound = DB.schools.ensure(BOUND_SCHOOL);
+          return { session: { schoolId: bound.id, bound: true }, school: bound };
+        }
+        var session = DB.session.get(); if (!session) return null;
+        var school = DB.schools.get(session.schoolId);
+        if (!school) { DB.session.clear(); return null; }      /* stale session */
+        return { session: session, school: school };
+      }
+      /* prototype helper: every school the parent page has registered here, with its login number */
+      function renderKnown() {
+        var host = rv('known'), list = DB.schools.all();
+        if (!list.length) { host.innerHTML = '<p class="rv-known__empty">None yet. Open a school’s SuperSchools page once in this browser and its profile (with its phone number) is registered automatically.</p>'; return; }
+        host.innerHTML = list.map(function (sc) {
+          var m = normalizePhone(sc.phone);
+          return '<button class="rv-known__item" type="button" data-mobile="' + esc(m) + '"><span><b>' + esc(sc.name) + '</b><span>' + esc(placeOf(sc)) + '</span></span>' +
+            (m ? '<em>+91 ' + fmtMobile(m) + '</em>' : '<em class="none">No phone on record</em>') + '</button>';
+        }).join('');
+      }
+      rv('known').addEventListener('click', function (e) {
+        var b = e.target.closest('[data-mobile]'); if (!b || !b.getAttribute('data-mobile')) return;
+        rv('login-mobile').value = fmtMobile(b.getAttribute('data-mobile'));
+        rv('login-wrap').classList.remove('is-err'); rv('login-err').classList.remove('is-show');
+        rv('login-mobile').focus();
+      });
+
+      /* My School tab follows the signed-in school (falls back to the static demo profile when signed out) */
+      var titleEl = $('[data-view="school"] .profile__title'), descEl = $('[data-view="school"] .profile__desc');
+      var staticTitle = titleEl.textContent, staticDesc = descEl.textContent, staticDoc = document.title;
+      function syncSchoolProfile() {
+        var ctx = currentSchool();
+        titleEl.textContent = ctx ? ctx.school.name : staticTitle;
+        descEl.textContent = ctx ? (schoolDetail(ctx.school) ? schoolDetail(ctx.school) + ' · ' : '') + 'Profile views, enquiries, visits, hiring status and parent reviews in one operating view.' : staticDesc;
+        if (!views.reviews.hidden) return;
+        document.title = (ctx ? ctx.school.name : staticDoc.split(' — ')[0]) + ' — My School';
+      }
+
+      function renderReviews() {
+        var ctx = currentSchool();
+        syncSchoolProfile();
+        renderKnown();
+        rv('login').hidden = !!ctx;
+        rv('page').hidden = !ctx;
+        rv('logout').hidden = !!BOUND_SCHOOL;
+        rv('school-name').textContent = ctx ? ctx.school.name : '';
+        rv('school-place').textContent = ctx ? placeOf(ctx.school) : '';
+        if (!ctx) { rv('login-mobile').value = ''; rv('login-err').classList.remove('is-show'); rv('login-wrap').classList.remove('is-err'); setTimeout(function () { rv('login-mobile').focus(); }, 60); return; }
+        renderPage(ctx);
+      }
+
+      /* ---- reviews: dummy school login (mobile → school) ---- */
+      rv('login-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        var m = normalizePhone(rv('login-mobile').value), err = rv('login-err'), wrap = rv('login-wrap');
+        function fail(msg) { wrap.classList.add('is-err'); err.textContent = msg; err.classList.add('is-show'); }
+        if (!validMobile(m)) { fail('Enter a 10-digit Indian mobile number starting 6 to 9.'); return; }
+        var school = DB.schools.all().filter(function (sc) { return normalizePhone(sc.phone) === m; })[0];
+        if (!school) { fail('No school profile is registered with this number yet. Open your school\u2019s SuperSchools page once so its profile is created, then try again.'); return; }
+        DB.session.set({ schoolId: school.id, mobile: m, signedInAt: new Date().toISOString() });
+        toast('Signed in as ' + school.name);
+        renderReviews();
+      });
+      rv('login-mobile').addEventListener('input', function () {
+        this.value = fmtMobile(normalizePhone(this.value).slice(0, 10));
+        rv('login-wrap').classList.remove('is-err'); rv('login-err').classList.remove('is-show');
+      });
+      rv('logout').addEventListener('click', function () { DB.session.clear(); filter = 'all'; syncPills(); toast('Signed out'); renderReviews(); });
+
+      /* ---- reviews: page ---- */
+      function hydrate(r) {
+        var u = DB.users.get(r.userId);
+        return { review: r, name: u ? u.name : 'Parent', role: u ? (u.role || 'Parent') : 'Parent', initials: u ? initials(u.name) : 'P' };
+      }
+      function feed(schoolId) {
+        return DB.reviews.bySchool(schoolId).sort(function (a, b) { return new Date(b.createdAt) - new Date(a.createdAt); }).map(hydrate);
+      }
+      function card(x, school) {
+        var r = x.review, replied = !!(r.reply && r.reply.text), reported = !!r.report;
+        var subs = CATS.map(function (c) { return '<span class="rv-sub"><b>' + c + '</b> ' + (r.ratings && r.ratings[c] || 0) + '/5</span>'; }).join('');
+        var left = replied
+          ? '<button class="rv-btn" type="button" data-act="reply"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>Edit reply</button>'
+          : '<button class="rv-btn rv-btn--primary" type="button" data-act="reply"><svg viewBox="0 0 24 24"><path d="M9 17l-5-5 5-5"/><path d="M20 18v-2a4 4 0 0 0-4-4H4"/></svg>Reply</button>';
+        var right = reported
+          ? ''                                   /* reported: nothing shown on the card — only SuperSchools acts on it */
+          : '<button class="rv-btn rv-btn--danger" type="button" data-act="report"><svg viewBox="0 0 24 24"><path d="M4 22V4"/><path d="M4 4h12l-1.5 4L16 12H4"/></svg>Report</button>';
+        return '<article class="rv-card" data-id="' + esc(r.id) + '">' +
+          '<div class="rv-card__top">' +
+          '<div class="rv-who"><div class="rv-avatar" aria-hidden="true">' + esc(x.initials) + '</div><div>' +
+          '<div class="rv-name">' + esc(x.name) + '</div><div class="rv-meta">' + timeAgo(r.createdAt) + '</div></div></div>' +
+          '</div>' +
+          '<div class="rv-divider" role="presentation"></div>' +
+          '<div class="rv-rating-row"><div class="rv-rating-main"><h4>Overall Rating</h4><div class="rv-rating"><span class="stars" role="img" aria-label="' + Number(r.overall).toFixed(1) + ' out of 5">' + stars(r.overall) + '</span><b>' + Number(r.overall).toFixed(1) + '</b><small>/ 5</small></div></div>' +
+          '<div class="rv-subs">' + subs + '</div>' +
+          '</div>' +
+          '<p class="rv-text">' + esc(r.text) + '</p>' +
+          (replied ? '<div class="rv-reply"><div class="rv-reply__head"><span>Reply - ' + timeAgo(r.reply.createdAt) + '</span></div><p>' + esc(r.reply.text) + '</p></div>' : '') + '<div class="rv-foot">' + left + right + '</div>' +
+          '<div class="rv-editor" data-editor="reply"><label>' + (replied ? 'Edit your reply' : 'Reply as ' + esc(school.name)) + '</label>' +
+          '<textarea maxlength="500" placeholder="Thank the parent, address anything specific they raised, and keep it respectful.">' + (replied ? esc(r.reply.text) : '') + '</textarea>' +
+          '<p class="rv-err" data-editor-err></p>' +
+          '<div class="rv-editor__row"><small>Shown publicly under this review on your school page.</small>' +
+          '<span class="rv-editor__actions"><button class="rv-btn" type="button" data-act="cancel">Cancel</button><button class="rv-btn rv-btn--primary" type="button" data-act="save-reply">' + (replied ? 'Save reply' : 'Post reply') + '</button></span></div></div>' +
+          '</article>';
+      }
+      function counts(list) {
+        var c = { all: list.length, need: 0, replied: 0 };
+        list.forEach(function (x) { var r = x.review; if (r.reply && r.reply.text) c.replied++; else c.need++; });
+        return c;
+      }
+      /* overall rating + per-category averages */
+      function renderBreakdown(list) {
+        var host = rv('breakdown');
+        host.hidden = false;
+        if (!list.length) {
+          rv('bd-avg').textContent = '—';
+          rv('bd-stars').innerHTML = stars(0);
+          rv('bd-count').textContent = 'No reviews yet';
+          rv('bd-grid').innerHTML = CATS.map(function (cat) {
+            return '<div class="rv-bd-row"><span class="lbl">' + cat + '</span>' +
+              '<span class="track" role="img" aria-label="0 out of 5"><i style="width:0%"></i></span>' +
+              '<span class="val">—</span></div>';
+          }).join('');
+          return;
+        }
+        var avg = list.reduce(function (a, x) { return a + Number(x.review.overall || 0); }, 0) / list.length;
+        rv('bd-avg').textContent = avg.toFixed(1);
+        rv('bd-stars').innerHTML = stars(avg);
+        rv('bd-count').textContent = 'Based on ' + plural(list.length, 'review');
+        rv('bd-grid').innerHTML = CATS.map(function (cat) {
+          var vals = list.map(function (x) { return Number(x.review.ratings && x.review.ratings[cat] || 0); });
+          var a = vals.reduce(function (s, v) { return s + v; }, 0) / vals.length;
+          return '<div class="rv-bd-row"><span class="lbl">' + cat + '</span>' +
+            '<span class="track" role="img" aria-label="' + a.toFixed(1) + ' out of 5"><i style="width:' + (a / 5 * 100).toFixed(1) + '%"></i></span>' +
+            '<span class="val">' + a.toFixed(1) + '</span></div>';
+        }).join('');
+      }
+      function syncPills() {
+        $$('.rv-pill', rv('filters')).forEach(function (p) { p.setAttribute('aria-pressed', p.getAttribute('data-filter') === filter ? 'true' : 'false'); });
+      }
+      function renderPage(ctx) {
+        var school = ctx.school, list = feed(school.id), c = counts(list);
+        document.title = school.name + ' \u2014 Reviews';
+        renderBreakdown(list);
+        Object.keys(c).forEach(function (k) { var n = $('[data-n="' + k + '"]'); if (n) n.textContent = c[k]; });
+        syncPills();
+        var out = list.filter(function (x) {
+          var r = x.review;
+          if (filter === 'need') return !(r.reply && r.reply.text);
+          if (filter === 'replied') return !!(r.reply && r.reply.text);
+          return true;
+        });
+        rv('list').innerHTML = out.length ? out.map(function (x) { return card(x, school); }).join('')
+          : (list.length
+            ? '<div class="card rv-empty"><h2>Nothing in this filter</h2><p>Try another filter to see more of your reviews.</p></div>'
+            : '<div class="card rv-empty"><div class="badge" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div><h2>No parent reviews yet</h2><p>Reviews written for your school will appear here.</p></div>');
+      }
+      rv('filters').addEventListener('click', function (e) {
+        var b = e.target.closest('.rv-pill'); if (!b) return;
+        filter = b.getAttribute('data-filter');
+        var ctx = currentSchool(); if (ctx) renderPage(ctx); else renderReviews();
+      });
+
+      /* ---- reply · edit reply · report (always re-checked against the school session) ---- */
+      function cardAuthor(art) { var n = $('.rv-name', art); return n ? n.textContent : ''; }
+
+      rv('list').addEventListener('click', function (e) {
+        var b = e.target.closest('[data-act]'); if (!b) return;
+        var ctx = currentSchool(); if (!ctx) { renderReviews(); return; }
+        var art = b.closest('.rv-card'), id = art.getAttribute('data-id'), act = b.getAttribute('data-act');
+        var r = DB.reviews.get(id);
+        if (!r || r.schoolId !== ctx.session.schoolId) { toast('You can only manage reviews of your own school.'); renderPage(ctx); return; }
+        var replyEd = $('[data-editor="reply"]', art);
+        function closeEditors() { replyEd.classList.remove('is-open'); }
+        function showErr(ed, msg) { var p = $('[data-editor-err]', ed); p.textContent = msg; p.classList.add('is-show'); }
+
+        if (act === 'reply') { closeEditors(); replyEd.classList.add('is-open'); $('textarea', replyEd).focus(); }
+        else if (act === 'report') { closeEditors(); openReportModal(id, cardAuthor(art)); }
+        else if (act === 'cancel') { closeEditors(); }
+        else if (act === 'save-reply') {
+          var text = $('textarea', replyEd).value.trim();
+          if (text.length < 10) { showErr(replyEd, 'Write at least 10 characters.'); return; }
+          var had = !!(r.reply && r.reply.text);
+          DB.reviews.update(id, { reply: { text: text, byName: ctx.school.name, schoolId: ctx.school.id, createdAt: had ? r.reply.createdAt : new Date().toISOString(), updatedAt: new Date().toISOString() } });
+          toast(had ? 'Reply updated' : 'Reply posted'); renderPage(ctx);
+        }
+      });
+
+      /* ---- report review modal ---- */
+      var REPORT_REASONS = [
+        { id: 'Off topic', desc: "Review doesn\u2019t pertain to an experience at or with this school", harmful: false },
+        { id: 'Spam', desc: 'Review is from a bot, a fake account or contains ads and promotions', harmful: false },
+        { id: 'Conflict of interest', desc: "Review is from someone affiliated with the school or a competitor\u2019s school", harmful: false },
+        { id: 'Profanity', desc: 'Review contains swear words, has sexually explicit language or details graphic violence or other illegal activity', harmful: true },
+        { id: 'Bullying or harassment', desc: 'Review personally attacks a specific individual', harmful: true },
+        { id: 'Discrimination or hate speech', desc: 'Review has harmful language about an individual or group based on identity', harmful: true },
+        { id: 'Personal information', desc: 'Contains personal information such as address or phone number', harmful: true }
+      ];
+      var reportModal = rv('report-modal'), reportTarget = null;
+
+      rv('report-list').innerHTML = REPORT_REASONS.map(function (o, i) {
+        return '<label class="rpt-opt">' +
+          '<input class="rpt-radio" type="radio" name="rptReason" value="' + i + '">' +
+          '<span class="rpt-txt"><b>' + esc(o.id) + '</b><span>' + esc(o.desc) + '</span>' +
+          (o.harmful ? '<span class="rpt-warn">Harmful · checked first</span>' : '') +
+          '</span></label>';
+      }).join('');
+
+      function pickedReason() {
+        var i = $('input[name="rptReason"]:checked', reportModal);
+        return i ? REPORT_REASONS[+i.value] : null;
+      }
+      function openReportModal(id, who) {
+        reportTarget = id;
+        $$('input[name="rptReason"]', reportModal).forEach(function (i) { i.checked = false; });
+        rv('report-submit').disabled = true;
+        rv('report-who').textContent = who ? 'Review by ' + who : '';
+        reportModal.classList.add('is-open');
+        document.body.style.overflow = 'hidden';
+      }
+      function closeReportModal() {
+        reportTarget = null;
+        reportModal.classList.remove('is-open');
+        document.body.style.overflow = '';
+      }
+      reportModal.addEventListener('change', function () { rv('report-submit').disabled = !pickedReason(); });
+      reportModal.addEventListener('click', function (e) { if (e.target === reportModal) closeReportModal(); });
+      rv('report-close').addEventListener('click', closeReportModal);
+      rv('report-cancel').addEventListener('click', closeReportModal);
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && reportModal.classList.contains('is-open')) closeReportModal(); });
+
+      rv('report-submit').addEventListener('click', function () {
+        var ctx = currentSchool(), reason = pickedReason();
+        if (!ctx || !reportTarget || !reason) return;
+        var r = DB.reviews.get(reportTarget);
+        if (!r || r.schoolId !== ctx.session.schoolId) { closeReportModal(); return; }
+        DB.reviews.update(reportTarget, {
+          report: {
+            schoolId: ctx.school.id,
+            reason: reason.id,
+            harmful: reason.harmful,
+            status: 'pending',            /* pending | approved | rejected (set by SuperSchools) */
+            hidden: false,                /* true = not shown on the parent side; only SuperSchools approval sets it */
+            createdAt: new Date().toISOString(),
+            reviewedAt: null
+          }
+        });
+        closeReportModal();
+        toast('Review reported \u00b7 SuperSchools will check it');
+        renderPage(ctx);
+      });
+
+      /* keep in sync with a parent page open in another tab */
+      window.addEventListener('storage', function (e) {
+        if (e.key && [K.schools, K.users, K.reviews, K.schoolSession].indexOf(e.key) > -1 && !views.reviews.hidden) renderReviews();
+      });
+
+      /* The console shell opens this page as the Reviews tab: show the reviews view. */
+      showTab('reviews');
+    })();
+  </script>
+
+<script src="../../components/RouteLoader.js"></script>
+</body>
+
+</html>

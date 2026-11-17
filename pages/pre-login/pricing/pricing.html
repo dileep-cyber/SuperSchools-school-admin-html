@@ -1,0 +1,1873 @@
+<!doctype html>
+<html lang="en" data-side="school-admin" data-feature="pricing-page">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pricing · SuperSchools OS</title>
+<meta name="description" content="Compare SuperSchools OS plans and single modules, then talk to our team about your school.">
+<link rel="canonical" href="https://superschools.in/superos/pricing">
+<link rel="icon" href="data:,">
+<script>document.documentElement.classList.add('js')</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block">
+
+<style id="tokens">
+:root{
+  /* brand / interaction — globals.css :9, :20-27 */
+  --color-blue:#284CA5;            /* :9 */
+  --color-p-50:#EEF2FB;            /* :20 */
+  --color-p-100:#D6DEF2;           /* :21 */
+  --color-p-200:#9EB3EB;           /* :22 */
+  --color-p-300:#7090E0;           /* :23 */
+  --color-p-400:#476AC5;           /* :24 */
+  --color-p-500:var(--color-blue); /* :25 */
+  --color-p-600:#1F3A80;           /* :26 */
+  --color-p-700:#162C61;           /* :27 */
+  /* amber: pending chips, globals.css :45-47 */
+  --color-warn:#96600A;            /* :45 */
+  --color-warn-bg:#FFF3DB;         /* :46 */
+  --color-warn-line:#FFE1A6;       /* :47 */
+  /* text — globals.css :10, :17, :29-32, :53-54 */
+  --color-title-grey:#2B2B2B;      /* :17 */
+  --color-dark-grey:#3D3D3D;       /* :10 */
+  --color-ink:var(--color-title-grey);   /* :29 */
+  --color-ink-2:var(--color-dark-grey);  /* :30 */
+  --color-ink-3:#707070;           /* :31 */
+  --color-ink-4:#6E6E6E;           /* :32 */
+  --color-on-dark-text:rgba(255,255,255,0.86);      /* :53 */
+  --color-on-dark-text-soft:rgba(255,255,255,0.78); /* :54 */
+  /* surfaces and lines — globals.css :14, :35-40, :49-50, :55-56 */
+  --color-paper:#FFFFFF;           /* :35 */
+  --color-mist:#FAFAFA;            /* :36 */
+  --color-background-grey:#F5F5F5; /* :14 */
+  --color-mist-2:var(--color-background-grey); /* :37 */
+  --color-line:#EBEBEB;            /* :38 */
+  --color-line-soft:#F2F2F2;       /* :39 */
+  --color-field-line:#C7C7C7;      /* :40 */
+  --color-nudge-bg:#F0F4FE;        /* :49 */
+  --color-nudge-line:#D7E0F8;      /* :50 */
+  --color-on-dark-line:rgba(255,255,255,0.14);  /* :55 */
+  --color-on-dark-glow:rgba(255,255,255,0.16);  /* :56 */
+  /* state — globals.css :16, :42-43, :64 */
+  --color-red:#D54545;             /* :16  border / ring only */
+  --color-rv-danger:#C0392B;       /* :64  error text (reviews scope, precedent) */
+  --color-ok:#1A6E50;              /* :42 */
+  --color-ok-bg:#E8F4ED;           /* :43  shared header menu tile */
+  --color-rv-danger-tint:#FDF1F0;  /* :68  shared header menu tile */
+  /* radius — globals.css :90-94 */
+  --r-xs:4px; --r-sm:6px; --r:8px; --r-lg:10px; --r-pill:999px;
+  /* layout / type — globals.css :96-97 */
+  --card-w:560px;
+  --fs-card-t:clamp(19px, 1.7vw, 20px);
+  /* shadow — globals.css :99-108 */
+  --sh-1:0 1px 2px rgba(0,0,0,0.03);
+  --sh-2:0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.03);
+  --sh-3:0 4px 12px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.05);
+  --sh-btn-hover:0 4px 10px rgba(33,36,43,0.06), 0 10px 28px rgba(33,36,43,0.07);
+  --sh-ghost-hover:0 6px 16px rgba(40,76,165,0.14);
+  --sh-dock:0 -8px 20px -10px rgba(20,24,40,0.18);
+  /* focus — globals.css :102-103 */
+  --focus-ring:0 0 0 2px #8ca7fd;
+  --err-ring:0 0 0 2px rgba(213,69,69,0.25);
+  /* motion — globals.css :113-116 */
+  --ease:cubic-bezier(0.22,0.61,0.36,1);
+  --t-1:0.16s; --t-2:0.28s; --t-3:0.55s;
+  /* rhythm — globals.css :118 */
+  --sec-gap:88px;
+  /* font — src/app/layout.tsx:6 (next/font Inter) */
+  --font:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  /* reviews scope, as the v25 FAQ and popup use them — globals.css :71-72, :75 */
+  --color-rv-ink:#2C3E66;          /* :71 */
+  --color-rv-ink-soft:#3F5170;     /* :72 */
+  --color-rv-line:#E7ECF4;         /* :75 */
+  /* approved For Schools shell, v25 L102-104, L127 (design.md Revision 2) — not yet in globals.css */
+  --color-hero-accent:#FFC94D;
+  --sh-hero-card:0 10px 30px rgba(14,28,72,0.22), 0 2px 6px rgba(14,28,72,0.12);
+  --r-panel:28px;                  /* superleads-homepage-v9 hero picture */
+  --color-ok-line:#BFE0CC;         /* globals.css :44 */
+  --sh-device:0 30px 60px rgba(10,20,60,0.35), 0 8px 18px rgba(10,20,60,0.22);
+  /* page colour: the For Schools value, v8 line 99 */
+  --color-page:var(--color-p-500);
+  /* v25 benefit-card icon fills and elevation — globals.css :48, :59, :73; v25 L126 */
+  --color-trust:#1BABBE;           /* :48 */
+  --color-rv-amber:#E8A13A;        /* :59 */
+  --color-rv-like:#E23A6E;         /* :73 */
+  --sh-acc:0 4px 40px rgba(24,24,29,0.08);
+  /* shared For Schools shell (v25 L96, L129; school-admin-home Q3) — not yet in globals.css */
+  --scrim:rgba(20,24,40,0.45);
+  --hdr-h:80px;                    /* measured header height, 76px at max-width 1024px */
+  --color-spin-track:rgba(255,255,255,.45); /* v8 .btnspin */
+  --color-note-err-line:#F0C3BC;   /* v8 line 116, approved popup */
+  /* module colours and table — globals.css :15, :63, :66, :82 */
+  --color-green:#359694;           /* :15 */
+  --color-rv-blue-tint:#E8EEFC;    /* :63 */
+  --color-rv-danger-hover:#FFF4F3; /* :66 */
+  --color-rv-surface:#F7F9FC;      /* :82 */
+  --sh-menu:0 18px 40px rgba(20,24,40,0.16), 0 2px 6px rgba(20,24,40,0.08);
+}
+@media (max-width: 829px){ :root{ --sec-gap:64px; } }   /* globals.css :121-123 */
+@media (max-width: 560px){ :root{ --sec-gap:48px; } }   /* globals.css :124-126 */
+@media (max-width: 1024px){ :root{ --hdr-h:76px; } }
+/* module colour pairs: v25 product colours, as in the basic HTML (design-language.md section 2) */
+.m-profile{--pc:var(--color-p-500);--pc-bg:var(--color-p-50)}
+.m-leads{--pc:var(--color-rv-like);--pc-bg:var(--color-rv-danger-hover)}
+.m-hr{--pc:var(--color-warn);--pc-bg:var(--color-warn-bg)}
+.m-social{--pc:var(--color-green);--pc-bg:var(--color-rv-surface)}
+.m-connect{--pc:var(--color-ok);--pc-bg:var(--color-ok-bg)}
+.m-site{--pc:var(--color-p-600);--pc-bg:var(--color-rv-blue-tint)}
+.m-ai{--pc:var(--color-rv-danger);--pc-bg:var(--color-rv-danger-tint)}
+</style>
+
+<!-- Breakpoints: (max-width: 1279px) shared header only · 1180px · 1024px · 830px · 641px · 561px · 400px brand only.
+     Written as (max-width: Npx) everywhere. -->
+
+<style id="base">
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{font-family:var(--font);font-size:16px;line-height:24px;font-weight:400;color:var(--color-ink);background:var(--color-paper);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+input{font:inherit}
+ul,ol{list-style:none}
+img{display:block;max-width:100%}
+::selection{background:var(--color-p-50);color:var(--color-p-700)}
+:focus-visible{outline:3px solid var(--color-p-300);outline-offset:2px}
+[tabindex="-1"]:focus{outline:none}
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.ic{width:1em;height:1em;flex-shrink:0;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-style:normal;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;word-wrap:normal;direction:ltr;font-feature-settings:'liga';-webkit-font-smoothing:antialiased;font-variation-settings:'FILL' 0,'wght' 400}
+.hide-scrollbar{-ms-overflow-style:none;scrollbar-width:none}
+.hide-scrollbar::-webkit-scrollbar{display:none}
+
+/* Skip link — v25 §9 */
+.skip{position:absolute;left:16px;top:-48px;z-index:300;background:var(--color-p-500);color:var(--color-paper);padding:10px 18px;border-radius:var(--r-sm);font-size:14px;font-weight:600;transition:top var(--t-1)}
+.skip:focus{top:12px}
+main:focus{outline:none}
+
+/* Buttons — components/ui/Button.tsx claim family (measured at /claim) */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;white-space:nowrap;font-weight:600;border-radius:var(--r-sm)}
+.btn > span{display:flex;align-items:center;gap:8px}
+.btn:focus-visible{outline:none;box-shadow:var(--focus-ring)}
+.btn:disabled,.btn[aria-disabled="true"]{opacity:0.5;pointer-events:none}
+.btn--claim{background:var(--color-p-500);border:1px solid var(--color-p-500);color:var(--color-paper);letter-spacing:-0.36px;transition:background-color var(--t-2) var(--ease),border-color var(--t-2) var(--ease),transform var(--t-2) var(--ease),box-shadow var(--t-2) var(--ease)}
+.btn--claim .ic{transition:transform var(--t-2) var(--ease)}
+.btn--claim:hover{background:var(--color-p-600);border-color:var(--color-p-600);transform:translateY(-1px);box-shadow:var(--sh-btn-hover)}
+.btn--claim:hover .ic{transform:translateX(3px)}
+.btn--claim:active{background:var(--color-p-700);border-color:var(--color-p-700);transform:translateY(0);box-shadow:none}
+.btn--claim-ghost{background:var(--color-paper);border:1.5px solid var(--color-p-500);color:var(--color-p-500);transition:background-color 150ms var(--ease),border-color 150ms var(--ease),color 150ms var(--ease),transform 150ms var(--ease),box-shadow 150ms var(--ease)}
+.btn--claim-ghost .ic{transition:transform var(--t-2) var(--ease)}
+.btn--claim-ghost:hover{background:var(--color-p-50);border-color:var(--color-p-600);color:var(--color-p-600);transform:translateY(-2px);box-shadow:var(--sh-ghost-hover)}
+.btn--claim-ghost:hover .ic{transform:translateY(2px)}
+.btn--claim-ghost:active{transform:translateY(0)}
+.btn--claim-outline{min-height:44px;padding:13px 24px;font-size:16px;line-height:16px;font-weight:650;background:var(--color-paper);border:1.5px solid var(--color-p-200);color:var(--color-p-600);transition:transform 150ms var(--ease),border-color 150ms var(--ease),box-shadow 150ms var(--ease)}
+.btn--claim-outline:hover{transform:translateY(-1px);border-color:var(--color-p-400);box-shadow:var(--sh-1)}
+.btn--claim-outline:active{transform:translateY(0)}
+.btn--claim-link{padding:8px 14px;font-size:14px;line-height:14px;font-weight:600;color:var(--color-p-600);transition:color 150ms var(--ease)}
+.btn--claim-link:hover{color:var(--color-p-700);text-decoration:underline;text-underline-offset:3px}
+.sz-claim{min-width:216px;padding:16px 26px;font-size:18px;line-height:18px}
+.sz-claim .ic{font-size:18px;stroke-width:2.2}
+.sz-claim-sm{min-width:212px;padding:14px 24px;font-size:16px;line-height:16px}
+.sz-claim-sm .ic{font-size:18px;stroke-width:2.2}
+.sz-claim-ghost{min-height:52px;padding:14px 22px;font-size:16px;line-height:24px}
+.sz-claim-ghost .ic{font-size:16px}
+.sz-claim-block{width:100%;padding:17px 14px;font-size:18px;line-height:18px}
+.sz-claim-block .ic{font-size:18px;stroke-width:2.2}
+.sz-claim-try{min-height:44px;padding:12px 16px;font-size:14px;line-height:14px}
+.sz-claim-try .ic{font-size:16px;stroke-width:2.2}
+@media (max-width: 1024px){
+  .btn--claim-link{text-decoration:underline;text-underline-offset:3px}
+}
+</style>
+<style id="shell">
+/* ===== Shared header — school-admin-home v25 L184-245, L865-931, L1160-1188 (final cascade) ===== */
+.hdr{position:sticky;top:0;z-index:50;height:80px;display:flex;align-items:center;background:var(--color-mist-2);border-bottom:1px solid var(--color-line-soft);transition:background-color var(--t-2) var(--ease),border-color var(--t-2) var(--ease),box-shadow var(--t-2) var(--ease)}
+/* v25 on-hero mode — L317-330, L1392-1393 */
+.js .hdr.on-hero{background:transparent;border-bottom-color:transparent}
+.js .hdr.on-hero.is-scrolled{background:var(--color-p-500);box-shadow:var(--sh-3)}
+.js .hdr.on-hero .brand img{filter:brightness(0) invert(1)}
+.js .hdr.on-hero .mn__top{color:var(--color-paper)}
+.js .hdr.on-hero .mn__top::after{background:var(--color-hero-accent)}
+.js .hdr.on-hero .btn--claim-ghost{background:transparent;border-color:var(--color-paper);color:var(--color-paper)}
+.js .hdr.on-hero .btn--claim-ghost:hover{background:var(--color-on-dark-glow);box-shadow:none}
+.js .hdr.on-hero .btn--claim.btn--hl{background:var(--color-paper);border-color:var(--color-paper);color:var(--color-p-500);box-shadow:var(--sh-hero-card)}
+.js .hdr.on-hero .btn--claim.btn--hl:hover{background:var(--color-p-50);border-color:var(--color-p-50);color:var(--color-p-600)}
+.js .hdr.on-hero .burger{color:var(--color-paper)}
+.js .hdr.on-hero .burger:hover{background:var(--color-on-dark-glow)}
+.js .hdr.on-hero :focus-visible{outline-color:var(--color-hero-accent)}
+.hdr__row{display:flex;align-items:center;justify-content:space-between;gap:16px;width:100%;max-width:calc(1160px + 2 * clamp(24px,4.2vw,60px));margin-inline:auto;padding:0 clamp(24px,4.2vw,60px)}
+.brand{display:inline-flex;align-items:center;min-height:44px;flex-shrink:0}
+.brand img{height:34px;width:auto}
+.hdr__nav{display:flex;align-items:center;gap:0;margin-left:clamp(24px,5.9vw,85px);margin-right:auto}
+.mn{position:static}
+.mn__top{display:inline-flex;align-items:center;gap:4px;position:relative;cursor:pointer;white-space:nowrap;min-height:44px;padding:10px 14px;font-size:16px;line-height:24px;font-weight:500;color:var(--color-ink);transition:color 150ms}
+.mn__top::after{content:"";position:absolute;left:14px;right:calc(100% - 14px);bottom:6px;height:2px;border-radius:2px;background:var(--color-p-500);transition:right 250ms}
+.mn__top:hover,.mn__top[aria-expanded="true"]{color:var(--color-p-600)}
+.mn__top:hover::after,.mn__top[aria-expanded="true"]::after{right:14px}
+.mn__chev{display:none}
+.mn__panel{position:absolute;top:calc(100% - 6px);left:50%;z-index:60;width:min(1180px,calc(100vw - 48px));translate:-50% 0;display:flex;border:1px solid var(--color-line);border-radius:var(--r-lg);background:var(--color-paper);box-shadow:var(--sh-menu);overflow:hidden;animation:mn-in var(--t-1) var(--ease)}
+.mn__panel[hidden]{display:none}
+@keyframes mn-in{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.mn__panel--serve{width:min(1000px,calc(100vw - 48px))}
+.mn__grid{flex:1;display:grid;gap:8px 20px;padding:22px}
+.mn__grid--2{grid-template-columns:repeat(2,minmax(0,1fr));align-content:start}
+.mn__grid--4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.mn__item{display:flex;align-items:flex-start;gap:14px;padding:12px;border-radius:var(--r);transition:background-color 150ms}
+.mn__item:hover{background:var(--color-mist)}
+.mn__item b{display:block;font-size:15.5px;line-height:1.35;font-weight:600;color:var(--color-p-500)}
+.mn__item small{display:block;margin-top:3px;font-size:13.5px;line-height:1.5;color:var(--color-ink-3)}
+.mn__item:hover b{color:var(--color-p-600);text-decoration:underline;text-underline-offset:3px}
+.mn__ic{display:grid;place-items:center;flex-shrink:0;width:44px;height:44px;border-radius:var(--r)}
+.mn__ic .ic{font-size:21px}
+.mn__ic--blue{background:var(--color-p-50);color:var(--color-p-500)}
+.mn__ic--ok{background:var(--color-ok-bg);color:var(--color-ok)}
+.mn__ic--amber{background:var(--color-warn-bg);color:var(--color-warn)}
+.mn__ic--red{background:var(--color-rv-danger-tint);color:var(--color-rv-danger)}
+.mn__aside{display:flex;flex-direction:column;gap:14px;width:272px;flex-shrink:0;padding:22px;background:var(--color-p-50)}
+.mn__card{display:flex;flex-direction:column;gap:6px;padding:16px;border-radius:var(--r-lg);background:var(--color-paper);box-shadow:var(--sh-2);transition:box-shadow var(--t-2) var(--ease),transform var(--t-2) var(--ease)}
+.mn__card .mn__ic{margin-bottom:6px}
+.mn__card b{font-size:15px;line-height:1.35;font-weight:600;color:var(--color-p-500)}
+.mn__card small{font-size:13.5px;line-height:1.5;color:var(--color-ink-3)}
+.mn__card:hover{box-shadow:var(--sh-3);transform:translateY(-2px)}
+.mn__panel--prod{flex-direction:column}
+.mn__cols{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:20px;padding:24px 24px 18px}
+.mn__head{display:flex;align-items:center;gap:10px;min-height:44px;font-size:15px;font-weight:700;color:var(--color-ink)}
+.mn__head .mn__ic{width:34px;height:34px;border-radius:var(--r-sm)}
+.mn__head .mn__ic .material-symbols-outlined{font-size:20px}
+.mn__head:hover{color:var(--color-p-600)}
+.mn__col ul{display:grid;margin-top:4px;padding-left:44px}
+.mn__col li a{display:flex;align-items:center;min-height:36px;font-size:14.5px;line-height:1.4;color:var(--color-p-500)}
+.mn__col li a:hover{color:var(--color-p-600);text-decoration:underline;text-underline-offset:3px}
+.mn__foot{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 24px;border-top:1px solid var(--color-line-soft);background:var(--color-mist)}
+.mn__foot p{font-size:13.5px;line-height:1.5;color:var(--color-ink-3)}
+.mn__foot b{font-weight:600;color:var(--color-ink-2)}
+.mn__foot a{font-weight:600;color:var(--color-p-600)}
+.mn__foot a:hover{text-decoration:underline;text-underline-offset:3px}
+.mn__soon{margin-left:4px;padding:2px 8px;border-radius:var(--r-pill);background:var(--color-mist-2);font-size:11px;font-weight:700;color:var(--color-ink-3)}
+.mn__all{display:inline-flex;align-items:center;gap:6px;flex-shrink:0;min-height:44px;font-size:14.5px;font-weight:600;color:var(--color-p-500)}
+.mn__all .ic{font-size:15px;transition:transform var(--t-1)}
+.mn__all:hover .ic{transform:translateX(3px)}
+/* Current-page marker — design.md E2 (new) */
+.mn__head--here{align-self:flex-start;padding:4px 8px;margin-left:-8px;border-radius:var(--r);background:var(--color-warn-bg)}
+.here-pill{display:inline-flex;align-items:center;margin-left:8px;padding:2px 8px;border-radius:var(--r-pill);border:1px solid var(--color-warn-line);background:var(--color-paper);font-size:11px;line-height:1;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--color-warn)}
+.hdr__cta{display:flex;align-items:center;gap:24px;flex-shrink:0}
+.hdr__cta .lbl-short{display:none}
+.hdr .sz-claim-try{min-height:48px;padding:8px 14px;font-size:16px;line-height:24px;font-weight:600;border-width:2px;border-radius:var(--r-xs);letter-spacing:normal}
+.hdr .btn--claim.btn--hl,.drawer .btn--claim.btn--hl{background:var(--color-p-500);border-color:var(--color-p-500);color:var(--color-paper);font-weight:700;box-shadow:none}
+.hdr .btn--claim.btn--hl:hover,.drawer .btn--claim.btn--hl:hover{background:var(--color-p-600);border-color:var(--color-p-600);color:var(--color-paper)}
+.burger{display:none;width:44px;height:44px;border-radius:var(--r-sm);align-items:center;justify-content:center;color:var(--color-ink);transition:background-color var(--t-1)}
+.burger .ic{font-size:22px}
+.burger:hover{background:var(--color-mist-2)}
+html:not(.js) .burger{display:none}
+/* Drawer — v25 L208-228, L924-930 */
+.scrim{position:fixed;inset:0;z-index:200;background:var(--scrim);opacity:0;visibility:hidden;transition:opacity var(--t-2),visibility var(--t-2)}
+.scrim.is-open{opacity:1;visibility:visible}
+.drawer{position:fixed;top:0;right:0;z-index:201;height:100%;width:min(88vw,348px);background:var(--color-paper);display:flex;flex-direction:column;padding:18px 20px 22px;overflow-y:auto;transform:translateX(100%);visibility:hidden;transition:transform 300ms cubic-bezier(0.4,0,0.2,1),visibility 300ms}
+.drawer.is-open{transform:translateX(0);visibility:visible}
+.drawer__top{display:flex;align-items:center;justify-content:space-between;padding-bottom:16px;margin-bottom:16px;border-bottom:1px solid var(--color-line-soft)}
+.drawer__top img{height:28px;width:auto}
+.drawer__x{width:42px;height:42px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;color:var(--color-ink-3);transition:background-color 150ms,color 150ms}
+.drawer__x .ic{font-size:18px}
+.drawer__x:hover{background:var(--color-mist-2);color:var(--color-ink)}
+.drawer__label{font-size:11px;font-weight:600;letter-spacing:0.09em;text-transform:uppercase;color:var(--color-ink-4);margin:0 6px 10px}
+.drawer__nav{display:flex;flex-direction:column;gap:4px}
+.drawer__nav > a{display:flex;align-items:center;gap:14px;padding:12px;border-radius:var(--r);font-size:15.5px;font-weight:600;color:var(--color-ink);transition:background-color 150ms}
+.drawer__tile{width:38px;height:38px;flex-shrink:0;border-radius:var(--r-sm);background:var(--color-mist-2);color:var(--color-ink-2);display:flex;align-items:center;justify-content:center;transition:background-color 150ms,color 150ms}
+.drawer__tile .ic{font-size:19px}
+.drawer__chev{margin-left:auto;font-size:18px;color:var(--color-ink-4);transition:transform 150ms,color 150ms}
+.drawer__nav > a:hover{background:var(--color-mist)}
+.drawer__nav > a:hover .drawer__tile{background:var(--color-p-100);color:var(--color-p-600)}
+.drawer__nav > a:hover .drawer__chev{transform:translateX(2px);color:var(--color-p-500)}
+.dg summary{display:flex;align-items:center;gap:14px;padding:12px;border-radius:var(--r);font-size:15.5px;font-weight:600;color:var(--color-ink);cursor:pointer;list-style:none;transition:background-color 150ms}
+.dg summary::-webkit-details-marker{display:none}
+.dg summary:hover{background:var(--color-mist)}
+.dg[open] .dg__chev{transform:rotate(180deg)}
+.dg__list{display:grid;padding:2px 0 8px 64px}
+.drawer__nav .dg__list a{display:flex;align-items:center;min-height:44px;padding:0 12px;font-size:14.5px;font-weight:500;color:var(--color-p-500)}
+.drawer__cta{margin-top:auto;display:flex;flex-direction:column;gap:10px;padding-top:20px;border-top:1px solid var(--color-line-soft)}
+.drawer__cta .btn{width:100%}
+@media (max-width: 1279px){
+  .hdr__nav{margin-left:16px}
+  .mn__top{padding:10px;font-size:15px}
+  .mn__top::after{left:10px;right:calc(100% - 10px)}
+  .mn__top:hover::after,.mn__top[aria-expanded="true"]::after{right:10px}
+  .hdr__cta{gap:12px}
+  .hdr__cta .lbl-full{display:none}
+  .hdr__cta .lbl-short{display:inline}
+  .mn__cols{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .mn__grid--4{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width: 1024px){
+  .hdr{height:76px;background:var(--color-paper)}
+  .brand img{height:28px}
+  .hdr__nav{display:none}
+  .burger{display:flex}
+  .hdr__cta{margin-left:auto}
+  .hdr .sz-claim-try{min-height:44px;font-size:15px}
+}
+@media (max-width: 830px){
+  .hdr__row{padding:0 20px}
+  .hdr__cta .btn--claim-ghost{display:none}
+}
+@media (max-width: 561px){
+  .brand img{height:24px}
+}
+
+/* ===== Shared footer — v25 L797-840 ===== */
+.ft2{padding:56px 40px 28px;background:var(--color-p-500);color:var(--color-paper)}
+.ft2__in{width:100%}
+.ft2__top{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;margin-bottom:36px}
+.ft2__brand{display:flex;flex-direction:column;align-items:flex-start;gap:12px;padding-right:40px}
+.ft2__logo{display:inline-flex;align-items:center;min-height:44px;color:var(--color-paper)}
+.ft2__mark{display:block;width:162px;height:auto}
+.ft2__lede,.ft2__help-d{max-width:540px;font-size:14px;line-height:1.55;color:var(--color-on-dark-text)}
+.ft2__help{display:flex;flex-direction:column;align-items:flex-start;gap:10px;padding-left:40px}
+.ft2__help-t{font-size:18px;line-height:1.35;font-weight:700;color:var(--color-paper)}
+.ft2__help .ft2__btn{margin-top:8px}
+.ft2__btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 22px;border-radius:var(--r-pill);background:var(--color-paper);font-size:14px;font-weight:600;color:var(--color-p-500);transition:background-color var(--t-1)}
+.ft2__btn:hover{background:var(--color-p-50)}
+.ft2__rule{margin:0 0 32px;border:0;border-top:1px solid var(--color-on-dark-line)}
+.ft2__nav{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:32px 28px;margin-bottom:32px}
+.ft2__h{margin-bottom:18px;font-size:13px;font-weight:700;letter-spacing:0.08em;color:var(--color-paper)}
+.ft2__list{display:flex;flex-direction:column;gap:12px}
+.ft2__list a{font-size:14px;color:var(--color-on-dark-text);transition:color var(--t-1)}
+.ft2__list a:hover,.ft2__copy a:hover{color:var(--color-paper);text-decoration:underline;text-underline-offset:3px}
+.ft2__list a[aria-current="page"]{font-weight:700;color:var(--color-paper)}
+.ft2__list a[aria-current="page"]:hover{text-decoration:none}
+.ft2__bottom{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:24px}
+.ft2__copy{font-size:13px;color:var(--color-on-dark-text-soft)}
+.ft2__sep{margin:0 4px}
+.ft2__social{display:flex;gap:8px}
+.ft2__social a{display:inline-grid;place-items:center;width:44px;height:44px;border:1px solid var(--color-on-dark-glow);border-radius:50%;color:var(--color-paper);transition:background-color var(--t-1),border-color var(--t-1)}
+.ft2__social a:hover{background:var(--color-on-dark-glow);border-color:var(--color-on-dark-text-soft)}
+.ft2 :focus-visible{outline:2px solid var(--color-paper);outline-offset:3px}
+@media (max-width: 1024px){
+  .ft2__list{gap:0}
+  .ft2__list a,.ft2__copy a{display:inline-flex;align-items:center;min-height:44px}
+}
+@media (max-width: 830px){
+  .ft2{padding:48px 20px 24px}
+  .ft2__top{grid-template-columns:1fr;gap:32px;margin-bottom:32px}
+  .ft2__brand{padding-right:0}
+  .ft2__help{padding-left:0}
+  .ft2__nav{grid-template-columns:1fr 1fr;gap:28px 24px}
+  .ft2__bottom{flex-direction:column;align-items:center;text-align:center;gap:18px}
+}
+@media (max-width: 561px){
+  .ft2{padding:40px 20px 96px}
+  .ft2__lede{font-size:13px}
+  .ft2__copy{font-size:12px}
+}
+
+/* ===== Page frame — see #page (design.md Revision 2) ===== */
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  :is(html,#rm) *,:is(html,#rm) *::before,:is(html,#rm) *::after{transition-duration:0s;transition-delay:0s;animation-duration:0s}
+}
+</style>
+<style id="page">
+
+/* ===== header: teal like the hero, white text (user). Buttons follow the page colour the way v25's do on its blue hero
+   (v25 .hdr.on-hero): sign in = white outline, claim = white fill with page-colour text ===== */
+.hdr,.hdr.is-scrolled{background:var(--color-page);border-bottom-color:var(--color-page)}
+.hdr.is-scrolled{box-shadow:var(--sh-3)}
+.hdr .brand img{filter:brightness(0) invert(1)}
+.hdr .mn__top,.hdr .mn__top:hover,.hdr .mn__top[aria-expanded="true"]{color:var(--color-paper);font-weight:500}
+.hdr .mn__top::after{background:var(--color-paper)}
+.hdr .burger{color:var(--color-paper)}
+.hdr .burger:hover{background:var(--color-on-dark-glow)}
+.hdr :focus-visible{outline-color:var(--color-paper)}
+.hdr .btn--claim-ghost{background:transparent;border-color:var(--color-paper);color:var(--color-paper)}
+.hdr .btn--claim-ghost:hover{background:var(--color-on-dark-glow);border-color:var(--color-paper);color:var(--color-paper);box-shadow:none}
+.hdr .btn--claim.btn--hl{background:var(--color-paper);border-color:var(--color-paper);color:var(--color-page);box-shadow:var(--sh-hero-card)}
+.hdr .btn--claim.btn--hl:hover{background:var(--color-mist-2);border-color:var(--color-mist-2);color:var(--color-page)}
+@media (max-width: 1024px){
+  .hdr{background:var(--color-page)}
+}
+/* header turns white once the hero has scrolled away (user, 2026-10-29); buttons then turn blue like the admin home page (v25) */
+.hdr.is-past{background:var(--color-paper);border-bottom-color:var(--color-line-soft)}
+.hdr.is-past .brand img{filter:none}
+.hdr.is-past .mn__top,.hdr.is-past .mn__top:hover,.hdr.is-past .mn__top[aria-expanded="true"]{color:var(--color-ink)}
+.hdr.is-past .mn__top::after{background:var(--color-page)}
+.hdr.is-past .burger{color:var(--color-ink)}
+.hdr.is-past .burger:hover{background:var(--color-mist-2)}
+.hdr.is-past :focus-visible{outline-color:var(--color-p-300)}
+.hdr.is-past .btn--claim-ghost{background:var(--color-paper);border-color:var(--color-p-500);color:var(--color-p-500)}
+.hdr.is-past .btn--claim-ghost:hover{background:var(--color-p-50);border-color:var(--color-p-600);color:var(--color-p-600);box-shadow:var(--sh-ghost-hover)}
+.hdr.is-past .btn--claim.btn--hl{background:var(--color-p-500);border-color:var(--color-p-500);color:var(--color-paper);box-shadow:none}
+.hdr.is-past .btn--claim.btn--hl:hover{background:var(--color-p-600);border-color:var(--color-p-600);color:var(--color-paper)}
+.wrap{max-width:1080px;margin:0 auto}
+.band{padding:calc(var(--sec-gap) / 2) 40px;scroll-margin-top:90px}
+.sh{margin:0 auto 28px;text-align:center}
+.eyebrow{display:inline-flex;align-items:center;gap:9px;margin-bottom:12px;font-size:11px;line-height:16.5px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--color-p-500)}
+.sh__title{font-size:clamp(25px,3.2vw,36px);line-height:1.22;font-weight:700;letter-spacing:-0.02em;color:var(--color-ink);text-wrap:balance}
+.sh__lede{max-width:760px;margin:16px auto 0;font-size:16.5px;line-height:1.62;color:var(--color-ink-2)}
+html.js [data-reveal]{transition:opacity var(--t-3) var(--ease),translate var(--t-3) var(--ease)}
+html.js [data-reveal].is-armed:not(.is-in){opacity:0;translate:0 16px}
+.pt-list{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 28px;margin:0 auto 24px}
+.pt-list{column-gap:16px}
+.pt-tab{display:inline-flex;align-items:center;min-height:48px;padding:10px 18px;border:2px solid transparent;border-radius:var(--r-pill);background:transparent;font-size:18px;line-height:24px;font-weight:600;color:var(--color-p-500);white-space:nowrap;cursor:pointer;transition:border-color var(--t-2) var(--ease),box-shadow var(--t-2) var(--ease),color var(--t-2) var(--ease)}
+.pt-tab:hover{color:var(--color-p-600)}
+.pt-tab[aria-selected="true"]{border-color:var(--color-p-400);background:var(--color-paper);box-shadow:var(--sh-ghost-hover);color:var(--color-p-500)}
+.pt-tab:focus-visible{outline:3px solid var(--color-p-300);outline-offset:2px}
+.notice{display:flex;align-items:flex-start;gap:11px;padding:15px 17px;border-radius:var(--r-lg);border:1px solid var(--color-p-100);background:var(--color-p-50)}
+.notice > .ic{font-size:18px;margin-top:1px;color:var(--color-p-500)}
+.notice__txt{flex:1;min-width:0}
+.notice__t{font-size:14px;line-height:1.3;font-weight:700;color:var(--color-ink)}
+.notice__b{margin-top:4px;font-size:12.5px;line-height:1.45;color:var(--color-ink-2)}
+.final{background:var(--color-paper);border-top:1px solid var(--color-line-soft)}
+.cl{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,0.9fr);gap:44px;align-items:center}
+.cl > *{min-width:0}
+.final__kick{margin-bottom:16px;font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-p-600)}
+.final__title{font-size:clamp(25px,3.2vw,36px);line-height:1.22;font-weight:700;letter-spacing:-0.02em;color:var(--color-ink);text-wrap:balance}
+.final__title em{font-style:normal;color:var(--color-p-500)}
+.final__sub{max-width:560px;margin-top:16px;font-size:16.5px;line-height:1.62;color:var(--color-ink-2)}
+.cl-act{display:flex;flex-direction:column;align-items:flex-start;gap:12px}
+.final__note{font-size:13px;line-height:1.6;color:var(--color-ink-3)}
+.fq{display:grid;grid-template-columns:minmax(0,0.8fr) minmax(0,1.2fr);gap:clamp(32px,6vw,96px);align-items:start}
+.fq > *{min-width:0}
+.fq__k{font-size:12px;line-height:1.5;font-weight:700;letter-spacing:0.11em;text-transform:uppercase;color:var(--color-p-500)}
+.fq__t{margin-top:12px;font-size:clamp(28px,3vw,38px);line-height:1.18;font-weight:700;letter-spacing:-0.03em;color:var(--color-rv-ink)}
+.fq__d{max-width:340px;margin-top:16px;font-size:15.5px;line-height:1.65;color:var(--color-rv-ink-soft)}
+.fq__link{display:inline-flex;align-items:center;gap:8px;min-height:44px;margin-top:14px;font-size:15px;font-weight:600;color:var(--color-p-500)}
+.fq__link .ic{font-size:17px;transition:translate var(--t-1) var(--ease)}
+.fq__link:hover .ic{translate:3px 0}
+.faq{display:grid;gap:0;border-top:1px solid var(--color-rv-line)}
+.qa{border-bottom:1px solid var(--color-rv-line)}
+.qa h3{font:inherit}
+.qa__btn{display:flex;align-items:center;justify-content:space-between;gap:18px;width:100%;padding:22px 0;text-align:left}
+.qa__q{font-size:16px;line-height:1.4;font-weight:600;color:var(--color-rv-ink)}
+.qa__ico{display:flex;align-items:center;justify-content:center;flex-shrink:0;width:28px;height:28px;border-radius:var(--r-pill);background:var(--color-p-50);color:var(--color-p-500);transition:transform var(--t-2),background-color var(--t-2),color var(--t-2)}
+.qa__ico .ic{font-size:15px;stroke-width:2.2}
+.qa.is-open .qa__ico{transform:rotate(45deg);background:var(--color-p-500);color:var(--color-paper)}
+.js .qa__a{max-height:0;overflow:hidden;transition:max-height 300ms ease}
+.qa__a-in{padding:0 48px 22px 0;font-size:15px;line-height:1.7;color:var(--color-rv-ink-soft)}
+html:not(.js) .qa__ico{display:none}
+
+/* ===== S2 — insights & resources (brightwheel 3-card section) ===== */
+
+/* ===== S2 / S7 — book-a-demo (inline section + popup), brightwheel stepped form ===== */
+.dm{max-width:480px;margin:0 auto;text-align:center}
+.dm__t{font-size:24px;line-height:1.3;font-weight:700;letter-spacing:-0.01em;color:var(--color-ink);text-wrap:balance}
+.dm__t:focus{outline:none}
+.dm__bars{display:flex;justify-content:center;gap:5px;margin-top:20px}
+.dm__bars span{width:30px;height:4px;border-radius:var(--r-pill);background:var(--color-line);transition:background-color var(--t-2)}
+.dm__bars span.is-on{background:var(--color-p-500)}
+.dm__count{margin-top:10px;font-size:13px;line-height:1.4;font-weight:500;color:var(--color-ink-3)}
+.dm__step{margin-top:24px}
+.dm__step[hidden]{display:none}
+.dm__opts{display:flex;flex-direction:column;gap:14px}
+.dm__opt{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:56px;padding:12px 18px;border:1.5px solid var(--color-line);border-radius:var(--r-lg);background:var(--color-paper);text-align:left;font-size:17px;line-height:1.3;font-weight:500;color:var(--color-ink);transition:border-color var(--t-1),background-color var(--t-1),box-shadow var(--t-1)}
+.dm__opt-arr{display:grid;place-items:center;width:28px;height:28px;flex-shrink:0;border-radius:50%;color:var(--color-p-400);transition:background-color var(--t-1),color var(--t-1)}
+.dm__opt-arr .ic{font-size:18px}
+.dm__opt:hover,.dm__opt.is-picked{border-color:var(--color-p-300);background:var(--color-nudge-bg);box-shadow:var(--sh-ghost-hover)}
+.dm__opt:hover .dm__opt-arr,.dm__opt.is-picked .dm__opt-arr{background:var(--color-p-400);color:var(--color-paper)}
+.dm__back{display:inline-flex;align-items:center;gap:4px;min-height:44px;margin-top:20px;padding:0 10px;font-size:15px;font-weight:500;color:var(--color-p-600)}
+.dm__back .ic{font-size:16px;transform:rotate(180deg)}
+.dm__back:hover{text-decoration:underline;text-underline-offset:3px}
+.dm__back[hidden]{display:none}
+.dm__form{text-align:left}
+.dm__next{width:100%;margin-top:20px;min-height:52px;border-radius:var(--r-lg);font-size:16px;font-weight:600}
+.fields{display:grid;gap:16px}
+.fields__pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}
+.fl__label{display:block;margin-bottom:8px;font-size:13.5px;line-height:1.5;font-weight:600;color:var(--color-ink)}
+.fl__req{margin-left:2px;color:var(--color-red)}
+.fl__box{position:relative;display:flex;align-items:center;gap:10px;height:56px;padding:0 14px;border-radius:var(--r-sm);border:1px solid var(--color-field-line);background:var(--color-paper);transition:border-color 150ms,box-shadow 150ms}
+.fl__box:focus-within{border-color:var(--color-p-500);box-shadow:var(--focus-ring)}
+.fl.is-error .fl__box{border-color:var(--color-red);box-shadow:var(--err-ring)}
+.fl__input{flex:1;min-width:0;height:100%;border:0;outline:0;background:transparent;font-size:16px;line-height:24px;font-weight:500;color:var(--color-ink)}
+.fl__input::placeholder{color:var(--color-ink-4);opacity:1}
+select.fl__input{appearance:none;-webkit-appearance:none;padding-right:28px;cursor:pointer}
+.fl__chev{position:absolute;right:14px;font-size:18px;color:var(--color-ink-4);pointer-events:none}
+.fl__pre{display:flex;align-items:center;gap:10px;font-size:16px;line-height:24px;font-weight:500;color:var(--color-ink-2)}
+.fl__div{display:block;width:1px;height:20px;background:var(--color-line)}
+.fl__err{display:block;margin-top:8px;font-size:12px;line-height:15px;font-weight:500;color:var(--color-rv-danger)}
+.fl__err:empty{display:none}
+/* Full name counter — teacher-profile .field-count: shown while the field is focused, hidden while an error shows */
+.fl__labelrow{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:8px}
+.fl__labelrow .fl__label{margin-bottom:0}
+.fl__count{font-size:12px;line-height:14px;font-weight:500;font-variant-numeric:tabular-nums;color:var(--color-ink-3);opacity:0;transition:opacity 120ms ease-out}
+.fl:focus-within .fl__count{opacity:1}
+.fl.is-error .fl__count{display:none}
+
+/* Demo form states — same components as the claim flow (field__err with icon, btnspin, note) */
+.fl__err{display:flex;align-items:flex-start;gap:6px}
+.fl__err .ic{width:14px;height:14px;flex-shrink:0;margin-top:0.5px}
+.btnspin{display:inline-block;flex-shrink:0;width:18px;height:18px;border:2.5px solid var(--color-spin-track);border-top-color:var(--color-paper);border-radius:50%;animation:dm-spin .7s linear infinite}
+@keyframes dm-spin{to{transform:rotate(360deg)}}
+.dm__next:disabled{cursor:progress;opacity:.85;transform:none;box-shadow:none}
+.dm__next .dm__busy{display:inline-flex;align-items:center;gap:10px}
+.dm__form[aria-busy="true"] .fl__box{background:var(--color-mist)}
+.dm__form[aria-busy="true"] .fl__input{color:var(--color-ink-3)}
+.note{display:flex;align-items:flex-start;gap:11px;padding:14px 16px;border:1px solid var(--color-p-100);border-radius:var(--r-lg);background:var(--color-p-50);text-align:left}
+.note .ic{flex-shrink:0;width:18px;height:18px;margin-top:1px;color:var(--color-p-500)}
+.note p{font-size:13.5px;line-height:1.55;color:var(--color-ink-2)}
+.note b{font-weight:600;color:var(--color-ink)}
+.note--err{border-color:var(--color-note-err-line);background:var(--color-rv-danger-tint)}
+.note--err .ic{color:var(--color-rv-danger)}
+.dm__alert{margin-top:16px}
+.dm__alert[hidden]{display:none}
+.dm__alert:focus{outline:none}
+
+.mods{min-width:0;border:0;padding:0;text-align:left}
+.mods__hint{margin:0 0 12px;font-size:13px;line-height:1.45;font-weight:500;color:var(--color-ink-3);text-align:center}
+.mods__grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}
+.mrow{display:flex;align-items:center;gap:10px;min-height:44px;padding:10px 12px;border-radius:var(--r-sm);border:1px solid var(--color-line);background:var(--color-paper);cursor:pointer;transition:border-color var(--t-1),background-color var(--t-1)}
+.mrow:hover{border-color:var(--color-p-500)}
+.mrow:has(input:checked){border-color:var(--color-p-500);background:var(--color-p-50)}
+.mrow:has(input:focus-visible){outline:3px solid var(--color-p-300);outline-offset:2px}
+.mrow__box{position:relative;display:grid;place-items:center;width:16px;height:16px;flex-shrink:0}
+.mrow__box input{appearance:none;-webkit-appearance:none;width:16px;height:16px;min-width:16px;margin:0;border-radius:var(--r-xs);border:1px solid var(--color-ink-3);background:var(--color-paper);cursor:inherit;transition:background-color 0.2s ease-in-out,border-color 0.2s ease-in-out}
+.mrow__box input:focus-visible{outline:none}
+.mrow__box input:checked{background:var(--color-p-500);border-color:var(--color-p-500)}
+.mrow__box .ic{position:absolute;inset:1px;width:14px;height:14px;stroke-width:1.5;color:var(--color-paper);pointer-events:none;opacity:0}
+.mrow__box input:checked + .ic{opacity:1}
+.mrow__name{font-size:14px;line-height:1.3;font-weight:600;color:var(--color-ink)}
+.mrow--locked,.mrow--locked:hover,.mrow--locked:has(input:checked){cursor:default;border-color:var(--color-warn-line);background:var(--color-warn-bg)}
+.mrow__pill{margin-left:auto;padding:4px 8px;border-radius:var(--r-pill);border:1px solid var(--color-warn-line);background:var(--color-paper);font-size:11px;line-height:1;font-weight:700;color:var(--color-warn)}
+.tp{display:flex;flex-direction:column;gap:14px;border:0;padding:0;min-width:0}
+.tp__opt{display:flex;align-items:center;gap:12px;min-height:56px;padding:12px 18px;border:1.5px solid var(--color-line);border-radius:var(--r-lg);background:var(--color-paper);font-size:17px;line-height:1.3;font-weight:500;color:var(--color-ink);text-align:left;cursor:pointer;transition:border-color var(--t-1),background-color var(--t-1),box-shadow var(--t-1)}
+.tp__opt:hover{border-color:var(--color-p-300)}
+.tp__opt:has(input:checked){border-color:var(--color-p-300);background:var(--color-nudge-bg);box-shadow:var(--sh-ghost-hover)}
+.tp__opt:has(input:focus-visible){outline:3px solid var(--color-p-300);outline-offset:2px}
+.tp__hint{margin:0 0 12px;font-size:13px;line-height:1.45;font-weight:500;color:var(--color-ink-3);text-align:center}
+.tp .fl__err{text-align:center}
+.consent{display:flex;align-items:flex-start;gap:10px;font-size:12.5px;line-height:1.5;color:var(--color-ink-2);cursor:pointer}
+.consent .mrow__box{margin-top:2px}
+.consent:has(input:focus-visible){outline:3px solid var(--color-p-300);outline-offset:2px;border-radius:var(--r-xs)}
+
+/* popup shell (v25 .cpop, plain white like brightwheel) */
+.cpop{position:fixed;inset:0;z-index:300;display:grid;place-items:center;padding:24px}
+.cpop[hidden]{display:none}
+.cpop__bg{position:absolute;inset:0;background:var(--scrim);opacity:0;transition:opacity var(--t-2) var(--ease)}
+.cpop__box{position:relative;width:min(640px,100%);max-height:calc(100dvh - 32px);overflow:auto;padding:52px 40px 36px;border-radius:var(--r-lg);background:var(--color-paper);box-shadow:var(--sh-device);opacity:0;transform:translateY(16px) scale(0.97);transition:opacity var(--t-2) var(--ease),transform var(--t-2) var(--ease)}
+.cpop.is-in .cpop__bg{opacity:1}
+.cpop.is-in .cpop__box{opacity:1;transform:none}
+.cpop__box:focus{outline:none}
+.cpop__x{position:absolute;top:14px;right:14px;z-index:1;display:grid;place-items:center;width:44px;height:44px;border-radius:50%;color:var(--color-ink-3);transition:background-color 150ms,color 150ms}
+.cpop__x .ic{font-size:22px}
+.cpop__x:hover{background:var(--color-mist-2);color:var(--color-ink)}
+.cpop__x:focus-visible{outline:2px solid var(--color-p-500);outline-offset:2px}
+body.cpop-open{overflow:hidden}
+
+/* ===== S6 — dock (v25 .dock) ===== */
+
+/* ===== S10 — plans notice ===== */
+.toast{position:fixed;left:50%;bottom:16px;z-index:70;width:min(480px,calc(100vw - 32px));translate:-50% 0}
+.toast[hidden]{display:none}
+.toast.is-in{animation:toast-in 0.3s ease-out}
+@keyframes toast-in{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+.toast .notice{box-shadow:var(--sh-3)}
+.toast .btn--claim-link{margin:4px 0 -8px -14px}
+.toast__x{position:relative;display:grid;place-items:center;width:32px;height:32px;flex-shrink:0;margin:-6px -8px 0 0;border-radius:50%;color:var(--color-ink-3);transition:background-color 150ms}
+.toast__x::before{content:"";position:absolute;inset:-6px}
+.toast__x .ic{font-size:16px}
+.toast__x:hover{background:var(--color-p-100)}
+
+/* phone swipe cards, as v25 (<=561px): features and How to claim scroll sideways, one card at a time, the next one peeking in */
+.fl__opt{margin-left:4px;font-weight:500;color:var(--color-ink-3)}
+.brand__t{font-size:26px;line-height:1;font-weight:800;letter-spacing:-0.02em;white-space:nowrap;color:var(--color-p-500)}
+.hdr .brand__t{color:var(--color-paper)}
+.hdr.is-past .brand__t{color:var(--color-p-500)}
+@media (max-width: 1279px){ .brand__t{font-size:22px} }
+@media (max-width: 400px){ .brand__t{font-size:18px} }
+
+/* ===== page overrides: this page has no SuperHR amber in its popup or menus ===== */
+.hdr .mn__top[aria-current="page"],.hdr .mn__top[aria-current="page"]:hover,.hdr.is-past .mn__top[aria-current="page"]{font-weight:500}
+/* current page: one line only, the same one hover draws */
+.hdr .mn__top[aria-current="page"]::after{right:14px}
+@media (max-width: 1279px){ .hdr .mn__top[aria-current="page"]::after{right:10px} }
+.mrow--locked,.mrow--locked:hover,.mrow--locked:has(input:checked){border-color:var(--color-p-100);background:var(--color-p-50)}
+.mrow__pill{border-color:var(--color-p-100);color:var(--color-p-600)}
+
+/* ===== S1 hero: design.md E2 (v8 .hb, one centred column, no media, no buttons) ===== */
+.hb{position:relative;overflow:hidden;isolation:isolate;padding:72px 40px 80px;background:var(--color-page);color:var(--color-paper)}
+.hb :focus-visible{outline:3px solid var(--color-paper);outline-offset:3px}
+
+/* ===== S1 stat row: design.md E3 ===== */
+.tbar{background:var(--color-paper);border-bottom:1px solid var(--color-line-soft);padding:0 40px}
+.st{display:flex;flex-direction:column;align-items:center;text-align:center}
+.st__v{font-size:clamp(44px,5.6vw,76px);line-height:1;font-weight:800;letter-spacing:-0.04em;white-space:nowrap;color:var(--color-ok)}
+.st__l{max-width:210px;margin-top:14px;font-size:15px;line-height:1.5;font-weight:600;color:var(--color-ink-2)}
+
+/* ===== S3 plans band ===== */
+.wrap--wide{max-width:1240px}
+#plans{background:var(--color-mist);border-top:1px solid var(--color-line)}
+.ctl{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:14px 28px;margin-bottom:18px}
+.ctl .pt-list{margin:0}
+.bill{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px 12px;font-size:14px;font-weight:600;color:var(--color-ink-2)}
+.bill[hidden]{display:none}
+/* E6: Claim/find/EntryModeToggle.tsx, measured at /claim/find */
+.sw{position:relative;display:flex;width:240px;padding:3px;border:1px solid var(--color-line);border-radius:var(--r-lg);background:var(--color-mist-2)}
+.sw__ind{position:absolute;top:4px;bottom:4px;left:0;width:0;border-radius:5px;background:var(--color-paper);box-shadow:var(--sh-1);transition:left 300ms var(--ease),width 300ms var(--ease)}
+.sw__o{position:relative;z-index:1;flex:1;min-height:44px;padding:8px 14px;border-radius:var(--r-sm);text-align:center;font-size:13.5px;line-height:20.25px;font-weight:700;color:var(--color-ink-3);transition:color 200ms}
+.sw__o:hover{color:var(--color-ink-2)}
+.sw__o[aria-checked="true"]{color:var(--color-blue)}
+.pend{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:var(--r-pill);background:var(--color-warn-bg);color:var(--color-warn);font-size:11.5px;line-height:16px;font-weight:700;white-space:nowrap}
+.pend--ok{background:var(--color-ok-bg);color:var(--color-ok)}
+.info{display:flex;align-items:flex-start;justify-content:center;gap:8px;max-width:760px;margin:0 auto 26px;font-size:14px;line-height:1.55;color:var(--color-ink-3);text-align:center}
+.info[hidden]{display:none}
+.info .ic{font-size:16px;margin-top:2px;color:var(--color-p-500)}
+
+/* E9 plan cards */
+.cards{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:24px 16px;align-items:stretch}
+.pc{position:relative;display:flex;flex-direction:column;gap:14px;min-width:0;padding:24px 20px 20px;border:1px solid var(--color-line);border-radius:var(--r-lg);background:var(--color-paper);box-shadow:var(--sh-1);transition:border-color var(--t-2),box-shadow var(--t-2),transform var(--t-2) var(--ease)}
+.pc:hover{border-color:var(--color-p-200);box-shadow:var(--sh-acc);transform:translateY(-2px)}
+.pc__name{font-size:19px;line-height:1.3;font-weight:700;color:var(--color-rv-ink)}
+.pc__sub{margin-top:4px;font-size:13.5px;line-height:1.5;color:var(--color-ink-3);min-height:61px}
+.pc__price{min-height:128px;padding:14px 0;border-top:1px solid var(--color-rv-line);border-bottom:1px solid var(--color-rv-line)}
+.pc__chip{margin-bottom:8px}
+.pc__k{font-size:11px;line-height:16px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--color-ink-3)}
+.pc__amt{font-size:24px;line-height:1.25;font-weight:800;letter-spacing:-0.02em;color:var(--color-ink)}
+.pc__amt small{margin-left:3px;font-size:14px;font-weight:600;letter-spacing:0;color:var(--color-ink-3)}
+.pc__amt--pend{font-size:19px;line-height:1.3;font-weight:700;letter-spacing:0}
+.pc__unit{margin-top:6px;font-size:13px;line-height:1.4;color:var(--color-ink-3)}
+.pmods{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.mi{display:grid;place-items:center;width:32px;height:32px;border-radius:var(--r);background:var(--pc-bg);color:var(--pc)}
+.mi .ic{font-size:17px}
+.pc__plus{font-size:13.5px;font-weight:700;color:var(--color-rv-ink)}
+.ticks{display:grid;gap:8px;font-size:14px;line-height:1.45;color:var(--color-rv-ink-soft)}
+.ticks li{display:flex;gap:8px}
+.ticks .ic{margin-top:2px;font-size:16px;color:var(--color-ok);stroke-width:2.4}
+.pc__sp{flex:1}
+.sz-md{min-height:48px;padding:12px 20px;font-size:15px;line-height:18px}
+.sz-md .ic{font-size:16px}
+.btn--block{width:100%}
+.pc--free .pc__amt{color:var(--color-ok)}
+.pc--pop{border:2px solid var(--color-p-500);box-shadow:var(--sh-acc)}
+.pc__tag{position:absolute;top:-13px;left:50%;translate:-50% 0;padding:3px 12px;border-radius:var(--r-pill);background:var(--color-rv-amber);color:var(--color-p-700);font-size:12px;line-height:18px;font-weight:700;white-space:nowrap}
+.pc--ent{background:var(--color-p-500);border-color:var(--color-p-500);color:var(--color-paper)}
+.pc--ent:hover{border-color:var(--color-p-600)}
+.pc--ent .pc__name,.pc--ent .pc__amt,.pc--ent .pc__plus{color:var(--color-paper)}
+.pc--ent .pc__sub,.pc--ent .pc__unit,.pc--ent .ticks,.pc--ent .pc__k{color:var(--color-on-dark-text)}
+.pc--ent .pc__price{border-color:var(--color-on-dark-line)}
+.pc--ent .ticks .ic{color:var(--color-on-dark-text-soft)}
+.pc--ent .btn--claim-ghost{border-color:var(--color-paper)}
+.pc--ent :focus-visible{outline-color:var(--color-hero-accent);box-shadow:none;outline-style:solid;outline-width:3px;outline-offset:2px}
+
+
+/* ===== S5 module cards: E11 ===== */
+.mgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.mc{display:flex;flex-direction:column;gap:12px;min-width:0;padding:22px 20px 20px;border:1px solid var(--color-line);border-radius:var(--r-lg);background:var(--color-paper);box-shadow:inset 0 4px 0 var(--pc),var(--sh-1);transition:box-shadow var(--t-2),transform var(--t-2) var(--ease)}
+.mc:hover{box-shadow:inset 0 4px 0 var(--pc),var(--sh-acc);transform:translateY(-2px)}
+.mc__h{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
+.mc .mi{width:44px;height:44px}
+.mc .mi .ic{font-size:22px}
+.mc__name{font-size:17px;font-weight:700;color:var(--color-rv-ink)}
+.mc__t{font-size:15.5px;line-height:1.4;font-weight:700;color:var(--color-ink)}
+.mc__sp{flex:1}
+.mc--wide{grid-column:1 / -1;display:grid;grid-template-columns:minmax(0,0.8fr) minmax(0,1.2fr);gap:12px 32px;align-items:start}
+.mc--wide .mc__l,.mc--wide .mc__r{display:flex;flex-direction:column;gap:12px;min-width:0}
+
+/* ===== S6, S7 comparison: E12, E13 ===== */
+.cmp-open{display:flex;justify-content:center}
+.cmp-open .ic{transition:transform var(--t-2)}
+.cmp-open [aria-expanded="true"] .ic{transform:rotate(180deg)}
+.cmp-box{margin-top:24px}
+.cmp-box[hidden]{display:none}
+.psw{display:none;flex-wrap:wrap;justify-content:center;gap:6px;margin-bottom:14px}
+.psw button{min-height:44px;padding:0 14px;border:1px solid var(--color-line);border-radius:var(--r-pill);background:var(--color-paper);font-size:13.5px;font-weight:600;color:var(--color-ink-2)}
+.psw button[aria-pressed="true"]{background:var(--color-p-500);border-color:var(--color-p-500);color:var(--color-paper)}
+.tw{border:1px solid var(--color-line);border-radius:var(--r-lg);background:var(--color-paper);overflow:clip;box-shadow:var(--sh-1)}
+table.cmp{width:100%;border-collapse:separate;border-spacing:0;table-layout:fixed;font-size:14px;line-height:1.45}
+.cmp th,.cmp td{padding:14px 16px;border-bottom:1px solid var(--color-rv-line);text-align:center;overflow-wrap:anywhere}
+.cmp tr:last-child th,.cmp tr:last-child td{border-bottom:0}
+.cmp th:first-child,.cmp td:first-child{width:28%;text-align:left}
+.cmp thead th{position:sticky;top:var(--hdr-h);z-index:1;background:var(--color-rv-surface);font-size:14px;font-weight:700;color:var(--color-rv-ink)}
+.cmp tbody th{font-weight:500;color:var(--color-rv-ink)}
+.cmp tbody td{color:var(--color-rv-ink-soft)}
+.cmp__mn{display:inline-flex;align-items:center;gap:10px}
+.cmp__mn .mi{width:28px;height:28px}
+.cmp__mn .mi .ic{font-size:15px}
+.cmp tr.grp td{background:var(--color-mist);font-size:14px;font-weight:700;color:var(--color-rv-ink);text-align:left}
+.yes{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--color-ok-bg);color:var(--color-ok)}
+.yes .ic{font-size:15px;stroke-width:2.6}
+.no{font-weight:700;color:var(--color-ink-3)}
+
+/* ===== Responsive (design.md section 9) ===== */
+@media (max-width: 1180px){
+  .cards{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .pc--ent{grid-column:span 2}
+  .pc__sub{min-height:40px}
+  .pt-tab{font-size:16px;padding:8px 14px}
+}
+@media (max-width: 1024px){
+  .fq{grid-template-columns:minmax(0,1fr);gap:28px}
+  .mgrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width: 830px){
+  .hb{padding:32px 20px 48px}
+  .tbar{padding:0 20px}
+  .band{padding-left:20px;padding-right:20px}
+  .cl{grid-template-columns:minmax(0,1fr);gap:28px}
+  .cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .mc--wide{grid-template-columns:minmax(0,1fr)}
+  .psw{display:flex}
+  table.cmp{table-layout:auto}
+  .cmp [data-col]{display:none}
+  .cmp [data-col].on{display:table-cell}
+  .cmp th:first-child,.cmp td:first-child{width:58%}
+  .cmp thead th{top:0}
+}
+@media (max-width: 641px){
+  .mgrid{grid-template-columns:minmax(0,1fr)}
+  .fields__pair{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width: 561px){
+  .st__l{font-size:14px}
+  .sh__title{font-size:20px}
+  .sh__lede{font-size:15.5px;line-height:1.6}
+  .ctl .pt-list{width:100%;flex-wrap:nowrap;column-gap:4px}
+  .ctl .pt-tab{flex:1;justify-content:center;padding:8px 6px;font-size:14px}
+  .cards{grid-template-columns:minmax(0,1fr)}
+  .pc--ent{grid-column:auto}
+  .pc__sub{min-height:0}
+  .pc__price{min-height:0}
+  .qa__btn{padding:18px 0}
+  .qa__a-in{padding:0 0 18px}
+  .final__title{font-size:19px}
+  .final__sub{font-size:15.5px;line-height:1.6}
+  .cl-act .btn{width:100%;min-width:0}
+  .cpop{padding:16px}
+  .cpop__box{padding:52px 20px 24px}
+  .dm__t{font-size:21px}
+  .mods__grid{grid-template-columns:minmax(0,1fr)}
+}
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  .js .hb__media,.toast.is-in,.mn__panel{animation:none}
+  .hb-btn,.hb-btn .ic,.cpop__bg,.cpop__box,.drawer,.scrim,.js .qa__a,.pc,.mc,.sw__ind{transition:none}
+  html.js [data-reveal].is-armed:not(.is-in){opacity:1;translate:none}
+}
+.dm__sel{display:block;width:fit-content;margin:0 auto 14px;padding:3px 12px;border-radius:var(--r-pill);background:var(--color-p-50);font-size:12.5px;line-height:18px;font-weight:600;color:var(--color-p-600)}
+.dm__sel[hidden]{display:none}
+.drawer__x{width:44px;height:44px}
+@media (max-width: 400px){
+  .hdr__cta{gap:8px}
+}
+
+
+/* ===== v2 (user 2026-11-02): hero, confirmation and order from superleads-homepage-v9; spacing from school-admin-home-v26 ===== */
+/* hero: text left, picture right */
+.hb{--pc:var(--color-p-500);--pc-bg:var(--color-p-50)}
+.hb__grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:56px;align-items:center;max-width:1160px;margin:0 auto}
+.hb__in{position:relative;z-index:2;text-align:left}
+.hb__title{font-size:clamp(32px,3.6vw,52px);line-height:1.1;font-weight:800;letter-spacing:-0.03em;color:var(--color-paper);text-wrap:balance}
+.hb__title .ln{display:block}
+.hb__sub{max-width:540px;margin:24px 0 0;font-size:19px;line-height:1.55;font-weight:700;color:var(--color-paper)}
+.hb__cta{display:flex;flex-wrap:wrap;gap:14px;margin-top:34px}
+.hb-btn{min-width:220px;min-height:56px;padding:16px 28px;font-size:19px;line-height:20px;font-weight:700;border-radius:var(--r);transition:background-color var(--t-2) var(--ease),border-color var(--t-2) var(--ease),color var(--t-2) var(--ease),transform var(--t-2) var(--ease),box-shadow var(--t-2) var(--ease)}
+.hb-btn .ic{font-size:18px;stroke-width:2.2;transition:transform var(--t-2) var(--ease)}
+.hb-btn--main{background:var(--color-paper);border:1px solid var(--color-paper);color:var(--color-page);box-shadow:var(--sh-hero-card)}
+.hb-btn--main:hover{background:var(--color-mist-2);border-color:var(--color-mist-2);transform:translateY(-2px);box-shadow:var(--sh-device)}
+.hb-btn--main:hover .ic{transform:translateX(3px)}
+.hb-btn--alt{background:transparent;border:2px solid var(--color-paper);color:var(--color-paper)}
+.hb-btn--alt:hover{background:var(--color-on-dark-glow);transform:translateY(-2px)}
+.hb-btn--alt:hover .ic{transform:translateY(2px)}
+.hb-btn:active{transform:translateY(0)}
+.hb__note{display:inline-flex;margin-top:20px;padding:6px 14px;border-radius:var(--r-pill);background:var(--color-paper);font-size:13px;line-height:1.5;font-weight:500;color:var(--color-ink-2)}
+.dv{overflow:hidden;background:var(--color-paper);box-shadow:var(--sh-device)}
+.dv--con{position:relative;border-radius:14px;border:8px solid var(--color-paper)}
+.dv--phone{position:absolute;right:0;bottom:0;z-index:2;width:184px;padding:7px;border-radius:30px;background:var(--color-ink)}
+.hph{position:relative;display:flex;flex-direction:column;gap:8px;min-height:330px;padding:30px 12px 14px;border-radius:24px;background:var(--color-paper)}
+.hph__notch{position:absolute;top:9px;left:50%;width:56px;height:14px;translate:-50% 0;border-radius:var(--r-pill);background:var(--color-ink)}
+.hph__h{font-size:16px;line-height:1.3;font-weight:800;color:var(--color-ink)}
+.hph__item{display:flex;gap:8px;padding:8px;border-radius:var(--r);border:1px solid var(--color-line);font-size:12px;line-height:1.3;font-weight:700;color:var(--color-ink)}
+.hph__item > b{color:var(--color-p-600)}
+.hph__item small{display:block;font-size:10.5px;font-weight:500;color:var(--color-ink-3)}
+.hph__new{display:flex;flex-direction:column;gap:4px;padding:10px;border-radius:var(--r);background:var(--pc-bg);font-size:12px;line-height:1.35;font-weight:700;color:var(--color-ink)}
+.hph__new > small{font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-page)}
+.hph__btns{display:flex;gap:6px;margin-top:4px}
+.hph__btn{flex:1;padding:6px 0;border-radius:var(--r-sm);background:var(--color-p-500);font-size:11.5px;font-style:normal;font-weight:600;text-align:center;color:var(--color-paper)}
+.hph__btn--alt{background:var(--color-paper);border:1px solid var(--color-p-200);color:var(--color-p-600)}
+.lx-stage{position:absolute;inset:26px 40px 52px 0;border-radius:var(--r-panel);border:1px solid var(--color-on-dark-line);background:var(--color-on-dark-glow)}
+.lx-app{display:flex;flex-direction:column;gap:12px;padding:14px;border:0;border-radius:var(--r-lg)}
+.lx-top{display:flex;align-items:center;gap:10px}
+.lx-mark{display:grid;place-items:center;width:30px;height:30px;border-radius:var(--r);background:var(--color-page);color:var(--color-paper)}
+.lx-mark .ic{font-size:17px}
+.lx-title{font-size:15px;line-height:1.3;font-weight:800;letter-spacing:-0.01em;color:var(--color-ink)}
+.lx-seg{display:flex;gap:2px;margin-left:auto;padding:3px;border-radius:var(--r-pill);background:var(--color-mist-2)}
+.lx-seg i{padding:4px 11px;border-radius:var(--r-pill);font-size:11px;line-height:1.3;font-style:normal;font-weight:600;color:var(--color-ink-3)}
+.lx-seg i.is-on{background:var(--color-paper);box-shadow:var(--sh-2);color:var(--color-ink)}
+.lx-me{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--color-p-50);font-size:10.5px;font-weight:700;color:var(--color-p-600)}
+.lx-src{display:flex;gap:6px;overflow:hidden}
+.lx-chip{flex-shrink:0;padding:4px 10px;border-radius:var(--r-pill);border:1px solid var(--color-line);font-size:11px;line-height:1.3;font-weight:600;color:var(--color-ink-2)}
+.lx-chip.is-on{border-color:var(--color-page);background:var(--color-page);color:var(--color-paper)}
+.lx-board{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.lx-col{display:flex;flex-direction:column;gap:6px;min-height:196px;padding:8px;border-radius:var(--r);border-top:3px solid var(--color-p-500);background:var(--color-mist)}
+.lx-col--visit{border-top-color:var(--pc)}
+.lx-col--won{border-top-color:var(--color-ok)}
+.lx-col__h{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:2px;font-size:11px;line-height:1.3;font-weight:700;color:var(--color-ink-2)}
+.lx-col__h span{min-width:20px;padding:1px 6px;border-radius:var(--r-pill);border:1px solid var(--color-line);background:var(--color-paper);font-size:10px;text-align:center;color:var(--color-ink-2)}
+.lx-card{display:flex;align-items:center;gap:7px;padding:7px;border-radius:var(--r-sm);border:1px solid var(--color-line);background:var(--color-paper);box-shadow:var(--sh-1)}
+.lx-card--won{border-color:var(--color-ok-line);background:var(--color-ok-bg)}
+.lx-av{display:grid;place-items:center;flex-shrink:0;width:24px;height:24px;border-radius:50%;font-size:9.5px;font-weight:700}
+.lx-av--a{background:var(--color-p-50);color:var(--color-p-600)}
+.lx-av--b{background:var(--pc-bg);color:var(--color-page)}
+.lx-av--c{background:var(--color-paper);color:var(--color-ok)}
+.lx-av--d{background:var(--color-warn-bg);color:var(--color-warn)}
+.lx-who{flex:1;min-width:0;overflow:hidden;font-size:11.5px;line-height:1.25;font-weight:700;white-space:nowrap;text-overflow:ellipsis;color:var(--color-ink)}
+.lx-who small{display:block;overflow:hidden;font-size:10px;font-weight:500;text-overflow:ellipsis;color:var(--color-ink-3)}
+.lx-fun{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:6px 10px;padding-top:10px;border-top:1px solid var(--color-line-soft)}
+.lx-fun__l{font-size:10.5px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--color-ink-3)}
+.lx-fun__bar{display:flex;gap:3px;height:8px}
+.lx-fun__bar i{border-radius:var(--r-pill);background:var(--color-p-500)}
+.lx-fun__bar i:nth-child(1){flex:64}
+.lx-fun__bar i:nth-child(2){flex:21;background:var(--color-page)}
+.lx-fun__bar i:nth-child(3){flex:9;background:var(--color-ok)}
+.lx-fun__n{grid-column:1 / -1;font-size:11px;line-height:1.3;color:var(--color-ink-2)}
+.lx-fun__n b{font-weight:800;color:var(--color-ink)}
+.lx-pop{position:absolute;z-index:3;display:flex;align-items:center;gap:10px;padding:10px 14px 10px 10px;border-radius:var(--r-lg);background:var(--color-paper);box-shadow:var(--sh-hero-card)}
+.lx-pop--enq{left:-22px;top:0}
+.lx-pop--visit{left:-30px;bottom:22px}
+.lx-pop__ic{display:grid;place-items:center;flex-shrink:0;width:36px;height:36px;border-radius:var(--r);background:var(--pc-bg);color:var(--pc)}
+.lx-pop__ic--ok{background:var(--color-ok-bg);color:var(--color-ok)}
+.lx-pop__ic .ic{font-size:19px}
+.lx-pop__t{display:flex;flex-direction:column;gap:1px;font-size:13px;line-height:1.3;font-weight:700;color:var(--color-ink)}
+.lx-pop__t small{font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-page)}
+.lx-pop__t em{display:flex;align-items:center;gap:4px;font-size:11px;font-style:normal;font-weight:500;color:var(--color-ink-3)}
+.lx-pop__t em.lx-pop__ok{font-weight:600;color:var(--color-ok)}
+.lx-pop__ok .ic{font-size:12px;stroke-width:3}
+@keyframes hb-rise{from{opacity:0;translate:0 40px}to{opacity:1;translate:none}}
+.js .hb__media{animation:hb-rise 0.9s var(--ease) both;animation-delay:0.12s}
+.hb__media{position:relative;padding:58px 112px 92px 34px}
+.hb__media .dv--phone{bottom:-26px;scale:0.88;transform-origin:100% 100%}
+.lx-col--visit{border-top-color:var(--color-rv-amber)}
+.lx-col__more{font-size:10.5px;line-height:1.3;font-weight:600;color:var(--color-ink-3)}
+.lx-fun__bar i:nth-child(1){flex:3}
+.lx-fun__bar i:nth-child(2){flex:2;background:var(--color-rv-amber)}
+.lx-fun__bar i:nth-child(3){flex:2;background:var(--color-ok)}
+.hb{display:flex;align-items:center;min-height:664px;padding:40px}
+.hb__grid{width:100%}
+@media (max-width: 1180px){ .hb__grid{gap:36px} }
+@media (max-width: 1100px){ .hb__media{zoom:0.8} }
+@media (max-width: 1024px){
+  .hb{min-height:668px}
+  .hb__grid{grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:36px}
+}
+@media (max-width: 991px){
+  .hb{min-height:748px}
+  .hb__grid{grid-template-columns:minmax(0,1fr)}
+  .hb__media{display:none}
+}
+@media (max-width: 969px){ .hb{min-height:682px} }
+@media (max-width: 830px){ .hb{padding:32px 20px} }
+@media (max-width: 640px){ .hb{min-height:578px} }
+@media (max-width: 561px){ .hb__cta{flex-direction:column;gap:12px;margin-top:28px} .hb-btn{width:100%;min-width:0} }
+@media (max-width: 480px){ .hb{min-height:594px} }
+@media (max-width: 360px){ .hb{min-height:634px} }
+@media (max-width: 340px){ .hb{min-height:730px} }
+
+/* stat row: four items, school-admin-home-v26 .tbar .st-row */
+.tbar{border-top:1px solid var(--color-line-soft)}
+.st-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px;align-items:start;max-width:1280px;margin:0 auto;padding:clamp(40px,5vw,60px) 0}
+.st:nth-child(1) .st__v{color:var(--color-p-500)}
+.st:nth-child(2) .st__v{color:var(--color-rv-danger)}
+.st:nth-child(3) .st__v{color:var(--color-warn)}
+.st:nth-child(4) .st__v{color:var(--color-ok)}
+@media (max-width: 830px){ .st-row{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:36px} .st__v{font-size:44px} }
+@media (max-width: 561px){ .st__v{font-size:clamp(28px,8.6vw,44px)} }
+
+/* section rhythm: school-admin-home-v26 #love and #get */
+.wrap--wide{max-width:1160px}
+@media (max-width: 1024px){ .wrap--wide{max-width:1080px} }
+.sh__lede{margin-top:12px;font-size:16px;color:var(--color-rv-ink-soft)}
+@media (max-width: 561px){ .sh__lede{font-size:15.5px} }
+.ctl{margin-bottom:24px}
+
+/* popup confirmation: superleads-homepage-v9 request-received R1 */
+.done{display:flex;flex-direction:column;align-items:stretch;text-align:left}
+.done[hidden]{display:none}
+.done__t{margin-top:12px;font-size:21px;line-height:1.25;font-weight:800;letter-spacing:-0.01em;color:var(--color-ink)}
+.done__t:focus{outline:none}
+.done__chip{display:inline-flex;align-self:flex-start;align-items:center;gap:6px;padding:4px 10px 4px 8px;border-radius:var(--r-pill);background:var(--color-ok-bg);font-size:13px;line-height:1.4;font-weight:700;color:var(--color-ok)}
+.done__chip .ic{font-size:14px;stroke-width:2.6}
+.done__chip--dup{background:var(--color-p-50);color:var(--color-p-600)}
+.done__m{margin-top:12px;font-size:13.5px;line-height:1.5;color:var(--color-ink-3)}
+.done__m b{font-weight:600;color:var(--color-ink-2)}
+.done__btn{width:100%;min-height:48px;margin-top:20px;font-size:15px;font-weight:700}
+.call{margin-top:16px;padding:12px 12px 12px 14px;border:1px solid var(--color-p-100);border-radius:var(--r-lg);background:var(--color-p-50)}
+.call__show{display:flex;align-items:center;gap:12px}
+.call__show[hidden]{display:none}
+.call__ic{display:grid;place-items:center;flex:none;width:36px;height:36px;border-radius:50%;background:var(--color-paper);color:var(--color-p-500);font-size:17px}
+.call__tx{display:flex;flex:1;flex-direction:column;min-width:0;line-height:1.35}
+.call__tx span{font-size:13.5px;color:var(--color-ink-2)}
+.call__no{font-size:16px;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--color-ink)}
+.call__chg{flex:none;min-height:44px;padding:0 14px;border-radius:var(--r-sm);border:1px solid var(--color-p-100);background:var(--color-paper);font-size:14px;font-weight:700;color:var(--color-p-500);transition:border-color 150ms}
+.call__chg:hover{border-color:var(--color-p-500)}
+.call__chg:focus-visible{outline:none;box-shadow:var(--focus-ring)}
+.dm__head.is-edit .dm__bars,.dm__head.is-edit .dm__count{display:none}
+.dm__form .fl{min-width:0}
+.dm__editnote{margin-top:16px;font-size:13px;line-height:1.45;color:var(--color-ink-2)}
+.dm__editnote[hidden]{display:none}
+.call__note{display:flex;align-items:flex-start;gap:6px;margin-top:10px;font-size:13.5px;line-height:1.45;font-weight:600;color:var(--color-ok)}
+.call__note:empty{display:none}
+.call__note .ic{flex:none;margin-top:2px;font-size:15px;stroke-width:2.6}
+.cpop__box:has(> * .done:not([hidden])){width:min(440px,100%);padding:28px 24px 24px}
+.call__note b{font-weight:inherit;white-space:nowrap}
+@media (max-width: 360px){ .cpop__box:has(> * .done:not([hidden])){padding:28px 18px 20px} .call__show{flex-wrap:wrap} .call__tx{flex-basis:100%} .call__chg{width:100%} }
+/* closing band highlighted, same as superleads-homepage-v12 and superhr-homepage-v13 #claim-ready */
+#talk{padding-block:calc(var(--sec-gap) / 2);border-top:0;background:var(--color-nudge-bg)}
+.done__m + .done__m{margin-top:4px}
+@media (prefers-reduced-motion: reduce){ .js .hb__media{animation:none} .hb-btn,.hb-btn .ic{transition:none} }
+
+/* hero, same as superleads-homepage-v12 and superhr-homepage-v13 (user 2026-11-04) */
+/* user 2026-11-03: phone hero (<=641px) as school-admin-home v26: text centred, sub line and note in its plain style. No picture on phones, as mybrightwheel.com. */
+@media (max-width: 641px){
+  .hb{min-height:0;padding-top:64px;padding-bottom:48px;overflow:hidden}
+  .hb .hb__grid{gap:28px}
+  .hb .hb__in{text-align:center}
+  .hb .hb__title{line-height:1.12}
+  .hb .hb__sub{max-width:560px;margin:20px auto 0;font-size:16px;line-height:1.6;font-weight:400;color:var(--color-on-dark-text)}
+  .hb .hb__cta{justify-content:center}
+  .hb .hb-btn{font-size:17px;font-weight:600}
+  .hb .hb__note{display:block;margin-top:16px;padding:0;border-radius:0;background:transparent;font-size:14px;line-height:1.5;font-weight:400;color:var(--color-on-dark-text-soft)}
+  .hb .hb__media{display:none}
+}
+@media (max-width: 561px){ .hb{padding-top:44px} }
+/* user 2026-11-03: tablet hero (642-1099px) as mybrightwheel.com/features/billing/, measured: text left, title 32/40, sub 18/28/600, hero 790 tall with the 76px header.
+   960-1099 text column 451, 768-959 text column 325, 642-767 text only. */
+@media (min-width: 642px) and (max-width: 1099px){
+  .hb{min-height:714px;padding:40px 20px;overflow:hidden}
+  .hb .hb__in{text-align:left}
+  .hb .hb__title{font-size:32px;line-height:40px}
+  .hb .hb__sub{max-width:none;margin:12px 0 0;font-size:18px;line-height:28px;font-weight:600}
+  .hb .hb__cta{flex-direction:column;align-items:stretch;gap:12px;margin-top:28px}
+  .hb .hb-btn{width:100%;min-width:0}
+}
+@media (min-width: 960px) and (max-width: 1099px){
+  .hb .hb__grid{grid-template-columns:451px minmax(0,1fr);gap:49px;max-width:920px;margin-inline:auto}
+  .hb .hb__cta,.hb .hb__note{max-width:407px}
+  .hb .hb__media{display:block;zoom:0.7;width:640px;max-width:none;justify-self:start}
+}
+@media (min-width: 768px) and (max-width: 959px){
+  .hb .hb__grid{grid-template-columns:325px minmax(0,1fr);gap:63px;max-width:660px;margin-inline:auto}
+  .hb .hb__media{display:block;zoom:0.66;width:476px;max-width:none;padding:58px 0 92px 12px;justify-self:start}
+  .hb .hb__media .dv--phone{display:none}
+}
+@media (min-width: 960px) and (max-width: 1023px){
+  .hb .hb__media{zoom:0.64}
+}
+@media (min-width: 642px) and (max-width: 767px){
+  .hb .hb__grid{grid-template-columns:330px;max-width:660px;margin-inline:auto;justify-content:start}
+  .hb .hb__media{display:none}
+}
+/* hero as tall as its content on tablet and laptop, 56px above and below, no fixed height */
+@media (min-width: 642px){ .hb{min-height:0;padding-block:56px} }
+</style>
+
+</head>
+<body>
+<body>
+<svg width="0" height="0" class="sr" aria-hidden="true"><defs>
+<symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+<symbol id="i-briefcase" viewBox="0 0 24 24"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/></symbol>
+<symbol id="i-baby" viewBox="0 0 24 24"><path d="M9 12h.01"/><path d="M15 12h.01"/><path d="M10 16c.5.3 1.2.5 2 .5s1.5-.2 2-.5"/><path d="M19 6.3a9 9 0 0 1 1.8 3.9 2 2 0 0 1 0 3.6 9 9 0 0 1-17.6 0 2 2 0 0 1 0-3.6A9 9 0 0 1 12 3c2 0 3.5 1.1 3.5 2.5s-.9 2.5-2 2.5c-.8 0-1.5-.4-1.5-1"/></symbol>
+<symbol id="i-bed-double" viewBox="0 0 24 24"><path d="M2 20v-8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v8"/><path d="M4 10V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v4"/><path d="M12 4v6"/><path d="M2 18h20"/></symbol>
+<symbol id="i-newspaper" viewBox="0 0 24 24"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></symbol>
+<symbol id="i-video" viewBox="0 0 24 24"><path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"/><rect x="2" y="6" width="14" height="12" rx="2"/></symbol>
+<symbol id="i-file-down" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M12 18v-6"/><path d="m9 15 3 3 3-3"/></symbol>
+<symbol id="i-bell" viewBox="0 0 24 24"><path d="M10.268 21a2 2 0 0 0 3.464 0"/><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/></symbol>
+<symbol id="i-heart" viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></symbol>
+<symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 12h16"/><path d="M4 18h16"/><path d="M4 6h16"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
+<symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+<symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></symbol>
+<symbol id="i-graduation-cap" viewBox="0 0 24 24"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/></symbol>
+<symbol id="i-pen-line" viewBox="0 0 24 24"><path d="M13 21h8"/><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/></symbol>
+<symbol id="i-chart-line" viewBox="0 0 24 24"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="m19 9-5 5-4-4-3 3"/></symbol>
+<symbol id="i-circle-question-mark" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+<symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></symbol>
+<symbol id="i-arrow-down" viewBox="0 0 24 24"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></symbol>
+<symbol id="i-chevrons-left-right" viewBox="0 0 24 24"><path d="m9 7-5 5 5 5"/><path d="m15 7 5 5-5 5"/></symbol>
+<symbol id="i-move-horizontal" viewBox="0 0 24 24"><path d="m18 8 4 4-4 4"/><path d="M2 12h20"/><path d="m6 8-4 4 4 4"/></symbol>
+<symbol id="i-image-off" viewBox="0 0 24 24"><line x1="2" x2="22" y1="2" y2="22"/><path d="M10.41 10.41a2 2 0 1 1-2.83-2.83"/><line x1="13.5" x2="6" y1="13.5" y2="21"/><line x1="18" x2="21" y1="12" y2="15"/><path d="M3.59 3.59A1.99 1.99 0 0 0 3 5v14a2 2 0 0 0 2 2h14c.55 0 1.052-.22 1.41-.59"/><path d="M21 15V5a2 2 0 0 0-2-2H9"/></symbol>
+<symbol id="i-phone" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></symbol>
+<symbol id="i-circle-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></symbol>
+<symbol id="i-message-square" viewBox="0 0 24 24"><path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z"/></symbol>
+<symbol id="i-shield-check" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></symbol>
+<symbol id="i-file-text" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></symbol>
+<symbol id="i-dollar-sign" viewBox="0 0 24 24"><line x1="12" x2="12" y1="2" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></symbol>
+<symbol id="i-square-check-big" viewBox="0 0 24 24"><path d="M21 10.656V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12.344"/><path d="m9 11 3 3L22 4"/></symbol>
+<symbol id="i-school" viewBox="0 0 24 24"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></symbol>
+<symbol id="i-megaphone" viewBox="0 0 24 24"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></symbol>
+<symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><path d="M16 3.128a4 4 0 0 1 0 7.744"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/></symbol>
+<symbol id="i-shield" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="10"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></symbol>
+<symbol id="i-map-pin" viewBox="0 0 24 24"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></symbol>
+<symbol id="i-mail" viewBox="0 0 24 24"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"/><rect x="2" y="4" width="20" height="16" rx="2"/></symbol>
+<symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
+<symbol id="i-message-circle" viewBox="0 0 24 24"><path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719"/></symbol>
+<symbol id="i-share-2" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></symbol>
+<symbol id="i-book-open" viewBox="0 0 24 24"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></symbol>
+<symbol id="i-layout-grid" viewBox="0 0 24 24"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></symbol><symbol id="i-rocket" viewBox="0 0 24 24"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></symbol><symbol id="i-sparkles" viewBox="0 0 24 24"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></symbol><symbol id="i-lightbulb" viewBox="0 0 24 24"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></symbol><symbol id="rf-grid" viewBox="0 0 24 24"><rect height="7" rx="1.5" width="7" x="3" y="3"/><rect height="7" rx="1.5" width="7" x="14" y="3"/><rect height="7" rx="1.5" width="7" x="3" y="14"/><rect height="7" rx="1.5" width="7" x="14" y="14"/></symbol><symbol id="rf-bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 22h4M9 15a6 6 0 1 1 6 0v3H9v-3ZM12 1v1M3 5l1 1M20 6l1-1M1 12h2M21 12h2"/></symbol><symbol id="rf-leads" viewBox="0 0 24 24"><path d="m3 17 6-6 4 4 8-8M15 7h6v6M3 4v17h18"/></symbol><symbol id="rf-heart" viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></symbol><symbol id="rf-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l4 2"/></symbol><symbol id="rf-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a17 17 0 0 1 0 18M12 3a17 17 0 0 0 0 18"/></symbol><symbol id="rf-arrow" viewBox="0 0 24 24"><path d="M4 12h16m-6-6 6 6-6 6"/></symbol><symbol id="rf-book" viewBox="0 0 24 24"><path d="M12 5c-4-2-7-2-10-1v15c3-1 6-1 10 1 4-2 7-2 10-1V4c-3-1-6-1-10 1ZM12 5v15"/></symbol><symbol id="rf-calendar" viewBox="0 0 24 24"><rect height="16" rx="2" width="18" x="3" y="5"/><path d="M16 3v4M8 3v4M3 11h18M8 15h2M14 15h2"/></symbol><symbol id="rf-chat" viewBox="0 0 24 24"><path d="M21 11.5a8.5 8.5 0 0 1-12.3 7.6L3 21l1.9-5.7A8.5 8.5 0 1 1 21 11.5Z"/><path d="M8 10h8M8 14h5"/></symbol><symbol id="rf-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol><symbol id="rf-chevron" viewBox="0 0 24 24"><path d="m8 5 7 7-7 7"/></symbol><symbol id="rf-file" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6ZM14 2v6h6M8 13h8M8 17h5"/></symbol><symbol id="rf-link" viewBox="0 0 24 24"><path d="m10 13 4-4M8 16l-2 2a4 4 0 0 1-6-6l5-5a4 4 0 0 1 6 0M16 8l2-2a4 4 0 0 1 6 6l-5 5a4 4 0 0 1-6 0" transform="translate(1 0) scale(.9)"/></symbol><symbol id="rf-mail" viewBox="0 0 24 24"><rect height="16" rx="2" width="18" x="3" y="4"/><path d="m3 6 9 7 9-7"/></symbol><symbol id="rf-phone" viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .7 2.8a2 2 0 0 1-.4 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2Z"/></symbol><symbol id="rf-school" viewBox="0 0 24 24"><path d="M3 21V7l9-4 9 4v14M1 21h22M9 21v-5h6v5M7 9h.01M12 9h.01M17 9h.01M7 13h.01M17 13h.01"/></symbol><symbol id="rf-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></symbol><symbol id="rf-shield" viewBox="0 0 24 24"><path d="m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6l8-3Z"/><path d="m8 12 3 3 5-6"/></symbol><symbol id="rf-social" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 10.5 6.8-4M8.6 13.5l6.8 4"/></symbol><symbol id="rf-sparkle" viewBox="0 0 24 24"><path d="m12 3 2.2 6.8L21 12l-6.8 2.2L12 21l-2.2-6.8L3 12l6.8-2.2L12 3ZM20 2v4M18 4h4"/></symbol><symbol id="rf-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/><circle cx="9" cy="7" r="4"/></symbol><symbol id="i-lock" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol><symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></symbol>
+<symbol id="i-wallet" viewBox="0 0 24 24"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></symbol>
+<symbol id="i-bot" viewBox="0 0 24 24"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></symbol>
+<symbol id="i-key-round" viewBox="0 0 24 24"><path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"/><circle cx="16.5" cy="7.5" r=".5" fill="currentColor"/></symbol>
+<symbol id="i-user-x" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="17" x2="22" y1="8" y2="13"/><line x1="22" x2="17" y1="8" y2="13"/></symbol>
+<symbol id="i-rotate-ccw" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></symbol>
+<symbol id="i-trending-up" viewBox="0 0 24 24"><path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/></symbol>
+<symbol id="i-badge-check" viewBox="0 0 24 24"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/></symbol>
+
+<symbol id="rf-school" viewBox="0 0 24 24"><path d="M3 21V7l9-4 9 4v14M1 21h22M9 21v-5h6v5M7 9h.01M12 9h.01M17 9h.01M7 13h.01M17 13h.01"/></symbol>
+<symbol id="rf-leads" viewBox="0 0 24 24"><path d="m3 17 6-6 4 4 8-8M15 7h6v6M3 4v17h18"/></symbol>
+<symbol id="rf-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/><circle cx="9" cy="7" r="4"/></symbol>
+<symbol id="rf-social" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 10.5 6.8-4M8.6 13.5l6.8 4"/></symbol>
+<symbol id="rf-chat" viewBox="0 0 24 24"><path d="M21 11.5a8.5 8.5 0 0 1-12.3 7.6L3 21l1.9-5.7A8.5 8.5 0 1 1 21 11.5Z"/><path d="M8 10h8M8 14h5"/></symbol>
+<symbol id="rf-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a17 17 0 0 1 0 18M12 3a17 17 0 0 0 0 18"/></symbol>
+<symbol id="rf-sparkle" viewBox="0 0 24 24"><path d="m12 3 2.2 6.8L21 12l-6.8 2.2L12 21l-2.2-6.8L3 12l6.8-2.2L12 3ZM20 2v4M18 4h4"/></symbol>
+</defs></svg>
+<a class="skip" href="#main" data-new="SkipLink" data-built-from="tokens" data-step="S1" data-state="default">Skip to content</a>
+<header class="hdr" id="hdr" data-new="SharedHeader" data-built-from="school-admin-home-v25.html L1820-1835 (approved For Schools shell)" data-step="S1" data-state="default">
+  <div class="hdr__row">
+    <a href="../home/home.html" class="brand" aria-label="SuperSchools OS, SuperSchools home"><span class="brand__t">SuperSchools OS</span></a>
+    <nav class="hdr__nav" aria-label="Primary" data-step="S1" data-new="MegaMenu" data-built-from="school-admin-home-v25.html L1823-1828">
+      <div class="mn" data-mn><button type="button" class="mn__top" id="mnb-serve" aria-expanded="false" aria-controls="mn-serve">Who we serve<svg class="ic mn__chev" aria-hidden="true"><use href="#i-chevron-down"></use></svg></button><div class="mn__panel mn__panel--serve" id="mn-serve" role="region" aria-labelledby="mnb-serve" hidden><div class="mn__grid mn__grid--2"><a class="mn__item" href="/preschools" data-exit="S17" data-route="user side"><span class="mn__ic mn__ic--red"><svg class="ic" aria-hidden="true"><use href="#i-baby"></use></svg></span><span><b>Preschools</b><small>You run a preschool, play school or nursery</small></span></a><a class="mn__item" href="/dayschool" data-exit="S17" data-route="user side"><span class="mn__ic mn__ic--blue"><svg class="ic" aria-hidden="true"><use href="#i-school"></use></svg></span><span><b>Day schools</b><small>You run a day school for local families</small></span></a><a class="mn__item" href="/boarding" data-exit="S17" data-route="user side"><span class="mn__ic mn__ic--ok"><svg class="ic" aria-hidden="true"><use href="#i-bed-double"></use></svg></span><span><b>Boarding schools</b><small>You run a residential or boarding school</small></span></a><a class="mn__item" href="/jobs" data-exit="S17" data-route="user side"><span class="mn__ic mn__ic--amber"><svg class="ic" aria-hidden="true"><use href="#i-users"></use></svg></span><span><b>Teachers</b><small>You are hiring teachers and school staff</small></span></a></div><div class="mn__aside"><a class="mn__card" href="../claim/claim.html" data-exit="S14"><span class="mn__ic mn__ic--blue"><svg class="ic" aria-hidden="true"><use href="#i-key-round"></use></svg></span><b>Already listed? Claim your school</b><small>Free, in 2 minutes and 2 steps</small></a></div></div></div>
+      <div class="mn" data-mn><button type="button" class="mn__top" id="mnb-prod" aria-expanded="false" aria-controls="mn-prod">Our products<svg class="ic mn__chev" aria-hidden="true"><use href="#i-chevron-down"></use></svg></button><div class="mn__panel mn__panel--prod" id="mn-prod" role="region" aria-labelledby="mnb-prod" hidden><div class="mn__cols"><div class="mn__col"><a class="mn__head" href="../claim/claim.html"><span class="mn__ic mn__ic--blue"><span class="material-symbols-outlined" aria-hidden="true">apartment</span></span>SuperProfile</a><ul><li><span class="mn__static">Find and claim your school</span></li><li><span class="mn__static">How claiming works</span></li><li><span class="mn__static">Edit your school page</span></li><li><span class="mn__static">My School dashboard</span></li></ul></div><div class="mn__col"><a class="mn__head" href="../leads/leads.html"><span class="mn__ic mn__ic--ok"><span class="material-symbols-outlined" aria-hidden="true">school</span></span>SuperLeads</a><ul><li><span class="mn__static">Parent enquiries</span></li><li><span class="mn__static">School visits and reminders</span></li><li><span class="mn__static">Admissions dashboard</span></li></ul></div><div class="mn__col"><a class="mn__head" href="../hr/hr.html"><span class="mn__ic mn__ic--amber"><span class="material-symbols-outlined" aria-hidden="true">work</span></span>SuperHR</a><ul><li><span class="mn__static">Post teacher jobs</span></li><li><span class="mn__static">Track every applicant</span></li><li><span class="mn__static">Interviews and follow-ups</span></li></ul></div><div class="mn__col"><span class="mn__head mn__head--off" aria-disabled="true"><span class="mn__ic mn__ic--red"><span class="material-symbols-outlined" aria-hidden="true">share</span></span>SuperSocial</span><ul><li><span class="mn__static">Publish to every channel</span></li><li><span class="mn__static">Schedule posts</span></li><li><span class="mn__static">Followers and reach</span></li></ul></div><div class="mn__col"><span class="mn__head mn__head--off" aria-disabled="true"><span class="mn__ic mn__ic--blue"><span class="material-symbols-outlined" aria-hidden="true">chat</span></span>SuperConnect</span><ul><li><span class="mn__static">Auto-replies to enquiries</span></li><li><span class="mn__static">Reminder templates</span></li><li><span class="mn__static">Broadcasts to parents</span></li></ul></div></div><div class="mn__foot"><p><b>Also on SuperSchoolsOS:</b> <span class="dg__off" aria-disabled="true">SuperSite</span> · <span class="dg__off" aria-disabled="true">SuperAI</span> · SuperCommunity and SuperLearn</p><a class="mn__all" href="../home/home.html#get">See all products<svg class="ic" aria-hidden="true"><use href="#i-arrow-right"></use></svg></a></div></div></div>
+      <a class="mn__top" href="#top" aria-current="page">Pricing</a>
+      <div class="mn" data-mn><button type="button" class="mn__top" id="mnb-res" aria-expanded="false" aria-controls="mn-res">Resources<svg class="ic mn__chev" aria-hidden="true"><use href="#i-chevron-down"></use></svg></button><div class="mn__panel mn__panel--res" id="mn-res" role="region" aria-labelledby="mnb-res" hidden><div class="mn__grid mn__grid--4"><a class="mn__item" href="/stories" data-exit="S17" data-route="not in the app yet"><span class="mn__ic mn__ic--ok"><svg class="ic" aria-hidden="true"><use href="#i-heart"></use></svg></span><span><b>Customer stories</b><small>How schools run admissions and hiring with SuperSchools</small></span></a><a class="mn__item" href="/guides" data-exit="S17" data-route="not in the app yet"><span class="mn__ic mn__ic--blue"><svg class="ic" aria-hidden="true"><use href="#i-book-open"></use></svg></span><span><b>Guides for schools</b><small>Step-by-step help to claim and manage your school page</small></span></a><a class="mn__item" href="/events" data-exit="S17" data-route="not in the app yet"><span class="mn__ic mn__ic--red"><svg class="ic" aria-hidden="true"><use href="#i-video"></use></svg></span><span><b>Webinars</b><small>Live and recorded sessions on getting more from the console</small></span></a><a class="mn__item" href="/templates" data-exit="S17" data-route="not in the app yet"><span class="mn__ic mn__ic--amber"><svg class="ic" aria-hidden="true"><use href="#i-file-down"></use></svg></span><span><b>Templates &amp; tools</b><small>Free admission forms, fee sheets and checklists</small></span></a><a class="mn__item" href="/blog" data-exit="S17" data-route="not in the app yet"><span class="mn__ic mn__ic--amber"><svg class="ic" aria-hidden="true"><use href="#i-newspaper"></use></svg></span><span><b>Blog</b><small>Ideas on admissions, parents and running a school</small></span></a><a class="mn__item" href="/help" data-exit="S17" data-route="not in the app yet"><span class="mn__ic mn__ic--red"><svg class="ic" aria-hidden="true"><use href="#i-circle-question-mark"></use></svg></span><span><b>Help center</b><small>Answers and support from the SuperSchools team</small></span></a><a class="mn__item" href="/whats-new" data-exit="S17" data-route="not in the app yet"><span class="mn__ic mn__ic--blue"><svg class="ic" aria-hidden="true"><use href="#i-bell"></use></svg></span><span><b>What’s new</b><small>The latest updates across SuperSchools and SuperSchoolsOS</small></span></a><a class="mn__item" href="../home/home.html#love"><span class="mn__ic mn__ic--ok"><svg class="ic" aria-hidden="true"><use href="#i-shield-check"></use></svg></span><span><b>Why SuperSchools?</b><small>Free to claim, verified by your official contact, no paid ranking</small></span></a></div></div></div>
+    </nav>
+    <div class="hdr__cta">
+      <a href="../login/login.html" class="btn btn--claim-ghost sz-claim-try" data-component="Button" data-variant="claim-ghost" data-size="claim-try" data-source="components/ui/Button.tsx" data-exit="S15"><span>School sign in</span></a>
+      <a href="../claim/claim.html" class="btn btn--claim btn--hl sz-claim-try" data-component="Button" data-variant="claim" data-size="claim-try" data-source="components/ui/Button.tsx" data-exit="S14"><span><span class="lbl-full">Claim your school</span><span class="lbl-short">Claim</span></span></a>
+      <button type="button" class="burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="drawer" data-new="MenuButton" data-built-from="tokens" data-icon="menu"><svg class="ic" aria-hidden="true"><use href="#i-menu"></use></svg></button>
+    </div>
+  </div>
+</header>
+<main id="main" tabindex="-1">
+
+<section class="hb" id="top" aria-labelledby="hero-t" data-step="S1" data-state="default" data-reused-from="superleads-homepage-v9.html#hb">
+  <div class="hb__grid">
+    <div class="hb__in" data-reveal>
+      <h1 class="hb__title" id="hero-t"><span class="ln">Simple plans for</span><span class="ln">every school.</span></h1>
+      <p class="hb__sub">Start free, then add the modules your school needs. The same plans for every school type, with the final amount based on school size.</p>
+      <div class="hb__cta" data-reused-from="superleads-homepage-v9.html#hb__cta">
+        <button type="button" class="btn hb-btn hb-btn--main" id="hero-cta" data-open-demo data-opens="S10" data-component="Button" data-variant="claim" data-source="components/ui/Button.tsx"><span>Talk to our team<svg class="ic" aria-hidden="true" data-icon="arrow-right"><use href="#i-arrow-right"></use></svg></span></button>
+        <a href="#plans" class="btn hb-btn hb-btn--alt" data-scroll="plans" data-component="Button" data-variant="claim-ghost" data-source="components/ui/Button.tsx"><span>See the plans<svg class="ic" aria-hidden="true" data-icon="arrow-down"><use href="#i-arrow-down"></use></svg></span></a>
+      </div>
+      <p class="hb__note">Free to claim · 15-day free trial after claiming · Prices in INR</p>
+    </div>
+    <div class="hb__media" aria-hidden="true" data-new="HeroPlans" data-built-from="superleads-homepage-v9.html .hb__media (lx-*, hph-*), plan data in FIXTURES.plans">
+      <span class="lx-stage"></span>
+      <div class="dv dv--con lx-app">
+        <div class="lx-top"><span class="lx-mark"><svg class="ic" aria-hidden="true"><use href="#rf-school"></use></svg></span><b class="lx-title">SuperSchools OS</b><span class="lx-seg"><i class="is-on">Monthly</i><i>Yearly</i></span></div>
+        <div class="lx-src"><span class="lx-chip is-on">Plans</span><span class="lx-chip">Single modules</span></div>
+        <div class="lx-board">
+          <div class="lx-col lx-col--new"><p class="lx-col__h">Starter<span>3</span></p><span class="lx-card"><span class="lx-who">SuperProfile</span></span><span class="lx-card"><span class="lx-who">SuperLeads</span></span><span class="lx-card"><span class="lx-who">SuperConnect</span></span></div>
+          <div class="lx-col lx-col--visit"><p class="lx-col__h">Growth<span>5</span></p><p class="lx-col__more">Everything in Starter, plus</p><span class="lx-card"><span class="lx-who">SuperHR</span></span><span class="lx-card"><span class="lx-who">SuperSocial</span></span></div>
+          <div class="lx-col lx-col--won"><p class="lx-col__h">Premium<span>7</span></p><p class="lx-col__more">Everything in Growth, plus</p><span class="lx-card"><span class="lx-who">SuperSite</span></span><span class="lx-card"><span class="lx-who">SuperAI</span></span></div>
+        </div>
+        <div class="lx-fun"><span class="lx-fun__l">All plans</span><span class="lx-fun__bar"><i></i><i></i><i></i></span><span class="lx-fun__n"><b>5</b> plans · <b>7</b> modules · Prices in INR</span></div>
+      </div>
+      <div class="lx-pop lx-pop--enq"><span class="lx-pop__ic lx-pop__ic--ok"><svg class="ic" aria-hidden="true"><use href="#i-circle-check"></use></svg></span><span class="lx-pop__t"><small>Free plan</small>Claimed badge<em>Free to claim your school</em></span></div>
+      <div class="lx-pop lx-pop--visit"><span class="lx-pop__ic"><svg class="ic" aria-hidden="true"><use href="#i-info"></use></svg></span><span class="lx-pop__t"><small>Free trial</small>15 days on paid plans<em class="lx-pop__ok"><svg class="ic" aria-hidden="true"><use href="#i-check"></use></svg>After claiming</em></span></div>
+      <div class="dv dv--phone">
+        <div class="hph">
+          <span class="hph__notch"></span>
+          <span class="hph__h">Your plan</span>
+          <span class="hph__item"><b>Growth</b><span>5 modules<small>10 admin users</small></span></span>
+          <span class="hph__item"><b>5,000</b><span>messages<small>A month</small></span></span>
+          <span class="hph__new"><small>Premium</small>Add SuperSite and SuperAI<span class="hph__btns"><i class="hph__btn">Upgrade</i></span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="tbar" aria-label="At a glance" data-step="S1" data-state="default" data-reused-from="school-admin-home-v26 (1).html#tbar (StatRow)">
+  <ul class="st-row">
+    <li class="st"><b class="st__v">Free</b><span class="st__l">To claim your school page</span></li>
+    <li class="st"><b class="st__v">50,000+</b><span class="st__l">Schools on SuperSchools</span></li>
+    <li class="st"><b class="st__v">Same</b><span class="st__l">Plans for every school type</span></li>
+    <li class="st"><b class="st__v">15 days</b><span class="st__l">Free trial after claiming</span></li>
+  </ul>
+</section>
+
+<section class="band" id="plans" aria-labelledby="h-plans" data-step="S2" data-state="default">
+  <div class="wrap wrap--wide">
+    <div class="sh" data-reveal data-component="SectionHead" data-source="components/common/SectionHead.tsx">
+      <p class="eyebrow">Plans and modules</p>
+      <h2 class="sh__title" id="h-plans">Choose what your school needs</h2>
+      <p class="sh__lede">Start with a plan, or read about single modules.</p>
+    </div>
+
+    <div class="ctl">
+      <div class="pt-list" role="tablist" aria-label="Plans or single modules" data-reused-from="superhr-homepage-v8.html#pt-tab">
+        <button type="button" class="pt-tab" role="tab" id="tab-plans" aria-selected="true" aria-controls="panel-plans">Plans</button>
+        <button type="button" class="pt-tab" role="tab" id="tab-mods" aria-selected="false" aria-controls="panel-mods" tabindex="-1">Single modules</button>
+      </div>
+      <div class="bill" id="bill">
+        <span id="bill-l">Billing</span>
+        <div class="sw" id="sw" role="radiogroup" aria-labelledby="bill-l" data-reused-from="components/features/Claim/find/EntryModeToggle.tsx">
+          <span class="sw__ind" id="swInd" aria-hidden="true"></span>
+          <button type="button" class="sw__o" role="radio" aria-checked="true" data-period="Monthly">Monthly</button>
+          <button type="button" class="sw__o" role="radio" aria-checked="false" data-period="Yearly" tabindex="-1">Yearly</button>
+        </div>
+        <span class="pend" data-new="PendingChip" data-built-from="tokens">Save X% - pending</span>
+      </div>
+    </div>
+
+    <div id="panel-plans" role="tabpanel" aria-labelledby="tab-plans" tabindex="-1">
+      <div aria-live="polite">
+        <p class="info" id="infoM" data-step="S3" data-state="default"><svg class="ic" aria-hidden="true" data-icon="info"><use href="#i-info"></use></svg><span>Sample prices, per school, per month. The final amount depends on school size. GST wording is pending.</span></p>
+        <p class="info" id="infoY" data-step="S4" data-state="empty" hidden><svg class="ic" aria-hidden="true" data-icon="info"><use href="#i-info"></use></svg><span>Yearly prices are pending. Ask our team for the final amount for your school.</span></p>
+      </div>
+      <div class="cards" id="cards" data-step="S3" data-state="default" data-new="PlanCard" data-built-from="Button, tokens; superschools-pricing basic HTML .pc"></div>
+    </div>
+
+    <div id="panel-mods" role="tabpanel" aria-labelledby="tab-mods" tabindex="-1" hidden>
+      <div class="mgrid" id="mgrid" data-step="S5" data-state="default" data-new="ModuleIntroCard" data-built-from="Button, tokens; superschools-pricing basic HTML .mc"></div>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="compare" aria-labelledby="h-cmp" data-step="S2" data-state="default">
+  <div class="wrap">
+    <div class="sh" data-reveal data-component="SectionHead" data-source="components/common/SectionHead.tsx">
+      <p class="eyebrow">Compare</p>
+      <h2 class="sh__title" id="h-cmp">What each plan includes</h2>
+      <p class="sh__lede">Every feature, plan by plan.</p>
+    </div>
+    <div class="cmp-open">
+      <button type="button" class="btn btn--claim-ghost sz-md" id="cmpBtn" aria-expanded="false" aria-controls="cmpBox" data-component="Button" data-variant="claim-ghost" data-source="components/ui/Button.tsx"><span><span id="cmpLbl">Compare all features</span><svg class="ic" aria-hidden="true" data-icon="chevron-down"><use href="#i-chevron-down"></use></svg></span></button>
+    </div>
+    <div class="cmp-box" id="cmpBox" data-step="S6" data-state="default" hidden>
+      <div class="psw" id="psw" role="group" aria-label="Choose a plan to view" data-step="S7" data-state="default"></div>
+      <div class="tw">
+        <table class="cmp" id="cmp" data-ported-from="super-admin:components/ui/table.tsx" data-new="ComparisonTable" data-built-from="superschools-pricing basic HTML .cmp">
+          <caption class="sr">Features included in each plan</caption>
+          <thead></thead><tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band final" id="talk" aria-labelledby="h-final" data-step="S2" data-state="default" data-reused-from="superhr-homepage-v8.html#claim-ready">
+  <div class="wrap cl">
+    <div class="cl-main" data-reveal>
+      <div class="final__kick">Not sure where to start?</div>
+      <h2 class="final__title" id="h-final">Find the right plan for <em>your school.</em></h2>
+      <p class="final__sub">Tell us about your school and the work you want to make easier. We'll recommend a plan and modules and share exact pricing.</p>
+    </div>
+    <div class="cl-act" data-reveal>
+      <button type="button" class="btn btn--claim sz-claim" data-open-demo data-opens="S10" data-component="Button" data-variant="claim" data-size="claim" data-source="components/ui/Button.tsx" data-icon="arrow-right"><span>Talk to our team<svg class="ic" aria-hidden="true"><use href="#i-arrow-right"></use></svg></span></button>
+      <p class="final__note cl-note">15-day free trial after claiming</p>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="faq" aria-labelledby="faq-t" data-step="S2" data-state="default">
+  <div class="wrap fq" data-reused-from="superhr-homepage-v8.html#fq">
+    <div class="fq__intro" data-reveal>
+      <p class="fq__k">Pricing questions</p>
+      <h2 class="fq__t" id="faq-t">Good questions. Clear answers.</h2>
+      <p class="fq__d">Plans, billing and how to get started with SuperSchools OS.</p>
+      <button type="button" class="fq__link" data-open-demo data-opens="S10">Ask our team<svg class="ic" aria-hidden="true" data-icon="arrow-right"><use href="#i-arrow-right"></use></svg></button>
+    </div>
+    <div class="faq" id="faqList" data-step="S8" data-state="default" data-component="Accordion" data-source="components/ui/accordion.tsx">
+            <div class="qa"><h3><button type="button" class="qa__btn" id="q1" aria-expanded="false" aria-controls="a1"><span class="qa__q">Is claiming my school free?</span><span class="qa__ico" aria-hidden="true"><svg class="ic"><use href="#i-plus"></use></svg></span></button></h3><div class="qa__a" id="a1" role="region" aria-labelledby="q1"><div class="qa__a-in">Yes. Claiming your school with SuperProfile is free, and the Free plan includes up to 25 parent enquiries a month. The Verified badge starts on the first paid plan.</div></div></div>
+            <div class="qa"><h3><button type="button" class="qa__btn" id="q2" aria-expanded="false" aria-controls="a2"><span class="qa__q">Do plans change for preschools, day schools or boarding schools?</span><span class="qa__ico" aria-hidden="true"><svg class="ic"><use href="#i-plus"></use></svg></span></button></h3><div class="qa__a" id="a2" role="region" aria-labelledby="q2"><div class="qa__a-in">No. Every school type sees the same plans. The final amount depends on school size, and our team will share it with you.</div></div></div>
+            <div class="qa"><h3><button type="button" class="qa__btn" id="q3" aria-expanded="false" aria-controls="a3"><span class="qa__q">How does yearly billing work?</span><span class="qa__ico" aria-hidden="true"><svg class="ic"><use href="#i-plus"></use></svg></span></button></h3><div class="qa__a" id="a3" role="region" aria-labelledby="q3"><div class="qa__a-in">Yearly prices and savings are pending. Ask our team and they will take you through them.</div></div></div>
+            <div class="qa"><h3><button type="button" class="qa__btn" id="q4" aria-expanded="false" aria-controls="a4"><span class="qa__q">Are prices inclusive of GST?</span><span class="qa__ico" aria-hidden="true"><svg class="ic"><use href="#i-plus"></use></svg></span></button></h3><div class="qa__a" id="a4" role="region" aria-labelledby="q4"><div class="qa__a-in">We show prices including GST, and that wording is pending. Our team will confirm the final amount on your call.</div></div></div>
+            <div class="qa"><h3><button type="button" class="qa__btn" id="q5" aria-expanded="false" aria-controls="a5"><span class="qa__q">Is there a free trial?</span><span class="qa__ico" aria-hidden="true"><svg class="ic"><use href="#i-plus"></use></svg></span></button></h3><div class="qa__a" id="a5" role="region" aria-labelledby="q5"><div class="qa__a-in">Yes. You get 15 days free on paid plans after you claim your school.</div></div></div>
+            <div class="qa"><h3><button type="button" class="qa__btn" id="q6" aria-expanded="false" aria-controls="a6"><span class="qa__q">Can I buy a single module?</span><span class="qa__ico" aria-hidden="true"><svg class="ic"><use href="#i-plus"></use></svg></span></button></h3><div class="qa__a" id="a6" role="region" aria-labelledby="q6"><div class="qa__a-in">Yes. Open the Single modules tab to read about each module and see its pricing.</div></div></div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="ft2" id="footer" aria-labelledby="ft2-h" data-new="SharedFooter" data-built-from="school-admin-home-v25.html L2011-2051 (approved For Schools shell)" data-step="S1" data-state="default">
+  <h2 id="ft2-h" class="sr">Site footer</h2>
+  <div class="ft2__in">
+    <div class="ft2__top">
+      <div class="ft2__brand">
+        <a href="../home/home.html" class="ft2__logo" aria-label="SuperSchools home"><svg class="ft2__mark" xmlns="http://www.w3.org/2000/svg" width="162" height="22" viewBox="0 0 162 22" fill="none" aria-hidden="true">
+              <path d="M10.2972 5.48834C10.1532 3.77874 9.0668 2.92426 7.03787 2.9249C6.16796 2.9249 5.48732 3.09833 4.99593 3.44519C4.76075 3.60233 4.56954 3.81688 4.4404 4.06855C4.31125 4.32021 4.24844 4.60067 4.25791 4.88339C4.25386 5.07324 4.28614 5.26211 4.35301 5.43983C4.43178 5.6185 4.55688 5.77285 4.71537 5.88689C4.88131 6.01656 5.05935 6.12995 5.24701 6.22551C5.50097 6.34112 5.76364 6.43653 6.03259 6.51086C6.38005 6.6155 6.69453 6.70808 6.97605 6.78861C7.25756 6.86914 7.65637 6.97409 8.17248 7.10345C8.68796 7.23028 9.13908 7.35108 9.52585 7.46586C11.2181 7.94906 12.4792 8.55338 13.3092 9.27882C14.1391 10.0043 14.5532 11.0455 14.5513 12.4025C14.5513 13.3854 14.3496 14.2437 13.9464 14.9774C13.5636 15.6898 13.0013 16.2898 12.3153 16.718C11.6205 17.1492 10.8616 17.4674 10.067 17.6607C9.2164 17.8667 8.34387 17.9682 7.4687 17.9631C5.13162 17.9631 3.30653 17.427 1.99343 16.3547C0.680327 15.2824 0.015851 13.7716 0 11.8223H3.74719C3.81059 13.9815 5.10784 15.0614 7.63894 15.062C8.6217 15.062 9.39904 14.8562 9.97094 14.4447C10.2434 14.2593 10.4647 14.0082 10.6143 13.7146C10.7639 13.421 10.8371 13.0943 10.8269 12.7649C10.8269 12.1688 10.565 11.7338 10.0413 11.4599C9.5176 11.1859 8.41754 10.8055 6.74113 10.3185C6.66748 10.3075 6.59469 10.2913 6.52334 10.2699C6.47579 10.2538 6.41111 10.2338 6.33313 10.21C6.25514 10.1862 6.18001 10.1653 6.11533 10.1491C5.53519 9.98872 5.13257 9.87172 4.90748 9.79816C4.6824 9.7246 4.32385 9.60127 3.83183 9.42815C3.45784 9.3039 3.09795 9.14067 2.75808 8.94114C2.53173 8.79656 2.2537 8.59523 1.924 8.33714C1.63011 8.12213 1.38668 7.84556 1.2107 7.52673C1.04515 7.19473 0.911099 6.84793 0.810306 6.49089C0.685438 6.05493 0.624254 5.6032 0.628653 5.14972C0.628653 3.58597 1.23289 2.33675 2.44138 1.40205C3.64986 0.467349 5.25335 0 7.25185 0C9.18568 0 10.7651 0.455301 11.99 1.3659C13.215 2.2765 13.8434 3.65065 13.8751 5.48834H10.2972Z" fill="currentColor"></path>
+              <path d="M28.4026 17.5761H25.1395V15.8107C24.1726 17.2299 22.8189 17.9391 21.0785 17.9385C19.709 17.9385 18.6412 17.5637 17.8753 16.8142C17.1094 16.0647 16.7267 14.9549 16.7274 13.485V5.10129H20.1835V12.2352C20.1785 12.6109 20.1989 12.9865 20.2444 13.3595C20.2888 13.6553 20.3743 13.9434 20.4983 14.2155C20.6231 14.5022 20.8518 14.7309 21.1384 14.8557C21.5023 15.0055 21.894 15.0758 22.2873 15.0621C24.0918 15.0621 24.994 13.8855 24.994 11.5323V5.10129H28.4026V17.5761Z" fill="currentColor"></path>
+              <path d="M34.518 6.64882C35.4208 5.39135 36.7098 4.76262 38.385 4.76262C40.0601 4.76262 41.4059 5.36694 42.4222 6.57557C43.4367 7.78485 43.9439 9.39679 43.9439 11.4114C43.9439 13.3613 43.4484 14.9286 42.4574 16.1131C41.4664 17.2977 40.1571 17.8899 38.5295 17.8899C36.8538 17.8899 35.5727 17.2694 34.6863 16.0285V22H31.2786V5.10124H34.518V6.64882ZM35.352 8.53407C34.8283 9.21131 34.5665 10.1543 34.5665 11.3629C34.5665 12.5715 34.8321 13.5142 35.3635 14.1908C35.8954 14.868 36.6287 15.2066 37.5633 15.2066C38.482 15.2066 39.2032 14.868 39.7269 14.1908C40.2506 13.5135 40.5135 12.588 40.5154 11.4143C40.5154 10.2056 40.2494 9.25443 39.7174 8.5607C39.1855 7.86697 38.4595 7.51979 37.5395 7.51915C36.6068 7.51915 35.8777 7.85746 35.352 8.53407Z" fill="currentColor"></path>
+              <path d="M55.8739 16.8265C54.8341 17.5672 53.5977 17.9378 52.1648 17.9384C50.2474 17.9384 48.7045 17.342 47.5359 16.1493C46.3674 14.9565 45.7825 13.3781 45.7812 11.4143C45.7812 9.47954 46.3696 7.88377 47.5464 6.62694C48.7232 5.37011 50.2217 4.74074 52.0421 4.73884C53.9277 4.73884 55.4266 5.3793 56.5387 6.66023C57.6508 7.94116 58.2062 9.67803 58.205 11.8708V12.2085H49.265C49.2808 13.2865 49.5427 14.1086 50.0506 14.6749C50.5584 15.2412 51.2717 15.5231 52.1904 15.5205C53.3996 15.5205 54.2457 14.9162 54.7288 13.7076H58.0148C57.6274 15.0462 56.9137 16.0858 55.8739 16.8265ZM53.9252 8.01472C53.4756 7.49093 52.8479 7.22904 52.0421 7.22904C51.285 7.22904 50.6567 7.47857 50.1571 7.97762C49.6574 8.47668 49.3601 9.16185 49.265 10.0331H54.7288C54.6464 9.21131 54.3785 8.53851 53.9252 8.01472Z" fill="currentColor"></path>
+              <path d="M68.6239 8.05084C68.186 7.95859 67.74 7.90984 67.2924 7.90531C66.1639 7.90531 65.3339 8.26391 64.8026 8.9811C64.2712 9.69829 64.0059 10.6615 64.0065 11.8708V17.5779H60.5751V5.10122H63.8382V7.39738C64.6624 5.67319 66.0082 4.8111 67.8755 4.8111C68.1262 4.81908 68.3763 4.84323 68.6239 4.88339V8.05084Z" fill="currentColor"></path>
+              <path d="M79.8161 5.48835C79.6716 3.77622 78.5839 2.92174 76.553 2.92491C75.6825 2.92491 75.0015 3.09834 74.5102 3.4452C74.2751 3.60239 74.084 3.81697 73.955 4.06865C73.826 4.32032 73.7634 4.60075 73.7731 4.8834C73.769 5.07325 73.8013 5.26212 73.8682 5.43984C73.9463 5.6189 74.0715 5.77341 74.2305 5.8869C74.3963 6.01678 74.5744 6.13019 74.7622 6.22552C75.0161 6.34129 75.2788 6.43671 75.5478 6.51087C75.894 6.61551 76.2081 6.70809 76.4903 6.78862C76.7724 6.86916 77.1712 6.9741 77.6867 7.10346C78.2028 7.23029 78.6543 7.35109 79.041 7.46587C80.7327 7.94907 81.9934 8.55339 82.8234 9.27882C83.6534 10.0043 84.0702 11.0455 84.074 12.4025C84.074 13.3854 83.8727 14.2437 83.4701 14.9774C83.0867 15.6896 82.5242 16.2896 81.8381 16.718C81.1432 17.1492 80.3844 17.4674 79.5898 17.6607C78.7392 17.8667 77.8667 17.9683 76.9915 17.9632C74.6544 17.9632 72.8293 17.427 71.5162 16.3547C70.2031 15.2824 69.5374 13.7716 69.519 11.8223H73.2652C73.3286 13.9815 74.6259 15.0614 77.157 15.062C78.1404 15.062 78.918 14.8563 79.4899 14.4447C79.7623 14.2593 79.9836 14.0082 80.1332 13.7145C80.2828 13.4209 80.356 13.0943 80.3459 12.7649C80.3459 12.1688 80.084 11.7338 79.5603 11.4599C79.0366 11.186 77.9368 10.8055 76.2611 10.3185C76.1874 10.3076 76.1146 10.2914 76.0433 10.27C75.9948 10.2538 75.9301 10.2338 75.8531 10.21C75.776 10.1863 75.6999 10.1653 75.6353 10.1492C75.0551 9.98873 74.6522 9.87173 74.4265 9.79817C74.2007 9.72461 73.8422 9.59969 73.3508 9.4234C72.976 9.30085 72.6152 9.13921 72.2742 8.94115C72.0491 8.79657 71.7711 8.59524 71.4401 8.33715C71.1467 8.1216 70.9034 7.84515 70.7268 7.52674C70.5621 7.19327 70.4287 6.84523 70.3283 6.4871C70.2039 6.05104 70.1427 5.59937 70.1467 5.14592C70.1467 3.58217 70.7512 2.33295 71.9604 1.39825C73.1695 0.463555 74.773 -0.0025262 76.7708 1.0297e-05C78.7047 1.0297e-05 80.2831 0.455311 81.5062 1.36591C82.7292 2.27651 83.3585 3.65066 83.394 5.48835H79.8161Z" fill="currentColor"></path>
+              <path d="M96.3427 16.5364C95.287 17.4394 93.9292 17.8906 92.2693 17.8899C90.352 17.8899 88.8128 17.3018 87.6519 16.1255C86.491 14.9492 85.9108 13.3857 85.9114 11.4352C85.9114 9.42057 86.4957 7.8007 87.6643 6.57558C88.8328 5.35045 90.384 4.7382 92.3178 4.73884C93.9777 4.73884 95.3314 5.1618 96.3788 6.00772C97.4263 6.85364 98.0226 8.00204 98.1678 9.45291H94.8029C94.5455 8.01852 93.7235 7.30133 92.3368 7.30133C91.4016 7.30133 90.6725 7.65993 90.1494 8.37712C89.6263 9.09431 89.3644 10.0896 89.3638 11.3629C89.3638 12.6045 89.6174 13.5674 90.1246 14.2516C90.6319 14.9359 91.3449 15.2783 92.2636 15.2789C93.7625 15.2789 94.6501 14.4409 94.9266 12.7649H98.2382C98.027 14.3762 97.3952 15.6334 96.3427 16.5364Z" fill="currentColor"></path>
+              <path d="M103.867 6.76964C104.85 5.44749 106.163 4.78642 107.807 4.78642C110.723 4.78642 112.182 6.32575 112.182 9.40442V17.5761H108.749V10.2262C108.749 9.37208 108.596 8.71925 108.29 8.26776C107.984 7.81626 107.404 7.59083 106.549 7.59146C105.518 7.59146 104.813 7.92184 104.434 8.5826C104.056 9.24336 103.866 10.1216 103.864 11.2174V17.5761H100.48V0.362454H103.864L103.867 6.76964Z" fill="currentColor"></path>
+              <path d="M125.803 6.5518C126.971 7.76107 127.556 9.35652 127.556 11.3382C127.556 13.3369 126.971 14.9406 125.803 16.1493C124.634 17.3579 123.075 17.9625 121.126 17.9632C119.176 17.9632 117.613 17.3585 116.436 16.1493C115.259 14.94 114.671 13.3363 114.672 11.3382C114.672 9.35589 115.268 7.76044 116.461 6.5518C117.653 5.34316 119.224 4.73884 121.174 4.73884C123.091 4.73884 124.634 5.34316 125.803 6.5518ZM118.902 8.41327C118.37 9.12285 118.104 10.0978 118.104 11.3382C118.104 12.6115 118.37 13.6029 118.902 14.3125C119.434 15.0221 120.175 15.3766 121.126 15.3759C122.077 15.3759 122.814 15.0173 123.338 14.3002C123.861 13.583 124.123 12.5893 124.123 11.3191C124.123 10.0775 123.853 9.10636 123.313 8.40566C122.773 7.70495 122.027 7.35618 121.077 7.35935C120.16 7.35301 119.435 7.70432 118.902 8.41327Z" fill="currentColor"></path>
+              <path d="M140.572 6.5518C141.74 7.76107 142.325 9.35652 142.325 11.3382C142.325 13.3369 141.74 14.9406 140.572 16.1493C139.403 17.3579 137.844 17.9625 135.895 17.9632C133.945 17.9632 132.382 17.3585 131.205 16.1493C130.028 14.94 129.44 13.3363 129.44 11.3382C129.44 9.35589 130.036 7.76044 131.229 6.5518C132.421 5.34316 133.992 4.73884 135.942 4.73884C137.86 4.73884 139.403 5.34316 140.572 6.5518ZM133.671 8.41327C133.14 9.12285 132.874 10.0978 132.873 11.3382C132.873 12.6115 133.139 13.6029 133.671 14.3125C134.203 15.0221 134.944 15.3766 135.895 15.3759C136.846 15.3759 137.583 15.0173 138.107 14.3002C138.63 13.583 138.892 12.5877 138.892 11.3144C138.892 10.0728 138.622 9.10161 138.083 8.4009C137.543 7.70019 136.798 7.35143 135.846 7.3546C134.929 7.35143 134.204 7.70432 133.671 8.41327Z" fill="currentColor"></path>
+              <path d="M148.101 17.5761H144.669V0.362454H148.101V17.5761Z" fill="currentColor"></path>
+              <path d="M158.399 8.72708C158.302 8.0993 158.064 7.65541 157.685 7.39542C157.306 7.13543 156.754 7.0067 156.03 7.00924C155.418 7.00924 154.943 7.11799 154.603 7.3355C154.445 7.42742 154.315 7.55999 154.225 7.71941C154.136 7.87883 154.091 8.05928 154.095 8.24198C154.095 8.69411 154.288 9.00832 154.675 9.1846C155.062 9.36089 155.755 9.5543 156.754 9.76483C156.931 9.79717 157.06 9.8219 157.141 9.83807C157.721 9.95031 158.185 10.0508 158.531 10.1396C158.963 10.2577 159.386 10.4032 159.8 10.5752C160.223 10.7313 160.615 10.9602 160.96 11.2515C161.261 11.5388 161.507 11.8789 161.686 12.255C161.902 12.7074 162.01 13.2042 161.999 13.7056C161.999 15.0112 161.492 16.043 160.478 16.8007C159.463 17.5585 158.068 17.9371 156.293 17.9365C154.601 17.9365 153.206 17.5737 152.108 16.8483C151.011 16.1229 150.455 15.0109 150.44 13.5125H153.703C153.816 14.8981 154.704 15.5912 156.366 15.5918C157.059 15.5918 157.611 15.4507 158.022 15.1685C158.433 14.8863 158.638 14.5116 158.638 14.0442C158.638 13.5775 158.453 13.2471 158.083 13.0531C157.713 12.859 157.028 12.6495 156.028 12.4243C155.963 12.4118 155.9 12.3956 155.837 12.3758C155.725 12.3435 155.475 12.2871 155.088 12.2065C154.702 12.1266 154.432 12.0657 154.279 12.0258C154.126 11.9858 153.875 11.9164 153.529 11.8203C153.266 11.7548 153.011 11.6614 152.768 11.5416C152.608 11.4532 152.394 11.3409 152.128 11.204C151.902 11.0971 151.7 10.9446 151.536 10.756C151.409 10.5955 151.268 10.4053 151.113 10.1852C150.958 9.96398 150.851 9.71293 150.799 9.44808C150.74 9.1534 150.712 8.85348 150.714 8.55301C150.714 7.32852 151.19 6.3859 152.141 5.72514C153.092 5.06438 154.437 4.73401 156.178 4.73401C157.741 4.73401 159.023 5.05614 160.021 5.70041C161.02 6.34468 161.541 7.35357 161.586 8.72708H158.399Z" fill="currentColor"></path>
+            </svg></a>
+        <p class="ft2__lede">Claim your school in 2 steps, under 2 min. Once claimed, keep school details updated, view parent enquiries and connect with parents to convert them into admissions, earn a Claimed badge for parent trust, and manage staff.</p>
+        <a href="../claim/claim.html" class="ft2__btn" data-exit="S14">Claim Your School</a>
+      </div>
+      <aside class="ft2__help" aria-labelledby="ft2-help-t">
+        <p class="ft2__help-t" id="ft2-help-t">Facing any issue or need help with something?</p>
+        <p class="ft2__help-d">Whatever you're working on—parent enquiries, visits, your school profile, staff, or reports—if something isn't working or you're unsure how it works, tell us here and our support team will help you sort it out.</p>
+        <a href="/contact" class="ft2__btn" data-exit="S17">Contact Support</a>
+      </aside>
+    </div>
+    <hr class="ft2__rule">
+    <nav class="ft2__nav" aria-label="Footer navigation">
+      <section><h3 class="ft2__h">FOR SCHOOLS</h3><ul class="ft2__list"><li><a href="../home/home.html#get">Our products</a></li><li><a href="../claim/claim.html" data-exit="S14">Claim your school</a></li><li><a href="../home/home.html#how">Step-by-Step guide</a></li><li><a href="/contact" data-exit="S17">Claim support for schools</a></li></ul></section>
+      <section><h3 class="ft2__h">SUPER MODULES</h3><ul class="ft2__list"><li><a href="../claim/claim.html">SuperProfile</a></li><li><a href="../hr/hr.html">SuperHR</a></li><li><a href="../leads/leads.html">SuperLeads</a></li><li><span class="dg__off" aria-disabled="true">SuperSocial</span></li><li><span class="dg__off" aria-disabled="true">SuperConnect</span></li><li><span class="dg__off" aria-disabled="true">SuperSite</span></li><li><span class="dg__off" aria-disabled="true">SuperAI</span></li></ul></section>
+      <section><h3 class="ft2__h">SUPPORT</h3><ul class="ft2__list"><li><a href="/contact" data-exit="S17">Contact Support (Schools)</a></li></ul></section>
+    </nav>
+    <hr class="ft2__rule">
+    <div class="ft2__bottom">
+      <p class="ft2__copy">© <span id="yr">2026</span> GoSuper AI Learning Solutions Private Limited. All rights reserved. <span class="ft2__sep" aria-hidden="true">·</span> <a href="/privacy" data-exit="S17">Privacy</a> <span class="ft2__sep" aria-hidden="true">·</span> <a href="/terms" data-exit="S17">Terms</a></p>
+      <ul class="ft2__social" aria-label="Social media"><li><a href="https://x.com/Super_Schools_" target="_blank" rel="noopener noreferrer" aria-label="Twitter"> <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"> <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z"></path> </svg> </a></li> <li><a href="https://www.instagram.com/superschools_india/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"> <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"> <rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.7"></rect> <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.7"></circle> <circle cx="17.5" cy="6.5" r="1" fill="currentColor"></circle> </svg> </a></li> <li><a href="https://www.facebook.com/people/SuperSchools/61587224090119/" target="_blank" rel="noopener noreferrer" aria-label="Facebook"> <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"> <path d="M13.5 21v-7h2.5l.5-3h-3V9c0-.9.3-1.5 1.6-1.5H17V5c-.3 0-1.3-.1-2.5-.1-2.5 0-4 1.5-4 4.2V11H8v3h2.5v7h3Z"></path> </svg> </a></li> <li><a href="https://in.linkedin.com/company/super-schools" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"> <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"> <path d="M6.94 4.5a2.44 2.44 0 1 1 0 4.88 2.44 2.44 0 0 1 0-4.88ZM5 10h3.88v10H5V10Zm6 0h3.7v1.4h.05c.52-.94 1.79-1.94 3.69-1.94 3.94 0 4.66 2.6 4.66 5.97V20h-3.88v-4.07c0-.97-.02-2.22-1.36-2.22-1.36 0-1.57 1.06-1.57 2.15V20H11V10Z"></path> </svg> </a></li> <li><a href="https://www.youtube.com/@superschools_india" target="_blank" rel="noopener noreferrer" aria-label="YouTube"> <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"> <path d="M21.6 7.2c-.2-1-1-1.8-2-2C17.5 4.8 12 4.8 12 4.8s-5.5 0-7.6.4c-1 .2-1.8 1-2 2C2 9.3 2 12 2 12s0 2.7.4 4.8c.2 1 1 1.8 2 2 2.1.4 7.6.4 7.6.4s5.5 0 7.6-.4c1-.2 1.8-1 2-2 .4-2.1.4-4.8.4-4.8s0-2.7-.4-4.8ZM10 15.5v-7l6 3.5-6 3.5Z"></path> </svg> </a></li></ul>
+    </div>
+  </div>
+</footer>
+<div class="cpop" id="demoDialog" hidden data-reused-from="school-admin-home-v25.html#claimPop (cpop)" data-component="ClaimChannelModal" data-source="components/features/Claim/verify/ClaimChannelModal.tsx">
+  <div class="cpop__bg" data-close-demo></div>
+  <div class="cpop__box" role="dialog" aria-modal="true" aria-labelledby="dm-pop-t" tabindex="-1">
+    <button type="button" class="cpop__x" data-close-demo aria-label="Close" data-icon="x"><svg class="ic" aria-hidden="true"><use href="#i-x"></use></svg></button>
+    <div class="dm" id="dm-pop" data-new="DemoStepper" data-built-from="brightwheel demo form (user), ClaimSearchField, ModuleCheckRow, Button"></div>
+  </div>
+</div>
+<template id="dmTpl">
+  <p class="dm__sel" data-sel hidden data-new="SelectionLine" data-built-from="tokens, PendingChip shape"></p>
+  <div class="dm__head">
+    <h2 class="dm__t" id="{p}-t" tabindex="-1">How many locations does your school have?</h2>
+    <div class="dm__bars" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+    <p class="dm__count" id="{p}-count">1 of 4</p>
+  </div>
+  <div class="dm__step" data-n="1" data-title="How many locations does your school have?" data-step="S10" data-state="default">
+    <div class="dm__opts" role="group" aria-labelledby="{p}-t">
+      <button type="button" class="dm__opt" data-key="locations" data-val="1"><span>1</span><span class="dm__opt-arr" aria-hidden="true"><svg class="ic"><use href="#i-arrow-right"></use></svg></span></button>
+      <button type="button" class="dm__opt" data-key="locations" data-val="2-9"><span>2-9</span><span class="dm__opt-arr" aria-hidden="true"><svg class="ic"><use href="#i-arrow-right"></use></svg></span></button>
+      <button type="button" class="dm__opt" data-key="locations" data-val="10+"><span>10+</span><span class="dm__opt-arr" aria-hidden="true"><svg class="ic"><use href="#i-arrow-right"></use></svg></span></button>
+    </div>
+  </div>
+  <div class="dm__step" data-n="2" data-title="What type of school do you run?" data-step="S10" data-state="default" hidden>
+    <fieldset class="tp" aria-describedby="{p}-tp-hint {p}-e-type">
+      <legend class="sr">School type</legend>
+      <p class="tp__hint" id="{p}-tp-hint">Choose all that apply.</p>
+      <label class="tp__opt"><span class="mrow__box"><input type="checkbox" name="type" value="Preschool"><svg class="ic" aria-hidden="true"><use href="#i-check"></use></svg></span><span>Preschool</span></label>
+      <label class="tp__opt"><span class="mrow__box"><input type="checkbox" name="type" value="Day school"><svg class="ic" aria-hidden="true"><use href="#i-check"></use></svg></span><span>Day school</span></label>
+      <label class="tp__opt"><span class="mrow__box"><input type="checkbox" name="type" value="Boarding school"><svg class="ic" aria-hidden="true"><use href="#i-check"></use></svg></span><span>Boarding school</span></label>
+      <span class="fl__err" id="{p}-e-type" role="alert"></span>
+    </fieldset>
+    <button type="button" class="btn btn--claim dm__next" data-next-type data-component="Button" data-variant="claim" data-source="components/ui/Button.tsx"><span>Continue<svg class="ic" aria-hidden="true"><use href="#i-arrow-right"></use></svg></span></button>
+  </div>
+  <div class="dm__step" data-n="3" data-title="Which modules do you want to hear about?" data-step="S10" data-state="default" hidden>
+    <fieldset class="mods" aria-describedby="{p}-mods-hint" data-new="ModuleCheckRow" data-built-from="features/Claim/verify/ClaimMethodRow.tsx#row, ui/checkbox.tsx#custom">
+      <legend class="sr">Modules</legend>
+      <p class="mods__hint" id="{p}-mods-hint"></p>
+      <div class="mods__grid"></div>
+    </fieldset>
+    <button type="button" class="btn btn--claim dm__next" data-next data-component="Button" data-variant="claim" data-source="components/ui/Button.tsx"><span>Continue<svg class="ic" aria-hidden="true"><use href="#i-arrow-right"></use></svg></span></button>
+  </div>
+  <div class="dm__step" data-n="4" data-title="Tell us about you" data-step="S10" data-state="default" hidden>
+    <form class="dm__form" novalidate>
+      <div class="fields">
+        <div class="fl" data-field="name" data-component="ClaimSearchField" data-source="components/features/Claim/flow/ClaimSearchField.tsx" data-rules-from="teacher-profile-v81 Full name (3–40, letters and spaces)"><div class="fl__labelrow"><label class="fl__label" for="{p}-name">Full name<span class="fl__req" aria-hidden="true">*</span></label><span class="fl__count" id="{p}-name-count" aria-live="polite">0/40</span></div><div class="fl__box"><input class="fl__input" id="{p}-name" name="name" type="text" autocomplete="name" maxlength="40" placeholder="Enter full name" aria-required="true" aria-describedby="{p}-e-name {p}-name-count"></div><span class="fl__err" id="{p}-e-name" role="alert"></span></div>
+        <div class="fl" data-field="school" data-component="ClaimSearchField" data-source="components/features/Claim/flow/ClaimSearchField.tsx"><label class="fl__label" for="{p}-school">School name<span class="fl__req" aria-hidden="true">*</span></label><div class="fl__box"><input class="fl__input" id="{p}-school" name="school" type="text" autocomplete="organization" maxlength="120" placeholder="Full school name" aria-required="true" aria-describedby="{p}-e-school"></div><span class="fl__err" id="{p}-e-school" role="alert"></span></div>
+        <div class="fl" data-field="mobile" data-component="ClaimSearchField" data-source="components/features/Claim/flow/ClaimSearchField.tsx"><label class="fl__label" for="{p}-mobile">Mobile number<span class="fl__req" aria-hidden="true">*</span></label><div class="fl__box"><span class="fl__pre" aria-hidden="true">+91<span class="fl__div"></span></span><input class="fl__input" id="{p}-mobile" name="mobile" type="tel" inputmode="numeric" maxlength="10" autocomplete="tel-national" placeholder="10-digit mobile number" aria-required="true" aria-describedby="{p}-e-mobile"></div><span class="fl__err" id="{p}-e-mobile" role="alert"></span></div>
+        <div class="fl" data-field="email" data-component="ClaimSearchField" data-source="components/features/Claim/flow/ClaimSearchField.tsx"><label class="fl__label" for="{p}-email">Email<span class="fl__opt">(optional)</span></label><div class="fl__box"><input class="fl__input" id="{p}-email" name="email" type="email" autocomplete="email" maxlength="120" placeholder="name@school.com" aria-describedby="{p}-e-email"></div><span class="fl__err" id="{p}-e-email" role="alert"></span></div>
+        <div class="fl" data-field="consent"><label class="consent"><span class="mrow__box"><input type="checkbox" name="consent" id="{p}-consent" checked aria-describedby="{p}-e-consent"><svg class="ic" aria-hidden="true"><use href="#i-check"></use></svg></span><span>I agree that SuperSchools may contact me by phone, SMS or email about my pricing request.</span></label><span class="fl__err" id="{p}-e-consent" role="alert"></span></div>
+      </div>
+      <div class="note note--err dm__alert" role="alert" tabindex="-1" data-alert hidden data-reused-from="claim flow .note (note--warn → error tone)"><svg class="ic" aria-hidden="true"><use href="#i-info"></use></svg><p data-alert-text></p></div>
+      <p class="dm__editnote" data-edit-note hidden>This changes your request. It does not send a new one.</p>
+      <button type="submit" class="btn btn--claim dm__next" data-send data-component="Button" data-variant="claim" data-source="components/ui/Button.tsx"><span>Request a call<svg class="ic" aria-hidden="true"><use href="#i-arrow-right"></use></svg></span></button>
+    </form>
+  </div>
+  <button type="button" class="dm__back" data-back hidden><svg class="ic" aria-hidden="true"><use href="#i-chevron-right"></use></svg>Back</button>
+  <div class="done" data-view="sent" hidden data-step="S11" data-state="success" data-reused-from="superleads-homepage-v9.html request-received R1">
+    <span class="done__chip"><svg class="ic" aria-hidden="true"><use href="#i-check"></use></svg>Request received</span>
+    <h2 class="done__t" tabindex="-1">Expect a call from us, <span data-out="name"></span></h2>
+    <div class="call" data-call>
+      <div class="call__show" data-call-show>
+        <span class="call__ic" aria-hidden="true"><svg class="ic"><use href="#i-phone"></use></svg></span>
+        <span class="call__tx"><b class="call__no" data-out="mobile"></b><span>We will call you within 1 working day</span></span>
+        <button type="button" class="call__chg" data-change aria-label="Change phone number">Change</button>
+      </div>
+    </div>
+    <p class="call__note" data-call-note role="status"></p>
+    <p class="done__m"><span data-about><b data-out="request"></b> for </span><b data-out="school"></b></p>
+    <p class="done__m" data-mods>Modules: <b data-out="modules"></b></p>
+    <button type="button" class="btn btn--claim done__btn" data-finish data-component="Button" data-variant="claim" data-source="components/ui/Button.tsx"><span>Done</span></button>
+  </div>
+  <div class="done" data-view="dup" hidden data-step="S12" data-state="default" data-reused-from="superleads-homepage-v9.html request-received R1">
+    <span class="done__chip done__chip--dup"><svg class="ic" aria-hidden="true"><use href="#i-info"></use></svg>Already with our team</span>
+    <h2 class="done__t" tabindex="-1">We already have your request</h2>
+    <div class="call" data-call>
+      <div class="call__show" data-call-show>
+        <span class="call__ic" aria-hidden="true"><svg class="ic"><use href="#i-phone"></use></svg></span>
+        <span class="call__tx"><b class="call__no" data-out="mobile"></b><span>We will call within 1 working day of your first request. No need to send it again.</span></span>
+        <button type="button" class="call__chg" data-change aria-label="Change phone number">Change</button>
+      </div>
+    </div>
+    <p class="call__note" data-call-note role="status"></p>
+    <p class="done__m"><span data-about><b data-out="prevRequest"></b> for </span><b data-out="prevSchool"></b></p>
+    <p class="done__m" data-mods>Modules: <b data-out="prevModules"></b></p>
+    <button type="button" class="btn btn--claim done__btn" data-finish data-component="Button" data-variant="claim" data-source="components/ui/Button.tsx"><span>Done</span></button>
+  </div>
+</template>
+<div class="toast" id="moduleNotice" hidden role="status" aria-live="polite" data-step="S13" data-state="default" data-reused-from="common/Toast.tsx#position">
+  <div class="notice" data-component="ClaimNotice" data-variant="info" data-source="components/features/Claim/flow/ClaimNotice.tsx">
+    <svg class="ic" aria-hidden="true" data-icon="info"><use href="#i-info"></use></svg>
+    <div class="notice__txt">
+      <p class="notice__t"><span id="noticeMod"></span> pricing comes from our team</p>
+      <p class="notice__b">Ask us and we will share it with you.</p>
+      <button type="button" class="btn btn--claim-link" id="noticeAct" data-open-demo data-opens="S10" data-component="Button" data-variant="claim-link" data-source="components/ui/Button.tsx">Talk to our team</button>
+    </div>
+    <button type="button" class="toast__x" id="noticeX" aria-label="Dismiss" data-icon="x"><svg class="ic" aria-hidden="true"><use href="#i-x"></use></svg></button>
+  </div>
+</div>
+
+<div class="scrim" id="scrim" data-step="S9" data-state="default" aria-hidden="true"></div>
+<div class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title" data-ported-from="user:common/Sidebar/index.tsx" data-step="S9" data-state="default">
+  <div class="drawer__top" data-ported-from="user:common/Sidebar/SidebarHeader.tsx">
+    <a href="../home/home.html" class="brand"><span class="brand__t">SuperSchools OS</span></a>
+    <button type="button" class="drawer__x" id="drawerClose" aria-label="Close menu" data-icon="x"><svg class="ic" aria-hidden="true"><use href="#i-x"></use></svg></button>
+  </div>
+  <h2 class="drawer__label" id="drawer-title">Menu</h2>
+  <nav class="drawer__nav" aria-label="Menu" data-ported-from="user:common/Sidebar/MenuItems.tsx">
+    <details class="dg"><summary><span class="drawer__tile"><svg class="ic" aria-hidden="true"><use href="#i-school"></use></svg></span>Who we serve<svg class="ic drawer__chev dg__chev" aria-hidden="true"><use href="#i-chevron-down"></use></svg></summary><div class="dg__list"><a href="/preschools" data-exit="S17" data-route="user side">Preschools</a><a href="/dayschool" data-exit="S17" data-route="user side">Day schools</a><a href="/boarding" data-exit="S17" data-route="user side">Boarding schools</a><a href="/jobs" data-exit="S17" data-route="user side">Teachers</a></div></details>
+    <details class="dg"><summary><span class="drawer__tile"><svg class="ic" aria-hidden="true"><use href="#i-target"></use></svg></span>Our products<svg class="ic drawer__chev dg__chev" aria-hidden="true"><use href="#i-chevron-down"></use></svg></summary><div class="dg__list"><a href="../claim/claim.html">SuperProfile</a><a href="../leads/leads.html">SuperLeads</a><a href="../hr/hr.html">SuperHR</a><span class="dg__off" aria-disabled="true">SuperSocial</span><span class="dg__off" aria-disabled="true">SuperConnect</span><span class="dg__off" aria-disabled="true">SuperSite</span><span class="dg__off" aria-disabled="true">SuperAI</span><a href="../home/home.html#get">See all products</a></div></details>
+    <a href="#top" aria-current="page"><span class="drawer__tile"><svg class="ic" aria-hidden="true"><use href="#i-dollar-sign"></use></svg></span>Pricing<svg class="ic drawer__chev" aria-hidden="true"><use href="#i-chevron-right"></use></svg></a>
+    <details class="dg"><summary><span class="drawer__tile"><svg class="ic" aria-hidden="true"><use href="#i-book-open"></use></svg></span>Resources<svg class="ic drawer__chev dg__chev" aria-hidden="true"><use href="#i-chevron-down"></use></svg></summary><div class="dg__list"><a href="/stories" data-exit="S17" data-route="not in the app yet">Customer stories</a><a href="/guides" data-exit="S17" data-route="not in the app yet">Guides for schools</a><a href="/events" data-exit="S17" data-route="not in the app yet">Webinars</a><a href="/templates" data-exit="S17" data-route="not in the app yet">Templates &amp; tools</a><a href="/blog" data-exit="S17" data-route="not in the app yet">Blog</a><a href="/help" data-exit="S17" data-route="not in the app yet">Help center</a><a href="/whats-new" data-exit="S17" data-route="not in the app yet">What’s new</a><a href="../home/home.html#love">Why SuperSchools?</a></div></details>
+  </nav>
+  <div class="drawer__cta">
+    <a href="../login/login.html" class="btn btn--claim-ghost sz-claim-try" data-component="Button" data-variant="claim-ghost" data-size="claim-try" data-source="components/ui/Button.tsx" data-exit="S15"><span>School sign in</span></a>
+    <a href="../claim/claim.html" class="btn btn--claim btn--hl sz-claim-try" data-component="Button" data-variant="claim" data-size="claim-try" data-source="components/ui/Button.tsx" data-exit="S14"><span>Claim your school</span></a>
+  </div>
+</div>
+<script>
+(function(){
+  'use strict';
+
+  /* Fixture data. Every amount is a sample figure (about.md decision 1), not an approved price. Swap the real ones in here. */
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+  const FIXTURES = {
+    requester: { name: 'Ananya Rao', school: 'Sample Valley School (fixture)', mobile: '9000012345' },
+    earlier: { school: 'Sample Valley School (fixture)', request: 'Growth plan · Monthly', modules: ['SuperProfile', 'SuperLeads'] },
+    modules: [
+      { key:'profile', name:'SuperProfile', cls:'m-profile', ic:'rf-school', title:'Claim and manage your school profile', free:true,
+        points:['Find your school and complete the ownership check.','Keep fees, facilities, photos and admission details current.','See what parents see, and fix it the same day.'] },
+      { key:'leads', name:'SuperLeads', cls:'m-leads', ic:'rf-leads', title:'Manage enquiries and grow admissions', href:'/superleads/pricing',
+        points:['Bring parent enquiries from connected sources into one place.','Assign owners, schedule visits and track admission stages.','Follow up with messages sent through SuperConnect.'] },
+      { key:'hr', name:'SuperHR', cls:'m-hr', ic:'rf-users', title:'Hire teachers and manage staff records', href:'/superhr/pricing',
+        points:['Publish school jobs and track applicants through hiring.','Manage staff records, attendance and leave.','Keep interviews and follow-ups in one place.'] },
+      { key:'social', name:'SuperSocial', cls:'m-social', ic:'rf-social', title:'Create, schedule and manage social media', href:'/supersocial/pricing',
+        points:['Draft school posts and captions with AI assistance.','Review, schedule and publish to connected social accounts.','Promote admissions, showcase activities and track engagement.'] },
+      { key:'connect', name:'SuperConnect', cls:'m-connect', ic:'rf-chat', title:'WhatsApp, email, SMS and calls. Together.', href:'/superconnect/pricing',
+        points:['Manage conversations across connected channels.','Send announcements, reminders and personalised messages.','Keep message history beside enquiries and staff records.'] },
+      { key:'site', name:'SuperSite', cls:'m-site', ic:'rf-globe', title:'Build your school website with AI', href:'/supersite/pricing',
+        points:['Generate a website draft from your school profile.','Customise pages, programmes and photos without coding.','Publish a mobile-friendly site with forms connected to SuperLeads.'] },
+      { key:'ai', name:'SuperAI', cls:'m-ai', ic:'rf-sparkle', title:'AI tools for teaching and school operations', href:'/superai/pricing',
+        points:['Choose tools for lesson plans, worksheets and school content.','Add your requirements to generate a relevant first draft.','Review, personalise and check the output before using it.'] }
+    ],
+    plans: [
+      { name:'Free', type:'free', sub:'For every school that wants to be found by parents', mods:['profile'],
+        feats:['Claim your school profile','Edit fees, photos and facilities','Claimed badge for parent trust','Up to 25 parent enquiries a month'] },
+      { name:'Starter', amount:'₹1,999', sub:'For schools starting to grow admissions', mods:['profile','leads','connect'], prev:'Free',
+        feats:['Verified badge','Unlimited parent enquiries','Follow-ups and visit booking','1,000 WhatsApp, SMS and email messages a month','3 admin users'] },
+      { name:'Growth', amount:'₹4,999', popular:true, sub:'For schools running admissions, staff and marketing', mods:['profile','leads','connect','hr','social'], prev:'Starter',
+        feats:['Teacher hiring and job posts','Staff records and attendance','Social post scheduler','5,000 messages a month','10 admin users'] },
+      { name:'Premium', amount:'₹9,999', sub:'The full SuperSchools OS for one campus', mods:['profile','leads','connect','hr','social','site','ai'], prev:'Growth',
+        feats:['School website on your own domain','SuperAI assistant','25,000 messages a month','Unlimited admin users','Priority phone support'] },
+      { name:'Enterprise', type:'ent', sub:'For school groups with many branches', mods:['profile','leads','connect','hr','social','site','ai'], prev:'Premium',
+        feats:['Multi-branch dashboard','Custom message volumes','Dedicated account manager','Onboarding and staff training'] }
+    ],
+    rows: [
+      ['profile', [['School profile and Claimed badge',[1,1,1,1,1]],['Verified badge',[0,1,1,1,1]],['Parent enquiries a month',['25','Unlimited','Unlimited','Unlimited','Unlimited']]]],
+      ['leads', [['Enquiry pipeline and follow-ups',[0,1,1,1,1]],['Visit booking and reminders',[0,1,1,1,1]],['Admission reports',[0,0,1,1,1]]]],
+      ['connect', [['WhatsApp, SMS and email messages a month',[0,'1,000','5,000','25,000','Custom']],['Parent broadcast lists',[0,1,1,1,1]]]],
+      ['hr', [['Job posts and hiring',[0,0,1,1,1]],['Staff records and attendance',[0,0,1,1,1]]]],
+      ['social', [['Social post scheduler',[0,0,1,1,1]],['Ready-made post templates',[0,0,1,1,1]]]],
+      ['site', [['School website',[0,0,0,1,1]],['Custom domain',[0,0,0,1,1]]]],
+      ['ai', [['SuperAI assistant',[0,0,0,1,1]]]],
+      [null, [['Admin users',['1','3','10','Unlimited','Unlimited']],['Branches',['1','1','1','1','Unlimited']],['Support',['Help centre','Email','Email and chat','Priority phone','Dedicated manager']]]]
+    ]
+  };
+  const COPY = {
+    name: 'Enter your full name.', school: 'Enter your school name.',
+    mobileEmpty: 'Enter your mobile number.', mobileFormat: 'Enter a 10-digit mobile number.',
+    type: 'Choose at least one school type.', consent: 'Tick the box so our team can contact you.',
+    nameFormat: 'Name can only contain letters and spaces.', nameShort: 'Full name must be at least 3 characters.', schoolShort: 'Enter the full school name.',
+    mobileStart: 'Mobile numbers start with 6, 7, 8 or 9.',
+    email: 'Enter a valid email address.',
+    sending: 'Sending your request…',
+    offline: '<b>You are offline.</b> Check your internet connection, then try again. Your answers are saved.',
+    timeout: '<b>This is taking too long.</b> Check your connection and try again.',
+    server: '<b>We could not send your request.</b> Something went wrong on our side. Please try again in a moment.',
+    changeTaken: 'We already have a request for this number.',
+    changeTitle: 'Change your number',
+    changeFailed: { offline: 'You are offline. Check your connection and try again. Your request still has the old number.', timeout: 'This is taking too long. Check your connection and try again. Your request still has the old number.', server: 'We could not save your changes. Your request still has the old number. Please try again.' }
+  };
+  const NAME_RE = /^[\p{L}\p{M} ]+$/u, NAME_STRIP = /[^\p{L}\p{M} ]/gu, NAME_MAX = 40;
+  const ERR_ICON = '<svg class="ic" aria-hidden="true"><use href="#i-info"></use></svg>';
+  /* Demo request call. Prototype stub: replace with the real API. Add ?demo-state=error|offline|slow to the URL to preview failures. */
+  const FORCED = new URLSearchParams(location.search).get('demo-state');
+  function sendDemoRequest(payload){
+    const call = new Promise((resolve, reject) => {
+      if (!navigator.onLine || FORCED === 'offline') { setTimeout(() => reject({kind: 'offline'}), 600); return; }
+      setTimeout(() => FORCED === 'error' ? reject({kind: 'server'}) : resolve({ok: true}), FORCED === 'slow' ? 20000 : 1400);
+    });
+    const limit = new Promise((_, reject) => setTimeout(() => reject({kind: 'timeout'}), 15000));
+    return Promise.race([call, limit]);
+  }
+  /* Saving the form after Change. Prototype stub: replace with the real API. It edits the existing request, never creates one.
+     Add ?change-state=error|offline to the URL to preview a failed save. */
+  const FORCED_CHANGE = new URLSearchParams(location.search).get('change-state');
+  function updateDemoRequest(from, details){
+    const call = new Promise((resolve, reject) => {
+      if (!navigator.onLine || FORCED_CHANGE === 'offline') { setTimeout(() => reject({kind: 'offline'}), 600); return; }
+      setTimeout(() => FORCED_CHANGE === 'error' ? reject({kind: 'server'}) : resolve({ok: true}), 900);
+    });
+    const limit = new Promise((_, reject) => setTimeout(() => reject({kind: 'timeout'}), 15000));
+    return Promise.race([call, limit]);
+  }
+  const fmtMobile = m => '+91 ' + m.slice(0, 5) + ' ' + m.slice(5);
+  const capFirst = t => t.charAt(0).toUpperCase() + t.slice(1);
+  const tidyCaps = t => t === t.toUpperCase() ? t.toLowerCase().replace(/(^|\s)(\S)/g, (_, a, b) => a + b.toUpperCase()) : t;
+  const MODULE_ORDER = FIXTURES.modules.map(m => m.name);
+  const MOBILE_RE = /^\d{10}$/, MOBILE_START_RE = /^[6-9]/;
+  const STEPS = 4;
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const phone = window.matchMedia('(max-width: 830px)');
+  const $ = (s, r) => (r || document).querySelector(s);
+  const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
+  const sentThisVisit = new Map();
+
+  const yr = $('#yr'); if (yr) yr.textContent = String(new Date().getFullYear());
+
+  /* ---------- header: solid; shadow once scrolled ---------- */
+  const hdr = $('#hdr');
+  const heroEl = $('#top');
+  function syncHdr(){ hdr.classList.toggle('is-scrolled', window.scrollY > 4); hdr.classList.toggle('is-past', !!heroEl && heroEl.getBoundingClientRect().bottom <= hdr.offsetHeight); }
+
+  /* ---------- mega menus (v25 behaviour) ---------- */
+  const menus = $$('[data-mn]');
+  let hoverOpenAt = 0, closeTimer = 0;
+  const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)');
+  function setMenu(mn, open){ $('.mn__top', mn).setAttribute('aria-expanded', String(open)); $('.mn__panel', mn).hidden = !open; }
+  function closeMenus(except){ menus.forEach(m => { if (m !== except) setMenu(m, false); }); }
+  menus.forEach(mn => {
+    const b = $('.mn__top', mn);
+    b.addEventListener('click', () => { const open = b.getAttribute('aria-expanded') === 'true'; if (open && Date.now() - hoverOpenAt < 400) return; closeMenus(mn); setMenu(mn, !open); });
+    mn.addEventListener('mouseenter', () => { if (!finePointer.matches) return; clearTimeout(closeTimer); if (b.getAttribute('aria-expanded') !== 'true'){ closeMenus(mn); setMenu(mn, true); hoverOpenAt = Date.now(); } });
+    mn.addEventListener('mouseleave', () => { if (!finePointer.matches) return; closeTimer = setTimeout(() => setMenu(mn, false), 180); });
+    mn.addEventListener('focusout', e => { if (!mn.contains(e.relatedTarget)) setMenu(mn, false); });
+  });
+  document.addEventListener('click', e => { if (!e.target.closest('[data-mn]')) closeMenus(); else if (e.target.closest('.mn__panel a')) closeMenus(); });
+
+  /* ---------- drawer (S9) ---------- */
+  const drawer = $('#drawer'), scrim = $('#scrim'), burger = $('#burger');
+  let drawerReturn = null;
+  function drawerFocusables(){ return $$('a[href],button:not([disabled]),summary', drawer); }
+  function openDrawer(){ drawerReturn = document.activeElement; drawer.classList.add('is-open'); scrim.classList.add('is-open'); burger.setAttribute('aria-expanded', 'true'); document.body.style.overflow = 'hidden'; setTimeout(() => { const f = drawerFocusables()[0]; if (f) f.focus(); }, 30); }
+  function closeDrawer(returnFocus){ if (!drawer.classList.contains('is-open')) return; drawer.classList.remove('is-open'); scrim.classList.remove('is-open'); burger.setAttribute('aria-expanded', 'false'); document.body.style.overflow = ''; if (returnFocus && drawerReturn) drawerReturn.focus(); }
+  burger.addEventListener('click', openDrawer);
+  $('#drawerClose').addEventListener('click', () => closeDrawer(true));
+  scrim.addEventListener('click', () => closeDrawer(true));
+  drawer.addEventListener('click', e => { if (e.target.closest('a')) closeDrawer(false); });
+  drawer.addEventListener('keydown', e => {
+    if (e.key === 'Escape'){ e.preventDefault(); closeDrawer(true); return; }
+    if (e.key !== 'Tab') return;
+    const f = drawerFocusables(); if (!f.length) return;
+    const first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+  });
+
+
+  /* ---------- module pricing notice (S13) ---------- */
+  const notice = $('#moduleNotice'), noticeMod = $('#noticeMod'), noticeAct = $('#noticeAct');
+  function showNotice(name){ noticeMod.textContent = name; noticeAct.dataset.module = name; notice.hidden = false; notice.classList.remove('is-in'); void notice.offsetWidth; notice.classList.add('is-in'); }
+  function hideNotice(){ notice.hidden = true; notice.classList.remove('is-in'); }
+  $('#noticeX').addEventListener('click', hideNotice);
+  function scrollToId(id){ const t = document.getElementById(id); if (t) t.scrollIntoView({ behavior: reduceMotion.matches ? 'auto' : 'smooth', block: 'start' }); }
+
+  /* ---------- plans and modules ---------- */
+  const modByKey = Object.fromEntries(FIXTURES.modules.map(m => [m.key, m]));
+  const icon = id => '<svg class="ic" aria-hidden="true"><use href="#' + id + '"></use></svg>';
+  const tick = t => '<li>' + icon('i-check') + '<span>' + t + '</span></li>';
+  const BTN = 'data-component="Button" data-source="components/ui/Button.tsx"';
+  let period = 'Monthly';
+
+  function priceHTML(p){
+    if (p.type === 'free') return '<p class="pc__amt">₹0<small>/forever</small></p><p class="pc__unit">Free to claim</p>';
+    if (p.type === 'ent') return '<p class="pc__amt">Custom</p><p class="pc__unit">Priced by branches and modules</p>';
+    if (period === 'Yearly') return '<p class="pc__amt pc__amt--pend">Yearly price pending</p><p class="pc__unit">Ask our team for the yearly price.</p>';
+    return '<p class="pc__chip"><span class="pend">Sample price</span></p><p class="pc__k">Starting from</p><p class="pc__amt">' + p.amount + '<small>/month</small></p><p class="pc__unit">Per school, incl. GST (pending)</p>';
+  }
+  function planButton(p){
+    if (p.type === 'free') return '<a href="../claim/claim.html" class="btn btn--claim-ghost sz-md btn--block" ' + BTN + ' data-variant="claim-ghost" data-exit="S14"><span>Claim your school</span></a>';
+    if (p.type === 'ent') return '<button type="button" class="btn btn--claim-ghost sz-md btn--block" ' + BTN + ' data-variant="claim-ghost" data-open-demo data-plan="Enterprise" data-opens="S10"><span>Contact sales</span></button>';
+    return '<button type="button" class="btn ' + (p.popular ? 'btn--claim' : 'btn--claim-ghost') + ' sz-md btn--block" ' + BTN + ' data-variant="' + (p.popular ? 'claim' : 'claim-ghost') + '" data-open-demo data-plan="' + p.name + '" data-opens="S10"><span>Upgrade</span></button>';
+  }
+  function renderCards(){
+    $('#cards').innerHTML = FIXTURES.plans.map(p => {
+      const cls = 'pc' + (p.type === 'free' ? ' pc--free' : '') + (p.type === 'ent' ? ' pc--ent' : '') + (p.popular ? ' pc--pop' : '');
+      const mods = p.mods.map(k => '<span class="mi ' + modByKey[k].cls + '" title="' + modByKey[k].name + '">' + icon(modByKey[k].ic) + '</span>').join('');
+      return '<article class="' + cls + '">' + (p.popular ? '<span class="pc__tag">Most popular</span>' : '') +
+        '<div><h3 class="pc__name">' + p.name + '</h3><p class="pc__sub">' + p.sub + '</p></div>' +
+        '<div class="pc__price">' + priceHTML(p) + '</div>' +
+        '<div><p class="pc__k">Modules included</p><div class="pmods">' + mods + '</div></div>' +
+        (p.prev ? '<p class="pc__plus">Everything in ' + p.prev + ', plus:</p>' : '') +
+        '<ul class="ticks">' + p.feats.map(tick).join('') + '</ul><div class="pc__sp"></div>' + planButton(p) + '</article>';
+    }).join('');
+  }
+  function renderModules(){
+    $('#mgrid').innerHTML = FIXTURES.modules.map(m => {
+      const head = '<div class="mc__h"><span class="mi">' + icon(m.ic) + '</span><h3 class="mc__name">' + m.name + '</h3>' + (m.free ? '<span class="pend pend--ok">Free to claim</span>' : '') + '</div><p class="mc__t">' + m.title + '</p>';
+      const points = '<ul class="ticks">' + m.points.map(tick).join('') + '</ul>';
+      if (m.free) return '<article class="mc mc--wide ' + m.cls + '"><div class="mc__l">' + head + '</div><div class="mc__r">' + points + '<a href="../claim/claim.html" class="btn btn--claim-ghost sz-md btn--block" ' + BTN + ' data-variant="claim-ghost" data-exit="S14"><span>Claim your school</span></a></div></article>';
+      return '<article class="mc ' + m.cls + '">' + head + points + '<div class="mc__sp"></div><a href="' + m.href + '" class="btn btn--claim-ghost sz-md btn--block" ' + BTN + ' data-variant="claim-ghost" data-exit="S16" data-module-link="' + m.name + '"><span>View ' + m.name + ' pricing' + icon('i-arrow-right') + '</span></a></article>';
+    }).join('');
+  }
+
+  /* ---------- billing switch (S3, S4): EntryModeToggle behaviour, as a radio group ---------- */
+  const sw = $('#sw'), swInd = $('#swInd'), swOpts = $$('.sw__o', sw);
+  function placeInd(){ const on = swOpts.find(o => o.getAttribute('aria-checked') === 'true'); if (!on || !on.offsetWidth) return; swInd.style.left = on.offsetLeft + 'px'; swInd.style.width = on.offsetWidth + 'px'; }
+  function setPeriod(next){
+    period = next;
+    swOpts.forEach(o => { const on = o.dataset.period === next; o.setAttribute('aria-checked', String(on)); o.tabIndex = on ? 0 : -1; });
+    $('#infoM').hidden = next !== 'Monthly'; $('#infoY').hidden = next !== 'Yearly';
+    placeInd(); renderCards(); renderCmp();
+  }
+  sw.addEventListener('click', e => { const o = e.target.closest('.sw__o'); if (o) setPeriod(o.dataset.period); });
+  sw.addEventListener('keydown', e => {
+    if (!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)) return;
+    e.preventDefault();
+    const i = swOpts.findIndex(o => o.dataset.period === period), n = swOpts[(i + 1) % swOpts.length];
+    setPeriod(n.dataset.period); n.focus();
+  });
+
+  /* ---------- tabs (S3, S5) ---------- */
+  const tabs = $$('.pt-tab'), bill = $('#bill');
+  function selectTab(t, focus){
+    tabs.forEach(x => { const on = x === t; x.setAttribute('aria-selected', String(on)); x.tabIndex = on ? 0 : -1; document.getElementById(x.getAttribute('aria-controls')).hidden = !on; });
+    bill.hidden = t.id !== 'tab-plans';
+    if (t.id === 'tab-plans') placeInd();
+    if (focus) t.focus();
+  }
+  tabs.forEach((t, i) => {
+    t.addEventListener('click', () => selectTab(t, false));
+    t.addEventListener('keydown', e => { if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return; e.preventDefault(); selectTab(tabs[(i + 1) % tabs.length], true); });
+  });
+
+  /* ---------- comparison (S6, S7) ---------- */
+  const cmp = $('#cmp'), cmpBtn = $('#cmpBtn'), cmpBox = $('#cmpBox'), psw = $('#psw');
+  let col = 2;
+  const cell = v => v === 1 ? '<span class="yes" aria-label="Included" role="img">' + icon('i-check') + '</span>' : v === 0 ? '<span class="no" aria-label="Not included" role="img">—</span>' : v;
+  function renderCmp(){
+    const P = FIXTURES.plans;
+    cmp.tHead.innerHTML = '<tr><th scope="col">Feature</th>' + P.map((p, i) => '<th scope="col" data-col="' + i + '">' + p.name + '</th>').join('') + '</tr>';
+    const price = period === 'Yearly' ? ['₹0','Pending','Pending','Pending','Custom'] : ['₹0'].concat(P.slice(1, 4).map(p => p.amount), ['Custom']);
+    cmp.tBodies[0].innerHTML = FIXTURES.rows.map(r => {
+      const m = modByKey[r[0]];
+      const head = m ? '<span class="cmp__mn ' + m.cls + '"><span class="mi">' + icon(m.ic) + '</span>' + m.name + '</span>' : 'Account and support';
+      return '<tr class="grp"><td colspan="6">' + head + '</td></tr>' + r[1].map(x => '<tr><th scope="row">' + x[0] + '</th>' + x[1].map((v, i) => '<td data-col="' + i + '">' + cell(v) + '</td>').join('') + '</tr>').join('');
+    }).join('') + '<tr class="grp"><td colspan="6">Price</td></tr><tr><th scope="row">' + (period === 'Yearly' ? 'Yearly price' : 'Starting price per month (sample)') + '</th>' + price.map((v, i) => '<td data-col="' + i + '"><b>' + v + '</b></td>').join('') + '</tr>';
+    showCol(col);
+  }
+  function showCol(i){
+    col = Number(i);
+    $$('[data-col]', cmp).forEach(c => c.classList.toggle('on', Number(c.dataset.col) === col));
+    $$('button', psw).forEach(b => b.setAttribute('aria-pressed', String(Number(b.dataset.i) === col)));
+  }
+  psw.innerHTML = FIXTURES.plans.map((p, i) => '<button type="button" data-i="' + i + '" aria-pressed="false">' + p.name + '</button>').join('');
+  psw.addEventListener('click', e => { const b = e.target.closest('button'); if (b) showCol(b.dataset.i); });
+  function setCmp(open){ cmpBox.hidden = !open; cmpBtn.setAttribute('aria-expanded', String(open)); $('#cmpLbl').textContent = open ? 'Hide comparison' : 'Compare all features'; }
+  cmpBtn.addEventListener('click', () => setCmp(cmpBox.hidden));
+
+  /* ---------- FAQ (S8) ---------- */
+  const qas = $$('.qa');
+  function setQa(qa, open){ $('.qa__btn', qa).setAttribute('aria-expanded', String(open)); qa.classList.toggle('is-open', open); const a = $('.qa__a', qa); a.style.maxHeight = open ? a.scrollHeight + 'px' : '0px'; }
+  $('#faqList').addEventListener('click', e => { const b = e.target.closest('.qa__btn'); if (!b) return; const qa = b.closest('.qa'), open = b.getAttribute('aria-expanded') === 'true'; qas.forEach(q => setQa(q, false)); if (!open) setQa(qa, true); });
+  function refitQa(){ qas.forEach(q => { if (q.classList.contains('is-open')) $('.qa__a', q).style.maxHeight = $('.qa__a', q).scrollHeight + 'px'; }); }
+
+  /* ---------- enquiry stepper (S10–S12), reused from superhr-homepage-v8.html ---------- */
+  const tpl = $('#dmTpl').innerHTML;
+  function Stepper(host, prefix, onFinish){
+    host.innerHTML = tpl.split('{p}').join(prefix);
+    const title = $('.dm__t', host), bars = $$('.dm__bars span', host), count = $('.dm__count', host);
+    const steps = $$('.dm__step', host), back = $('[data-back]', host);
+    const form = $('form', host), send = $('[data-send]', host);
+    const views = { sent: $('[data-view="sent"]', host), dup: $('[data-view="dup"]', host) };
+    const head = $('.dm__head', host);
+    const f = {}; ['name','school','mobile','email'].forEach(k => f[k] = $('#' + prefix + '-' + k, host));
+    const consent = $('#' + prefix + '-consent', host);
+    const alertBox = $('[data-alert]', host), alertText = $('[data-alert-text]', host);
+    const editHtml = '<span>Save changes</span>', editNote = $('[data-edit-note]', host), touched = new Set();
+    const sendHtml = () => '<span>' + (ctx.upgrade ? 'Request upgrade' : 'Request a call') + '<svg class="ic" aria-hidden="true"><use href="#i-arrow-right"></use></svg></span>';
+    const answers = {};
+    const sel = $('[data-sel]', host), grid = $('.mods__grid', host), hint = $('.mods__hint', host);
+    let ctx = { request: '', locked: [], upgrade: false };
+    function setContext(next){
+      const was = new Set($$('input[name="modules"]', host).filter(i => i.checked && !i.disabled).map(i => i.value));
+      ctx = next;
+      sel.textContent = ctx.request; sel.hidden = !ctx.request || !head || head.hidden;
+      hint.textContent = ctx.hint;
+      const ordered = ctx.locked.concat(MODULE_ORDER.filter(m => !ctx.locked.includes(m)));
+      grid.innerHTML = ordered.map(m => {
+        const lock = ctx.locked.includes(m), on = lock || was.has(m);
+        return '<label class="mrow' + (lock ? ' mrow--locked' : '') + '"><span class="mrow__box"><input type="checkbox" name="modules" value="' + m + '"' + (on ? ' checked' : '') + (lock ? ' disabled' : '') + '><svg class="ic" aria-hidden="true"><use href="#i-check"></use></svg></span><span class="mrow__name">' + m + '</span>' + (lock ? '<span class="mrow__pill">Included</span>' : '') + '</label>';
+      }).join('');
+    }
+    let at = 1, submitted = false, shownAt = 0, callMobile = '', editing = null;
+    function show(n){
+      at = n;
+      steps.forEach(s => { s.hidden = Number(s.dataset.n) !== n; });
+      head.hidden = false; views.sent.hidden = true; views.dup.hidden = true; sel.hidden = !ctx.request || !!editing; $$('[data-call-note]', host).forEach(n => { n.textContent = ''; });
+      title.textContent = editing && n === 4 ? COPY.changeTitle : steps[n - 1].dataset.title;
+      head.classList.toggle('is-edit', !!editing); editNote.hidden = !editing;
+      bars.forEach((b, i) => b.classList.toggle('is-on', i < n));
+      count.textContent = n + ' of ' + STEPS;
+      back.hidden = n === 1;
+      $$('.dm__opt', steps[n - 1]).forEach(o => o.classList.toggle('is-picked', answers[o.dataset.key] === o.dataset.val));
+      send.disabled = false; send.innerHTML = editing ? editHtml : sendHtml();
+      if (n !== 4) alertBox.hidden = true;
+      steps[3].dataset.state = submitted && hasErrors() ? 'error' : 'default';
+    }
+    function focusStep(){
+      if (editing){ f.mobile.focus(); return; }
+      const s = steps[at - 1];
+      const target = at === 4 ? ([f.name, f.school, f.mobile].find(i => !i.value.trim()) || f.name) : ($('.dm__opt.is-picked', s) || $('.dm__opt, input:not([disabled])', s));
+      if (target) target.focus();
+    }
+    host.addEventListener('click', e => {
+      const chg = e.target.closest('[data-change]');
+      if (chg){ editing = { from: callMobile, view: chg.closest('[data-view]'), vals: formVals() }; show(4); f.mobile.focus(); f.mobile.select(); host.scrollIntoView({ block: 'nearest' }); return; }
+      const o = e.target.closest('.dm__opt');
+      if (o){ answers[o.dataset.key] = o.dataset.val; show(at + 1); focusStep(); return; }
+      if (e.target.closest('[data-next-type]')){
+        const picked = $$('input[name="type"]', host).filter(i => i.checked).map(i => i.value);
+        setErr($('#' + prefix + '-e-type', host), picked.length ? '' : COPY.type);
+        if (!picked.length){ steps[1].dataset.state = 'error'; $('input[name="type"]', host).focus(); return; }
+        steps[1].dataset.state = 'default'; answers.type = picked.join(', '); show(3); focusStep(); return;
+      }
+      if (e.target.closest('[data-next]')){ show(4); focusStep(); return; }
+      if (e.target.closest('[data-back]') && editing){ cancelEdit(); return; }
+      if (e.target.closest('[data-back]')){ show(Math.max(1, at - 1)); focusStep(); return; }
+      if (e.target.closest('[data-finish]')){ if (Date.now() - shownAt < 500) return; show(4); if (onFinish) onFinish(); else focusStep(); }
+    });
+    /* Change: back to the last part of the form with the number ready to edit. Saving updates the same request, never sends a new one. Back leaves it as it was. */
+    function formVals(){ const v = {}; ['name','school','mobile','email'].forEach(k => { v[k] = f[k].value.trim(); }); return v; }
+    function showDone(view){ steps.forEach(s => s.hidden = true); head.hidden = true; back.hidden = true; sel.hidden = true; shownAt = Date.now(); view.hidden = false; host.closest('.cpop__box') && (host.closest('.cpop__box').scrollTop = 0); $('[data-change]', view).focus(); }
+    function fillDone(view, rec, name, mobile){
+      const school = tidyCaps(rec.school), mods = listText(rec.modules);
+      fill(view, view === views.sent
+        ? { name: capFirst(name), mobile: fmtMobile(mobile), school: school, request: rec.request, modules: mods }
+        : { mobile: fmtMobile(mobile), prevSchool: school, prevRequest: rec.request, prevModules: mods });
+      $('[data-about]', view).hidden = !rec.request; $('[data-mods]', view).hidden = !rec.modules.length;
+    }
+    function cancelEdit(){
+      const e0 = editing; editing = null;
+      Object.keys(e0.vals).forEach(k => { f[k].value = e0.vals[k]; });
+      consent.checked = true; alertBox.hidden = true; KEYS.forEach(paint);
+      show(4); showDone(e0.view);
+    }
+    function saveEdit(){
+      const e0 = editing, vals = formVals(), changed = Object.keys(vals).some(k => vals[k] !== e0.vals[k]);
+      if (!changed){ cancelEdit(); return; }
+      setBusy(true);
+      updateDemoRequest(e0.from, vals).then(() => {
+        setBusy(false);
+        const rec = sentThisVisit.get(e0.from) || { school: vals.school, modules: modules(), request: ctx.request };
+        if (vals.school !== e0.vals.school) rec.school = vals.school;
+        sentThisVisit.delete(e0.from); sentThisVisit.set(vals.mobile, rec);
+        editing = null; callMobile = vals.mobile; show(4);
+        fillDone(e0.view, rec, vals.name.split(/\s+/)[0], vals.mobile);
+        $('[data-call-note]', e0.view).innerHTML = '<svg class="ic" aria-hidden="true"><use href="#i-check"></use></svg><span>' + (vals.mobile !== e0.from ? 'Number updated. We will call <b>' + fmtMobile(vals.mobile) + '</b>, not <b>' + fmtMobile(e0.from) + '</b>.' : 'Your details are updated.') + '</span>';
+        showDone(e0.view);
+      }).catch(er => { setBusy(false); showAlert(er && er.kind); });
+    }
+    function err(k){
+      if (k === 'consent') return consent.checked ? '' : COPY.consent;
+      const v = f[k].value.trim();
+      if (k === 'mobile') return !v ? COPY.mobileEmpty : !MOBILE_RE.test(v) ? COPY.mobileFormat : !MOBILE_START_RE.test(v) ? COPY.mobileStart : (editing && v !== editing.from && sentThisVisit.has(v) ? COPY.changeTaken : '');
+      if (k === 'email') return !v || EMAIL_RE.test(v) ? '' : COPY.email;
+      if (!v) return COPY[k];
+      if (k === 'name') return !NAME_RE.test(v) ? COPY.nameFormat : (v.length < 3 ? COPY.nameShort : '');
+      if (k === 'school') return v.length < 3 ? COPY.schoolShort : '';
+      return '';
+    }
+    function setErr(el, msg){ el.innerHTML = msg ? ERR_ICON + '<span>' + msg + '</span>' : ''; }
+    const KEYS = ['name','school','mobile','email','consent'];
+    function paint(k){
+      const msg = err(k), input = k === 'consent' ? consent : f[k];
+      input.closest('.fl').classList.toggle('is-error', !!msg);
+      input.setAttribute('aria-invalid', msg ? 'true' : 'false');
+      setErr($('#' + prefix + '-e-' + k, host), msg);
+      return msg;
+    }
+    function hasErrors(){ return KEYS.some(k => err(k)); }
+    const nameCount = $('#' + prefix + '-name-count', host);
+    f.name.addEventListener('input', () => {
+      const el = f.name, v = el.value, clean = v.replace(NAME_STRIP, '').replace(/^ +/, '').replace(/ {2,}/g, ' ').slice(0, NAME_MAX);
+      if (clean !== v) { const pos = el.selectionStart, before = v.slice(0, pos).replace(NAME_STRIP, '').replace(/^ +/, '').replace(/ {2,}/g, ' ').length; el.value = clean; try { el.setSelectionRange(before, before); } catch (e) {} }
+      nameCount.textContent = el.value.length + '/' + NAME_MAX;
+    });
+    f.mobile.addEventListener('input', () => { const d = f.mobile.value.replace(/\D+/g, '').slice(0, 10); if (d !== f.mobile.value) f.mobile.value = d; });
+    KEYS.forEach(k => (k === 'consent' ? consent : f[k]).addEventListener(k === 'consent' ? 'change' : 'input', () => { if (!submitted && !touched.has(k)) return; paint(k); steps[3].dataset.state = hasErrors() ? 'error' : 'default'; }));
+    /* validate a field when the user leaves it (only once something was typed), like the claim flow */
+    ['name','school','mobile','email'].forEach(k => f[k].addEventListener('blur', () => { if (!f[k].value.trim() && !submitted) return; touched.add(k); paint(k); steps[3].dataset.state = hasErrors() && submitted ? 'error' : 'default'; }));
+    function setBusy(on){
+      send.disabled = on; back.disabled = on; form.setAttribute('aria-busy', on ? 'true' : 'false');
+      [f.name, f.school, f.mobile, f.email].forEach(i => { i.readOnly = on; }); consent.disabled = on;
+      send.innerHTML = on ? '<span class="dm__busy"><span class="btnspin" aria-hidden="true"></span>' + (editing ? 'Saving…' : COPY.sending) + '</span>' : (editing ? editHtml : sendHtml());
+      steps[3].dataset.state = on ? 'loading' : 'default';
+    }
+    function showAlert(kind){ const copy = editing ? COPY.changeFailed : COPY; alertText.innerHTML = copy[kind] || copy.server; alertBox.hidden = false; steps[3].dataset.state = 'error'; alertBox.focus(); }
+    function modules(){ const picked = $$('input[name="modules"]', host).filter(i => i.checked).map(i => i.value); return MODULE_ORDER.filter(m => picked.includes(m)); }
+    function listText(a){ return a.length <= 1 ? a.join('') : a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1]; }
+    function fill(view, data){ $$('[data-out]', view).forEach(el => { const v = data[el.dataset.out]; if (v !== undefined) el.textContent = v; }); }
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      if (send.disabled) return;
+      submitted = true;
+      const errs = KEYS.filter(k => paint(k));
+      if (errs.length){ steps[3].dataset.state = 'error'; (errs[0] === 'consent' ? consent : f[errs[0]]).focus(); return; }
+      alertBox.hidden = true;
+      if (editing){ saveEdit(); return; }
+      setBusy(true);
+      const mobile = f.mobile.value.trim(), mods = modules();
+      sendDemoRequest({ answers: Object.assign({}, answers), name: f.name.value.trim().replace(/\s+/g, ' '), school: f.school.value.trim(), mobile: mobile, email: f.email.value.trim(), modules: mods })
+        .then(() => {
+          setBusy(false);
+          const prev = sentThisVisit.get(mobile);
+          steps.forEach(s => s.hidden = true); head.hidden = true; back.hidden = true; sel.hidden = true; shownAt = Date.now();
+          callMobile = mobile;
+          if (prev){ fillDone(views.dup, prev, '', mobile); views.dup.hidden = false; $('.done__t', views.dup).focus(); }
+          else {
+            const rec = { school: f.school.value.trim(), modules: mods, request: ctx.request, answers: Object.assign({}, answers) };
+            sentThisVisit.set(mobile, rec);
+            fillDone(views.sent, rec, f.name.value.trim().split(/\s+/)[0], mobile);
+            views.sent.hidden = false; $('.done__t', views.sent).focus();
+          }
+          host.closest('.cpop__box') && (host.closest('.cpop__box').scrollTop = 0);
+        })
+        .catch(e => { setBusy(false); showAlert(e && e.kind); });
+    });
+    show(1);
+    return {
+      host, show, focusStep, form, send, steps, setContext,
+      atStep: () => at,
+      isDone: () => !views.sent.hidden || !views.dup.hidden,
+      fixture(){ Object.keys(f).forEach(k => { f[k].value = FIXTURES.requester[k] || ''; }); consent.checked = true; answers.locations = '1'; answers.type = 'Day school'; const dt = $('input[name="type"][value="Day school"]', host); if (dt) dt.checked = true; }
+    };
+  }
+
+
+  /* ---------- popup ---------- */
+  const dlg = $('#demoDialog'), box = $('.cpop__box', dlg);
+  const pop = Stepper($('#dm-pop'), 'dm-pop', () => closeDemo());
+  let opener = null, hideTimer = 0;
+  function dlgFocusables(){ return $$('a[href],button:not([disabled]),input:not([disabled]),select', box).filter(el => !el.closest('[hidden]')); }
+  const ALL7 = 'includes all seven modules.';
+  function contextFor(from){
+    const d = (from && from.dataset) || {};
+    if (d.plan){
+      const p = FIXTURES.plans.find(x => x.name === d.plan), names = p.mods.map(k => modByKey[k].name);
+      return { request: p.type === 'ent' ? 'Enterprise' : p.name + ' plan · ' + period, locked: names, upgrade: p.type !== 'ent',
+        hint: names.length === 7 ? p.name + ' ' + ALL7 : p.name + ' includes these modules. Add any others you want to hear about.' };
+    }
+    if (d.module) return { request: d.module, locked: [d.module], hint: d.module + ' is included. Add any others you want to hear about.' };
+    return { request: '', locked: [], hint: 'Choose the modules you want to hear about, or leave them empty.' };
+  }
+  function openDemo(from){
+    opener = from || document.activeElement;
+    pop.setContext(contextFor(from));
+    hideNotice(); closeDrawer(false); closeMenus(); clearTimeout(hideTimer);
+    if (pop.isDone()) pop.show(4); else pop.show(pop.atStep());
+    dlg.hidden = false; document.body.classList.add('cpop-open');
+    requestAnimationFrame(() => { dlg.classList.add('is-in'); pop.focusStep(); });
+  }
+  function closeDemo(){
+    if (dlg.hidden) return;
+    dlg.classList.remove('is-in'); document.body.classList.remove('cpop-open');
+    if (reduceMotion.matches) dlg.hidden = true; else hideTimer = setTimeout(() => { dlg.hidden = true; }, 280);
+    if (opener && document.contains(opener)) opener.focus();
+  }
+  document.addEventListener('click', e => {
+    const o = e.target.closest('[data-open-demo]'); if (o){ e.preventDefault(); openDemo(o); return; }
+    if (e.target.closest('[data-close-demo]')){ closeDemo(); return; }
+    /* N9: the module pricing pages do not exist yet (module-pricing-pages). Remove this line and H8 takes over. */
+    const m = e.target.closest('[data-module-link]'); if (m){ e.preventDefault(); showNotice(m.dataset.moduleLink); return; }
+    const s = e.target.closest('[data-scroll]'); if (s){ e.preventDefault(); scrollToId(s.dataset.scroll); return; }
+    if (e.target.closest('a[href="#top"]')){ e.preventDefault(); window.scrollTo({ top: 0, behavior: reduceMotion.matches ? 'auto' : 'smooth' }); }
+  });
+  box.addEventListener('keydown', e => {
+    if (e.key !== 'Tab') return;
+    const list = dlgFocusables(); if (!list.length) return;
+    const first = list[0], last = list[list.length - 1];
+    if (e.shiftKey && (document.activeElement === first || document.activeElement === box)){ e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Escape') return;
+    if (!dlg.hidden){ e.preventDefault(); closeDemo(); return; }
+    if (!notice.hidden){ hideNotice(); return; }
+    const m = menus.find(x => $('.mn__top', x).getAttribute('aria-expanded') === 'true'); if (m){ closeMenus(); $('.mn__top', m).focus(); }
+  });
+
+  /* ---------- reveal on scroll (v8) ---------- */
+  const reveals = $$('[data-reveal]');
+  if ('IntersectionObserver' in window && !reduceMotion.matches){
+    const io = new IntersectionObserver(entries => entries.forEach(en => { if (en.isIntersecting){ en.target.classList.add('is-in'); io.unobserve(en.target); } }), { rootMargin: '0px 0px -6% 0px', threshold: 0.06 });
+    reveals.forEach((el, i) => { if (el.getBoundingClientRect().top < window.innerHeight * 0.94){ el.classList.add('is-in'); return; } el.style.transitionDelay = ((i % 4) * 70) + 'ms'; el.classList.add('is-armed'); io.observe(el); });
+  } else reveals.forEach(el => el.classList.add('is-in'));
+
+  /* ---------- direct links (H18, N11): #compare opens the table, #modules opens the tab, unknown ones do nothing ---------- */
+  function applyHash(){
+    const h = decodeURIComponent(location.hash.slice(1));
+    if (h === 'compare'){ setCmp(true); scrollToId('compare'); }
+    else if (h === 'modules'){ selectTab($('#tab-mods'), false); scrollToId('plans'); }
+    else if (h === 'plans'){ selectTab($('#tab-plans'), false); scrollToId('plans'); }
+    else if (h === 'faq') scrollToId('faq');
+  }
+  window.addEventListener('hashchange', applyHash);
+  window.addEventListener('popstate', applyHash);
+
+  let raf = 0;
+  window.addEventListener('scroll', () => { if (raf) return; raf = requestAnimationFrame(() => { raf = 0; syncHdr(); }); }, { passive: true });
+  window.addEventListener('resize', () => { refitQa(); placeInd(); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(placeInd);
+
+  /* ---------- debug switch: ?step=S10&state=error ---------- */
+  const growthBtn = () => $('[data-plan="Growth"]');
+  function debug(){
+    const q = new URLSearchParams(location.search), step = q.get('step'), state = q.get('state');
+    if (!step) return;
+    switch (step){
+      case 'S1': window.scrollTo(0, 0); break;
+      case 'S2': scrollToId('faq'); break;
+      case 'S3': scrollToId('plans'); break;
+      case 'S4': setPeriod('Yearly'); scrollToId('plans'); break;
+      case 'S5': selectTab($('#tab-mods'), false); scrollToId('plans'); break;
+      case 'S6': setCmp(true); scrollToId('compare'); break;
+      case 'S7': setCmp(true); showCol(3); scrollToId('compare'); break;
+      case 'S8': scrollToId('faq'); setQa(qas[0], true); break;
+      case 'S9': openDrawer(); break;
+      case 'S10':
+        openDemo(growthBtn());
+        if (state === 'error'){ pop.show(4); pop.form.requestSubmit(); }
+        if (state === 'disabled'){ pop.fixture(); pop.show(4); pop.send.disabled = true; pop.steps[3].dataset.state = 'disabled'; }
+        if (state === 'loading'){ pop.fixture(); pop.show(4); pop.form.requestSubmit(); }
+        break;
+      case 'S11': pop.fixture(); openDemo(growthBtn()); pop.show(4); pop.form.requestSubmit(); break;
+      case 'S12':
+        sentThisVisit.set(FIXTURES.requester.mobile, { school: FIXTURES.earlier.school, request: FIXTURES.earlier.request, modules: FIXTURES.earlier.modules });
+        pop.fixture(); openDemo(growthBtn()); pop.show(4); pop.form.requestSubmit(); break;
+      case 'S13': selectTab($('#tab-mods'), false); showNotice('SuperLeads'); break;
+    }
+  }
+
+  renderCards(); renderModules(); renderCmp(); showCol(col); placeInd(); syncHdr(); applyHash(); debug();
+})();
+</script>
+
+<script src="../../../lib/auth.js"></script>
+<script src="../../../components/PreLoginMenu.js"></script>
+</body>
+</html>

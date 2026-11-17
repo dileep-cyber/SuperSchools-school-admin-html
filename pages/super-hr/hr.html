@@ -10,6 +10,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <script src="../../styles/tailwind-config.js"></script>
   <link rel="stylesheet" href="../../styles/dashboard.css" />
+<style id="ss-layout">/* console page layout: same side margins and the same title / description style on every page */
+:root{--ss-gx:12px}@media(min-width:768px){:root{--ss-gx:24px}}@media(min-width:1024px){:root{--ss-gx:48px}}
+section.custom-scrollbar > div.w-full{padding:16px var(--ss-gx)!important}
+.dashboard-action-row h2{font-family:Inter,system-ui,sans-serif!important;font-size:20px!important;line-height:25px!important;font-weight:700!important;letter-spacing:-0.2px!important;color:#2B2B2B!important;margin:0!important;text-transform:none!important;}
+</style>
 </head>
 <body class="bg-slate-200 text-slate-900 min-h-screen" x-data="schoolConsole({ module: 'jobs', sub: 'jobs' })">
   <div id="routeLoader" class="route-loader" role="status" aria-live="polite" aria-label="Loading">
@@ -29,11 +34,6 @@
             <div class="dashboard-root space-y-5">
               <div class="dashboard-action-row flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div class="min-w-0">
-                  <div class="flex items-center gap-2 text-xs sm:text-sm font-medium text-slate-500 mb-3">
-                    <button type="button" @click="setPage('school')" class="hover:text-primary transition-colors cursor-pointer">Home</button>
-                    <span class="material-symbols-outlined text-[16px] text-slate-400">chevron_right</span>
-                    <span class="text-slate-700">Jobs</span>
-                  </div>
                   <h2 class="text-[22px] md:text-[26px] leading-tight font-semibold tracking-[-0.035em] text-slate-900">Jobs Dashboard</h2>
                 </div>
                 <button type="button" @click="window.location.href='applications.html'" class="rounded-full bg-primary hover:bg-primary-hover text-white px-5 py-2 text-sm font-medium shadow-[0_10px_22px_rgba(40,76,165,.18)] inline-flex items-center gap-2 transition-all hover:-translate-y-0.5">View All Jobs <span class="material-symbols-outlined text-[18px]">arrow_forward</span></button>

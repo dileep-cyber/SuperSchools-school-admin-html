@@ -44,7 +44,7 @@ function walk(dir, ext) {
 const SHARED_JS = new Set([
   'navigation.js', 'store.js', 'charts.js', 'tailwind-config.js', 'crm-store.js',
   'Sidebar.js', 'TopNav.js', 'MobileNav.js', 'HamburgerMenu.js',
-  'Toast.js', 'RouteLoader.js', 'AppShell.js'
+  'Toast.js', 'RouteLoader.js', 'AppShell.js', 'HeaderControls.js'
 ]);
 const REQUIRED_ON_EVERY_PAGE = ['lib/navigation.js', 'lib/store.js', 'components/AppShell.js', 'components/Sidebar.js', 'components/TopNav.js'];
 
@@ -64,7 +64,9 @@ const isLocalRef = (r) => {
 };
 const resolveRef = (fromFile, ref) => resolve(dirname(fromFile), ref.split('?')[0].split('#')[0]);
 
-const htmlPages = walk(PAGES, '.html');
+const PRELOGIN = join(PAGES, 'pre-login');
+const htmlPages = walk(PAGES, '.html').filter((p) => !p.startsWith(PRELOGIN));   // post-login pages (embedded in console.html)
+const preLoginPages = walk(PRELOGIN, '.html');
 
 // Map each page-specific JS basename -> set of owning page folders.
 const jsOwner = {};
@@ -81,7 +83,8 @@ for (const h of htmlPages) {
 
 // ---- 2 & 3 & 6. Per-page checks ------------------------------------
 for (const h of htmlPages) {
-  const html = readFileSync(h, 'utf8');
+  // (text/plain + text/template script bodies are embedded sample markup, not links of this page)
+  const html = readFileSync(h, 'utf8').replace(/<script[^>]*type="text\/(?:plain|template)"[^>]*>[\s\S]*?<\/script>/g, '');
   // local src/href resolution
   for (const m of html.matchAll(/(?:src|href)="([^"]+)"/g)) {
     const ref = m[1];
@@ -99,7 +102,7 @@ for (const h of htmlPages) {
   }
   // component wiring: legacy schoolConsole pages load the shared shell scripts;
   // self-contained embedded mockups instead carry the embed bridge (RouteLoader.js).
-  if (html.includes('schoolConsole(')) {
+  if (html.includes('schoolConsole(') && !html.includes('components/RouteLoader.js')) {   // self-contained pages (e.g. Super Connect) bring their own store + the embed bridge
     for (const req of REQUIRED_ON_EVERY_PAGE) {
       if (html.includes(req)) ok();
       else bad(`SHELL   ${rel(h)} does not load ${req}`);
@@ -108,6 +111,27 @@ for (const h of htmlPages) {
     if (html.includes('components/RouteLoader.js')) ok();
     else bad(`EMBED   ${rel(h)} (self-contained) does not load the embed bridge components/RouteLoader.js`);
   }
+}
+
+// ---- 7. Pre-login pages (pages/pre-login/*) + the index.html router ----
+for (const h of preLoginPages) {
+  const html = readFileSync(h, 'utf8').replace(/<script[^>]*type="text\/(?:plain|template)"[^>]*>[\s\S]*?<\/script>/g, '');
+  for (const m of html.matchAll(/(?:src|href)=["']([^"']+)["']/g)) {
+    const ref = m[1]; if (!isLocalRef(ref)) continue;
+    existsSync(resolveRef(h, ref)) ? ok() : bad(`PRELOGIN ${rel(h)} -> "${ref}" (missing)`);
+  }
+  for (const m of html.matchAll(/(?:location\.href|location\.replace\()\s*=?\s*\(?['"]([^'"]+\.html[^'"]*)['"]/g)) {
+    existsSync(resolveRef(h, m[1])) ? ok() : bad(`PRELOGIN-NAV ${rel(h)} -> "${m[1]}" (missing)`);
+  }
+  html.includes('lib/auth.js') ? ok() : bad(`PRELOGIN ${rel(h)} does not load lib/auth.js`);
+}
+{
+  const idx = readFileSync(join(ROOT, 'index.html'), 'utf8');
+  for (const need of ['lib/auth.js', 'console.html', 'pages/pre-login/home/home.html'])
+    idx.includes(need) ? ok() : bad(`ROUTER  index.html does not reference ${need}`);
+  const con = readFileSync(join(ROOT, 'console.html'), 'utf8');
+  con.includes('lib/auth.js') ? ok() : bad('AUTH    console.html does not load lib/auth.js');
+  /requireAuth/.test(readFileSync(join(ROOT, 'lib', 'shell.js'), 'utf8')) ? ok() : bad('AUTH    shell.js does not require a session');
 }
 
 // ---- nav targets inside colocated page-logic JS --------------------
@@ -166,11 +190,11 @@ if (!existsSync(NAV_FILE)) {
 }
 
 // ---- 5. Persistent shell (index.html + lib/shell.js) ---------------
-const indexHtml = readFileSync(join(ROOT, 'index.html'), 'utf8');
+const indexHtml = readFileSync(join(ROOT, 'console.html'), 'utf8');
 // 5a. The shell must load its store and host a content iframe + appShell store.
-indexHtml.includes('lib/shell.js') ? ok() : bad('SHELL   index.html does not load lib/shell.js');
-indexHtml.includes('x-ref="contentFrame"') ? ok() : bad('SHELL   index.html has no content <iframe x-ref="contentFrame">');
-indexHtml.includes('x-data="appShell()"') ? ok() : bad('SHELL   index.html does not bind x-data="appShell()"');
+indexHtml.includes('lib/shell.js') ? ok() : bad('SHELL   console.html does not load lib/shell.js');
+indexHtml.includes('x-ref="contentFrame"') ? ok() : bad('SHELL   console.html has no content <iframe x-ref="contentFrame">');
+indexHtml.includes('x-data="appShell()"') ? ok() : bad('SHELL   console.html does not bind x-data="appShell()"');
 // 5b. Every route-table URL in lib/shell.js must resolve on disk.
 const SHELL_FILE = join(ROOT, 'lib', 'shell.js');
 if (!existsSync(SHELL_FILE)) {

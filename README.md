@@ -180,3 +180,23 @@ hand-maintained and **not** regenerated.
 ```powershell
 pwsh -File _build/build.ps1
 ```
+
+## Complete flow (pre-login + post-login)
+
+```
+index.html                      ROUTER: session cookie -> console.html, none -> pages/pre-login/home/home.html
+console.html                    POST-LOGIN shell (sidebar + header + content iframe); needs a session
+lib/auth.js                     session cookie `ss_session` (set on login/claim, cleared on sign out)
+components/PreLoginMenu.js      pre-login header menus (+ "Go to dashboard" when signed in)
+pages/pre-login/                PRE-LOGIN, one folder per page (same convention as the module folders)
+  home/home.html                Super OS home (For Schools)
+  claim/claim.html              SuperProfile - claim your school (a verified claim signs you in)
+  leads/leads.html  hr/hr.html  pricing/pricing.html
+  login/login.html              school login (mobile/email + PIN or OTP)
+pages/onboarding/setup.html     5-step school setup (first screen after login)
+pages/<module>/...              post-login module pages
+```
+
+Flow: home -> login (or claim) -> session cookie -> console.html -> 5-step setup -> Save & exit -> dashboard.
+**Sign out** (right menu) deletes the cookie and returns to index.html (-> home). Opening `console.html` or a signed-in
+visit to the login page is routed by the cookie. Footer links such as /contact, /blog, /terms point at the public site and are not part of this prototype.
